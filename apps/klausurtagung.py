@@ -537,7 +537,7 @@ def _(executeButtonSQL, mo, queryEditorSQL, sc, slides):
 def _(mo):
     dates = mo.sql(
         f"""
-        SELECT date from 'train.csv'
+        SELECT date from 'train.csv' ORDER BY date DESC LIMIT 3500
         """,
         output=False
     )
