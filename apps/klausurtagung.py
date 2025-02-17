@@ -9,7 +9,7 @@ app = marimo.App(
 
 
 @app.cell
-def _():
+async def _():
     import marimo as mo
     import datetime as dt
     import pandas as pd
@@ -17,7 +17,9 @@ def _():
     import time
     import pyarrow
     import duckdb
-    import sqlglot
+    import micropip
+    await micropip.install("sqlglot")  # Install first
+    import sqlglot  # Then import
     #from lets_plot import ggplot, geom_line, geom_bar, aes, scale_color_manual, theme, element_text, element_blank, element_line, element_rect, element_blank, as_discrete, coord_flip, theme, geom_text, layer_tooltips
     import numpy as np
     from scipy.optimize import milp, LinearConstraint
@@ -27,6 +29,7 @@ def _():
         alt,
         dt,
         duckdb,
+        micropip,
         milp,
         mo,
         np,
@@ -564,7 +567,7 @@ def _(filtered, mo):
         f"""
         SELECT date, streetname, CAST(SUM(n_pedestrians) AS INT) AS count FROM filtered GROUP BY streetname, date
         """,
-        output=False,
+        output=False
     )
     return (timeseries,)
 
@@ -575,7 +578,7 @@ def _(filtered, mo):
         f"""
         SELECT date, CAST(SUM(n_pedestrians) AS INT) AS count FROM filtered GROUP BY date
         """,
-        output=False,
+        output=False
     )
     return (summedData,)
 
@@ -999,10 +1002,10 @@ def _(
         solution = optimize_warehouses()
         # Assume the list of opened warehouses
         opened_warehouses = solution["activeWarehouses"][0]
-        
+
         # Mark opened warehouses
         warehouses["Opened"] = warehouses["ID"].apply(lambda x: x in opened_warehouses)
-        
+
         # Create base chart
         base = alt.Chart().mark_circle(size=100).encode(
             x=alt.X("X", title="X Coordinate"),
@@ -1010,32 +1013,32 @@ def _(
             color=alt.Color("Type", scale=alt.Scale(domain=["Customer", "Opened Warehouse", "Closed Warehouse"], range=["blue", "green", "gray"])),
             tooltip=["ID", "X", "Y"]
         )
-        
+
         # Customers
         customer_chart = base.encode(
             alt.ShapeValue("circle"),
             alt.ColorValue("blue")
         ).transform_calculate(Type="Customer").transform_filter(alt.datum.Type == "Customer")
-        
+
         # Opened Warehouses
         opened_chart = base.encode(
             alt.ShapeValue("triangle"),
             alt.ColorValue("green")
         ).transform_calculate(Type="Opened Warehouse").transform_filter(alt.datum.Type == "Opened Warehouse")
-        
+
         # Closed Warehouses
         closed_chart = base.encode(
             alt.ShapeValue("triangle"),
             alt.ColorValue("gray")
         ).transform_calculate(Type="Closed Warehouse").transform_filter(alt.datum.Type == "Closed Warehouse")
-        
+
         # Combine all charts
         chart = alt.layer(customer_chart, opened_chart, closed_chart).properties(
             width=400,
             height=400,
             title="Warehouse and Customer Locations"
         ).configure_legend(labelFontSize=12, titleFontSize=14)
-        
+
         # Display chart
         chart = alt.Chart(pd.concat([customers.assign(Type="Customer"), 
                                      warehouses.assign(Type=["Opened Warehouse" if w else "Closed Warehouse" for w in warehouses["Opened"]])])
