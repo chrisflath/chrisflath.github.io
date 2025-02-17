@@ -498,15 +498,14 @@ def _(diagramEditor, mo, sc, slides):
 
 
 @app.cell
-def _(mo, run_sql_query):
+def _(mo):
     # SQL Query Editor
     queryEditorSQL = mo.ui.text_area(label="Enter SQL Query", value="SELECT * FROM 'train.csv';", full_width=True)
-    executeButtonSQL = mo.ui.button(label="Run Query", on_click=lambda value: run_sql_query(), value="")
-    return executeButtonSQL, queryEditorSQL
+    return (queryEditorSQL,)
 
 
 @app.cell
-def _(executeButtonSQL, mo, queryEditorSQL, sc, slides):
+def _(mo, queryEditorSQL, sc, slides):
     slides["sql_query"] = {}
 
     queryResult = mo.sql(queryEditorSQL.value)
@@ -522,8 +521,7 @@ def _(executeButtonSQL, mo, queryEditorSQL, sc, slides):
 
         ---
         """),
-        queryEditorSQL,
-        executeButtonSQL
+        queryEditorSQL
     ])
 
     slides["sql_query"]["content2"] = mo.as_html(queryResult)
@@ -562,10 +560,10 @@ def _(datePicker, mo):
 
 
 @app.cell
-def _(filtered, mo):
+def _(datePicker, mo):
     timeseries = mo.sql(
         f"""
-        SELECT date, streetname, CAST(SUM(n_pedestrians) AS INT) AS count FROM filtered GROUP BY streetname, date
+        SELECT date, streetname, CAST(SUM(n_pedestrians) AS INT) AS count FROM 'train.csv' WHERE date BETWEEN '{str(datePicker.value[0])}' AND '{str(datePicker.value[1])}' GROUP BY streetname, date
         """,
         output=False
     )
@@ -573,10 +571,10 @@ def _(filtered, mo):
 
 
 @app.cell
-def _(filtered, mo):
+def _(datePicker, mo):
     summedData = mo.sql(
         f"""
-        SELECT date, CAST(SUM(n_pedestrians) AS INT) AS count FROM filtered GROUP BY date
+        SELECT date, CAST(SUM(n_pedestrians) AS INT) AS count FROM 'train.csv' WHERE date BETWEEN '{str(datePicker.value[0])}' AND '{str(datePicker.value[1])}' GROUP BY date
         """,
         output=False
     )
