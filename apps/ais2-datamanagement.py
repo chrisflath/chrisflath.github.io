@@ -1647,7 +1647,7 @@ def _(denorm):
 
 @app.cell
 def _(sc):
-    sc.create_agenda(currentSection="Implementation")
+    sc.create_agenda(currentSection="Implementation with SQL")
     return
 
 
