@@ -4,6 +4,7 @@ __generated_with = "0.13.4"
 app = marimo.App(
     width="medium",
     app_title="Data Management",
+    layout_file="layouts/ais2-datamanagement.slides.json",
     css_file="d3.css",
 )
 
@@ -34,7 +35,7 @@ def _(mo):
             self.vertical_spacer_height = 800
             self.horizontal_spacer_width = 1280
             self.logo = mo.image("https://raw.githubusercontent.com/d3group/.github/refs/heads/main/assets/D3_2c.png", width=200)
-    
+
         def get_spacer_horizontal(self, size=1200):
             return mo.md(r"""&nbsp;""").style({"width": f"{size}px"})
 
@@ -43,7 +44,7 @@ def _(mo):
 
         def get_horizontal_rule(self):
             return mo.md(f"<div style='width: {self.horizontal_spacer_width}px; height: 1px; background-color: darkgray;'></div>")
-    
+
         def get_footer(self, slide_number=0):
             if slide_number is not None:
                 return mo.vstack([
@@ -63,7 +64,7 @@ def _(mo):
                         mo.vstack([self.logo], gap=0, align="end")
                     ], widths=[0.8,0.2])
                 ], align="start")
- 
+
         def render_slide(self, left_width=750, right_width=450, content1=None, content2=None):
             title_style = {"width": "100%", "text-align": "left"}  # Ensure full width and left alignment
 
@@ -105,7 +106,7 @@ def _(mo):
                         mo.vstack([
                             mo.md(f"{self.presenter} ({self.chair_title})")
                         ], align="start"),
-                    
+
                         self.content2],align="center", gap=1, justify="space-around")], align="start")
                     ], justify="start", align="start", gap=5).style({"text-align": "left"}),
                     self.get_spacer_vertical(100),
@@ -145,7 +146,7 @@ def _(mo):
 
             slide = mo.vstack([slide, mo.Html("""<div class="page-break"></div>""")])
             return slide
-    
+
         def get_title_number(self):
             return (self.title_raw, self.slide_number)
 
@@ -156,7 +157,7 @@ def _(mo):
             self.presenter = presenter
             self.pages = []
             self.currentSection = "Default Section"
-    
+
 
         def create_slide(self, title, layout_type="2-column", newSection=None):
             if newSection:
@@ -164,7 +165,7 @@ def _(mo):
             slide = Slide(title, len(self.pages)+1, chair_title=self.chair_title, lecture_name=self.lecture_name, presenter=self.presenter, layout_type=layout_type, section=self.currentSection)
             self.pages.append(slide)
             return slide
-    
+
         def create_agenda(self, title="Agenda", currentSection=None):
             agenda = {}
             for page in self.pages:
