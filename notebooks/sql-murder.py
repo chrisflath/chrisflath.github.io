@@ -14,7 +14,7 @@ def _():
 
 
     # URL of the dataset (must allow direct downloads)
-    url = "https://raw.githubusercontent.com//NUKnightLab/sql-mysteries/raw/refs/heads/master/sql-murder-mystery.db"
+    url = "https://raw.githubusercontent.com/WIBA-DMA/exam-2024-pprm/refs/heads/main/sql-murder-mystery.db"
 
     # Download and save the file
     filename = "murder.db"
