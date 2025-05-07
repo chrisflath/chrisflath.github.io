@@ -1,0 +1,525 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.13.4"
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "23e92a983ccb778a82edf7f2c2b62439",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "SQL DB setup successfull\n"
+        }
+      ]
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "5c00be7c045a3848237ba092eb2b2ff4",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "c84e74f153bafe54d10958dc4ab1da6f",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "c322cd2a3e80804eafe253e4055bdbd9",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "52bf96efa035b8d1a84f5d5cfa85acb7",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "8e8131406def98142845cb3ec55ccd1a",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "6840730774b451c8f0f62f429522b30b",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "930e5bed2c36b279ea76ad9b8bd71cc9",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "BYtC",
+      "code_hash": "eb244fe420fbdbd8b7dc3196768b679f",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "RGSE",
+      "code_hash": "9e45b6ba5b7e91732a6ba99b5ece55a0",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "Kclp",
+      "code_hash": "1c09cedc034a69ad5d506f0c1f5163f3",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "emfo",
+      "code_hash": null,
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "Hstk",
+      "code_hash": "e37f8a1ca7347c89247625ae289f7973",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "nWHF",
+      "code_hash": "b1e94f24ca4401781c0afd99bbadef9f",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "iLit",
+      "code_hash": "b1e94f24ca4401781c0afd99bbadef9f",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "ZHCJ",
+      "code_hash": "81b07cf2c49b36c9bca3c9e843fa36d4",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "ROlb",
+      "code_hash": "d23320bafd7067331c8db442f75e79c9",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "EAGw",
+      "code_hash": "99eb7739b8705db26782654f0ee38295",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<span class=\"markdown prose dark:prose-invert\"><h1 id=\"komplexe-abfragen-auf-mehreren-tabellen\">Komplexe Abfragen auf mehreren Tabellen</h1></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Pzrf",
+      "code_hash": "3fd3610f2a105b123c76689463edebb5",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<span class=\"markdown prose dark:prose-invert\"><h2 id=\"predict-tasks\">Predict Tasks</h2></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "iZBY",
+      "code_hash": "5fa03a2d2e67bbb345d536ede7d61b31",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='iZBY-0' random-id='0e43d700-3a9d-0647-c338-9979de867a87'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;Bayer 04 Leverkusen&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:28,&#92;&quot;S&#92;&quot;:&#92;&quot;24&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;04&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;00&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;69:19&#92;&#92;u00a0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;+50&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:76},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;FC Bayern M&#92;&#92;u00fcnchen&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:28,&#92;&quot;S&#92;&quot;:&#92;&quot;19&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;03&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;06&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;80:36&#92;&#92;u00a0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;+44&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:60},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;VfB Stuttgart&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:28,&#92;&quot;S&#92;&quot;:&#92;&quot;19&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;03&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;06&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;64:34&#92;&#92;u00a0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;+30&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:60},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;RB Leipzig&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:28,&#92;&quot;S&#92;&quot;:&#92;&quot;16&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;05&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;07&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;64:33&#92;&#92;u00a0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;+31&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:53},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;Borussia Dortmund&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:28,&#92;&quot;S&#92;&quot;:&#92;&quot;15&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;08&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;05&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;55:33&#92;&#92;u00a0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;+22&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:53},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;Eintracht Frankfurt&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:28,&#92;&quot;S&#92;&quot;:&#92;&quot;10&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;12&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;06&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;43:36&#92;&#92;u00a0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;+7&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:42},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;FC Augsburg&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:28,&#92;&quot;S&#92;&quot;:&#92;&quot;09&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;09&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;10&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;45:46&#92;&#92;u00a0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;-1&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:36},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;TSG Hoffenheim&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:28,&#92;&quot;S&#92;&quot;:&#92;&quot;10&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;06&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;12&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;48:53&#92;&#92;u00a0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;-5&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:36},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;Sport-Club Freiburg&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:28,&#92;&quot;S&#92;&quot;:&#92;&quot;10&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;06&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;12&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;40:52&#92;&#92;u00a0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;-12&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:36},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;1. FC Heidenheim 1846&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:28,&#92;&quot;S&#92;&quot;:&#92;&quot;08&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;09&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;11&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;41:49&#92;&#92;u00a0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;-8&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:33},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;Borussia M&#92;&#92;u00f6nchengladbach&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:28,&#92;&quot;S&#92;&quot;:&#92;&quot;07&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;10&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;11&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;49:54&#92;&#92;u00a0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;-5&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:31},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;SV Werder Bremen&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:28,&#92;&quot;S&#92;&quot;:&#92;&quot;08&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;07&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;13&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;36:44&#92;&#92;u00a0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;-8&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:31},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;1. FC Union Berlin&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:28,&#92;&quot;S&#92;&quot;:&#92;&quot;08&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;05&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;15&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;25:43&#92;&#92;u00a0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;-18&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:29},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;VfL Wolfsburg&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:28,&#92;&quot;S&#92;&quot;:&#92;&quot;07&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;07&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;14&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;34:47&#92;&#92;u00a0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;-13&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:28},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;VfL Bochum 1848&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:28,&#92;&quot;S&#92;&quot;:&#92;&quot;05&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;11&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;12&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;33:58&#92;&#92;u00a0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;-25&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:26},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;1. FSV Mainz 05&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:28,&#92;&quot;S&#92;&quot;:&#92;&quot;04&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;11&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;13&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;26:46&#92;&#92;u00a0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;-20&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:23},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;1. FC K&#92;&#92;u00f6ln&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:28,&#92;&quot;S&#92;&quot;:&#92;&quot;04&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;10&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;14&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;23:49&#92;&#92;u00a0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;-26&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:22},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;SV Darmstadt 98&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:28,&#92;&quot;S&#92;&quot;:&#92;&quot;02&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;08&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;18&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;28:71&#92;&#92;u00a0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;-43&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:14}]&quot;' data-total-rows='18' data-total-columns='8' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='25' data-field-types='[[&quot;Mannschaft&quot;, [&quot;string&quot;, &quot;str&quot;]], [&quot;Spiele&quot;, [&quot;integer&quot;, &quot;i64&quot;]], [&quot;S&quot;, [&quot;string&quot;, &quot;str&quot;]], [&quot;U&quot;, [&quot;string&quot;, &quot;str&quot;]], [&quot;N&quot;, [&quot;string&quot;, &quot;str&quot;]], [&quot;Tore&quot;, [&quot;string&quot;, &quot;str&quot;]], [&quot;Tordifferenz&quot;, [&quot;string&quot;, &quot;str&quot;]], [&quot;Punkte&quot;, [&quot;integer&quot;, &quot;i64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='true' data-row-headers='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "SzYt",
+      "code_hash": "f23305d5ea0eefa7242d92fb36521161",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='SzYt-0' random-id='f6d34c3d-2005-e104-0493-ed564b66a9f4'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;Bayer 04 Leverkusen&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:28,&#92;&quot;S&#92;&quot;:&#92;&quot;24&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;04&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;00&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;69:19&#92;&#92;u00a0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;+50&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:76},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;FC Bayern M&#92;&#92;u00fcnchen&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:28,&#92;&quot;S&#92;&quot;:&#92;&quot;19&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;03&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;06&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;80:36&#92;&#92;u00a0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;+44&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:60},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;VfB Stuttgart&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:28,&#92;&quot;S&#92;&quot;:&#92;&quot;19&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;03&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;06&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;64:34&#92;&#92;u00a0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;+30&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:60},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;RB Leipzig&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:28,&#92;&quot;S&#92;&quot;:&#92;&quot;16&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;05&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;07&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;64:33&#92;&#92;u00a0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;+31&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:53},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;Borussia Dortmund&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:28,&#92;&quot;S&#92;&quot;:&#92;&quot;15&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;08&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;05&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;55:33&#92;&#92;u00a0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;+22&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:53},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;Eintracht Frankfurt&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:28,&#92;&quot;S&#92;&quot;:&#92;&quot;10&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;12&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;06&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;43:36&#92;&#92;u00a0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;+7&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:42},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;FC Augsburg&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:28,&#92;&quot;S&#92;&quot;:&#92;&quot;09&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;09&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;10&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;45:46&#92;&#92;u00a0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;-1&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:36},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;TSG Hoffenheim&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:28,&#92;&quot;S&#92;&quot;:&#92;&quot;10&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;06&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;12&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;48:53&#92;&#92;u00a0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;-5&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:36},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;Sport-Club Freiburg&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:28,&#92;&quot;S&#92;&quot;:&#92;&quot;10&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;06&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;12&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;40:52&#92;&#92;u00a0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;-12&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:36},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;1. FC Heidenheim 1846&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:28,&#92;&quot;S&#92;&quot;:&#92;&quot;08&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;09&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;11&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;41:49&#92;&#92;u00a0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;-8&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:33}]&quot;' data-total-rows='18' data-total-columns='8' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;Mannschaft&quot;, [&quot;string&quot;, &quot;str&quot;]], [&quot;Spiele&quot;, [&quot;integer&quot;, &quot;i64&quot;]], [&quot;S&quot;, [&quot;string&quot;, &quot;str&quot;]], [&quot;U&quot;, [&quot;string&quot;, &quot;str&quot;]], [&quot;N&quot;, [&quot;string&quot;, &quot;str&quot;]], [&quot;Tore&quot;, [&quot;string&quot;, &quot;str&quot;]], [&quot;Tordifferenz&quot;, [&quot;string&quot;, &quot;str&quot;]], [&quot;Punkte&quot;, [&quot;integer&quot;, &quot;i64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='true' data-row-headers='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Clbl",
+      "code_hash": "9cc5931bd3557a8fe2e8935d6e58351d",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "nYjE",
+      "code_hash": "5fa03a2d2e67bbb345d536ede7d61b31",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='nYjE-0' random-id='ff046a5e-6171-ce5f-c72f-d82270c79dd9'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;Bayer 04 Leverkusen&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:31,&#92;&quot;S&#92;&quot;:&#92;&quot;25&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;6&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;77:22&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;55&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:81},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;FC Bayern M&#92;&#92;u00fcnchen&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;VfB Stuttgart&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;RB Leipzig&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;Borussia Dortmund&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;Eintracht Frankfurt&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;FC Augsburg&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;TSG Hoffenheim&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;Sport-Club Freiburg&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;1. FC Heidenheim 1846&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;Borussia M&#92;&#92;u00f6nchengladbach&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;SV Werder Bremen&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;1. FC Union Berlin&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;VfL Wolfsburg&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;VfL Bochum 1848&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;1. FSV Mainz 05&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;1. FC K&#92;&#92;u00f6ln&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;SV Darmstadt 98&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;W&#92;&#92;u00fcrzburger Kickers&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0}]&quot;' data-total-rows='19' data-total-columns='8' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='25' data-field-types='[[&quot;Mannschaft&quot;, [&quot;string&quot;, &quot;str&quot;]], [&quot;Spiele&quot;, [&quot;integer&quot;, &quot;i64&quot;]], [&quot;S&quot;, [&quot;string&quot;, &quot;str&quot;]], [&quot;U&quot;, [&quot;string&quot;, &quot;str&quot;]], [&quot;N&quot;, [&quot;string&quot;, &quot;str&quot;]], [&quot;Tore&quot;, [&quot;string&quot;, &quot;str&quot;]], [&quot;Tordifferenz&quot;, [&quot;string&quot;, &quot;str&quot;]], [&quot;Punkte&quot;, [&quot;integer&quot;, &quot;i64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='true' data-row-headers='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Choq",
+      "code_hash": "b8dfece6cafe24c96d2872379ecb40e3",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "DnJY",
+      "code_hash": "5fa03a2d2e67bbb345d536ede7d61b31",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='DnJY-0' random-id='6ee56ad5-2457-f7af-0259-5f327016d386'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;Bayer 04 Leverkusen&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;FC Bayern M&#92;&#92;u00fcnchen&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;VfB Stuttgart&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;RB Leipzig&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;Borussia Dortmund&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;Eintracht Frankfurt&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;FC Augsburg&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;TSG Hoffenheim&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;Sport-Club Freiburg&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;1. FC Heidenheim 1846&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;Borussia M&#92;&#92;u00f6nchengladbach&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;SV Werder Bremen&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;1. FC Union Berlin&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;VfL Wolfsburg&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;VfL Bochum 1848&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;1. FSV Mainz 05&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;1. FC K&#92;&#92;u00f6ln&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;SV Darmstadt 98&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0}]&quot;' data-total-rows='18' data-total-columns='8' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='25' data-field-types='[[&quot;Mannschaft&quot;, [&quot;string&quot;, &quot;str&quot;]], [&quot;Spiele&quot;, [&quot;integer&quot;, &quot;i64&quot;]], [&quot;S&quot;, [&quot;string&quot;, &quot;str&quot;]], [&quot;U&quot;, [&quot;string&quot;, &quot;str&quot;]], [&quot;N&quot;, [&quot;string&quot;, &quot;str&quot;]], [&quot;Tore&quot;, [&quot;string&quot;, &quot;str&quot;]], [&quot;Tordifferenz&quot;, [&quot;string&quot;, &quot;str&quot;]], [&quot;Punkte&quot;, [&quot;integer&quot;, &quot;i64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='true' data-row-headers='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "jaJx",
+      "code_hash": "801b7baa3c2ad4383b983dbdb657d8d7",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "uNJX",
+      "code_hash": "ce1c17ce32c0249e7701b482fdfeaa7f",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='uNJX-0' random-id='64ae3c9e-7baa-77cb-ca41-f4f94807b649'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;Bayer 04 Leverkusen&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;FC Bayern M&#92;&#92;u00fcnchen&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;VfB Stuttgart&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;RB Leipzig&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;Borussia Dortmund&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;Eintracht Frankfurt&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;FC Augsburg&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;TSG Hoffenheim&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;Sport-Club Freiburg&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;1. FC Heidenheim 1846&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;Borussia M&#92;&#92;u00f6nchengladbach&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;SV Werder Bremen&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;1. FC Union Berlin&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;VfL Wolfsburg&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;VfL Bochum 1848&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;1. FSV Mainz 05&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;1. FC K&#92;&#92;u00f6ln&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0},{&#92;&quot;Mannschaft&#92;&quot;:&#92;&quot;SV Darmstadt 98&#92;&quot;,&#92;&quot;Spiele&#92;&quot;:0,&#92;&quot;S&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;U&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;N&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Tore&#92;&quot;:&#92;&quot;0:0&#92;&quot;,&#92;&quot;Tordifferenz&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;Punkte&#92;&quot;:0}]&quot;' data-total-rows='18' data-total-columns='8' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='25' data-field-types='[[&quot;Mannschaft&quot;, [&quot;string&quot;, &quot;str&quot;]], [&quot;Spiele&quot;, [&quot;integer&quot;, &quot;i64&quot;]], [&quot;S&quot;, [&quot;string&quot;, &quot;str&quot;]], [&quot;U&quot;, [&quot;string&quot;, &quot;str&quot;]], [&quot;N&quot;, [&quot;string&quot;, &quot;str&quot;]], [&quot;Tore&quot;, [&quot;string&quot;, &quot;str&quot;]], [&quot;Tordifferenz&quot;, [&quot;string&quot;, &quot;str&quot;]], [&quot;Punkte&quot;, [&quot;integer&quot;, &quot;i64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='true' data-row-headers='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "IaAb",
+      "code_hash": null,
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "tqse",
+      "code_hash": "320846d0e5190ac5450eca79ca03940a",
+      "outputs": [
+        {
+          "type": "error",
+          "ename": "exception",
+          "evalue": "(sqlite3.ProgrammingError) You can only execute one statement at a time.\n[SQL: \n    SELECT * from ewigeTabelle;\n\n    SELECT Mannschaft, Punkte, Saison\n    FROM ewigeTabelle\n    WHERE Punkte = (SELECT MAX(Punkte) FROM ewigeTabelle);\n\n    SELECT Mannschaft, Punkte, Saison\n    FROM ewigeTabelle\n    WHERE\n    Punkte = (SELECT MAX(Punkte) FROM ewigeTabelle WHERE Rang = 18)\n    AND Rang = 18;\n\n    SELECT Mannschaft, S, Saison\n    FROM ewigeTabelle\n    WHERE\n    S = (SELECT MIN(S) FROM ewigeTabelle WHERE Rang = 1)\n    AND Rang = 1;\n    ]\n(Background on this error at: https://sqlalche.me/e/20/f405)",
+          "traceback": []
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stderr",
+          "text": "<span class=\"codehilite\"><div class=\"highlight\"><pre><span></span><span class=\"gt\">Traceback (most recent call last):</span>\n  File <span class=\"nb\">&quot;/Users/chris/miniconda3/lib/python3.11/site-packages/sqlalchemy/engine/base.py&quot;</span>, line <span class=\"m\">1970</span>, in <span class=\"n\">_exec_single_context</span>\n<span class=\"w\">    </span><span class=\"bp\">self</span><span class=\"o\">.</span><span class=\"n\">dialect</span><span class=\"o\">.</span><span class=\"n\">do_execute</span><span class=\"p\">(</span>\n  File <span class=\"nb\">&quot;/Users/chris/miniconda3/lib/python3.11/site-packages/sqlalchemy/engine/default.py&quot;</span>, line <span class=\"m\">924</span>, in <span class=\"n\">do_execute</span>\n<span class=\"w\">    </span><span class=\"n\">cursor</span><span class=\"o\">.</span><span class=\"n\">execute</span><span class=\"p\">(</span><span class=\"n\">statement</span><span class=\"p\">,</span> <span class=\"n\">parameters</span><span class=\"p\">)</span>\n<span class=\"gr\">sqlite3.ProgrammingError</span>: <span class=\"n\">You can only execute one statement at a time.</span>\n\n<span class=\"gt\">The above exception was the direct cause of the following exception:</span>\n\n<span class=\"gt\">Traceback (most recent call last):</span>\n  File <span class=\"nb\">&quot;/Users/chris/miniconda3/lib/python3.11/site-packages/marimo/_runtime/executor.py&quot;</span>, line <span class=\"m\">141</span>, in <span class=\"n\">execute_cell</span>\n<span class=\"w\">    </span><span class=\"n\">exec</span><span class=\"p\">(</span><span class=\"n\">cell</span><span class=\"o\">.</span><span class=\"n\">body</span><span class=\"p\">,</span> <span class=\"n\">glbls</span><span class=\"p\">)</span>\n  File <span class=\"nb\">&quot;/var/folders/c0/x76gq04d1cz4pdmjjt96745r0000gn/T/marimo_1591/__marimo__cell_tqse_.py&quot;</span>, line <span class=\"m\">1</span>, in <span class=\"n\">&lt;module&gt;</span>\n<span class=\"w\">    </span><span class=\"n\">_df</span> <span class=\"o\">=</span> <span class=\"n\">mo</span><span class=\"o\">.</span><span class=\"n\">sql</span><span class=\"p\">(</span>\n<span class=\"w\">          </span><span class=\"pm\">^^^^^^^</span>\n  File <span class=\"nb\">&quot;/Users/chris/miniconda3/lib/python3.11/site-packages/marimo/_sql/sql.py&quot;</span>, line <span class=\"m\">84</span>, in <span class=\"n\">sql</span>\n<span class=\"w\">    </span><span class=\"n\">df</span> <span class=\"o\">=</span> <span class=\"n\">sql_engine</span><span class=\"o\">.</span><span class=\"n\">execute</span><span class=\"p\">(</span><span class=\"n\">query</span><span class=\"p\">)</span>\n<span class=\"w\">         </span><span class=\"pm\">^^^^^^^^^^^^^^^^^^^^^^^^^</span>\n  File <span class=\"nb\">&quot;/Users/chris/miniconda3/lib/python3.11/site-packages/marimo/_sql/engines/sqlalchemy.py&quot;</span>, line <span class=\"m\">68</span>, in <span class=\"n\">execute</span>\n<span class=\"w\">    </span><span class=\"n\">result</span> <span class=\"o\">=</span> <span class=\"n\">connection</span><span class=\"o\">.</span><span class=\"n\">execute</span><span class=\"p\">(</span><span class=\"n\">text</span><span class=\"p\">(</span><span class=\"n\">query</span><span class=\"p\">))</span>\n<span class=\"w\">             </span><span class=\"pm\">^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>\n  File <span class=\"nb\">&quot;/Users/chris/miniconda3/lib/python3.11/site-packages/sqlalchemy/engine/base.py&quot;</span>, line <span class=\"m\">1421</span>, in <span class=\"n\">execute</span>\n<span class=\"w\">    </span><span class=\"k\">return</span> <span class=\"n\">meth</span><span class=\"p\">(</span>\n<span class=\"w\">           </span><span class=\"pm\">^^^^^</span>\n  File <span class=\"nb\">&quot;/Users/chris/miniconda3/lib/python3.11/site-packages/sqlalchemy/sql/elements.py&quot;</span>, line <span class=\"m\">514</span>, in <span class=\"n\">_execute_on_connection</span>\n<span class=\"w\">    </span><span class=\"k\">return</span> <span class=\"n\">connection</span><span class=\"o\">.</span><span class=\"n\">_execute_clauseelement</span><span class=\"p\">(</span>\n<span class=\"w\">           </span><span class=\"pm\">^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>\n  File <span class=\"nb\">&quot;/Users/chris/miniconda3/lib/python3.11/site-packages/sqlalchemy/engine/base.py&quot;</span>, line <span class=\"m\">1643</span>, in <span class=\"n\">_execute_clauseelement</span>\n<span class=\"w\">    </span><span class=\"n\">ret</span> <span class=\"o\">=</span> <span class=\"bp\">self</span><span class=\"o\">.</span><span class=\"n\">_execute_context</span><span class=\"p\">(</span>\n<span class=\"w\">          </span><span class=\"pm\">^^^^^^^^^^^^^^^^^^^^^^</span>\n  File <span class=\"nb\">&quot;/Users/chris/miniconda3/lib/python3.11/site-packages/sqlalchemy/engine/base.py&quot;</span>, line <span class=\"m\">1849</span>, in <span class=\"n\">_execute_context</span>\n<span class=\"w\">    </span><span class=\"k\">return</span> <span class=\"bp\">self</span><span class=\"o\">.</span><span class=\"n\">_exec_single_context</span><span class=\"p\">(</span>\n<span class=\"w\">           </span><span class=\"pm\">^^^^^^^^^^^^^^^^^^^^^^^^^^</span>\n  File <span class=\"nb\">&quot;/Users/chris/miniconda3/lib/python3.11/site-packages/sqlalchemy/engine/base.py&quot;</span>, line <span class=\"m\">1989</span>, in <span class=\"n\">_exec_single_context</span>\n<span class=\"w\">    </span><span class=\"bp\">self</span><span class=\"o\">.</span><span class=\"n\">_handle_dbapi_exception</span><span class=\"p\">(</span>\n  File <span class=\"nb\">&quot;/Users/chris/miniconda3/lib/python3.11/site-packages/sqlalchemy/engine/base.py&quot;</span>, line <span class=\"m\">2356</span>, in <span class=\"n\">_handle_dbapi_exception</span>\n<span class=\"w\">    </span><span class=\"k\">raise</span> <span class=\"n\">sqlalchemy_exception</span><span class=\"o\">.</span><span class=\"n\">with_traceback</span><span class=\"p\">(</span><span class=\"n\">exc_info</span><span class=\"p\">[</span><span class=\"mi\">2</span><span class=\"p\">])</span> <span class=\"kn\">from</span> <span class=\"nn\">e</span>\n  File <span class=\"nb\">&quot;/Users/chris/miniconda3/lib/python3.11/site-packages/sqlalchemy/engine/base.py&quot;</span>, line <span class=\"m\">1970</span>, in <span class=\"n\">_exec_single_context</span>\n<span class=\"w\">    </span><span class=\"bp\">self</span><span class=\"o\">.</span><span class=\"n\">dialect</span><span class=\"o\">.</span><span class=\"n\">do_execute</span><span class=\"p\">(</span>\n  File <span class=\"nb\">&quot;/Users/chris/miniconda3/lib/python3.11/site-packages/sqlalchemy/engine/default.py&quot;</span>, line <span class=\"m\">924</span>, in <span class=\"n\">do_execute</span>\n<span class=\"w\">    </span><span class=\"n\">cursor</span><span class=\"o\">.</span><span class=\"n\">execute</span><span class=\"p\">(</span><span class=\"n\">statement</span><span class=\"p\">,</span> <span class=\"n\">parameters</span><span class=\"p\">)</span>\n<span class=\"gr\">sqlalchemy.exc.ProgrammingError</span>: <span class=\"n\">(sqlite3.ProgrammingError) You can only execute one statement at a time.</span>\n<span class=\"x\">[SQL: </span>\n<span class=\"x\">    SELECT * from ewigeTabelle;</span>\n\n<span class=\"x\">    SELECT Mannschaft, Punkte, Saison</span>\n<span class=\"x\">    FROM ewigeTabelle</span>\n<span class=\"x\">    WHERE Punkte = (SELECT MAX(Punkte) FROM ewigeTabelle);</span>\n\n<span class=\"x\">    SELECT Mannschaft, Punkte, Saison</span>\n<span class=\"x\">    FROM ewigeTabelle</span>\n<span class=\"x\">    WHERE</span>\n<span class=\"x\">    Punkte = (SELECT MAX(Punkte) FROM ewigeTabelle WHERE Rang = 18)</span>\n<span class=\"x\">    AND Rang = 18;</span>\n\n<span class=\"x\">    SELECT Mannschaft, S, Saison</span>\n<span class=\"x\">    FROM ewigeTabelle</span>\n<span class=\"x\">    WHERE</span>\n<span class=\"x\">    S = (SELECT MIN(S) FROM ewigeTabelle WHERE Rang = 1)</span>\n<span class=\"x\">    AND Rang = 1;</span>\n<span class=\"x\">    ]</span>\n<span class=\"x\">(Background on this error at: https://sqlalche.me/e/20/f405)</span>\n</pre></div>\n</span>"
+        }
+      ]
+    },
+    {
+      "id": "KQrV",
+      "code_hash": "1221c41929b2d78833aa2a0c4eead29c",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<span class=\"markdown prose dark:prose-invert\"><h2 id=\"modify-tasks-aggregation\">Modify Tasks - Aggregation</h2>\n<ul>\n<li>Welche Mannschaft braucht wieviel Tore pro Punkt?</li>\n<li>Was war die niedrigste Punktzahl je Verein?</li>\n<li>Welcher Verein hat wieviele Saisons / Spiele gespielt?</li>\n<li>Wie viel Tore wurden pro Saison geschossen?</li>\n<li>Welche Platzierungen haben die Bayern, der BVB und Gladbach wie oft belegt?</li>\n<li>Welches Bundesliga-Matchup ist historisch am torreichsten?</li>\n<li>Welche Mannschaft schie\u00dft daheim die meisten (die wenigsten) Tore pro Spiel?</li>\n</ul></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "JAlq",
+      "code_hash": "3a485c932b7d79cf7658f21150a1ee01",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<span class=\"markdown prose dark:prose-invert\"><h2 id=\"modify-tasks-group-by\">Modify Tasks - GROUP BY</h2>\n<ul>\n<li>Wie viele Punkte holen die Vereine durchschnittlich pro Spiel?</li>\n<li>Wie viele Tore schie\u00dfen die Vereine durchschnittlich pro Spiel?</li>\n<li>Welche Mannschaft braucht wieviel Tore pro Punkt?</li>\n<li>Was war die niedrigste Punktzahl je Verein?</li>\n<li>Welcher Verein hat wieviele Saisons / Spiele gespielt?</li>\n<li>Wie viel Tore wurden pro Saison geschossen?</li>\n<li>Welche Platzierungen haben die Bayern, der BVB und Gladbach wie oft belegt?</li>\n<li>Welches Bundesliga-Matchup ist historisch am torreichsten?</li>\n<li>Welche Mannschaft schie\u00dft daheim die meisten (die wenigsten) Tore pro Spiel?</li>\n</ul></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Cgbk",
+      "code_hash": "df881065868c4bf76d99ccef979c940d",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<span class=\"markdown prose dark:prose-invert\"><h2 id=\"modify-tasks-having\">Modify Tasks - HAVING</h2>\n<ul>\n<li>Von den Vereinen die mindestens drei Mal Meister wurden, wer wurde wie oft Meister?</li>\n<li>Gegen welchen Verein hat Bayern daheim die beste Gewinnrate (mind. 20 Partien)?</li>\n<li>Welches Bundesliga-Matchup ist historisch am tor\u00e4rmsten (mind. 40 Partien)?</li>\n<li>Welche Mannschaften haben gegen mindestens 5 Vereine mit mindestens 5 Toren Vorsprung ausw\u00e4rts gewonnen?</li>\n<li>In welchen Saisons gab es mindestens 15 Spiele mit einer Tordifferenz von 5 Toren?</li>\n</ul></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "LAua",
+      "code_hash": "575fb049732bfe640154f38f4f348768",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<span class=\"markdown prose dark:prose-invert\"><h2 id=\"make-aufgabe-1\">Make - Aufgabe 1</h2>\n<ul>\n<li>\n<span class=\"paragraph\">In dieser Aufgabe schreiben Sie SQL Abfragen um neue Zeilen einzuf\u00fcgen.</span>\n<ul>\n<li>\n<span class=\"paragraph\">Nehmen Sie weitere Qualifikationen in die Tabelle <em>qualifikationen</em> auf. Die neue Zeile soll mit einer expliziten Spaltenangabe in die Tabelle eingef\u00fcgt werden. In die Spaltenliste soll Folgendes aufgenommen werden: <em>qid</em>, <em>bezeichnung</em>, <em>kuerzel</em> und <em>kategorie</em>. Wir m\u00f6chten die Qualifikation <em>SQL</em> eintragen, die mit dem K\u00fcrzel <em>ITE</em> in die Kategorie <em>Informatik</em> aufgenommen werden soll. </span>\n</li>\n<li>\n<span class=\"paragraph\">In jedem gr\u00f6\u00dferen Unternehmen gibt es Administratoren. Diese Qualifikation werden wir als N\u00e4chstes in die Tabelle eintragen. Geben Sie als Bezeichnung <em>Administrator</em>, als K\u00fcrzel <em>ADA</em> und als Kategorie <em>Support</em> ein.</span>\n</li>\n</ul>\n</li>\n</ul></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "UARs",
+      "code_hash": "14a2d3c88faf279756db291193f2bc33",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<span class=\"markdown prose dark:prose-invert\"><h2 id=\"make-aufgabe-2\">Make - Aufgabe 2</h2>\n<ul>\n<li>\n<span class=\"paragraph\">In dieser Aufgabe schreiben Sie SQL Abfragen um bestehende Zeilen zu ver\u00e4ndern.</span>\n<ul>\n<li>\n<span class=\"paragraph\">Die Zeile mit dem Schl\u00fcsselwert 2 der Spalte <em>qid</em> der Tabelle <em>qualglobal</em> identifiziert einen Datensatz in dem der Spalte <em>bezeichnung</em> der Wert <em>Second Level Support</em> zugeordnet ist. \u00c4ndern Sie die Bezeichnung zu dem Wert <em>Second Level Helpdesk</em>.</span>\n</li>\n<li>\n<span class=\"paragraph\">Jetzt soll die Bezeichnung des Datensatzes mit Schl\u00fcsselwert 3 ge\u00e4ndert werden. \u00c4ndern Sie die <em>bezeichnung</em> zu <em>First Level Helpdesk</em> und das <em>kuerzel</em> zu <em>FLH</em>.</span>\n</li>\n<li>\n<span class=\"paragraph\">Das Unternehmen beabsichtigt auf eine freie Office-Suite umzusteigen. Daher soll den Werten der Spalte <em>kategorie</em>, die derzeit dem Wert <em>Office</em> entsprechen, ein <em>NULL</em>-Wert zugeordnet werden.</span>\n</li>\n</ul>\n</li>\n</ul></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "acJo",
+      "code_hash": "27c8c89eadf9e0c74f7b38723e4841f9",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<span class=\"markdown prose dark:prose-invert\"><h2 id=\"make-aufgabe-3-zeilen-loschen\">Make - Aufgabe 3 - Zeilen l\u00f6schen</h2>\n<ul>\n<li>\n<span class=\"paragraph\">In dieser Aufgabe schreiben Sie SQL Abfragen um bestehende Zeilen zu l\u00f6schen.</span>\n<ul>\n<li>\n<span class=\"paragraph\">Als Erstes soll die Zeile mit dem Schl\u00fcsselwert 2 aus der Tabelle <em>qualglobalarchiv</em> gel\u00f6scht werden.</span>\n</li>\n<li>\n<span class=\"paragraph\">Nun sollen die Eintrage mit der <em>qid</em> 5, 6 und 7 gel\u00f6scht werden.</span>\n</li>\n<li>\n<span class=\"paragraph\">L\u00f6schen Sie alle verbleibenden Eintr\u00e4ge der Tabelle <em>qualglobalarchiv</em>.</span>\n</li>\n</ul>\n</li>\n</ul></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "TpKr",
+      "code_hash": "fa399fc5cc8f942c51c4ba2d9d02bd2a",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<span class=\"markdown prose dark:prose-invert\"><h2 id=\"make-aufgabe-4-spaltenwerte-gruppieren\">Make - Aufgabe 4 - Spaltenwerte gruppieren</h2>\n<ul>\n<li>\n<span class=\"paragraph\">In dieser Aufgabe schreiben Sie SQL Abfragen um Aggregate \u00fcber Gruppen zu berechnen.</span>\n<ul>\n<li>\n<span class=\"paragraph\">In der Tabelle <em>kreditinstitut_auszug</em> sind s\u00e4mtliche Kreditinstitute und deren Bankleitzahlen erfasst. Jeder Bankleitzahl k\u00f6nnen mehrere Kreditinstitute zugeordnet sein. Ermittelen Sie wieviele Kreditinstitute den jeweiligen Bankleitzahlen zugeordnet sind.</span>\n</li>\n<li>\n<span class=\"paragraph\">Ermitteln Sie, basierend auf der Tabelle <em>bonus</em>, die Summe der Auszahlungen f\u00fcr Bonuszahlungen, die jeweils an einem Tag ausgesch\u00fcttet werden.</span>\n</li>\n<li>\n<span class=\"paragraph\">Ermitteln Sie, basierend auf der Tabelle <em>bonus</em>, den durchschnittlichen Bonus den die Mitarbeiter jeweils erhalten haben.</span>\n</li>\n</ul>\n</li>\n</ul></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "qTYs",
+      "code_hash": "caa67dc752384acdf8aad96189458d03",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<span class=\"markdown prose dark:prose-invert\"><h2 id=\"make-aufgabe-5-nach-aggregierten-werten-einer-gruppierung-filtern\">Make - Aufgabe 5 - Nach aggregierten Werten einer Gruppierung filtern</h2>\n<ul>\n<li>\n<span class=\"paragraph\">In dieser Aufgabe schreiben Sie SQL Abfragen um Aggregate \u00fcber Gruppen zu berechnen und basierend auf diesen Aggregaten zu filtern.</span>\n<ul>\n<li>\n<span class=\"paragraph\">Ermitteln Sie in der Tabelle <em>kreditinstitut_auszug</em> alle Bankleitzahlen, denen mehr als ein Kreditinstitut zugeordnet ist.</span>\n</li>\n<li>\n<span class=\"paragraph\">In der Tabelle <em>arbeitszeit_auszug</em> sind die Arbeitszeiten eines jeden Mitarbeiters pro Tag hinterlegt. Erstellen Sie einen Bericht, der auswertet, wie viele Stunden jeder Mitarbeiter pro Monat gearbeitet hat. Diese Auswertung bezieht sich immer auf das jeweilige Jahr. Geben Sie nur Mitarbeiter aus die mindestens 100 Stunden gearbeitet haben.</span>\n</li>\n</ul>\n</li>\n</ul></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Pygd",
+      "code_hash": "c55ab9af13787adb66265aeaab347df0",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "SQL DB setup successfull\n"
+        }
+      ]
+    },
+    {
+      "id": "eltf",
+      "code_hash": "3c01dc93d4dacd448c25bb18ebe23d83",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<span class=\"markdown prose dark:prose-invert\"><h3 id=\"update\">UPDATE</h3></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "waNL",
+      "code_hash": "6d994ae97477230a60953f7438549f1e",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<span class=\"markdown prose dark:prose-invert\"><h3 id=\"insert\">INSERT</h3></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "oWrS",
+      "code_hash": "f55f44f43c9db23c5b16ec63110f9143",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<span class=\"markdown prose dark:prose-invert\"><h3 id=\"insert-2\">INSERT 2</h3></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lKuD",
+      "code_hash": "cbdf2f333325245150f4e817092fc0c9",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<span class=\"markdown prose dark:prose-invert\"><h3 id=\"select-modifiers\">SELECT modifiers</h3></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "eMrf",
+      "code_hash": "e0a999fb8b4ed800f4b8109846ed2aa1",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<span class=\"markdown prose dark:prose-invert\"><h3 id=\"delete\">DELETE</h3></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "NnfJ",
+      "code_hash": "9491ebe599da7666c62ed011a59c4cde",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<span class=\"markdown prose dark:prose-invert\"><h3 id=\"aggregation\">Aggregation</h3></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PNEe",
+      "code_hash": "4950cda95f280de2602e69a6f10e15e1",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<span class=\"markdown prose dark:prose-invert\"><h3 id=\"group-by\">GROUP BY</h3></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "OKBo",
+      "code_hash": "8346aa55b1f4b403e406df772da86a7f",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<span class=\"markdown prose dark:prose-invert\"><h3 id=\"mengenoperationen\">Mengenoperationen</h3></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Jwjo",
+      "code_hash": "980e43ee0d55803db51e8ba8cada4525",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<span class=\"markdown prose dark:prose-invert\"><h1 id=\"ubungsaufgaben\">\u00dcbungsaufgaben</h1></span>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}
