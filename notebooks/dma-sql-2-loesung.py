@@ -1,7 +1,7 @@
 import marimo
 
 __generated_with = "0.13.6"
-app = marimo.App(width="full", app_title="SQL Einführung 2")
+app = marimo.App(width="full", app_title="SQL Einführung 2 - Lösung")
 
 
 @app.cell(hide_code=True)
@@ -909,19 +909,22 @@ def _(engine2, mo, qualifikationen):
         (qid, bezeichnung, kuerzel, kategorie)
         VALUES
         (1,"SQL","ITE","Informatik"),
-        (2,"Administrator","ADA","Support"); 
+        (2,"Administrator","ADA","Support");
         """,
         engine=engine2
     )
     return
 
 
-app._unparsable_cell(
-    r"""
-    SELECT * from qualifikationen
-    """,
-    name="_"
-)
+@app.cell
+def _(engine2, mo, qualifikationen):
+    _df = mo.sql(
+        f"""
+        SELECT * from qualifikationen
+        """,
+        engine=engine2
+    )
+    return
 
 
 @app.cell(hide_code=True)
