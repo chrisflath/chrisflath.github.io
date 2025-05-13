@@ -1045,13 +1045,15 @@ def _(engine2, mo, qualglobalarchiv):
     return
 
 
-app._unparsable_cell(
-    r"""
-    SELECT * FROM qualglobalarchiv;
-    """,
-    name="_"
-)
-
+@app.cell
+def _(engine2, mo, qualglobalarchiv):
+    _df = mo.sql(
+        f"""
+        SELECT * FROM qualglobalarchiv;
+        """,
+        engine=engine2
+    )
+    return
 
 @app.cell
 def _(engine2, mo, qualglobalarchiv):
@@ -1063,14 +1065,15 @@ def _(engine2, mo, qualglobalarchiv):
     )
     return
 
-
-app._unparsable_cell(
-    r"""
-    SELECT * FROM qualglobalarchiv;
-    """,
-    name="_"
-)
-
+@app.cell
+def _(engine2, mo, qualglobalarchiv):
+    _df = mo.sql(
+        f"""
+        SELECT * FROM qualglobalarchiv;
+        """,
+        engine=engine2
+    )
+    return
 
 @app.cell(hide_code=True)
 def _(mo):
