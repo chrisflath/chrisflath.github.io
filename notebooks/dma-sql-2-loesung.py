@@ -835,14 +835,17 @@ def _(engine_matches, mo, results):
     return
 
 
-app._unparsable_cell(
-    r"""
-    SELECT * FROM results
-    WHERE GoalsFor - GoalsAgainst >= 5
-    AND SeasonLabel = \"1965/66\"
-    """,
-    name="_"
-)
+@app.cell
+def _(engine_matches, mo, results):
+    _df = mo.sql(
+        f"""
+        SELECT * FROM results
+        WHERE GoalsFor - GoalsAgainst >= 5
+        AND SeasonLabel = "1965/66"
+        """,
+        engine=engine_matches
+    )
+    return
 
 
 @app.cell(hide_code=True)
@@ -898,16 +901,19 @@ def _(engine2, mo, qualifikationen):
     return
 
 
-app._unparsable_cell(
-    r"""
-    INSERT INTO qualifikationen
-    (qid, bezeichnung, kuerzel, kategorie)
-    VALUES
-    (1,\"SQL\",\"ITE\",\"Informatik\"),
-    (2,\"Administrator\",\"ADA\",\"Support\"); 
-    """,
-    name="_"
-)
+@app.cell
+def _(engine2, mo, qualifikationen):
+    _df = mo.sql(
+        f"""
+        INSERT INTO qualifikationen
+        (qid, bezeichnung, kuerzel, kategorie)
+        VALUES
+        (1,"SQL","ITE","Informatik"),
+        (2,"Administrator","ADA","Support"); 
+        """,
+        engine=engine2
+    )
+    return
 
 
 app._unparsable_cell(
