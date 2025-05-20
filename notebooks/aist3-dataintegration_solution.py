@@ -427,12 +427,21 @@ def _(pd):
     mock_nba["Field_Goal_Pct"] = mock_nba["Field_Goal_Pct"].clip(lower=35, upper=60)
 
     mock_nba
-    return (np,)
+    return mock_nba, np
 
 
 @app.cell
-def _():
-    #your code here
+def _(mock_nba, plt, sns):
+    plt.figure()
+    sns.scatterplot(
+        data=mock_nba,
+        x="Field_Goal_Pct",
+        y="Pts_per_Game",
+        size="Games_Played",
+        hue="Position"
+    )
+    plt.xlabel("Field Goal Percentage")
+    plt.ylabel("Points per Game")
     return
 
 
@@ -479,8 +488,17 @@ def _(np, pd):
 
 
 @app.cell
-def _():
-    #your code here
+def _(mock_nba, plt, sns):
+    plt.figure()
+    sns.scatterplot(
+        data=mock_nba,
+        x="Field_Goal_Pct",
+        y="Pts_per_Game",
+        size="Games_Played",
+        hue="Position"
+    )
+    plt.xlabel("Field Goal Percentage")
+    plt.ylabel("Points per Game")
     return
 
 
