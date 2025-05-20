@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.13.6"
+__generated_with = "0.13.7"
 app = marimo.App(width="full", app_title="SQL Einführung 2 - Lösung")
 
 
@@ -1055,6 +1055,7 @@ def _(engine2, mo, qualglobalarchiv):
     )
     return
 
+
 @app.cell
 def _(engine2, mo, qualglobalarchiv):
     _df = mo.sql(
@@ -1065,6 +1066,7 @@ def _(engine2, mo, qualglobalarchiv):
     )
     return
 
+
 @app.cell
 def _(engine2, mo, qualglobalarchiv):
     _df = mo.sql(
@@ -1074,6 +1076,7 @@ def _(engine2, mo, qualglobalarchiv):
         engine=engine2
     )
     return
+
 
 @app.cell(hide_code=True)
 def _(mo):
