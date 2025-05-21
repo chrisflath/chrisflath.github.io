@@ -32,6 +32,7 @@ def _():
 def _():
     leagues = {"Unterfrankenliga" : "https://www.ligamanager.schachbund-bayern.de/ufr/ergebnisse/spielplan.htm?ligaId=2326",
                "Bezirksliga Ost" : "https://www.ligamanager.schachbund-bayern.de/ufr/ergebnisse/spielplan.htm?ligaId=2328",
+               "Kreisliga" : "https://www.ligamanager.schachbund-bayern.de/ufr/ergebnisse/spielplan.htm?ligaId=2358",
                "A-Klasse" : "https://www.ligamanager.schachbund-bayern.de/ufr-mitte/ergebnisse/spielplan.htm?ligaId=2359",
               "B-Klasse" : "https://www.ligamanager.schachbund-bayern.de/ufr-mitte/ergebnisse/spielplan.htm?ligaId=2360",
               }
