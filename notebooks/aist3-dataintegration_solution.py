@@ -84,10 +84,13 @@ def _(mo):
 
 
 @app.cell
-def _(mo):
+def _(mo, pokemon):
     task1 = mo.sql(
         f"""
-        -- Your query here
+        SELECT "Type 1", COUNT(*) AS Count
+        FROM pokemon
+        GROUP BY "Type 1"
+        ORDER BY Count DESC
         """
     )
     return
@@ -115,10 +118,15 @@ def _(mo):
 
 
 @app.cell
-def _(mo):
+def _(mo, pokemon):
     task2 = mo.sql(
         f"""
-        -- Your query here
+        SELECT "Type 1", AVG(Defense) AS Average_Defense
+        FROM pokemon
+        WHERE Legendary = FALSE
+        GROUP BY "Type 1"
+        ORDER BY Average_Defense DESC
+        LIMIT 5
         """
     )
     return
@@ -145,10 +153,16 @@ def _(mo):
 
 
 @app.cell
-def _(mo):
+def _(mo, pokemon):
     task3 = mo.sql(
         f"""
-        -- Your query here
+        SELECT "Type 1", Name, Defense
+        FROM pokemon AS p
+        WHERE Defense = (
+            SELECT MAX(Defense)
+            FROM pokemon
+            WHERE "Type 1" = p."Type 1"
+        )
         """
     )
     return
@@ -484,21 +498,26 @@ def _(np, pd):
 
     bundesliga_passes = pd.DataFrame(data)
     bundesliga_passes
-    return
+    return (bundesliga_passes,)
 
 
 @app.cell
-def _(mock_nba, plt, sns):
-    plt.figure()
-    sns.scatterplot(
-        data=mock_nba,
-        x="Field_Goal_Pct",
-        y="Pts_per_Game",
-        size="Games_Played",
-        hue="Position"
+def _(bundesliga_passes, plt, sns):
+
+    plt.figure(figsize=(14, 6))
+    sns.boxplot(
+        data=bundesliga_passes,
+        x="Team",
+        y="Passes",
+        legend=False
     )
-    plt.xlabel("Field Goal Percentage")
-    plt.ylabel("Points per Game")
+
+    plt.title("Distribution of Played Passes per Matchday by Bundesliga Team")
+    plt.xlabel("Team")
+    plt.ylabel("Passes per Match")
+    plt.xticks(rotation=45, ha="right")
+    plt.tight_layout()
+    plt.gca()
     return
 
 
