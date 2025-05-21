@@ -87,7 +87,7 @@ def _(mo, plot_df):
             MAX(dwz) AS dwzMax,
         FROM plot_df
         GROUP BY board, league
-        ORDER BY board, league
+        ORDER BY board, league, DWZmittel DSC
         """,
         output=False
     )
