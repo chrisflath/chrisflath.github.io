@@ -34,10 +34,6 @@ def _(mo):
 
     Your task is to explore the **trade-off between spoilage and spillage** and find the optimal booking limit.
 
-    > In this simulation, we use just 10 runs to reflect the reality of limited visibility.
-    Different groups will see different results — and that’s part of the point.
-
-
     ---
 
     ### 🟣 Spoilage
