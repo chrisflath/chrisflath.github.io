@@ -211,7 +211,7 @@ def _(
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""## Full Enumeration""")
     return
@@ -255,20 +255,27 @@ def _(
 
     optimal_protected_high_fare_rooms = np.argmax(revenues)
     max_revenue = revenues[optimal_protected_high_fare_rooms]
-
-    print(
-        f"Optimal number of high fare rooms to protect:"
-        f" {optimal_protected_high_fare_rooms}"
-    )
-    print(f"Maximum expected revenue: ${max_revenue:.2f}")
     return (
+        max_revenue,
         optimal_protected_high_fare_rooms,
         protected_high_fare_rooms_range,
         revenues,
     )
 
 
-@app.cell
+@app.cell(hide_code=True)
+def _(max_revenue, mo, optimal_protected_high_fare_rooms):
+    mo.md(
+        rf"""
+    Optimal number of high fare rooms to protect: {optimal_protected_high_fare_rooms}
+
+    Maximum expected revenue: {max_revenue:.2f}
+    """
+    )
+    return
+
+
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""## Linear Program""")
     return
