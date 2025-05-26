@@ -4,7 +4,7 @@ __generated_with = "0.13.11"
 app = marimo.App(width="medium")
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _():
     import marimo as mo
     import numpy as np
@@ -45,7 +45,66 @@ def _():
     )
 
 
-@app.cell
+@app.cell(hide_code=True)
+def _(np, pulp):
+    def pulp_to_scipy_linprog(prob):
+        variables = prob.variables()
+
+        # Objective coefficients
+        constant_offset = prob.objective.constant
+
+        objective = np.array([prob.objective.get(v,0) for v in variables])
+        if prob.sense == pulp.LpMaximize:
+            c = -objective
+            constant_offset = -constant_offset  # important: flip the sign of constant too!
+        else:
+            c = objective
+
+        # Constraints
+        A_ub, b_ub, A_eq, b_eq = [], [], [], []
+        for constraint in prob.constraints.values():
+            coeffs = [constraint.get(v,0) if constraint.get(v,0) is not None else 0 for v in variables]
+            const_term = constraint.constant
+
+            if constraint.sense == pulp.LpConstraintLE:
+                A_ub.append(coeffs)
+                b_ub.append(-const_term)
+            elif constraint.sense == pulp.LpConstraintGE:
+                A_ub.append([-coef for coef in coeffs])
+                b_ub.append(const_term)
+            elif constraint.sense == pulp.LpConstraintEQ:
+                A_eq.append(coeffs)
+                b_eq.append(-const_term)
+
+        # Bounds
+        bounds = []
+        for v in variables:
+            lb = v.lowBound if v.lowBound is not None else -np.inf
+            ub = v.upBound if v.upBound is not None else np.inf
+            bounds.append((lb, ub))
+
+        # Integrality
+        integrality = np.array([1 if v.cat == pulp.LpInteger or v.cat == pulp.LpBinary else 0 for v in variables])
+
+        return {
+            'c': c,
+            'A_ub': np.array(A_ub) if A_ub else None,
+            'b_ub': np.array(b_ub) if b_ub else None,
+            'A_eq': np.array(A_eq) if A_eq else None,
+            'b_eq': np.array(b_eq) if b_eq else None,
+            'bounds': bounds,
+            'integrality': integrality,  # key addition
+            'variable_names': [v.name for v in variables],
+            'constraint_names': [con.name for con in prob.constraints.values()],
+            'objective_sense': 'max' if prob.sense == pulp.LpMaximize else 'min',
+            'problem_name': prob.name,
+            'constant_offset': constant_offset
+        }
+
+    return (pulp_to_scipy_linprog,)
+
+
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
@@ -90,117 +149,7 @@ def _(mo):
     return
 
 
-@app.cell
-def _(np, pulp):
-    def pulp_to_scipy_linprog(prob):
-        variables = prob.variables()
-
-        # Objective coefficients
-        constant_offset = prob.objective.constant
-
-        objective = np.array([prob.objective.get(v) for v in variables])
-        if prob.sense == pulp.LpMaximize:
-            c = -objective
-            constant_offset = -constant_offset  # important: flip the sign of constant too!
-        else:
-            c = objective
-
-        # Constraints
-        A_ub, b_ub, A_eq, b_eq = [], [], [], []
-        for constraint in prob.constraints.values():
-            coeffs = [constraint.get(v) if constraint.get(v) is not None else 0 for v in variables]
-            const_term = constraint.constant
-
-            if constraint.sense == pulp.LpConstraintLE:
-                A_ub.append(coeffs)
-                b_ub.append(-const_term)
-            elif constraint.sense == pulp.LpConstraintGE:
-                A_ub.append([-coef for coef in coeffs])
-                b_ub.append(const_term)
-            elif constraint.sense == pulp.LpConstraintEQ:
-                A_eq.append(coeffs)
-                b_eq.append(-const_term)
-
-        # Bounds
-        bounds = []
-        for v in variables:
-            lb = v.lowBound if v.lowBound is not None else -np.inf
-            ub = v.upBound if v.upBound is not None else np.inf
-            bounds.append((lb, ub))
-
-        # Integrality
-        integrality = np.array([1 if v.cat == pulp.LpInteger or v.cat == pulp.LpBinary else 0 for v in variables])
-
-        return {
-            'c': c,
-            'A_ub': np.array(A_ub) if A_ub else None,
-            'b_ub': np.array(b_ub) if b_ub else None,
-            'A_eq': np.array(A_eq) if A_eq else None,
-            'b_eq': np.array(b_eq) if b_eq else None,
-            'bounds': bounds,
-            'integrality': integrality,  # key addition
-            'variable_names': [v.name for v in variables],
-            'constraint_names': [con.name for con in prob.constraints.values()],
-            'objective_sense': 'max' if prob.sense == pulp.LpMaximize else 'min',
-            'problem_name': prob.name,
-            'constant_offset': constant_offset
-        }
-
-    return (pulp_to_scipy_linprog,)
-
-
-@app.cell
-def _(
-    high_fare_slider,
-    low_fare_slider,
-    mean_demand_high_fare_slider,
-    np,
-    poisson,
-    total_rooms_slider,
-):
-    # Revenue function (using UI element values)
-    def expected_revenue(protected_high_fare_rooms):
-        low_fare_rooms = total_rooms_slider.value - protected_high_fare_rooms
-        revenue = 0
-        for d in range(
-            total_rooms_slider.value + 1
-        ):  # Potential high fare demand scenarios
-            prob = poisson.pmf(d, mean_demand_high_fare_slider.value)
-            if d <= protected_high_fare_rooms:
-                # All high fare demand can be accommodated
-                revenue += prob * (
-                    d * high_fare_slider.value + low_fare_rooms * low_fare_slider.value
-                )
-            else:
-                # Only protect_high_fare_rooms can be accommodated, rest get low fare
-                revenue += prob * (
-                    protected_high_fare_rooms * high_fare_slider.value
-                    + (total_rooms_slider.value - protected_high_fare_rooms)
-                    * low_fare_slider.value
-                )
-        return revenue
-
-
-    # Optimization and plotting data
-    protected_high_fare_rooms_range = range(total_rooms_slider.value + 1)
-    revenues = [expected_revenue(ph) for ph in protected_high_fare_rooms_range]
-
-    optimal_protected_high_fare_rooms = np.argmax(revenues)
-    max_revenue = revenues[optimal_protected_high_fare_rooms]
-
-    print(
-        f"Optimal number of high fare rooms to protect:"
-        f" {optimal_protected_high_fare_rooms}"
-    )
-    print(f"Maximum expected revenue: ${max_revenue:.2f}")
-    return (
-        optimal_protected_high_fare_rooms,
-        protected_high_fare_rooms_range,
-        revenues,
-    )
-
-
-@app.cell
+@app.cell(hide_code=True)
 def _(
     optimal_protected_high_fare_rooms,
     protected_high_fare_rooms_range,
@@ -263,6 +212,69 @@ def _(
 
 
 @app.cell
+def _(mo):
+    mo.md(r"""## Full Enumeration""")
+    return
+
+
+@app.cell
+def _(
+    high_fare_slider,
+    low_fare_slider,
+    mean_demand_high_fare_slider,
+    np,
+    poisson,
+    total_rooms_slider,
+):
+    # Revenue function (using UI element values)
+    def expected_revenue(protected_high_fare_rooms):
+        low_fare_rooms = total_rooms_slider.value - protected_high_fare_rooms
+        revenue = 0
+        for d in range(
+            total_rooms_slider.value + 1
+        ):  # Potential high fare demand scenarios
+            prob = poisson.pmf(d, mean_demand_high_fare_slider.value)
+            if d <= protected_high_fare_rooms:
+                # All high fare demand can be accommodated
+                revenue += prob * (
+                    d * high_fare_slider.value + low_fare_rooms * low_fare_slider.value
+                )
+            else:
+                # Only protect_high_fare_rooms can be accommodated, rest get low fare
+                revenue += prob * (
+                    protected_high_fare_rooms * high_fare_slider.value
+                    + (total_rooms_slider.value - protected_high_fare_rooms)
+                    * low_fare_slider.value
+                )
+        return revenue
+
+
+    # Optimization and plotting data
+    protected_high_fare_rooms_range = range(total_rooms_slider.value + 1)
+    revenues = [expected_revenue(ph) for ph in protected_high_fare_rooms_range]
+
+    optimal_protected_high_fare_rooms = np.argmax(revenues)
+    max_revenue = revenues[optimal_protected_high_fare_rooms]
+
+    print(
+        f"Optimal number of high fare rooms to protect:"
+        f" {optimal_protected_high_fare_rooms}"
+    )
+    print(f"Maximum expected revenue: ${max_revenue:.2f}")
+    return (
+        optimal_protected_high_fare_rooms,
+        protected_high_fare_rooms_range,
+        revenues,
+    )
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""## Linear Program""")
+    return
+
+
+@app.cell
 def _(
     LpMaximize,
     LpProblem,
@@ -299,7 +311,7 @@ def _(
     return (problem,)
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(linprog, problem, pulp_to_scipy_linprog):
     linprog_data = pulp_to_scipy_linprog(problem)
 
