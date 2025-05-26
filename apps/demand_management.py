@@ -10,10 +10,10 @@ app = marimo.App(
 
 @app.cell
 def _():
-    from utils.slides import SlideCreator
-    from utils.data import DataLoader, DataSplitter
-    from utils.forecast import ForecastManager, Evaluator, ForecastPlotter
-    from utils.decomposition import LinearTrendSeasonalDecomposer, DecompositionPlotter
+    from public.utils.slides import SlideCreator
+    from public.utils.data import DataLoader, DataSplitter
+    from public.utils.forecast import ForecastManager, Evaluator, ForecastPlotter
+    from public.utils.decomposition import LinearTrendSeasonalDecomposer, DecompositionPlotter
     from sklearn.utils import Bunch
     import marimo as mo
     import pandas as pd
