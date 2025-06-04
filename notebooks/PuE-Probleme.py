@@ -105,6 +105,130 @@ def _(mo):
         r"""
     # LP-Modellierung mit Python
 
+    ## 💧 Produktionsplanung bei Blue Ridge Hot Tubs
+
+    Ein Whirlpool-Hersteller plant die Produktion zweier Produkttypen mit dem Ziel, den Deckungsbeitrag zu maximieren. Die Produktion ist durch drei Ressourcen begrenzt: Montagekapazität, Pumpeneinsatz und Arbeitsstunden.
+
+    ---
+
+    ### 🧾 Entscheidungskontext
+
+    Es stehen zwei Whirlpool-Modelle zur Auswahl:
+
+    - **X₁**: Luxus-Modell (Deckungsbeitrag 350 $ pro Einheit)
+    - **X₂**: Standard-Modell (Deckungsbeitrag 300 $ pro Einheit)
+
+    ### 🚧 Ressourceneinschränkungen
+
+    | Ressource         | X₁-Verbrauch | X₂-Verbrauch | Verfügbar |
+    |-------------------|--------------|--------------|-----------|
+    | Montagezeit       | 1 h          | 1 h          | 200 h     |
+    | Pumpenkapazität   | 9 Einheiten  | 6 Einheiten  | 1.566     |
+    | Arbeitszeit       | 12 h         | 16 h         | 2.880 h   |
+
+    ---
+
+    ### 🎯 Zielfunktion
+
+    \[
+    \text{maximiere } Z = 350X_1 + 300X_2
+    \]
+    """
+    )
+    return
+
+
+@app.cell
+def _(pulp, solve_with_scipy):
+    br_model = pulp.LpProblem("Blue_Ridge_Hot_Tubs", pulp.LpMaximize)
+
+    X1 = pulp.LpVariable("X1", lowBound=0)
+    X2 = pulp.LpVariable("X2", lowBound=0)
+
+    # Zielfunktion
+    br_model += 350 * X1 + 300 * X2, "Deckungsbeitrag"
+
+    # Nebenbedingungen
+    br_model += X1 + X2 <= 200, "Montagezeit"
+    br_model += 9 * X1 + 6 * X2 <= 1566, "Pumpen"
+    br_model += 12 * X1 + 16 * X2 <= 2880, "Arbeitszeit"
+
+    # Optimieren
+    br_model = solve_with_scipy(br_model)
+
+    # Ausgabe
+    print(f"X1: {X1.varValue}, X2: {X2.varValue}")
+    print("Maximaler Deckungsbeitrag:", pulp.value(br_model.objective))
+
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    ## 🧸 Produktionsmix in der Spielzeugfabrik
+
+    Ein Hersteller von Holzspielzeug produziert zwei Produkttypen: **Spielzeugsoldaten** und **Spielzeugzüge**. Die Produktion ist zweistufig aufgebaut und unterliegt mehreren Ressourcenrestriktionen sowie Absatzgrenzen.
+
+    ---
+
+    ### 🧾 Entscheidungskontext
+
+    - **S**: Anzahl Spielzeugsoldaten  
+    - **Z**: Anzahl Spielzeugzüge  
+    - Deckungsbeitrag 3 respektive 2
+
+    ### 🔨 Produktionsschritte und Restriktionen
+
+    | Ressource                | Soldat (S) | Zug (Z) | Verfügbar |
+    |--------------------------|------------|---------|-----------|
+    | Schreinerei              | 1 h        | 1 h     | 80 h      |
+    | Oberflächenveredelung    | 2 h        | 1 h     | 100 h     |
+    | Absatzgrenze Soldaten    | max. 40    | –       | –         |
+
+    ---
+
+    ### 🎯 Zielfunktion
+
+    \[
+    \text{maximiere } Z = 3S + 2Z
+    \]
+    """
+    )
+    return
+
+
+@app.cell
+def _(pulp, solve_with_scipy):
+    # %%
+    toy_model = pulp.LpProblem("Spielzeugfabrik", pulp.LpMaximize)
+
+    S = pulp.LpVariable("Soldaten", lowBound=0)
+    Z = pulp.LpVariable("Zuege", lowBound=0)
+
+    # Zielfunktion
+    toy_model += 3 * S + 3 * Z, "Deckungsbeitrag"
+
+    # Nebenbedingungen
+    toy_model += S + Z <= 80, "Schreinerei"
+    toy_model += 2 * S + Z <= 100, "Veredelung"
+    toy_model += S <= 40, "Verkaufsschranke_Soldaten"
+
+    # Optimieren
+    toy_model = solve_with_scipy(toy_model)
+
+    # Ausgabe
+    print(f"Soldaten: {S.varValue}, Züge: {Z.varValue}")
+    print("Maximaler Deckungsbeitrag:", pulp.value(toy_model.objective))
+
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
     ## 🏭 Make-or-Buy Problem: Produktionsentscheidungen bei Electro-Poly
 
     Die Firma **Electro-Poly** ist Hersteller von Schaltkästen und möchte mehrere Kundenaufträge möglichst kosteneffizient erfüllen. Für jedes der drei Produktmodelle (1, 2 und 3) steht die Entscheidung an: **intern produzieren** oder **extern zukaufen** ("make or buy").
@@ -417,7 +541,7 @@ def _(pulp, solve_with_scipy, transport):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
