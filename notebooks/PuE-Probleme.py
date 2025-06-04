@@ -31,7 +31,7 @@ def _(linprog, np, pulp):
         A_eq, b_eq = [], []
 
         for constraint in prob.constraints.values():
-            coeffs = [constraint.get(v) if constraint.get(v) is not None else 0 for v in variables]
+            coeffs = [constraint.get(v, 0) for v in variables]
             const_term = constraint.constant
 
             if constraint.sense == pulp.LpConstraintLE:
@@ -84,12 +84,12 @@ def _(linprog, np, pulp):
         if res.success:
             for var_name, var_value in zip(linprog_data['variable_names'], res.x):
                 prob.variablesDict()[var_name].varValue = var_value
-        
+
             # Correctly add back constant offset
             prob.objective_value = res.fun + linprog_data['constant_offset']
             if prob.sense == pulp.LpMaximize:
                 prob.objective_value = -prob.objective_value
-        
+
             prob.status = pulp.LpStatusOptimal
         else:
             prob.status = pulp.LpStatusNotSolved
@@ -132,8 +132,7 @@ def _(mo):
     **Verfügbare interne Kapazitäten:**
 
     - Verkabelung: 10.000 Stunden  
-    - Verpackung: 5.000 Stunden  
-
+    - Verpackung: 5.000 Stunden
     """
     )
     return
