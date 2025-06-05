@@ -139,27 +139,39 @@ def _(mo):
 
 
 @app.cell
-def _(pulp, solve_with_scipy):
-    br_model = pulp.LpProblem("Blue_Ridge_Hot_Tubs", pulp.LpMaximize)
+def _(mo):
+    aquaSpaPreisSlider = mo.ui.slider(start=50, stop=500, value = 350, step=5, show_value=True)
+    startBlueRidge = mo.ui.run_button()
+    return aquaSpaPreisSlider, startBlueRidge
 
-    X1 = pulp.LpVariable("X1", lowBound=0)
-    X2 = pulp.LpVariable("X2", lowBound=0)
 
-    # Zielfunktion
-    br_model += 350 * X1 + 300 * X2, "Deckungsbeitrag"
+@app.cell
+def _(aquaSpaPreisSlider, mo, startBlueRidge):
+    mo.vstack([aquaSpaPreisSlider, startBlueRidge], align="start")
+    return
 
-    # Nebenbedingungen
-    br_model += X1 + X2 <= 200, "Montagezeit"
-    br_model += 9 * X1 + 6 * X2 <= 1566, "Pumpen"
-    br_model += 12 * X1 + 16 * X2 <= 2880, "Arbeitszeit"
 
-    # Optimieren
-    br_model = solve_with_scipy(br_model)
-
-    # Ausgabe
-    print(f"X1: {X1.varValue}, X2: {X2.varValue}")
-    print("Maximaler Deckungsbeitrag:", pulp.value(br_model.objective))
-
+@app.cell
+def _(aquaSpaPreisSlider, pulp, solve_with_scipy, startBlueRidge):
+    if startBlueRidge.value:
+    
+        X1 = pulp.LpVariable("X1", lowBound=0)
+        X2 = pulp.LpVariable("X2", lowBound=0)
+        br_model = pulp.LpProblem("Blue_Ridge_Hot_Tubs", pulp.LpMaximize)
+        # Zielfunktion
+        br_model += aquaSpaPreisSlider.value * X1 + 300 * X2, "Deckungsbeitrag"
+    
+        # Nebenbedingungen
+        br_model += X1 + X2 <= 200, "Montagezeit"
+        br_model += 9 * X1 + 6 * X2 <= 1566, "Pumpen"
+        br_model += 12 * X1 + 16 * X2 <= 2880, "Arbeitszeit"
+    
+        # Optimieren
+        br_model = solve_with_scipy(br_model)
+    
+        # Ausgabe
+        print(f"X1: {X1.varValue}, X2: {X2.varValue}")
+        print("Maximaler Deckungsbeitrag:", pulp.value(br_model.objective))
     return
 
 
@@ -200,7 +212,7 @@ def _(mo):
 
 
 @app.cell
-def _(pulp, solve_with_scipy):
+def _(pulp):
     # %%
     toy_model = pulp.LpProblem("Spielzeugfabrik", pulp.LpMaximize)
 
@@ -208,19 +220,24 @@ def _(pulp, solve_with_scipy):
     Z = pulp.LpVariable("Zuege", lowBound=0)
 
     # Zielfunktion
-    toy_model += 3 * S + 3 * Z, "Deckungsbeitrag"
+    toy_model += 3 * S + 2 * Z, "Deckungsbeitrag"
 
+    return S, Z, toy_model
+
+
+@app.cell
+def _(S, Z, pulp, solve_with_scipy, toy_model):
     # Nebenbedingungen
-    toy_model += S + Z <= 80, "Schreinerei"
-    toy_model += 2 * S + Z <= 100, "Veredelung"
-    toy_model += S <= 40, "Verkaufsschranke_Soldaten"
+    toy_model.constraints["Schreinerei"] = S + Z <= 80
+    toy_model.constraints["Veredelung"] = 2 * S + Z <= 100
+    toy_model.constraints["Verkaufsschranke_Soldaten"] = S <= 40
 
     # Optimieren
-    toy_model = solve_with_scipy(toy_model)
+    solvedToyModel = solve_with_scipy(toy_model)
 
     # Ausgabe
     print(f"Soldaten: {S.varValue}, Züge: {Z.varValue}")
-    print("Maximaler Deckungsbeitrag:", pulp.value(toy_model.objective))
+    print("Maximaler Deckungsbeitrag:", pulp.value(solvedToyModel.objective))
 
     return
 
@@ -359,17 +376,13 @@ def _(pulp, solve_with_scipy):
     ]
 
     # Entscheidungsvariablen
-    X = [pulp.LpVariable(f"X{i+1}", lowBound=0) for i in range(len(bonds))]
+    X = [pulp.LpVariable(f"X{i+1}", lowBound=0, upBound=187500) for i in range(len(bonds))]
 
     # Zielfunktion: Ertragsmaximierung
     model2 += pulp.lpSum(X[i] * bonds[i]["return"] for i in range(len(bonds))), "Gesamtertrag"
 
     # Gesamtsumme: 750.000 €
     model2 += pulp.lpSum(X) == 750000, "Investitionssumme"
-
-    # Max. 25 % in jede einzelne Anleihe
-    for i in range(len(bonds)):
-        model2 += X[i] <= 187500, f"Max25Prozent_{bonds[i]['name']}"
 
     # Mind. 50 % in langlaufende Anleihen
     model2 += pulp.lpSum(X[i] for i in range(len(bonds)) if bonds[i]["long_term"]) >= 375000, "Min50ProzentLangläufer"
@@ -438,52 +451,8 @@ def _(mo):
     return
 
 
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""## Variante 1 (ausführlicher)""")
-    return
-
-
 @app.cell
 def _(pulp, solve_with_scipy):
-    model3 = pulp.LpProblem("Tropicsun-Transport", pulp.LpMinimize)
-
-    transport = {}
-    for quelle in [1, 2, 3]:
-        for senke in [4, 5, 6]:
-            transport[(quelle, senke)] = pulp.LpVariable(f"X{quelle}{senke}", lowBound=0)
-
-    kosten = {
-        (1,4): 21, (1,5): 50, (1,6): 40,
-        (2,4): 35, (2,5): 30, (2,6): 22,
-        (3,4): 55, (3,5): 20, (3,6): 25,
-    }
-    model3 += pulp.lpSum([kosten[i]*transport[i] for i in kosten]), "Gesamtkosten"
-
-    model3 += transport[1,4] + transport[1,5] + transport[1,6] == 275000
-    model3 += transport[2,4] + transport[2,5] + transport[2,6] == 400000
-    model3 += transport[3,4] + transport[3,5] + transport[3,6] == 300000
-
-    model3 += transport[1,4] + transport[2,4] + transport[3,4] <= 200000
-    model3 += transport[1,5] + transport[2,5] + transport[3,5] <= 600000
-    model3 += transport[1,6] + transport[2,6] + transport[3,6] <= 225000
-
-    model3 = solve_with_scipy(model3)
-
-    for key, var3 in transport.items():
-        print(f"transport{key[0]}{key[1]}: {var3.varValue}")
-    print("Transportkosten:", pulp.value(model3.objective))
-    return (transport,)
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""##Variante 2 (kompakt)""")
-    return
-
-
-@app.cell
-def _(pulp, solve_with_scipy, transport):
     # Initialisierung des Modells
     model3b = pulp.LpProblem("Tropicsun-Transport", pulp.LpMinimize)
 
@@ -505,7 +474,7 @@ def _(pulp, solve_with_scipy, transport):
     }
 
     # Zielfunktion: Gesamttransportkosten minimieren
-    model3b += pulp.lpSum(kostenb[(q, s)] * transportb[(q, s)] for (q, s) in transport), "Gesamtkosten"
+    model3b += pulp.lpSum(kostenb[(q, s)] * transportb[(q, s)] for (q, s) in transportb), "Gesamtkosten"
 
     # Angebotsmengen je Quelle (Produktionsstätten)
     kapazitaet = {
@@ -640,6 +609,153 @@ def _(pulp, solve_with_scipy):
 
     print("Minimale Gesamtkosten:", pulp.value(model4.objective))
 
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    ## 🛣️ Beispiel: American Car Association – Kürzester Pfad mit Zusatzkriterien
+
+    Dieses Modell basiert auf einem Netzwerk aus Städten im Südosten der USA. Ziel ist es, eine optimale Route durch das Netzwerk zu berechnen, z. B. für die Mitglieder der American Car Association, die Wert auf **schnelle Reisezeiten** oder **landschaftlich attraktive Strecken** legen.
+
+    ---
+
+    ### 🧾 Problemstruktur
+
+    🧩 Knoten (Städte):
+
+    - Knoten sind US-Städte wie **Birmingham, Atlanta, Asheville, Raleigh, Charlotte, Virginia Beach** etc.
+    - Jeder Knoten hat eine **Balance** (z. B. +1 für Start, -1 für Ziel) → Standardmodell eines **Flussproblems mit Quelle und Senke**
+
+    🔁 Kante hat zwei Kostenmaße:
+
+    | Kante (z. B. A → B) | Reisezeit (Stunden) | Scenic Score (je höher, desto schöner) |
+    |---------------------|----------------------|-----------------------------------------|
+    | A → B               | 2.0 h                | 4 pts                                   |
+    | B → C               | 3.3 h                | 5 pts                                   |
+    | ...                 | ...                  | ...                                     |
+
+    ---
+
+    ### 🎯 Zielsetzung
+
+    - **Variante 1:** Minimierung der **Reisezeit**  
+    - **Variante 2:** Maximierung des **Scenic Scores**  
+    - **Variante 3:** Nebenbedingungen für Reisezeit und Scenic Score
+    """
+    )
+    return
+
+
+@app.cell
+def _(mo):
+    scenicToggle = mo.ui.switch()
+    travelUpperBound = mo.ui.slider(9.3,50,value=50,label="Höchstdauer", show_value=True)
+    scenicLowerBound = mo.ui.slider(0,27,value=0,label="Minimale Schönheit", show_value=True)
+    return scenicLowerBound, scenicToggle, travelUpperBound
+
+
+@app.cell
+def _():
+    use_scenic = False            # False → Zeit minimieren, True → Scenic maximieren
+    max_travel_time = 9           # None oder Zahl (z. B. 9 Stunden)
+    min_scenic_score = 20         # None oder Zahl (z. B. mindestens 20 Punkte)
+
+    return
+
+
+@app.cell
+def _(mo, scenicLowerBound, scenicToggle, travelUpperBound):
+    mo.vstack([mo.hstack([mo.md("Reisedauer"),scenicToggle,mo.md("Schönheit")], justify = "start"),
+               travelUpperBound,
+               scenicLowerBound])
+    return
+
+
+@app.cell
+def _(
+    mo,
+    pulp,
+    scenicLowerBound,
+    scenicToggle,
+    solve_with_scipy,
+    travelUpperBound,
+):
+    # Zielrichtung wählen
+    use_scenic = scenicToggle.value
+
+    # Definition der Kanten: (Start, Ziel): (Reisezeit in h, Scenic Score)
+    edges = {
+        ("Bham", "Chatt.1"): (3.0, 4),
+        ("Atlanta", "Chatt.1"): (2.5, 5),
+        ("Atlanta", "G'ville"): (2.5, 5),
+        ("Chatt.1", "K'ville"): (1.7, 5),
+        ("Chatt.1", "A'ville"): (2.8, 7),
+        ("K'ville", "A'ville"): (2.0, 7),
+        ("K'ville", "L'burg"): (5.0, 9),
+        ("A'ville", "Gboro"): (1.5, 4),
+        ("A'ville", "L'burg"): (2.0, 9),
+        ("A'ville", "Charl.7"): (2.8, 7),
+        ("Gboro", "Va Bch"): (2.0, 7),
+        ("Gboro", "Raleigh"): (1.1, 7),
+        ("Charl.7", "Va Bch"): (2.7, 4),
+        ("G'ville", "Charl.7"): (1.6, 2),
+    }
+
+    # Knoten-Bilanzen: Quelle +1, Senke -1, Rest 0
+    bilanzen = {
+        "Bham": +1,
+        "Va Bch": -1,
+        "Atlanta": 0,
+        "Chatt.1": 0,
+        "K'ville": 0,
+        "A'ville": 0,
+        "L'burg": 0,
+        "Gboro": 0,
+        "Raleigh": 0,
+        "Charl.7": 0,
+        "G'ville": 0,
+    }
+
+    # LP-Modell
+    prob = pulp.LpProblem("American_Car_Association_Route", pulp.LpMaximize if use_scenic else pulp.LpMinimize)
+
+    # Entscheidungsvariablen
+    x = {e: pulp.LpVariable(f"x_{e[0]}_{e[1]}", cat="Binary") for e in edges}
+
+    # Zielfunktion
+    if use_scenic:
+        prob += pulp.lpSum(x[e] * edges[e][1] for e in edges), "Total_Scenic_Score"
+    else:
+        prob += pulp.lpSum(x[e] * edges[e][0] for e in edges), "Total_Travel_Time"
+
+    prob += pulp.lpSum(x[e] * edges[e][1] for e in edges) >= scenicLowerBound.value
+    prob += pulp.lpSum(x[e] * edges[e][0] for e in edges) <= travelUpperBound.value
+
+    # Flussgleichgewichtsbedingungen
+    for node in bilanzen:
+        inflow = pulp.lpSum(x[e] for e in edges if e[1] == node)
+        outflow = pulp.lpSum(x[e] for e in edges if e[0] == node)
+        prob += bilanzen[node] + inflow == outflow, f"Balance_{node}"
+
+    # Optimieren
+    prob = solve_with_scipy(prob)
+
+
+    # Ausgabe
+    with mo.redirect_stdout():
+        print(f"\n🧭 Zielwert ({'Scenic' if use_scenic else 'Zeit'}): {pulp.value(prob.objective):.2f}")
+        print("🚗 Gewählte Route:")
+        for e in edges:
+            if x[e].varValue == 1:
+                print(f"  {e[0]} → {e[1]}  (⏱ {edges[e][0]} h, 🌄 {edges[e][1]} pts)")
+    return
+
+
+@app.cell
+def _():
     return
 
 
