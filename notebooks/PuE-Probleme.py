@@ -115,15 +115,15 @@ def _(mo):
 
     Es stehen zwei Whirlpool-Modelle zur Auswahl:
 
-    - **X₁**: Luxus-Modell (Deckungsbeitrag 350 $ pro Einheit)
-    - **X₂**: Standard-Modell (Deckungsbeitrag 300 $ pro Einheit)
+    - **X₁**: AquaSpa-Modell (Deckungsbeitrag 350 $ pro Einheit)
+    - **X₂**: HydroLuxe-Modell (Deckungsbeitrag 300 $ pro Einheit)
 
     ### 🚧 Ressourceneinschränkungen
 
     | Ressource         | X₁-Verbrauch | X₂-Verbrauch | Verfügbar |
     |-------------------|--------------|--------------|-----------|
-    | Montagezeit       | 1 h          | 1 h          | 200 h     |
-    | Pumpenkapazität   | 9 Einheiten  | 6 Einheiten  | 1.566     |
+    | Pumpen       | 1           | 1           | 200      |
+    | Rohrleitung   | 9  | 6  | 1.566     |
     | Arbeitszeit       | 12 h         | 16 h         | 2.880 h   |
 
     ---
@@ -138,40 +138,154 @@ def _(mo):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
-    aquaSpaPreisSlider = mo.ui.slider(start=50, stop=500, value = 350, step=5, show_value=True)
-    startBlueRidge = mo.ui.run_button()
-    return aquaSpaPreisSlider, startBlueRidge
+    DEFAULT_PRICE_AS = 350
+    get_price_as, set_price_as = mo.state(DEFAULT_PRICE_AS)
+    DEFAULT_PRICE_HL = 300
+    get_price_hl, set_price_hl = mo.state(DEFAULT_PRICE_HL)
+    DEFAULT_PUMPEN = 200
+    get_pumpen, set_pumpen = mo.state(DEFAULT_PUMPEN)
+    DEFAULT_ROHRE = 1566
+    get_rohre, set_rohre = mo.state(DEFAULT_ROHRE)
+    DEFAULT_ARBEITSZEIT = 2880
+    get_arbeitszeit, set_arbeitszeit = mo.state(DEFAULT_ARBEITSZEIT)
+    return (
+        DEFAULT_ARBEITSZEIT,
+        DEFAULT_PRICE_AS,
+        DEFAULT_PRICE_HL,
+        DEFAULT_PUMPEN,
+        DEFAULT_ROHRE,
+        get_arbeitszeit,
+        get_price_as,
+        get_price_hl,
+        get_pumpen,
+        get_rohre,
+        set_arbeitszeit,
+        set_price_as,
+        set_price_hl,
+        set_pumpen,
+        set_rohre,
+    )
 
 
-@app.cell
-def _(aquaSpaPreisSlider, mo, startBlueRidge):
-    mo.vstack([aquaSpaPreisSlider, startBlueRidge], align="start")
+@app.cell(hide_code=True)
+def _(
+    get_arbeitszeit,
+    get_price_as,
+    get_price_hl,
+    get_pumpen,
+    get_rohre,
+    mo,
+    set_arbeitszeit,
+    set_price_as,
+    set_price_hl,
+    set_pumpen,
+    set_rohre,
+):
+    reset = mo.ui.run_button(label="Reset")
+    aquaSpaPreisSlider = mo.ui.slider(
+        start=50,
+        stop=500,
+        value=get_price_as(),          # <-- read the state
+        on_change=set_price_as,        # <-- write to the state when user moves it
+        step=5,
+        show_value=True
+    )
+    hydroLuxePreisSlider = mo.ui.slider(start=50, stop=500, value = get_price_hl(), on_change=set_price_hl, step=5, show_value=True, label="")
+    pumpenSlider = mo.ui.slider(start=50, stop=400, value = get_pumpen(), on_change=set_pumpen, step=1, show_value=True, label="")
+    rohreSlider = mo.ui.slider(start=250, stop=2000, value = get_rohre(), on_change=set_rohre, step=1, show_value=True, label="")
+    arbeitszeitSlider = mo.ui.slider(start=250, stop=4000, value = get_arbeitszeit(), on_change=set_arbeitszeit, step=1, show_value=True, label="")
+
+    sliderList = [aquaSpaPreisSlider, hydroLuxePreisSlider, pumpenSlider, rohreSlider, arbeitszeitSlider]
+    labelList = ["Preis AquaSpa", "Preis HydroLuxe", "Verfügbarkeit Pumpen", "Verfügbarkeit Rohrleitungen", "Verfügbarkeit Arbeitszeit"]
+    return (
+        aquaSpaPreisSlider,
+        arbeitszeitSlider,
+        hydroLuxePreisSlider,
+        labelList,
+        pumpenSlider,
+        reset,
+        rohreSlider,
+        sliderList,
+    )
+
+
+@app.cell(hide_code=True)
+def _(
+    DEFAULT_ARBEITSZEIT,
+    DEFAULT_PRICE_AS,
+    DEFAULT_PRICE_HL,
+    DEFAULT_PUMPEN,
+    DEFAULT_ROHRE,
+    reset,
+    set_arbeitszeit,
+    set_price_as,
+    set_price_hl,
+    set_pumpen,
+    set_rohre,
+):
+    if reset.value:
+        set_price_as(DEFAULT_PRICE_AS)
+        set_price_hl(DEFAULT_PRICE_HL)
+        set_pumpen(DEFAULT_PUMPEN)
+        set_rohre(DEFAULT_ROHRE)
+        set_arbeitszeit(DEFAULT_ARBEITSZEIT)
+
+    return
+
+
+@app.cell(hide_code=True)
+def _(labelList, mo, reset, sliderList):
+    stackList = []
+    for _ in range(len(sliderList)):
+        stackList.append(mo.hstack([mo.md(labelList[_]),sliderList[_]], justify="start",widths=(0.2,1)))
+    stackList.append(reset)
+    mo.vstack(stackList)
     return
 
 
 @app.cell
-def _(aquaSpaPreisSlider, pulp, solve_with_scipy, startBlueRidge):
-    if startBlueRidge.value:
-    
-        X1 = pulp.LpVariable("X1", lowBound=0)
-        X2 = pulp.LpVariable("X2", lowBound=0)
-        br_model = pulp.LpProblem("Blue_Ridge_Hot_Tubs", pulp.LpMaximize)
-        # Zielfunktion
-        br_model += aquaSpaPreisSlider.value * X1 + 300 * X2, "Deckungsbeitrag"
-    
-        # Nebenbedingungen
-        br_model += X1 + X2 <= 200, "Montagezeit"
-        br_model += 9 * X1 + 6 * X2 <= 1566, "Pumpen"
-        br_model += 12 * X1 + 16 * X2 <= 2880, "Arbeitszeit"
-    
-        # Optimieren
-        br_model = solve_with_scipy(br_model)
-    
-        # Ausgabe
-        print(f"X1: {X1.varValue}, X2: {X2.varValue}")
-        print("Maximaler Deckungsbeitrag:", pulp.value(br_model.objective))
+def _(
+    aquaSpaPreisSlider,
+    arbeitszeitSlider,
+    hydroLuxePreisSlider,
+    pulp,
+    pumpenSlider,
+    rohreSlider,
+    solve_with_scipy,
+):
+    import time
+    X1 = pulp.LpVariable("Aqua-Spa", lowBound=0)
+    X2 = pulp.LpVariable("HydroLuxe", lowBound=0)
+    br_model = pulp.LpProblem("Blue_Ridge_Hot_Tubs", pulp.LpMaximize)
+    # Zielfunktion
+    br_model += aquaSpaPreisSlider.value * X1 + hydroLuxePreisSlider.value * X2, "Deckungsbeitrag"
+
+    # Nebenbedingungen
+    br_model += X1 + X2 <= pumpenSlider.value, "Pumpen"
+    br_model += 9 * X1 + 6 * X2 <= rohreSlider.value, "Rohrleitung"
+    br_model += 12 * X1 + 16 * X2 <= arbeitszeitSlider.value, "Arbeitszeit"
+
+    # Optimieren
+    br_model = solve_with_scipy(br_model)
+
+    return X1, X2, br_model
+
+
+@app.cell(hide_code=True)
+def _(br_model, mo):
+    with mo.redirect_stdout():
+        print(br_model)
+    return
+
+
+@app.cell(hide_code=True)
+def _(X1, X2, br_model, mo, pulp):
+    with mo.redirect_stdout():
+        print(f"Aqua-Spa: {X1.varValue:.1f}")
+        print(f"HydroLuxe: {X2.varValue:.1f}")
+        print(f"Maximaler Deckungsbeitrag: {pulp.value(br_model.objective):.1f}")
     return
 
 
@@ -212,7 +326,7 @@ def _(mo):
 
 
 @app.cell
-def _(pulp):
+def _(pulp, solve_with_scipy):
     # %%
     toy_model = pulp.LpProblem("Spielzeugfabrik", pulp.LpMaximize)
 
@@ -221,12 +335,6 @@ def _(pulp):
 
     # Zielfunktion
     toy_model += 3 * S + 2 * Z, "Deckungsbeitrag"
-
-    return S, Z, toy_model
-
-
-@app.cell
-def _(S, Z, pulp, solve_with_scipy, toy_model):
     # Nebenbedingungen
     toy_model.constraints["Schreinerei"] = S + Z <= 80
     toy_model.constraints["Veredelung"] = 2 * S + Z <= 100
@@ -234,6 +342,19 @@ def _(S, Z, pulp, solve_with_scipy, toy_model):
 
     # Optimieren
     solvedToyModel = solve_with_scipy(toy_model)
+
+    return S, Z, solvedToyModel, toy_model
+
+
+@app.cell
+def _(mo, toy_model):
+    with mo.redirect_stdout():
+        print(toy_model)
+    return
+
+
+@app.cell
+def _(S, Z, pulp, solvedToyModel):
 
     # Ausgabe
     print(f"Soldaten: {S.varValue}, Züge: {Z.varValue}")
@@ -303,13 +424,26 @@ def _(pulp, solve_with_scipy):
     model += 2*M[0] + 1.5*M[1] + 3*M[2] <= 10000  # Verkabelung
     model += 1*M[0] + 2*M[1] + 1*M[2] <= 5000     # Verpackung
 
+
     # Optimieren
     model = solve_with_scipy(model)
+    return B, M, model
 
+
+@app.cell
+def _(mo, model):
+    with mo.redirect_stdout():
+        print(model)
+    return
+
+
+@app.cell
+def _(B, M, mo, model, pulp):
     # Ergebnisse
-    for var in M + B:
-        print(f"{var.name}: {var.varValue}")
-    print("Gesamtkosten:", pulp.value(model.objective))
+    with mo.redirect_stdout():
+        for var in M + B:
+            print(f"{var.name}: {var.varValue}")
+        print(f"Gesamtkosten: {pulp.value(model.objective)}")
 
     return
 
@@ -393,10 +527,24 @@ def _(pulp, solve_with_scipy):
     # Optimierung
     model2 = solve_with_scipy(model2)
 
-    # Ausgabe
-    for i, var2 in enumerate(X):
-        print(f"{bonds[i]['name']}: {var2.varValue:.2f} EUR")
-    print("Maximaler Ertrag:", pulp.value(model2.objective))
+
+    return X, bonds, model2
+
+
+@app.cell
+def _(mo, model2):
+    with mo.redirect_stdout():
+        print(model2)
+    return
+
+
+@app.cell
+def _(X, bonds, mo, model2, pulp):
+    with mo.redirect_stdout():
+        # Ausgabe
+        for i, var2 in enumerate(X):
+            print(f"{bonds[i]['name']}: {var2.varValue:.2f} EUR")
+        print(f"Maximaler Ertrag: {pulp.value(model2.objective)}")
 
     return
 
@@ -452,7 +600,7 @@ def _(mo):
 
 
 @app.cell
-def _(pulp, solve_with_scipy):
+def _(mo, pulp, solve_with_scipy):
     # Initialisierung des Modells
     model3b = pulp.LpProblem("Tropicsun-Transport", pulp.LpMinimize)
 
@@ -500,12 +648,19 @@ def _(pulp, solve_with_scipy):
 
     # Lösung berechnen
     model3b = solve_with_scipy(model3b)
+    with mo.redirect_stdout():
+        print(model3b)
+    return model3b, transportb
 
-    # Ausgabe der Lösung
-    for (q, s), var3b in transportb.items():
-        print(f"Transport von {q} → {s}: {var3b.varValue:.0f} Einheiten")
 
-    print("Minimale Transportkosten:", pulp.value(model3b.objective))
+@app.cell
+def _(mo, model3b, pulp, transportb):
+    with mo.redirect_stdout():
+    
+        # Ausgabe der Lösung
+        for tupel, var3b in transportb.items():
+            print(f"Transport von {tupel[0]} → {tupel[1]}: {var3b.varValue:.0f} Einheiten")
+        print(f"Minimale Transportkosten: {pulp.value(model3b.objective)}")
 
     return
 
@@ -602,13 +757,26 @@ def _(pulp, solve_with_scipy):
     # Optimieren
     model4 = solve_with_scipy(model4)
 
-    # Ausgabe
-    for (i4, j4), var4 in lieferung.items():
-        if var4.varValue > 0:
-            print(f"Transport {i4} → {j4}: {var4.varValue:.0f} Einheiten")
 
-    print("Minimale Gesamtkosten:", pulp.value(model4.objective))
 
+    return lieferung, model4
+
+
+@app.cell
+def _(mo, model4):
+    with mo.redirect_stdout():
+        print(model4)
+    return
+
+
+@app.cell
+def _(lieferung, mo, model4, pulp):
+    with mo.redirect_stdout():
+        # Ausgabe
+        for (i4, j4), var4 in lieferung.items():
+            if var4.varValue > 0:
+                print(f"Transport {i4} → {j4}: {var4.varValue:.0f} Einheiten")
+        print(f"Minimale Gesamtkosten: {pulp.value(model4.objective)}")
     return
 
 
@@ -658,15 +826,6 @@ def _(mo):
 
 
 @app.cell
-def _():
-    use_scenic = False            # False → Zeit minimieren, True → Scenic maximieren
-    max_travel_time = 9           # None oder Zahl (z. B. 9 Stunden)
-    min_scenic_score = 20         # None oder Zahl (z. B. mindestens 20 Punkte)
-
-    return
-
-
-@app.cell
 def _(mo, scenicLowerBound, scenicToggle, travelUpperBound):
     mo.vstack([mo.hstack([mo.md("Reisedauer"),scenicToggle,mo.md("Schönheit")], justify = "start"),
                travelUpperBound,
@@ -676,7 +835,6 @@ def _(mo, scenicLowerBound, scenicToggle, travelUpperBound):
 
 @app.cell
 def _(
-    mo,
     pulp,
     scenicLowerBound,
     scenicToggle,
@@ -744,18 +902,26 @@ def _(
     prob = solve_with_scipy(prob)
 
 
-    # Ausgabe
+
+    return edges, prob, use_scenic, x
+
+
+@app.cell
+def _(mo, prob):
     with mo.redirect_stdout():
-        print(f"\n🧭 Zielwert ({'Scenic' if use_scenic else 'Zeit'}): {pulp.value(prob.objective):.2f}")
-        print("🚗 Gewählte Route:")
-        for e in edges:
-            if x[e].varValue == 1:
-                print(f"  {e[0]} → {e[1]}  (⏱ {edges[e][0]} h, 🌄 {edges[e][1]} pts)")
+        print(prob)
     return
 
 
 @app.cell
-def _():
+def _(edges, mo, prob, pulp, use_scenic, x):
+    # Ausgabe
+    with mo.redirect_stdout():
+        print(f"\n🧭 Zielwert ({'Scenic' if use_scenic else 'Zeit'}): {pulp.value(prob.objective):.2f}")
+        print("🚗 Gewählte Route:")
+        for edge in edges:
+            if x[edge].varValue == 1:
+                print(f"  {edge[0]} → {edge[1]}  (⏱ {edges[edge][0]} h, 🌄 {edges[edge][1]} pts)")
     return
 
 
