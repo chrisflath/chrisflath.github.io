@@ -1,13 +1,14 @@
 import marimo
 
-__generated_with = "0.14.7"
+__generated_with = "0.14.6"
 app = marimo.App(width="full")
 
 
 @app.cell
 def _():
     import marimo as mo
-    return (mo,)
+    import requests
+    return mo, requests
 
 
 @app.cell(hide_code=True)
@@ -17,15 +18,42 @@ def _(mo):
 
 
 @app.cell
-def _():
+def _(requests):
+    url = "https://chrisflath.github.io/notebooks/public/data.db"
+
+    # Download and save the file
+    filename = "data.db"
+
+    response = requests.get(url)
+    if response.status_code == 200:
+        with open(filename, "wb") as file:
+            file.write(response.content)
+        print(f"SQL DB setup successfull")
+    else:
+        print(f"Failed to download, status: {response.status_code}")
+
+    url = "https://chrisflath.github.io/notebooks/public/nba.db"
+
+    # Download and save the file
+    filename = "nba.db"
+
+    response = requests.get(url)
+    if response.status_code == 200:
+        with open(filename, "wb") as file:
+            file.write(response.content)
+        print(f"SQL DB setup successfull")
+    else:
+        print(f"Failed to download, status: {response.status_code}")
+
+
     import sqlalchemy
 
-    DATABASE_URL = "sqlite:///public/data.db"
+    DATABASE_URL = "sqlite:///data.db"
     engine = sqlalchemy.create_engine(DATABASE_URL)
 
     import sqlalchemy
 
-    DATABASE_URL = "sqlite:///public/nba.db"
+    DATABASE_URL = "sqlite:///nba.db"
     engine2 = sqlalchemy.create_engine(DATABASE_URL)
     return engine, engine2
 
@@ -37,7 +65,7 @@ def _(mo):
 
 
 @app.cell
-def _(engine, mo):
+def _(engine, mo, shipman_times):
     shipmanTimes = mo.sql(
         f"""
         SELECT Hour,
@@ -58,7 +86,7 @@ def _(shipmanTimes):
 
 
 @app.cell
-def _(engine, mo):
+def _(engine, mo, shipman_victims):
     _df = mo.sql(
         f"""
         SELECT gender, ROUND(AVG(AGE)) AS meanAge, COUNT(*)
@@ -71,7 +99,7 @@ def _(engine, mo):
 
 
 @app.cell
-def _(engine, mo):
+def _(engine, mo, shipman_victims):
     shipmanOverTime = mo.sql(
         f"""
         SELECT yearofdeath, COUNT(*) as count
@@ -108,11 +136,11 @@ def _(engine, mo):
         """,
         engine=engine
     )
-    return
+    return (test_counts,)
 
 
 @app.cell(hide_code=True)
-def _(engine, mo):
+def _(base, centers, dates, engine, grid, lifted, mo, test_counts):
     _df = mo.sql(
         f"""
         -- 2) Simulation mit rekursivem CTE
@@ -184,7 +212,7 @@ def _(engine, mo):
 
 
 @app.cell
-def _(engine, mo):
+def _(engine, mo, test_counts):
     tsTests = mo.sql(
         f"""
         SELECT * FROM test_counts
@@ -201,7 +229,7 @@ def _(tsTests):
 
 
 @app.cell
-def _(engine, mo):
+def _(engine, mo, test_counts):
     _df = mo.sql(
         f"""
         CREATE TEMP TABLE first_digits AS
@@ -211,11 +239,11 @@ def _(engine, mo):
         """,
         engine=engine
     )
-    return
+    return (first_digits,)
 
 
 @app.cell
-def _(engine, mo):
+def _(engine, first_digits, mo):
     _df = mo.sql(
         f"""
         SELECT test_center, first_digit, COUNT(*) AS count
@@ -229,7 +257,7 @@ def _(engine, mo):
 
 
 @app.cell
-def _(engine, mo):
+def _(engine, first_digits, mo):
     testBenford = mo.sql(
         f"""
         -- 1) Beobachtete Counts pro Zentrum × Ziffer
@@ -248,7 +276,7 @@ def _(engine, mo):
 
 
 @app.cell
-def _(engine, mo):
+def _(engine, first_digits, mo):
     _df = mo.sql(
         f"""
         -- 2) Gesamt-Counts pro Zentrum
@@ -262,11 +290,11 @@ def _(engine, mo):
         """,
         engine=engine
     )
-    return
+    return (tc_total,)
 
 
 @app.cell
-def _(engine, mo):
+def _(engine, mo, tc_observed, tc_total):
     _df = mo.sql(
         f"""
         -- 3) Observed Probabilities berechnen
@@ -284,11 +312,11 @@ def _(engine, mo):
         """,
         engine=engine
     )
-    return
+    return (tc_obs_prob,)
 
 
 @app.cell
-def _(engine, mo):
+def _(engine, expected_benford, mo, tc_obs_prob):
     _df = mo.sql(
         f"""
         -- 4) Erwartete Counts und Probabilities hinzuholen
@@ -312,7 +340,7 @@ def _(engine, mo):
 
 
 @app.cell
-def _(engine, mo):
+def _(engine, mo, tc_deviation):
     deviations = mo.sql(
         f"""
         -- 6) Finale Ausgabe: sortiert nach größter Abweichung
@@ -341,7 +369,7 @@ def _(mo):
 
 
 @app.cell
-def _(engine, mo):
+def _(engine, mo, titanic):
     _df = mo.sql(
         f"""
         SELECT * FROM titanic;
@@ -358,7 +386,7 @@ def _(mo):
 
 
 @app.cell
-def _(engine2, mo):
+def _(engine2, mo, salary):
     _df = mo.sql(
         f"""
         SELECT * FROM
@@ -384,7 +412,7 @@ def _(engine2, mo):
 
 
 @app.cell
-def _(engine2, mo):
+def _(engine2, mo, salary):
     _df = mo.sql(
         f"""
         SELECT * FROM 
@@ -397,7 +425,7 @@ def _(engine2, mo):
 
 
 @app.cell
-def _(engine2, mo):
+def _(engine2, mo, salary):
     _df = mo.sql(
         f"""
         SELECT MIN(Amount) AS Minimum FROM salary;
@@ -441,7 +469,7 @@ def _(engine2, mo):
 
 
 @app.cell
-def _(engine2, mo):
+def _(engine2, mo, salary):
     _df = mo.sql(
         f"""
         SELECT MAX(Amount) AS Maximum FROM salary;
@@ -452,7 +480,7 @@ def _(engine2, mo):
 
 
 @app.cell
-def _(engine2, mo):
+def _(engine2, mo, salary):
     salaryTeams = mo.sql(
         f"""
         SELECT Tm, AVG(Amount) as AVGSalary FROM salary GROUP BY Tm;
@@ -469,7 +497,7 @@ def _(salaryTeams):
 
 
 @app.cell
-def _(engine2, mo):
+def _(engine2, mo, players):
     playerCount = mo.sql(
         f"""
         SELECT Tm, Pos, COUNT(Player) as playerCount FROM players WHERE Tm NOT LIKE "TOT" GROUP BY Tm, Pos;
@@ -486,7 +514,7 @@ def _(playerCount):
 
 
 @app.cell
-def _(engine2, mo):
+def _(engine2, mo, players, salary):
     salaryPos = mo.sql(
         f"""
         SELECT players.Pos, AVG(Amount)
@@ -505,7 +533,7 @@ def _(salaryPos):
 
 
 @app.cell
-def _(engine2, mo):
+def _(engine2, mo, salary):
     _df = mo.sql(
         f"""
         SELECT CASE
@@ -582,8 +610,6 @@ def _(mo):
     - Altersgruppen bilden und visuell vergleichen
 
     ---
-
-
     """
     )
     return
