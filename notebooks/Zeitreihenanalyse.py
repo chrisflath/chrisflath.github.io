@@ -9,16 +9,16 @@ def _():
     import marimo as mo
     import pandas as pd
     import sqlalchemy
-
-    return mo, pd, sqlalchemy
+    import requests
+    return mo, pd, requests, sqlalchemy
 
 
 @app.cell
-def _(DATABASE_URL, requests, sqlalchemy):
+def _(requests, sqlalchemy):
     url = "https://chrisflath.github.io/notebooks/public/datats.db"
 
     # Download and save the file
-    filename = "data.db"
+    filename = "datats.db"
 
     response = requests.get(url)
     if response.status_code == 200:
@@ -28,6 +28,7 @@ def _(DATABASE_URL, requests, sqlalchemy):
     else:
         print(f"Failed to download, status: {response.status_code}")
     
+    DATABASE_URL = "sqlite:///datats.db"
     engine = sqlalchemy.create_engine(DATABASE_URL)
     return (engine,)
 
