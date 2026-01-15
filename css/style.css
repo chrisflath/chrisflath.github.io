@@ -194,14 +194,14 @@ a:hover {
     background: linear-gradient(135deg, #fffef8 0%, #faf8f0 100%);
     padding: var(--spacing-md) var(--spacing-lg);
     position: relative;
-    transform: rotate(-0.7deg);
+    transform: rotate(-0.6deg);
     border: 2px solid var(--pencil-gray);
     border-radius: 2px 8px 4px 6px;
     box-shadow:
         3px 3px 0 var(--border-color),
         4px 4px 8px rgba(0,0,0,0.08);
-    width: fit-content;
-    height: fit-content;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .hero-stats .stat-item {
@@ -239,10 +239,11 @@ a:hover {
 
 .profile-image {
     width: 100%;
-    max-width: 240px;
     /* Pencil sketch frame effect */
     border: 2px solid var(--pencil-gray);
     box-shadow: 3px 3px 0 var(--border-color);
+    border-radius: 3px 6px 4px 7px;
+    transform: rotate(0.5deg);
     filter: contrast(1.02);
 }
 
@@ -276,6 +277,16 @@ a:hover {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--spacing-sm);
     margin-top: var(--spacing-md);
+    background: linear-gradient(135deg, #fffef8 0%, #faf8f0 100%);
+    padding: var(--spacing-md);
+    border: 2px solid var(--pencil-gray);
+    border-radius: 4px 7px 5px 8px;
+    box-shadow:
+        3px 3px 0 var(--border-color),
+        4px 4px 8px rgba(0,0,0,0.08);
+    transform: rotate(0.4deg);
+    width: 100%;
+    box-sizing: border-box;
 }
 
 @media (max-width: 768px) {
@@ -288,19 +299,13 @@ a:hover {
     justify-content: center;
     gap: var(--spacing-xs);
     padding: var(--spacing-xs) var(--spacing-sm);
-    background: linear-gradient(135deg, #fffef8 0%, #faf8f0 100%);
-    border: 1px solid var(--pencil-gray);
+    background: transparent;
+    border: none;
     color: var(--text-color);
     font-family: var(--font-accent);
     font-size: 1rem;
-    box-shadow: 2px 2px 0 var(--border-color);
-    border-radius: 2px 4px 3px 5px;
+    box-shadow: none;
 }
-
-.contact-link:nth-child(1) { transform: rotate(-0.6deg); }
-.contact-link:nth-child(2) { transform: rotate(0.5deg); }
-.contact-link:nth-child(3) { transform: rotate(0.4deg); }
-.contact-link:nth-child(4) { transform: rotate(-0.5deg); }
 
 .contact-link svg {
     width: 16px;
