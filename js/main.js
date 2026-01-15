@@ -80,12 +80,13 @@ function initPublicationFilters() {
  * Fetches publications dynamically from Bibsonomy
  */
 
-// Configuration - UPDATE THESE VALUES
+// Configuration
 const BIBSONOMY_CONFIG = {
-    username: 'cflath',  // Your Bibsonomy username
-    apiKey: '6aecc79a36444ef0edaab8ff5f2bfbac',
-    baseUrl: 'https://www.bibsonomy.org/api',
-    resourceType: 'bibtex'  // or 'bookmark'
+    username: 'cflath'
+};
+
+const OPENALEX_CONFIG = {
+    authorId: 'A5073782971'  // OpenAlex author ID for Christoph M. Flath
 };
 
 /**
@@ -105,6 +106,43 @@ function initBibsonomy() {
         // Show and load dynamic content
         pubContainer.style.display = 'block';
         loadBibsonomyPublications(pubContainer);
+    }
+
+    // Load citation metrics from OpenAlex
+    loadOpenAlexMetrics();
+}
+
+/**
+ * Fetch author metrics from OpenAlex API
+ */
+async function loadOpenAlexMetrics() {
+    const pubCountEl = document.getElementById('pub-count');
+    const citationsEl = document.getElementById('citation-count');
+    const hIndexEl = document.getElementById('h-index');
+
+    if (!citationsEl && !hIndexEl && !pubCountEl) return;
+
+    try {
+        const response = await fetch(`https://api.openalex.org/authors/${OPENALEX_CONFIG.authorId}`);
+        if (!response.ok) throw new Error('Failed to fetch');
+
+        const author = await response.json();
+
+        // Only set pub count from OpenAlex on pages without Bibsonomy publications
+        // (publications page sets this from Bibsonomy data instead)
+        const hasBibsonomy = document.getElementById('bibsonomy-publications');
+        if (pubCountEl && author.works_count && !hasBibsonomy) {
+            pubCountEl.textContent = author.works_count.toLocaleString();
+        }
+        if (citationsEl && author.cited_by_count) {
+            citationsEl.textContent = author.cited_by_count.toLocaleString();
+        }
+        if (hIndexEl && author.summary_stats?.h_index) {
+            hIndexEl.textContent = author.summary_stats.h_index;
+        }
+    } catch (error) {
+        console.error('Error fetching OpenAlex metrics:', error);
+        // Keep fallback values shown in HTML
     }
 }
 
