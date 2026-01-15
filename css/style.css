@@ -184,10 +184,6 @@ a:hover {
     height: fit-content;
 }
 
-.hero-stats.stats-row {
-    margin: var(--spacing-lg) 0 var(--spacing-sm) 0;
-}
-
 /* Hero stats below photo - paper snippet style */
 .hero-stats {
     display: flex;
