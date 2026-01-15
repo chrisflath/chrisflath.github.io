@@ -98,8 +98,46 @@
             color: var(--text-light);
         }
 
+        /* Research navigation links */
+        .research-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .research-nav-link {
+            font-family: var(--font-accent);
+            font-size: 1.1rem;
+            color: var(--text-color);
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: linear-gradient(135deg, #fffef8 0%, #faf8f0 100%);
+            border: 2px solid var(--pencil-gray);
+            box-shadow: 2px 2px 0 var(--border-color);
+            border-radius: 3px 5px 4px 6px;
+            text-decoration: none;
+        }
+
+        .research-nav-link:nth-child(1) { transform: rotate(-0.5deg); }
+        .research-nav-link:nth-child(2) { transform: rotate(0.7deg); }
+        .research-nav-link:nth-child(3) { transform: rotate(-0.4deg); }
+        .research-nav-link:nth-child(4) { transform: rotate(0.6deg); }
+
+        .research-nav-link:hover {
+            color: var(--primary-color);
+        }
+
         /* Mobile: simplified research cards */
         @media (max-width: 768px) {
+            .research-nav-link {
+                font-family: var(--font-main);
+                font-size: 0.9rem;
+                transform: none;
+                border-radius: 4px;
+                box-shadow: none;
+                border: 1px solid var(--border-color);
+                background: var(--background);
+            }
             .research-area {
                 padding: var(--spacing-md);
                 background: var(--background);
@@ -166,8 +204,16 @@
             <div class="container">
                 <h1>Research Areas</h1>
 
+                <!-- Jump Links -->
+                <div class="research-nav">
+                    <a href="#platforms" class="research-nav-link">Platforms & Commerce</a>
+                    <a href="#collaboration" class="research-nav-link">Collaboration & AI</a>
+                    <a href="#energy" class="research-nav-link">Energy Systems</a>
+                    <a href="#methods" class="research-nav-link">Methods & Analytics</a>
+                </div>
+
                 <!-- Research Area 1 -->
-                <div class="research-area">
+                <div class="research-area" id="platforms">
                     <h2>Digital Markets, Platforms, and Data-Driven Commerce</h2>
                     <p class="research-description">
                         I study decision-making and market outcomes in digital ecosystems—where incentives, information, and platform design shape behavior. This includes sharing-economy and mobility platforms as well as data-driven retail and operational decision problems (e.g., service design, fulfillment, and returns).
@@ -187,7 +233,7 @@
                 </div>
 
                 <!-- Research Area 2 -->
-                <div class="research-area">
+                <div class="research-area" id="collaboration">
                     <h2>Collaboration, Competition, and Human–Algorithm Interaction</h2>
                     <p class="research-description">
                         This stream examines how individuals and teams collaborate and compete in high-frequency digital environments, and how algorithmic systems (e.g., matching, ranking, AI assistants) shape decision-making, learning, and performance.
@@ -204,7 +250,7 @@
                 </div>
 
                 <!-- Research Area 3 -->
-                <div class="research-area">
+                <div class="research-area" id="energy">
                     <h2>Energy Systems, Flexibility, and Market Design</h2>
                     <p class="research-description">
                         I work on data-driven and optimization-based approaches to coordinate distributed energy resources under uncertainty—linking economic incentives, operational constraints, and real-world behavior.
@@ -222,7 +268,7 @@
                 </div>
 
                 <!-- Research Area 4 -->
-                <div class="research-area">
+                <div class="research-area" id="methods">
                     <h2>Methods for Decision Intelligence and Business Analytics</h2>
                     <p class="research-description">
                         Across domains, I develop reusable analytics methods and toolchains—spanning machine learning, process analytics, and optimization—to support robust decision-making in business settings.
