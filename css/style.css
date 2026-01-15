@@ -106,10 +106,8 @@ a:hover {
 
 .site-title {
     color: var(--background);
-    font-family: var(--font-heading);
-    font-size: 1.6rem;
-    font-weight: 400;
-    letter-spacing: 0.02em;
+    font-family: var(--font-accent);
+    font-size: 1.8rem;
     border-bottom: none;
 }
 
