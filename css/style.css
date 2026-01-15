@@ -175,7 +175,6 @@ a:hover {
 .hero {
     padding: var(--spacing-xl) 0;
     background: transparent;
-    border-bottom: 1px solid var(--border-color);
 }
 
 .hero-content {
