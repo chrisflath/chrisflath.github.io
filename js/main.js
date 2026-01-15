@@ -90,28 +90,21 @@ const BIBSONOMY_CONFIG = {
 
 /**
  * Initialize Bibsonomy integration if on publications page
+ * Auto-loads publications on page load
  */
 function initBibsonomy() {
-    const loadButton = document.getElementById('load-bibsonomy');
     const pubContainer = document.getElementById('bibsonomy-publications');
-    const staticContent = document.querySelectorAll('.publication-list, h2.section-title.mt-2');
+    const staticContent = document.querySelectorAll('.static-publication-list, h2.static-section-title');
     const staticFooter = document.getElementById('static-footer');
 
-    if (loadButton && pubContainer) {
-        loadButton.addEventListener('click', async function() {
-            // Hide static content
-            staticContent.forEach(el => el.style.display = 'none');
-            if (staticFooter) staticFooter.style.display = 'none';
+    if (pubContainer) {
+        // Hide static content
+        staticContent.forEach(el => el.style.display = 'none');
+        if (staticFooter) staticFooter.style.display = 'none';
 
-            // Show and load dynamic content
-            pubContainer.style.display = 'block';
-            loadButton.textContent = 'Loading...';
-            loadButton.disabled = true;
-
-            await loadBibsonomyPublications(pubContainer);
-
-            loadButton.textContent = '✓ Loaded from Bibsonomy';
-        });
+        // Show and load dynamic content
+        pubContainer.style.display = 'block';
+        loadBibsonomyPublications(pubContainer);
     }
 }
 
@@ -175,19 +168,27 @@ async function loadBibsonomyPublications(container) {
 }
 
 /**
+ * Format authors array into a string
+ */
+function formatAuthors(authors) {
+    if (!authors || !Array.isArray(authors)) return '';
+    return authors.map(a => {
+        if (typeof a === 'string') return a;
+        return `${a.first || ''} ${a.last || ''}`.trim();
+    }).join(', ');
+}
+
+/**
  * Render Bibsonomy publications to the page
- * Handles both JSONP format (items array) and API format (posts.post array)
+ * JSONP format uses: label (title), authors (array), pub-type, year, journal, booktitle, doi, url
  */
 function renderBibsonomyPublications(container, data) {
-    // Handle JSONP format (items array) or API format (posts.post array)
+    // JSONP format returns items array
     let items = [];
 
     if (data.items && Array.isArray(data.items)) {
-        // JSONP format
-        items = data.items;
-    } else if (data.posts && data.posts.post) {
-        // API format
-        items = Array.isArray(data.posts.post) ? data.posts.post : [data.posts.post];
+        // Filter to only Publication type items
+        items = data.items.filter(item => item.type === 'Publication');
     }
 
     if (items.length === 0) {
@@ -198,8 +199,7 @@ function renderBibsonomyPublications(container, data) {
     // Group by year
     const publicationsByYear = {};
     items.forEach(item => {
-        // JSONP format has different structure
-        const year = item.year || (item.bibtex && item.bibtex.year) || 'Unknown';
+        const year = item.year || 'Unknown';
         if (!publicationsByYear[year]) {
             publicationsByYear[year] = [];
         }
@@ -215,16 +215,15 @@ function renderBibsonomyPublications(container, data) {
         html += '<div class="publication-list">';
 
         publicationsByYear[year].forEach(item => {
-            // Handle both JSONP and API formats
-            const title = item.title || (item.bibtex && item.bibtex.title) || 'Untitled';
-            const author = item.author || (item.bibtex && item.bibtex.author) || '';
-            const entrytype = item.entrytype || (item.bibtex && item.bibtex.entrytype) || 'misc';
-            const itemYear = item.year || (item.bibtex && item.bibtex.year) || '';
-            const url = item.url || (item.bibtex && item.bibtex.url) || '';
-            const doi = item.doi || (item.bibtex && item.bibtex.doi) || '';
-            const venue = item.journal || item.booktitle || item.publisher ||
-                         (item.bibtex && (item.bibtex.journal || item.bibtex.booktitle || item.bibtex.publisher)) || '';
-            const bibtexKey = item.bibtexKey || item.id || '';
+            // JSONP field names
+            const title = item.label || 'Untitled';
+            const author = formatAuthors(item.authors);
+            const entrytype = item['pub-type'] || 'misc';
+            const itemYear = item.year || '';
+            const url = item.url || '';
+            const doi = item.doi || '';
+            const venue = item.journal || item.booktitle || '';
+            const bibtexKey = item.id || '';
 
             const type = getPublicationType(entrytype);
 
