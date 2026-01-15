@@ -296,30 +296,57 @@ a:hover {
     -webkit-mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 4' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 2 Q10 0, 20 2 T40 2 T60 2 T80 2 T100 2' stroke='black' fill='none' stroke-width='3'/%3E%3C/svg%3E");
 }
 
-/* Research Cards - Notebook style */
+/* Research Cards - Paper snippet/cutout style */
 .research-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: var(--spacing-lg);
+    gap: var(--spacing-xl);
+    padding: var(--spacing-md);
 }
 
 .research-card {
-    background: var(--background);
+    background: #fffef8;
     padding: var(--spacing-lg);
-    border: 1px solid var(--pencil-gray);
-    box-shadow: 3px 3px 0 var(--border-color);
     position: relative;
+    /* Torn paper shadow effect */
+    box-shadow:
+        2px 2px 4px rgba(0,0,0,0.08),
+        4px 4px 8px rgba(0,0,0,0.05);
+    /* Slight rotation for natural look */
+    transform: rotate(-0.5deg);
+    /* Rough paper edge effect */
+    border: none;
+    clip-path: polygon(
+        0% 2%, 3% 0%, 7% 1%, 11% 0%, 15% 2%, 19% 0%, 23% 1%, 27% 0%, 31% 2%, 35% 0%,
+        39% 1%, 43% 0%, 47% 2%, 51% 0%, 55% 1%, 59% 0%, 63% 2%, 67% 0%, 71% 1%, 75% 0%,
+        79% 2%, 83% 0%, 87% 1%, 91% 0%, 95% 2%, 98% 0%, 100% 1%,
+        100% 98%, 97% 100%, 93% 99%, 89% 100%, 85% 98%, 81% 100%, 77% 99%, 73% 100%,
+        69% 98%, 65% 100%, 61% 99%, 57% 100%, 53% 98%, 49% 100%, 45% 99%, 41% 100%,
+        37% 98%, 33% 100%, 29% 99%, 25% 100%, 21% 98%, 17% 100%, 13% 99%, 9% 100%,
+        5% 98%, 2% 100%, 0% 99%
+    );
 }
 
-/* Corner fold effect */
+.research-card:nth-child(even) {
+    transform: rotate(0.5deg);
+}
+
+.research-card:nth-child(3n) {
+    transform: rotate(-0.3deg);
+}
+
+/* Tape effect on top */
 .research-card::before {
     content: '';
     position: absolute;
-    top: 0;
-    right: 0;
-    width: 20px;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%) rotate(1deg);
+    width: 60px;
     height: 20px;
-    background: linear-gradient(135deg, var(--background-alt) 50%, var(--border-color) 50%);
+    background: rgba(255, 245, 200, 0.7);
+    border: 1px solid rgba(200, 180, 100, 0.3);
+    z-index: 1;
 }
 
 .research-card h3 {
@@ -361,46 +388,77 @@ a.research-card h3 {
     margin-top: var(--spacing-sm);
 }
 
-/* Publications - Lab notebook entries */
+/* Publications - Paper snippet style */
 .publication-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-lg);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: var(--spacing-xl);
+    padding: var(--spacing-md);
 }
 
 .publication-item {
-    background: var(--background);
+    background: #fffef8;
     padding: var(--spacing-lg);
-    border-left: 3px solid var(--primary-color);
-    border-bottom: 1px dashed var(--border-color);
     position: relative;
+    /* Torn paper shadow effect */
+    box-shadow:
+        2px 2px 4px rgba(0,0,0,0.08),
+        4px 4px 8px rgba(0,0,0,0.05);
+    /* Rough paper edge effect */
+    border: none;
+    clip-path: polygon(
+        0% 2%, 3% 0%, 7% 1%, 11% 0%, 15% 2%, 19% 0%, 23% 1%, 27% 0%, 31% 2%, 35% 0%,
+        39% 1%, 43% 0%, 47% 2%, 51% 0%, 55% 1%, 59% 0%, 63% 2%, 67% 0%, 71% 1%, 75% 0%,
+        79% 2%, 83% 0%, 87% 1%, 91% 0%, 95% 2%, 98% 0%, 100% 1%,
+        100% 98%, 97% 100%, 93% 99%, 89% 100%, 85% 98%, 81% 100%, 77% 99%, 73% 100%,
+        69% 98%, 65% 100%, 61% 99%, 57% 100%, 53% 98%, 49% 100%, 45% 99%, 41% 100%,
+        37% 98%, 33% 100%, 29% 99%, 25% 100%, 21% 98%, 17% 100%, 13% 99%, 9% 100%,
+        5% 98%, 2% 100%, 0% 99%
+    );
 }
 
-/* Margin line like notebook */
+.publication-item:nth-child(odd) {
+    transform: rotate(-0.4deg);
+}
+
+.publication-item:nth-child(even) {
+    transform: rotate(0.4deg);
+}
+
+.publication-item:nth-child(3n) {
+    transform: rotate(0.2deg);
+}
+
+/* Tape effect */
 .publication-item::before {
     content: '';
     position: absolute;
-    left: var(--spacing-lg);
-    top: 0;
-    bottom: 0;
-    width: 1px;
-    background: repeating-linear-gradient(
-        to bottom,
-        var(--border-color) 0px,
-        var(--border-color) 4px,
-        transparent 4px,
-        transparent 8px
-    );
-    opacity: 0.5;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%) rotate(-1deg);
+    width: 50px;
+    height: 18px;
+    background: rgba(255, 245, 200, 0.7);
+    border: 1px solid rgba(200, 180, 100, 0.3);
+    z-index: 1;
 }
 
 .publication-title {
     font-family: var(--font-heading);
     font-weight: 500;
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     color: var(--primary-color);
     margin-bottom: var(--spacing-xs);
     line-height: 1.4;
+}
+
+.publication-title a {
+    color: inherit;
+    border-bottom: none;
+}
+
+.publication-title a:hover {
+    border-bottom: 1px solid var(--primary-color);
 }
 
 .publication-authors {
