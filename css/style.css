@@ -326,6 +326,10 @@ a:hover {
     padding: var(--spacing-xl) 0;
 }
 
+.hero + .section {
+    padding-top: var(--spacing-lg);
+}
+
 .section:nth-child(even) {
     background: rgba(248, 246, 241, 0.7);
 }
