@@ -840,14 +840,12 @@ a.research-card h3 {
     border-bottom: none;
 }
 
-/* Subtle hover for all card elements */
+/* Subtle hover for all card elements - text color shift */
 .contact-link:hover,
 .research-card:hover,
 .phd-student:hover,
-.publication-item:hover,
-.hero-stats:hover,
-.hero-description:hover {
-    background: linear-gradient(135deg, #fffdf5 0%, #f5f3e8 100%);
+.publication-item:hover {
+    color: var(--primary-color);
 }
 
 /* Utility Classes */
