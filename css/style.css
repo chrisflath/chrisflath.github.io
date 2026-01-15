@@ -174,7 +174,7 @@ a:hover {
 /* Hero Section */
 .hero {
     padding: var(--spacing-xl) 0;
-    background: var(--background);
+    background: transparent;
     border-bottom: 1px solid var(--border-color);
 }
 
@@ -328,7 +328,7 @@ a:hover {
 }
 
 .section:nth-child(even) {
-    background: var(--background-alt);
+    background: rgba(248, 246, 241, 0.7);
 }
 
 /* Pencil underline for section titles */
