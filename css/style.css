@@ -277,14 +277,6 @@ a:hover {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--spacing-sm);
     margin-top: var(--spacing-md);
-    background: linear-gradient(135deg, #fffef8 0%, #faf8f0 100%);
-    padding: var(--spacing-md);
-    border: 2px solid var(--pencil-gray);
-    border-radius: 4px 7px 5px 8px;
-    box-shadow:
-        3px 3px 0 var(--border-color),
-        4px 4px 8px rgba(0,0,0,0.08);
-    transform: rotate(0.4deg);
     width: 100%;
     box-sizing: border-box;
 }
@@ -298,13 +290,28 @@ a:hover {
     align-items: center;
     justify-content: center;
     gap: var(--spacing-xs);
-    padding: var(--spacing-xs) var(--spacing-sm);
-    background: transparent;
-    border: none;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: linear-gradient(135deg, #fffef8 0%, #faf8f0 100%);
+    border: 2px solid var(--pencil-gray);
+    border-radius: 3px 5px 4px 6px;
     color: var(--text-color);
     font-family: var(--font-accent);
     font-size: 1rem;
-    box-shadow: none;
+    box-shadow:
+        2px 2px 0 var(--border-color),
+        3px 3px 6px rgba(0,0,0,0.06);
+}
+
+.contact-link:nth-child(1) { transform: rotate(-0.8deg); }
+.contact-link:nth-child(2) { transform: rotate(0.6deg); }
+.contact-link:nth-child(3) { transform: rotate(0.4deg); }
+.contact-link:nth-child(4) { transform: rotate(-0.5deg); }
+
+.contact-link:hover {
+    transform: rotate(0deg) translateY(-2px);
+    box-shadow:
+        2px 2px 0 var(--border-color),
+        4px 4px 10px rgba(0,0,0,0.1);
 }
 
 .contact-link svg {
