@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Publications by Prof. Dr. Christoph M. Flath - Business Analytics, Smart Grids, Operations Management">
+    <title>Publications | Prof. Dr. Christoph M. Flath</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="site-header">
+        <div class="container">
+            <a href="index.html" class="site-title">Christoph M. Flath</a>
+            <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+            <nav class="main-nav">
+                <a href="index.html">Home</a>
+                <a href="publications.html" class="active">Publications</a>
+                <a href="research.html">Research</a>
+                <a href="cv.html">CV</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="page-content">
+        <section class="section">
+            <div class="container">
+                <h1>Publications</h1>
+                <p class="text-muted mb-2">
+                    Publications are loaded dynamically from <a href="https://www.bibsonomy.org/user/flath" target="_blank" rel="noopener">Bibsonomy</a>.
+                    Also see my <a href="https://scholar.google.com/citations?user=5Iy85HsAAAAJ" target="_blank" rel="noopener">Google Scholar profile</a>.
+                </p>
+
+                <!-- Toggle between dynamic and static views -->
+                <div style="margin-bottom: 1rem;">
+                    <button id="load-bibsonomy" class="filter-btn" style="background: var(--accent-color); color: white;">
+                        Load from Bibsonomy
+                    </button>
+                </div>
+
+                <!-- Filter Bar -->
+                <div class="filter-bar">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="journal">Journal Articles</button>
+                    <button class="filter-btn" data-filter="conference">Conference Papers</button>
+                    <button class="filter-btn" data-filter="chapter">Book Chapters</button>
+                </div>
+
+                <!-- Publication Stats -->
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <span class="stat-number">76+</span>
+                        <span class="stat-label">Publications</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">1,600+</span>
+                        <span class="stat-label">Citations</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">22</span>
+                        <span class="stat-label">h-index</span>
+                    </div>
+                </div>
+
+                <!-- Publications List -->
+                <h2 class="section-title mt-2">2023</h2>
+                <div class="publication-list">
+                    <div class="publication-item" data-type="journal">
+                        <span class="publication-year">2023</span>
+                        <h4 class="publication-title">Deep Learning-Enabled Segmentation of Ambiguous Bioimages With Deepflash2</h4>
+                        <p class="publication-authors">Griebel, P., Segebarth, D., Stein, N., Schukraft, N., Tovote, P., Blum, R., & Flath, C.M.</p>
+                        <p class="publication-venue">Nature Communications, 14, Article 1679</p>
+                        <div class="publication-links">
+                            <a href="#" class="pub-link">PDF</a>
+                            <a href="#" class="pub-link">DOI</a>
+                            <a href="https://github.com/matjesg/deepflash2" class="pub-link" target="_blank">Code</a>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 class="section-title mt-2">2021</h2>
+                <div class="publication-list">
+                    <div class="publication-item" data-type="journal">
+                        <span class="publication-year">2021</span>
+                        <h4 class="publication-title">Analytics Applications in Fashion Supply Chain Management - A Review of Literature and Practice</h4>
+                        <p class="publication-authors">Flath, C.M., & Stein, N.</p>
+                        <p class="publication-venue">IEEE Transactions on Engineering Management</p>
+                        <div class="publication-links">
+                            <a href="#" class="pub-link">PDF</a>
+                            <a href="#" class="pub-link">DOI</a>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 class="section-title mt-2">2019</h2>
+                <div class="publication-list">
+                    <div class="publication-item" data-type="journal">
+                        <span class="publication-year">2019</span>
+                        <h4 class="publication-title">Privacy in the Sharing Economy</h4>
+                        <p class="publication-authors">Teubner, T., & Flath, C.M.</p>
+                        <p class="publication-venue">Journal of the Association for Information Systems (JAIS), 20(3)</p>
+                        <div class="publication-links">
+                            <a href="#" class="pub-link">PDF</a>
+                            <a href="#" class="pub-link">DOI</a>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 class="section-title mt-2">2014-2018</h2>
+                <div class="publication-list">
+                    <div class="publication-item" data-type="journal">
+                        <span class="publication-year">2014</span>
+                        <h4 class="publication-title">Improving Electric Vehicle Charging Coordination Through Area Pricing</h4>
+                        <p class="publication-authors">Flath, C.M., Ilg, J.P., Gottwalt, S., Schmeck, H., & Weinhardt, C.</p>
+                        <p class="publication-venue">Transportation Science, 48(4), 619-634</p>
+                        <div class="publication-links">
+                            <a href="#" class="pub-link">PDF</a>
+                            <a href="#" class="pub-link">DOI</a>
+                        </div>
+                    </div>
+
+                    <div class="publication-item" data-type="conference">
+                        <span class="publication-year">2015</span>
+                        <h4 class="publication-title">Simulation-based Evaluation of Battery Switching Stations for Electric Vehicles</h4>
+                        <p class="publication-authors">Dauer, D., & Flath, C.M.</p>
+                        <p class="publication-venue">European Conference on Information Systems (ECIS)</p>
+                        <div class="publication-links">
+                            <a href="#" class="pub-link">PDF</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dynamic Bibsonomy Publications Container -->
+                <div id="bibsonomy-publications" style="display: none;"></div>
+
+                <!-- More Publications Notice -->
+                <div class="mt-2 text-center" id="static-footer">
+                    <p class="text-muted">
+                        This page shows selected publications. For a complete list with citation information, please visit:
+                    </p>
+                    <div class="contact-links" style="justify-content: center; margin-top: 1rem;">
+                        <a href="https://scholar.google.com/citations?user=5Iy85HsAAAAJ" class="contact-link" target="_blank" rel="noopener">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 24a7 7 0 1 1 0-14 7 7 0 0 1 0 14zm0-24L0 9.5l4.838 3.94A8 8 0 0 1 12 9a8 8 0 0 1 7.162 4.44L24 9.5z"/></svg>
+                            Google Scholar
+                        </a>
+                        <a href="https://dblp.org/pers/hd/f/Flath:Christoph_M=" class="contact-link" target="_blank" rel="noopener">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                            DBLP
+                        </a>
+                        <a href="https://www.researchgate.net/lab/WI3-Wuerzburg-Christoph-Michael-Flath" class="contact-link" target="_blank" rel="noopener">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19.586 0c-1.9 0-3.456 1.538-3.456 3.434 0 1.9 1.556 3.436 3.456 3.436s3.456-1.536 3.456-3.436c0-1.896-1.556-3.434-3.456-3.434zm-9.586 6.016c-3.76 0-6.814 3.054-6.814 6.814s3.054 6.814 6.814 6.814 6.814-3.054 6.814-6.814-3.054-6.814-6.814-6.814z"/></svg>
+                            ResearchGate
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2025 Christoph M. Flath. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="https://www.uni-wuerzburg.de/en/" target="_blank" rel="noopener">University of Würzburg</a>
+                <a href="https://www.wiwi.uni-wuerzburg.de/wiba/" target="_blank" rel="noopener">Chair Website</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

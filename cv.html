@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CV of Prof. Dr. Christoph M. Flath - Academic Background and Experience">
+    <title>CV | Prof. Dr. Christoph M. Flath</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .cv-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .cv-download {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-lg);
+            background: var(--primary-color);
+            color: white;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .cv-download:hover {
+            background: var(--secondary-color);
+            color: white;
+            text-decoration: none;
+        }
+
+        .cv-section {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .cv-section h2 {
+            color: var(--secondary-color);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .cv-entry {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            gap: var(--spacing-lg);
+            padding: var(--spacing-md) 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .cv-entry:last-child {
+            border-bottom: none;
+        }
+
+        @media (max-width: 600px) {
+            .cv-entry {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-xs);
+            }
+        }
+
+        .cv-date {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .cv-content h3 {
+            font-size: 1.1rem;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .cv-org {
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+
+        .cv-location {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .cv-description {
+            margin-top: var(--spacing-sm);
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .skill-category h4 {
+            color: var(--primary-color);
+            margin-bottom: var(--spacing-sm);
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .skill-category ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .skill-category li {
+            padding: var(--spacing-xs) 0;
+            color: var(--text-color);
+        }
+
+        .awards-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .award-item {
+            display: flex;
+            gap: var(--spacing-md);
+            align-items: flex-start;
+        }
+
+        .award-year {
+            background: var(--primary-color);
+            color: white;
+            padding: 2px 10px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="site-header">
+        <div class="container">
+            <a href="index.html" class="site-title">Christoph M. Flath</a>
+            <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+            <nav class="main-nav">
+                <a href="index.html">Home</a>
+                <a href="publications.html">Publications</a>
+                <a href="research.html">Research</a>
+                <a href="cv.html" class="active">CV</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="page-content">
+        <section class="section">
+            <div class="container">
+                <div class="cv-header">
+                    <h1>Curriculum Vitae</h1>
+                    <!-- Optional: Add a download link for PDF CV -->
+                    <!-- <a href="files/Flath_CV.pdf" class="cv-download" download>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        Download PDF
+                    </a> -->
+                </div>
+
+                <!-- Current Position -->
+                <div class="cv-section">
+                    <h2>Current Position</h2>
+                    <div class="cv-entry">
+                        <div class="cv-date">Since 2018</div>
+                        <div class="cv-content">
+                            <h3>Full Professor (W3)</h3>
+                            <div class="cv-org">Julius-Maximilians-Universität Würzburg</div>
+                            <div class="cv-location">Würzburg, Germany</div>
+                            <p class="cv-description">
+                                Chair of Business Information Systems and Business Analytics (Wirtschaftsinformatik und Business Analytics).
+                                Research focus on data-driven decision support, machine learning applications, smart grids, and platform economics.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Academic Positions -->
+                <div class="cv-section">
+                    <h2>Academic Positions</h2>
+                    <div class="cv-entry">
+                        <div class="cv-date">2014 – 2018</div>
+                        <div class="cv-content">
+                            <h3>Junior Professor</h3>
+                            <div class="cv-org">Karlsruhe Institute of Technology (KIT)</div>
+                            <div class="cv-location">Karlsruhe, Germany</div>
+                            <p class="cv-description">
+                                Institute of Information Systems and Marketing (IISM). Research on smart grids, electric mobility, and market design.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="cv-entry">
+                        <div class="cv-date">2010 – 2014</div>
+                        <div class="cv-content">
+                            <h3>Research Associate / Postdoc</h3>
+                            <div class="cv-org">Karlsruhe Institute of Technology (KIT)</div>
+                            <div class="cv-location">Karlsruhe, Germany</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Education -->
+                <div class="cv-section">
+                    <h2>Education</h2>
+                    <div class="cv-entry">
+                        <div class="cv-date">2010 – 2014</div>
+                        <div class="cv-content">
+                            <h3>Dr. rer. pol. (Ph.D. in Economics)</h3>
+                            <div class="cv-org">Karlsruhe Institute of Technology (KIT)</div>
+                            <div class="cv-location">Karlsruhe, Germany</div>
+                            <p class="cv-description">
+                                Dissertation on market mechanisms for smart grid coordination and electric vehicle integration.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="cv-entry">
+                        <div class="cv-date">2006 – 2007</div>
+                        <div class="cv-content">
+                            <h3>Exchange Studies</h3>
+                            <div class="cv-org">University of Toronto</div>
+                            <div class="cv-location">Toronto, Canada</div>
+                        </div>
+                    </div>
+                    <div class="cv-entry">
+                        <div class="cv-date">2004 – 2010</div>
+                        <div class="cv-content">
+                            <h3>Diploma in Business Engineering (Wirtschaftsingenieurwesen)</h3>
+                            <div class="cv-org">Karlsruhe Institute of Technology (KIT)</div>
+                            <div class="cv-location">Karlsruhe, Germany</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Research Interests -->
+                <div class="cv-section">
+                    <h2>Research Interests</h2>
+                    <div class="skills-grid">
+                        <div class="skill-category">
+                            <h4>Methods</h4>
+                            <ul>
+                                <li>Machine Learning & Deep Learning</li>
+                                <li>Optimization</li>
+                                <li>Market Design</li>
+                                <li>Econometrics</li>
+                            </ul>
+                        </div>
+                        <div class="skill-category">
+                            <h4>Applications</h4>
+                            <ul>
+                                <li>Business Analytics</li>
+                                <li>Smart Grids & Energy</li>
+                                <li>Supply Chain Management</li>
+                                <li>Platform Economics</li>
+                            </ul>
+                        </div>
+                        <div class="skill-category">
+                            <h4>Tools & Technologies</h4>
+                            <ul>
+                                <li>Python, R</li>
+                                <li>PyTorch, TensorFlow</li>
+                                <li>SQL, Big Data</li>
+                                <li>Simulation</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Academic Service -->
+                <div class="cv-section">
+                    <h2>Academic Service</h2>
+                    <div class="cv-entry">
+                        <div class="cv-date">Editorial</div>
+                        <div class="cv-content">
+                            <p>Reviewer for leading journals including Transportation Science, Information Systems Research, MIS Quarterly, and Management Science.</p>
+                        </div>
+                    </div>
+                    <div class="cv-entry">
+                        <div class="cv-date">Conferences</div>
+                        <div class="cv-content">
+                            <p>Regular contributions to ICIS, ECIS, HICSS, and other major IS conferences.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Selected Awards -->
+                <div class="cv-section">
+                    <h2>Selected Honors & Rankings</h2>
+                    <div class="awards-list">
+                        <div class="award-item">
+                            <span class="award-year">2021</span>
+                            <div>Ranked among Top 50 researchers in Business Administration (Germany, Austria, Switzerland)</div>
+                        </div>
+                        <div class="award-item">
+                            <span class="award-year">Ongoing</span>
+                            <div>h-index: 22 | 1,600+ citations (Google Scholar)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact -->
+                <div class="cv-section">
+                    <h2>Contact</h2>
+                    <div class="cv-entry">
+                        <div class="cv-date">Office</div>
+                        <div class="cv-content">
+                            <p>
+                                Julius-Maximilians-Universität Würzburg<br>
+                                Lehrstuhl für Wirtschaftsinformatik und Business Analytics<br>
+                                Sanderring 2<br>
+                                97070 Würzburg, Germany
+                            </p>
+                        </div>
+                    </div>
+                    <div class="cv-entry">
+                        <div class="cv-date">Email</div>
+                        <div class="cv-content">
+                            <p><a href="mailto:christoph.flath@uni-wuerzburg.de">christoph.flath@uni-wuerzburg.de</a></p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2025 Christoph M. Flath. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="https://www.uni-wuerzburg.de/en/" target="_blank" rel="noopener">University of Würzburg</a>
+                <a href="https://www.wiwi.uni-wuerzburg.de/wiba/" target="_blank" rel="noopener">Chair Website</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

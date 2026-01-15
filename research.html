@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Research Projects by Prof. Dr. Christoph M. Flath - Business Analytics, Smart Grids, Machine Learning">
+    <title>Research | Prof. Dr. Christoph M. Flath</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .research-intro {
+            max-width: 800px;
+            font-size: 1.1rem;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .research-area {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .research-area h2 {
+            color: var(--secondary-color);
+            border-left: 4px solid var(--accent-color);
+            padding-left: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .research-area-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-lg);
+        }
+
+        @media (max-width: 768px) {
+            .research-area-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .research-description {
+            line-height: 1.8;
+        }
+
+        .research-highlights {
+            background: var(--background-alt);
+            padding: var(--spacing-lg);
+            border-radius: 8px;
+        }
+
+        .research-highlights h4 {
+            color: var(--primary-color);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .research-highlights ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .research-highlights li {
+            padding: var(--spacing-xs) 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .research-highlights li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+        }
+
+        .collaborators {
+            margin-top: var(--spacing-xl);
+            padding: var(--spacing-lg);
+            background: var(--background-alt);
+            border-radius: 8px;
+        }
+
+        .collaborator-logos {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-lg);
+            align-items: center;
+            margin-top: var(--spacing-md);
+        }
+
+        .collaborator-item {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="site-header">
+        <div class="container">
+            <a href="index.html" class="site-title">Christoph M. Flath</a>
+            <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+            <nav class="main-nav">
+                <a href="index.html">Home</a>
+                <a href="publications.html">Publications</a>
+                <a href="research.html" class="active">Research</a>
+                <a href="cv.html">CV</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="page-content">
+        <section class="section">
+            <div class="container">
+                <h1>Research</h1>
+                <p class="research-intro">
+                    My research program explores the intersection of operations management, microeconomics, and business analytics.
+                    I focus on analyzing large-scale data—from sensor streams and transaction logs to web-scraped data—and combining
+                    these insights with optimization approaches to build data-driven decision support systems.
+                </p>
+
+                <!-- Research Area 1: Business Analytics & ML -->
+                <div class="research-area">
+                    <h2>Business Analytics & Machine Learning</h2>
+                    <div class="research-area-content">
+                        <div class="research-description">
+                            <p>
+                                We develop advanced analytics and machine learning methods to transform raw data into actionable business insights.
+                                Our work spans predictive modeling, deep learning applications, and the design of intelligent decision support systems.
+                            </p>
+                            <p>
+                                A recent highlight is <strong>deepflash2</strong>, a deep learning framework for bioimage segmentation published
+                                in Nature Communications. This tool enables researchers to accurately segment ambiguous microscopy images using
+                                state-of-the-art neural networks.
+                            </p>
+                        </div>
+                        <div class="research-highlights">
+                            <h4>Key Topics</h4>
+                            <ul>
+                                <li>Deep learning for image analysis</li>
+                                <li>Predictive analytics in business</li>
+                                <li>Automated decision support systems</li>
+                                <li>Fashion supply chain analytics</li>
+                            </ul>
+                            <h4 class="mt-1">Featured Publication</h4>
+                            <ul>
+                                <li><em>Nature Communications</em> (2023): Deepflash2</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Research Area 2: Smart Grids -->
+                <div class="research-area">
+                    <h2>Smart Grids & Energy Systems</h2>
+                    <div class="research-area-content">
+                        <div class="research-description">
+                            <p>
+                                The transition to sustainable energy systems requires intelligent coordination of distributed energy resources.
+                                My research designs market mechanisms and optimization approaches for electric vehicle charging, demand response,
+                                and grid integration of renewables.
+                            </p>
+                            <p>
+                                We develop pricing mechanisms that align individual incentives with system-wide efficiency goals,
+                                enabling scalable coordination without centralized control.
+                            </p>
+                        </div>
+                        <div class="research-highlights">
+                            <h4>Key Topics</h4>
+                            <ul>
+                                <li>Electric vehicle charging coordination</li>
+                                <li>Area pricing mechanisms</li>
+                                <li>Demand response optimization</li>
+                                <li>Battery switching stations</li>
+                            </ul>
+                            <h4 class="mt-1">Featured Publication</h4>
+                            <ul>
+                                <li><em>Transportation Science</em> (2014): EV Charging</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Research Area 3: Platform Economics -->
+                <div class="research-area">
+                    <h2>Platform Economics & Privacy</h2>
+                    <div class="research-area-content">
+                        <div class="research-description">
+                            <p>
+                                Digital platforms have transformed how we consume, work, and interact. My research examines the economic
+                                implications of platform-mediated transactions, with particular attention to privacy considerations
+                                in data-driven business models.
+                            </p>
+                            <p>
+                                We study how platform design affects user behavior, market outcomes, and welfare—including the
+                                often-overlooked dimension of privacy in the sharing economy.
+                            </p>
+                        </div>
+                        <div class="research-highlights">
+                            <h4>Key Topics</h4>
+                            <ul>
+                                <li>Sharing economy dynamics</li>
+                                <li>Privacy valuation and trade-offs</li>
+                                <li>Platform design and incentives</li>
+                                <li>Data-driven business models</li>
+                            </ul>
+                            <h4 class="mt-1">Featured Publication</h4>
+                            <ul>
+                                <li><em>JAIS</em> (2019): Privacy in Sharing Economy</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Current Projects -->
+                <h2 class="section-title mt-2">Current Projects</h2>
+                <div class="project-grid">
+                    <div class="project-card">
+                        <div class="project-content">
+                            <span class="project-status active">Active</span>
+                            <h3>DeepFlash2: Bioimage Segmentation</h3>
+                            <p>
+                                Open-source deep learning tool for automated segmentation of microscopy images.
+                                Used by research labs worldwide for neuroscience and cell biology applications.
+                            </p>
+                            <div class="publication-links mt-1">
+                                <a href="https://github.com/matjesg/deepflash2" class="pub-link" target="_blank">GitHub</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="project-card">
+                        <div class="project-content">
+                            <span class="project-status active">Active</span>
+                            <h3>Data-Driven Supply Chain Analytics</h3>
+                            <p>
+                                Developing analytics frameworks for fashion and retail supply chains,
+                                combining demand forecasting with inventory optimization.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="project-card">
+                        <div class="project-content">
+                            <span class="project-status active">Active</span>
+                            <h3>Smart Grid Coordination Mechanisms</h3>
+                            <p>
+                                Designing decentralized coordination mechanisms for electric vehicle charging
+                                and demand response in smart grid environments.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Collaborators -->
+                <div class="collaborators">
+                    <h3>Research Network</h3>
+                    <p class="text-muted">
+                        I collaborate with researchers and practitioners across academia and industry on interdisciplinary projects.
+                    </p>
+                    <div class="collaborator-logos">
+                        <span class="collaborator-item">Karlsruhe Institute of Technology (KIT)</span>
+                        <span class="collaborator-item">•</span>
+                        <span class="collaborator-item">University of Toronto</span>
+                        <span class="collaborator-item">•</span>
+                        <span class="collaborator-item">Industry Partners</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2025 Christoph M. Flath. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="https://www.uni-wuerzburg.de/en/" target="_blank" rel="noopener">University of Würzburg</a>
+                <a href="https://www.wiwi.uni-wuerzburg.de/wiba/" target="_blank" rel="noopener">Chair Website</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
