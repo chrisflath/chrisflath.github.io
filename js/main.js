@@ -12,14 +12,24 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 /**
- * Carousel scroll buttons
+ * Carousel scroll buttons and shuffle
  */
 function initCarouselButtons() {
     const carousel = document.querySelector('.pub-carousel');
     const leftBtn = document.querySelector('.carousel-btn-left');
     const rightBtn = document.querySelector('.carousel-btn-right');
 
-    if (!carousel || !leftBtn || !rightBtn) return;
+    if (!carousel) return;
+
+    // Shuffle cards on load
+    const cards = Array.from(carousel.children);
+    for (let i = cards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        carousel.appendChild(cards[j]);
+        cards.splice(j, 1);
+    }
+
+    if (!leftBtn || !rightBtn) return;
 
     const scrollAmount = 300;
 
