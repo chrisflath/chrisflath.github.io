@@ -1,2169 +1,3766 @@
-
-{  
-   "types" : {
-      "Bookmark" : {
-         "pluralLabel" : "Bookmarks"
-      },
-      "Publication" : {
-         "pluralLabel" : "Publications"
-      },
-      "GoldStandardPublication" : {
-         "pluralLabel" : "GoldStandardPublications"
-      },
-      "GoldStandardBookmark" : {
-         "pluralLabel" : "GoldStandardBookmarks"
-      },
-      "Tag" : {
-         "pluralLabel" : "Tags"
-      },
-      "User" : {
-         "pluralLabel" : "Users"
-      },
-      "Group" : {
-         "pluralLabel" : "Groups"
-      },
-      "Sphere" : {
-         "pluralLabel" : "Spheres"
-      }
-   },
-   
-   "properties" : {
-      "count" : {
-         "valueType" : "number"
-      },
-      "date" : {
-         "valueType" : "date"
-      },
-      "changeDate" : {
-         "valueType" : "date"
-      },
-      "url" : {
-         "valueType" : "url"
-      },
-      "id" : {
-         "valueType" : "url"
-      },
-      "tags" : {
-         "valueType" : "item"
-      },
-      "user" : {
-         "valueType" : "item"
-      }      
-   },
-   
-   "items" : [
-   	  
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/24948e4a78c3d0061a2ced756bf274858/cflath",         
-         "tags" : [
-            "myown","proceedings"
-         ],
-         
-         "intraHash" : "4948e4a78c3d0061a2ced756bf274858",
-         "interHash" : "37093a94230b4c31ee7be9e10fc96130",
-         "label" : "Experts versus Novices: Analyzing Behavioral Variability in Complex Process Environments.",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2026-01-15 12:04:44",
-         "changeDate" : "2026-01-15 19:29:16",
-         "count" : 3,
-         "pub-type": "inproceedings",
-         "booktitle": "Wirtschaftsinformatik 2024 Proceedings",
-         "year": "2024", 
-         "url": "", 
-         
-         "author": [ 
-            "Nico Elbert","Christoph Michael Flath"
-         ],
-         "authors": [
-         	
-            	{"first" : "Nico",	"last" : "Elbert"},
-            	{"first" : "Christoph Michael",	"last" : "Flath"}
-         ],
-         
-         "bibtexKey": "elbert2024experts"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/234c7f62e1c64dd3ff3efb9226164a2d3/cflath",         
-         "tags" : [
-            "journal","myown"
-         ],
-         
-         "intraHash" : "34c7f62e1c64dd3ff3efb9226164a2d3",
-         "interHash" : "c824ded3b12808878eae8a8e6c4f6227",
-         "label" : "Challenges and Outcomes Using Big Data as a Service",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2026-01-15 12:04:30",
-         "changeDate" : "2026-01-15 12:04:30",
-         "count" : 2,
-         "pub-type": "article",
-         "journal": "Business & Information Systems Engineering",
-         "year": "2024", 
-         "url": "", 
-         
-         "author": [ 
-            "Gautam Srivastava","Christoph M. Flath","Jerry Chun-Wei Lin","Yudong Zhang"
-         ],
-         "authors": [
-         	
-            	{"first" : "Gautam",	"last" : "Srivastava"},
-            	{"first" : "Christoph M.",	"last" : "Flath"},
-            	{"first" : "Jerry Chun-Wei",	"last" : "Lin"},
-            	{"first" : "Yudong",	"last" : "Zhang"}
-         ],
-         "volume": "66","number": "1","pages": "1--2",
-         "bibtexKey": "srivastava2024bigdata"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/2ce334766176254cb283541d8226f73a0/cflath",         
-         "tags" : [
-            "myown","proceedings"
-         ],
-         
-         "intraHash" : "ce334766176254cb283541d8226f73a0",
-         "interHash" : "1de9e65e80e959e3d870575c633c32c2",
-         "label" : "Process Mining for Game Analytics",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2026-01-15 12:04:09",
-         "changeDate" : "2026-01-15 12:04:09",
-         "count" : 3,
-         "pub-type": "inproceedings",
-         "booktitle": "2024 IEEE Conference on Games (CoG)","publisher":"IEEE",
-         "year": "2024", 
-         "url": "", 
-         
-         "author": [ 
-            "Nico Elbert","Christoph M. Flath"
-         ],
-         "authors": [
-         	
-            	{"first" : "Nico",	"last" : "Elbert"},
-            	{"first" : "Christoph M.",	"last" : "Flath"}
-         ],
-         "pages": "1--4",
-         "bibtexKey": "elbert2024processmining"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/24003971647040e650b6408ad45676d23/cflath",         
-         "tags" : [
-            "journal","myown"
-         ],
-         
-         "intraHash" : "4003971647040e650b6408ad45676d23",
-         "interHash" : "9f430b47f0f9ab705633832211e5e0d6",
-         "label" : "The faster, the better? The impact of short delivery times on product returns in online retailing",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2026-01-15 12:03:49",
-         "changeDate" : "2026-01-15 12:03:49",
-         "count" : 3,
-         "pub-type": "article",
-         "journal": "Journal of Retailing",
-         "year": "2024", 
-         "url": "", 
-         
-         "author": [ 
-            "Simon Masuch","Jan R. Landwehr","Christoph M. Flath","Frédéric Thiesse"
-         ],
-         "authors": [
-         	
-            	{"first" : "Simon",	"last" : "Masuch"},
-            	{"first" : "Jan R.",	"last" : "Landwehr"},
-            	{"first" : "Christoph M.",	"last" : "Flath"},
-            	{"first" : "Frédéric",	"last" : "Thiesse"}
-         ],
-         "volume": "100","number": "3","pages": "475--485",
-         "bibtexKey": "masuch2024faster"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/28960812b6f12f177c6ddebfefc228532/cflath",         
-         "tags" : [
-            "myown","proceedings"
-         ],
-         
-         "intraHash" : "8960812b6f12f177c6ddebfefc228532",
-         "interHash" : "14134918da4abd7f092c387f93e7c3e6",
-         "label" : "Framework for Extracting Real-World Object-Centric Event Logs from Game Data",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2026-01-15 12:03:22",
-         "changeDate" : "2026-01-15 19:30:22",
-         "count" : 2,
-         "pub-type": "inproceedings",
-         "booktitle": "ICPM Workshops",
-         "year": "2024", 
-         "url": "", 
-         
-         "author": [ 
-            "Lukas Liss","Nico Elbert","Christoph M. Flath","Wil M. P. van der Aalst"
-         ],
-         "authors": [
-         	
-            	{"first" : "Lukas",	"last" : "Liss"},
-            	{"first" : "Nico",	"last" : "Elbert"},
-            	{"first" : "Christoph M.",	"last" : "Flath"},
-            	{"first" : "Wil M. P.",	"last" : "van der Aalst"}
-         ],
-         "pages": "363--375",
-         "bibtexKey": "liss2024ocel"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/258aacbf54381894785c8998f632de4e7/cflath",         
-         "tags" : [
-            "myown","proceedings"
-         ],
-         
-         "intraHash" : "58aacbf54381894785c8998f632de4e7",
-         "interHash" : "cc2401a15b3b8a9632b8935626d5b5e8",
-         "label" : "Beyond Play: Competitive Game Data as an Empirical Resource for IS Research",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2026-01-15 12:03:06",
-         "changeDate" : "2026-01-15 20:16:45",
-         "count" : 1,
-         "pub-type": "inproceedings",
-         "booktitle": "Proceedings of the International Conference on Information Systems",
-         "year": "2025", 
-         "url": "", 
-         
-         "author": [ 
-            "Nico Elbert","Nikolai Stein","Christoph M. Flath"
-         ],
-         "authors": [
-         	
-            	{"first" : "Nico",	"last" : "Elbert"},
-            	{"first" : "Nikolai",	"last" : "Stein"},
-            	{"first" : "Christoph M.",	"last" : "Flath"}
-         ],
-         
-         "bibtexKey": "elbert2025beyondplay"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/29a0e229c8c38e00d009cb472adf3ebdf/cflath",         
-         "tags" : [
-            "myown","proceedings"
-         ],
-         
-         "intraHash" : "9a0e229c8c38e00d009cb472adf3ebdf",
-         "interHash" : "2c4e0423db902e2efae304dcc77cfd94",
-         "label" : "Assessing Electricity Customers Using Procurement Cost Metrics: A Data-Driven Framework for Modeling Tariff-Driven Behavior",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2026-01-15 12:02:32",
-         "changeDate" : "2026-01-15 12:02:32",
-         "count" : 2,
-         "pub-type": "inproceedings",
-         "booktitle": "Proceedings of the 16th ACM International Conference on Future and Sustainable Energy Systems","publisher":"ACM",
-         "year": "2025", 
-         "url": "", 
-         
-         "author": [ 
-            "Robin Thomas Derzbach","Christoph Michael Flath"
-         ],
-         "authors": [
-         	
-            	{"first" : "Robin Thomas",	"last" : "Derzbach"},
-            	{"first" : "Christoph Michael",	"last" : "Flath"}
-         ],
-         
-         "bibtexKey": "derzbach2025electricity"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/25f0bb733177b40c5ea50561d17a4df1d/cflath",         
-         "tags" : [
-            "myown","proceedings"
-         ],
-         
-         "intraHash" : "5f0bb733177b40c5ea50561d17a4df1d",
-         "interHash" : "061ccfd79f11dfcf7f5e1069eb40cc36",
-         "label" : "Matchmaking Beyond Elo: Why Teams are More Than the Sum of Individual Skill",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2026-01-15 12:01:58",
-         "changeDate" : "2026-01-15 19:30:36",
-         "count" : 3,
-         "pub-type": "inproceedings",
-         "booktitle": "2025 IEEE Conference on Games (CoG)","publisher":"IEEE",
-         "year": "2025", 
-         "url": "", 
-         
-         "author": [ 
-            "Nico Elbert","Christoph M Flath","Victor Klockmann","Fabian Kosse","Alicia von Schenk","Nikolai Stein"
-         ],
-         "authors": [
-         	
-            	{"first" : "Nico",	"last" : "Elbert"},
-            	{"first" : "Christoph M",	"last" : "Flath"},
-            	{"first" : "Victor",	"last" : "Klockmann"},
-            	{"first" : "Fabian",	"last" : "Kosse"},
-            	{"first" : "Alicia",	"last" : "von Schenk"},
-            	{"first" : "Nikolai",	"last" : "Stein"}
-         ],
-         "pages": "1--8",
-         "bibtexKey": "elbert2025matchmaking"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/23c2111e445564a07cf798e48391b0e17/cflath",         
-         "tags" : [
-            "highlight","journal","myown"
-         ],
-         
-         "intraHash" : "3c2111e445564a07cf798e48391b0e17",
-         "interHash" : "9f430b47f0f9ab705633832211e5e0d6",
-         "label" : "The faster, the better? The impact of short delivery times on product returns in online retailing",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2024-11-11 10:13:50",
-         "changeDate" : "2024-11-11 10:13:50",
-         "count" : 3,
-         "pub-type": "article",
-         "journal": "Journal of Retailing",
-         "year": "2024", 
-         "url": "", 
-         
-         "author": [ 
-            "Simon Masuch","Jan R. Landwehr","Christoph M. Flath","Frederic Thiesse"
-         ],
-         "authors": [
-         	
-            	{"first" : "Simon",	"last" : "Masuch"},
-            	{"first" : "Jan R.",	"last" : "Landwehr"},
-            	{"first" : "Christoph M.",	"last" : "Flath"},
-            	{"first" : "Frederic",	"last" : "Thiesse"}
-         ],
-         "volume": "100",
-         "bibtexKey": "masuch2024faster"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/2e72febd27d9792e784dd06a46fac79da/cflath",         
-         "tags" : [
-            "journal","myown"
-         ],
-         
-         "intraHash" : "e72febd27d9792e784dd06a46fac79da",
-         "interHash" : "edd0243d333c7b3a189274a7fe707f1e",
-         "label" : "Welcome to the Era of ChatGPT et al.",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2024-11-11 10:09:04",
-         "changeDate" : "2024-11-11 10:09:19",
-         "count" : 2,
-         "pub-type": "article",
-         "journal": "Business & Information Systems Engineering",
-         "year": "2023", 
-         "url": "", 
-         
-         "author": [ 
-            "Timm Teubner","Christoph Michael Flath","Christof Weinhardt","Wil van der Aalst","Oliver Hinz"
-         ],
-         "authors": [
-         	
-            	{"first" : "Timm",	"last" : "Teubner"},
-            	{"first" : "Christoph Michael",	"last" : "Flath"},
-            	{"first" : "Christof",	"last" : "Weinhardt"},
-            	{"first" : "Wil",	"last" : "van der Aalst"},
-            	{"first" : "Oliver",	"last" : "Hinz"}
-         ],
-         "volume": "65","pages": "95-101",
-         "bibtexKey": "teubner2023welcome"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/218e6566d554443345594b99d347cf436/cflath",         
-         "tags" : [
-            "myown","proceedings","stein"
-         ],
-         
-         "intraHash" : "18e6566d554443345594b99d347cf436",
-         "interHash" : "a63df01be7c5ad82924841b08fa615fd",
-         "label" : "The Layers of Change: Multilevel Adaptations to Exogenous Game Patches in CS: GO",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2024-11-11 10:06:30",
-         "changeDate" : "2024-11-11 10:06:30",
-         "count" : 3,
-         "pub-type": "inproceedings",
-         "booktitle": "IEEE Conference on Games (CoG)",
-         "year": "2023", 
-         "url": "", 
-         
-         "author": [ 
-            "Nico Elbert","Emil Paskovski","Nikolai Stein","Christoph M. Flath"
-         ],
-         "authors": [
-         	
-            	{"first" : "Nico",	"last" : "Elbert"},
-            	{"first" : "Emil",	"last" : "Paskovski"},
-            	{"first" : "Nikolai",	"last" : "Stein"},
-            	{"first" : "Christoph M.",	"last" : "Flath"}
-         ],
-         
-         "bibtexKey": "elbert2024layers"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/23fd1331805206c4b4034277c1e4227f4/cflath",         
-         "tags" : [
-            "myown","proceedings"
-         ],
-         
-         "intraHash" : "3fd1331805206c4b4034277c1e4227f4",
-         "interHash" : "37093a94230b4c31ee7be9e10fc96130",
-         "label" : "Experts versus Novices: Analyzing Behavioral Variability in Complex Process Environments",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2024-11-11 10:04:03",
-         "changeDate" : "2024-11-20 12:36:07",
-         "count" : 3,
-         "pub-type": "inproceedings",
-         "booktitle": "Wirtschaftsinformatik Proceedings",
-         "year": "2024", 
-         "url": "", 
-         
-         "author": [ 
-            "Nico Elbert","Christoph Michael Flath"
-         ],
-         "authors": [
-         	
-            	{"first" : "Nico",	"last" : "Elbert"},
-            	{"first" : "Christoph Michael",	"last" : "Flath"}
-         ],
-         
-         "bibtexKey": "2024experts"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/2f148bcd899690650d820edb510073bd3/cflath",         
-         "tags" : [
-            "myown","proceedings"
-         ],
-         
-         "intraHash" : "f148bcd899690650d820edb510073bd3",
-         "interHash" : "1de9e65e80e959e3d870575c633c32c2",
-         "label" : "Process Mining for Game Analytics",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2024-11-11 10:02:49",
-         "changeDate" : "2024-11-20 12:36:32",
-         "count" : 3,
-         "pub-type": "inproceedings",
-         "booktitle": "IEEE Conference on Games (CoG)",
-         "year": "2024", 
-         "url": "", 
-         
-         "author": [ 
-            "Nico Elbert","Christoph M. Flath"
-         ],
-         "authors": [
-         	
-            	{"first" : "Nico",	"last" : "Elbert"},
-            	{"first" : "Christoph M.",	"last" : "Flath"}
-         ],
-         
-         "bibtexKey": "noauthororeditor2024process"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/2eb92e1c2fa13f6b724e6afb2135a10d2/cflath",         
-         "tags" : [
-            "DeepLearning","Predictive","PredictiveProcessAnalytics","ProcessMining","journal","myown","stein"
-         ],
-         
-         "intraHash" : "eb92e1c2fa13f6b724e6afb2135a10d2",
-         "interHash" : "5b9a8f2bcc5f8bfbdae2e5d75338eaaf",
-         "label" : "Predictive End-to-End Enterprise Process Network Monitoring",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2023-02-28 15:41:18",
-         "changeDate" : "2023-02-28 15:41:18",
-         "count" : 3,
-         "pub-type": "article",
-         "journal": "Business & Information Systems Engineering",
-         "year": "2022", 
-         "url": "", 
-         
-         "author": [ 
-            "Felix Oberdorf","Myriam Schaschek","Sven Weinzierl","Nikolai Stein","Martin Matzner","Christoph M. Flath"
-         ],
-         "authors": [
-         	
-            	{"first" : "Felix",	"last" : "Oberdorf"},
-            	{"first" : "Myriam",	"last" : "Schaschek"},
-            	{"first" : "Sven",	"last" : "Weinzierl"},
-            	{"first" : "Nikolai",	"last" : "Stein"},
-            	{"first" : "Martin",	"last" : "Matzner"},
-            	{"first" : "Christoph M.",	"last" : "Flath"}
-         ],
-         
-         "doi" : "10.1007/s12599-022-00778-4",
-         
-         "bibtexKey": "oberdorf2022predictive"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/2d09da00edf4152e7c60fd73bcaecfb72/cflath",         
-         "tags" : [
-            "sys:relevantfor:wi-wue","deep_learning","highlight","journal","myown"
-         ],
-         
-         "intraHash" : "d09da00edf4152e7c60fd73bcaecfb72",
-         "interHash" : "77316484c065edbac8fe96699d9c22f0",
-         "label" : "Deep learning-enabled segmentation of ambiguous bioimages with deepflash2",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2023-02-25 02:12:40",
-         "changeDate" : "2023-02-25 02:13:21",
-         "count" : 2,
-         "pub-type": "article",
-         "journal": "Nature Communications",
-         "year": "2023", 
-         "url": "", 
-         
-         "author": [ 
-            "Matthias Griebel","Dennis Segebarth","Nikolai Stein","Nina Schukraft","Philip Tovote","Robert Blum","Christoph M. Flath"
-         ],
-         "authors": [
-         	
-            	{"first" : "Matthias",	"last" : "Griebel"},
-            	{"first" : "Dennis",	"last" : "Segebarth"},
-            	{"first" : "Nikolai",	"last" : "Stein"},
-            	{"first" : "Nina",	"last" : "Schukraft"},
-            	{"first" : "Philip",	"last" : "Tovote"},
-            	{"first" : "Robert",	"last" : "Blum"},
-            	{"first" : "Christoph M.",	"last" : "Flath"}
-         ],
-         
-         "bibtexKey": "griebellearningenabled"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/262d1823ad5b4d7a888a1227ff2c64451/cflath",         
-         "tags" : [
-            "analytics","highlight","journal","myown","stein"
-         ],
-         
-         "intraHash" : "62d1823ad5b4d7a888a1227ff2c64451",
-         "interHash" : "4112b9af613b452764947542236a5ef6",
-         "label" : "Information Value Analysis for Real-time Silo Fill-level Monitoring",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2022-12-21 17:24:44",
-         "changeDate" : "2024-11-11 10:11:06",
-         "count" : 2,
-         "pub-type": "article",
-         "journal": "INFORMS Journal on Applied Analytics",
-         "year": "2023", 
-         "url": "", 
-         
-         "author": [ 
-            "Toni Greif","Nikolai Stein","Christoph M. Flath"
-         ],
-         "authors": [
-         	
-            	{"first" : "Toni",	"last" : "Greif"},
-            	{"first" : "Nikolai",	"last" : "Stein"},
-            	{"first" : "Christoph M.",	"last" : "Flath"}
-         ],
-         "volume": "53","number": "4","pages": "283-294",
-         "bibtexKey": "greif2022information"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/2079c4abd7161c3e9aa23728ce09d9b15/cflath",         
-         "tags" : [
-            "analytics","industry4.0","journal","myown","stein"
-         ],
-         
-         "intraHash" : "079c4abd7161c3e9aa23728ce09d9b15",
-         "interHash" : "2796d97cd79fcfc7f5cb578adb9aeb51",
-         "label" : "Analytics-enabled escalation management: System development and business value assessment",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2021-05-06 21:45:34",
-         "changeDate" : "2024-11-15 13:21:40",
-         "count" : 4,
-         "pub-type": "article",
-         "journal": "Computers in Industry",
-         "year": "2021", 
-         "url": "", 
-         
-         "author": [ 
-            "Felix Oberdorf","Nikolai Stein","Christoph M. Flath"
-         ],
-         "authors": [
-         	
-            	{"first" : "Felix",	"last" : "Oberdorf"},
-            	{"first" : "Nikolai",	"last" : "Stein"},
-            	{"first" : "Christoph M.",	"last" : "Flath"}
-         ],
-         
-         "bibtexKey": "oberdorf2021analyticsenabled"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/24fb56676ffe30abd0edff266398a4313/cflath",         
-         "tags" : [
-            "analytics","highlight","journal","myown","stein"
-         ],
-         
-         "intraHash" : "4fb56676ffe30abd0edff266398a4313",
-         "interHash" : "3e4a1c9f53fd5490724dbb49704b761b",
-         "label" : "Analytics Applications in Fashion Supply Chain Management - A Review of Literature and Practice",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2021-04-20 23:20:26",
-         "changeDate" : "2024-11-18 15:38:12",
-         "count" : 3,
-         "pub-type": "article",
-         "journal": "IEEE Transactions on Engineering Management",
-         "year": "2021", 
-         "url": "", 
-         
-         "author": [ 
-            "Christina Stahl","Nikolai Stein","Christoph M. Flath"
-         ],
-         "authors": [
-         	
-            	{"first" : "Christina",	"last" : "Stahl"},
-            	{"first" : "Nikolai",	"last" : "Stein"},
-            	{"first" : "Christoph M.",	"last" : "Flath"}
-         ],
-         
-         "bibtexKey": "stahl2021analytics"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/2797b8ad73dc9d2d7bc7dd385b2ed9797/cflath",         
-         "tags" : [
-            "sys:relevantfor:wi-wue","analytics","journal","machineLearning","myown","rfid"
-         ],
-         
-         "intraHash" : "797b8ad73dc9d2d7bc7dd385b2ed9797",
-         "interHash" : "fecd221955d876dcf041fa8cc49f727c",
-         "label" : "Catch me if You Scan: Data-Driven Prescriptive Modeling for Smart Store Environments",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2020-12-23 21:53:43",
-         "changeDate" : "2020-12-23 21:53:43",
-         "count" : 3,
-         "pub-type": "article",
-         "journal": "European Journal of Operational Research",
-         "year": "2021", 
-         "url": "", 
-         
-         "author": [ 
-            "Matthias Hauser","Christoph M. Flath","Frederic Thiesse"
-         ],
-         "authors": [
-         	
-            	{"first" : "Matthias",	"last" : "Hauser"},
-            	{"first" : "Christoph M.",	"last" : "Flath"},
-            	{"first" : "Frederic",	"last" : "Thiesse"}
-         ],
-         
-         "bibtexKey": "hauser2021catch"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/2157fc45f77296a87aac401bffff4763d/cflath",         
-         "tags" : [
-            "sys:relevantfor:wi-wue","deep_learning","griebel","journal","myown","stein"
-         ],
-         
-         "intraHash" : "157fc45f77296a87aac401bffff4763d",
-         "interHash" : "2662216ce16e3400a96b929189905aa6",
-         "label" : "On the objectivity, reliability, and validity of deep learning enabled bioimage analyses",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2020-10-17 10:33:58",
-         "changeDate" : "2023-02-25 02:13:53",
-         "count" : 1,
-         "pub-type": "article",
-         "journal": "eLife",
-         "year": "2020", 
-         "url": "", 
-         
-         "author": [ 
-            "Dennis Segebarth","Matthias Griebel","Nikolai Stein","Cora R von Collenberg","Corinna Martin","Dominik Fiedler","Lucas B Comeras","Anupam Sah","Victoria Schoeffler","Theresa Lueffe","Christoph M. Flath"
-         ],
-         "authors": [
-         	
-            	{"first" : "Dennis",	"last" : "Segebarth"},
-            	{"first" : "Matthias",	"last" : "Griebel"},
-            	{"first" : "Nikolai",	"last" : "Stein"},
-            	{"first" : "Cora R",	"last" : "von Collenberg"},
-            	{"first" : "Corinna",	"last" : "Martin"},
-            	{"first" : "Dominik",	"last" : "Fiedler"},
-            	{"first" : "Lucas B",	"last" : "Comeras"},
-            	{"first" : "Anupam",	"last" : "Sah"},
-            	{"first" : "Victoria",	"last" : "Schoeffler"},
-            	{"first" : "Theresa",	"last" : "Lueffe"},
-            	{"first" : "Christoph M.",	"last" : "Flath"}
-         ],
-         
-         "bibtexKey": "segebarth2020objectivity"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/28ed4587f0e0cf8d3254a668937b9baa9/cflath",         
-         "tags" : [
-            "sys:relevantfor:wi-wue","myown","oberdorf","proceedings","stein"
-         ],
-         
-         "intraHash" : "8ed4587f0e0cf8d3254a668937b9baa9",
-         "interHash" : "7a336e49ebdf64200c41dc746b06c5a2",
-         "label" : "Data-Driven Cycling Policy Guidance using GIS",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2020-09-26 00:08:33",
-         "changeDate" : "2020-09-26 00:08:33",
-         "count" : 3,
-         "pub-type": "inproceedings",
-         "booktitle": "Proceedings of the 41st International Conference on Information Systems (ICIS)",
-         "year": "2020", 
-         "url": "", 
-         
-         "author": [ 
-            "Felix Oberdorf","Nikolai Stein","Christoph M. Flath"
-         ],
-         "authors": [
-         	
-            	{"first" : "Felix",	"last" : "Oberdorf"},
-            	{"first" : "Nikolai",	"last" : "Stein"},
-            	{"first" : "Christoph M.",	"last" : "Flath"}
-         ],
-         
-         "bibtexKey": "oberdorf2020datadriven"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/270718223852c48d5e60be94125ef7eae/cflath",         
-         "tags" : [
-            "sys:relevantfor:wi-wue","greif","myown","proceedings","stein"
-         ],
-         
-         "intraHash" : "70718223852c48d5e60be94125ef7eae",
-         "interHash" : "5d27e2f70ec05e1c17a6a0f58e29be56",
-         "label" : "Support Your Local: IS-Based Collaborative Delivery Service for Urban Communities",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2020-09-25 20:55:21",
-         "changeDate" : "2020-09-25 20:55:21",
-         "count" : 3,
-         "pub-type": "inproceedings",
-         "booktitle": "Proceedings of the 41st International Conference on Information Systems (ICIS)",
-         "year": "2020", 
-         "url": "", 
-         
-         "author": [ 
-            "Toni Greif","Nikolai Stein","Christoph M. Flath"
-         ],
-         "authors": [
-         	
-            	{"first" : "Toni",	"last" : "Greif"},
-            	{"first" : "Nikolai",	"last" : "Stein"},
-            	{"first" : "Christoph M.",	"last" : "Flath"}
-         ],
-         
-         "bibtexKey": "greif2020support"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/216a97b8e402410f7ecf481046613af64/cflath",         
-         "tags" : [
-            "sys:relevantfor:wi-wue","griebel","myown","oberdorf","proceedings","stein"
-         ],
-         
-         "intraHash" : "16a97b8e402410f7ecf481046613af64",
-         "interHash" : "c3240661a6aeb72121f2173e8f68c161",
-         "label" : "ADR for Big-Data IT Artifact Development: An Escalation Management Example",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2020-09-25 20:52:56",
-         "changeDate" : "2020-09-25 20:53:40",
-         "count" : 3,
-         "pub-type": "inproceedings",
-         "booktitle": "Proceedings of the 41st International Conference on Information Systems (ICIS)",
-         "year": "2020", 
-         "url": "", 
-         
-         "author": [ 
-            "Felix Oberdorf","Nikolai Stein","Nicolas Walk","Matthias Griebel","Christoph M. Flath"
-         ],
-         "authors": [
-         	
-            	{"first" : "Felix",	"last" : "Oberdorf"},
-            	{"first" : "Nikolai",	"last" : "Stein"},
-            	{"first" : "Nicolas",	"last" : "Walk"},
-            	{"first" : "Matthias",	"last" : "Griebel"},
-            	{"first" : "Christoph M.",	"last" : "Flath"}
-         ],
-         
-         "bibtexKey": "oberdorfbigdata"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/2de071903aee89ca6c6efc3034b5b90d7/cflath",         
-         "tags" : [
-            "sys:relevantfor:wi-wue","investment","journal","myown"
-         ],
-         
-         "intraHash" : "de071903aee89ca6c6efc3034b5b90d7",
-         "interHash" : "e65e98578d17066dca7f5f273c6a590d",
-         "label" : "Capacity investment choices under cost heterogeneity and output flexibility in oligopoly",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2020-08-28 14:12:46",
-         "changeDate" : "2020-08-28 14:12:46",
-         "count" : 1,
-         "pub-type": "article",
-         "journal": "European Journal of Operational Research",
-         "year": "2020", 
-         "url": "", 
-         
-         "author": [ 
-            "Benoit Chevalier-Roignant","Christoph M. Flath","Peter M. Kort","Lenos Trigeorgis"
-         ],
-         "authors": [
-         	
-            	{"first" : "Benoit",	"last" : "Chevalier-Roignant"},
-            	{"first" : "Christoph M.",	"last" : "Flath"},
-            	{"first" : "Peter M.",	"last" : "Kort"},
-            	{"first" : "Lenos",	"last" : "Trigeorgis"}
-         ],
-         
-         "bibtexKey": "chevalierroignantcapacity"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/2abc675438ecd332e3cbed0995a1e07b7/cflath",         
-         "tags" : [
-            "sys:relevantfor:wi-wue","greif","journal","myown","stein"
-         ],
-         
-         "intraHash" : "abc675438ecd332e3cbed0995a1e07b7",
-         "interHash" : "e10ee1932b31a4775c7b49af12484972",
-         "label" : "Peeking into the Void: Digital Twins for Construction Site Logistics",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2020-05-16 14:57:43",
-         "changeDate" : "2020-10-19 14:44:02",
-         "count" : 5,
-         "pub-type": "article",
-         "journal": "Computers in Industry",
-         "year": "2020", 
-         "url": "", 
-         
-         "author": [ 
-            "Toni Greif","Nikolai Stein","Christoph. M. Flath"
-         ],
-         "authors": [
-         	
-            	{"first" : "Toni",	"last" : "Greif"},
-            	{"first" : "Nikolai",	"last" : "Stein"},
-            	{"first" : "Christoph. M.",	"last" : "Flath"}
-         ],
-         "volume": "121",
-         "bibtexKey": "greif2020peeking"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/2534780eee57bf777733382aa15757c82/cflath",         
-         "tags" : [
-            "sys:relevantfor:wi-wue","greif","griebel","myown","proceedings"
-         ],
-         
-         "intraHash" : "534780eee57bf777733382aa15757c82",
-         "interHash" : "bf9715558fa16829c4ada383d100532e",
-         "label" : "A Picture is Worth More than a Thousand Purchases: Designing an Image-based Fashion Curation System.",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2019-10-09 23:18:23",
-         "changeDate" : "2020-01-23 17:43:11",
-         "count" : 4,
-         "pub-type": "inproceedings",
-         "booktitle": "Proceedings of the 27th European Conference on Information Systems",
-         "year": "2019", 
-         "url": "", 
-         
-         "author": [ 
-            "Matthias Griebel","Giacomo Welsch","Toni Greif","Christoph M. Flath"
-         ],
-         "authors": [
-         	
-            	{"first" : "Matthias",	"last" : "Griebel"},
-            	{"first" : "Giacomo",	"last" : "Welsch"},
-            	{"first" : "Toni",	"last" : "Greif"},
-            	{"first" : "Christoph M.",	"last" : "Flath"}
-         ],
-         
-         "bibtexKey": "griebel2019picture"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/20ca9c2823b8a827684e5f6c1f6a156c0/cflath",         
-         "tags" : [
-            "sys:relevantfor:wi-wue","griebel","machineLearning","myown","proceedings","stein"
-         ],
-         
-         "intraHash" : "0ca9c2823b8a827684e5f6c1f6a156c0",
-         "interHash" : "1fcf297f42cb83b7439c12bf9d4ea588",
-         "label" : "Augmented Intelligence for Quality Control of Manual Assembly Processes using Industrial Wearable Systems",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2019-09-26 11:19:37",
-         "changeDate" : "2020-01-23 17:43:35",
-         "count" : 4,
-         "pub-type": "inproceedings",
-         "booktitle": "Proceedings of the 40th International Conference on Information Systems (ICIS)",
-         "year": "2019", 
-         "url": "", 
-         
-         "author": [ 
-            "Adrian Krenzer","Nikolai Stein","Matthias Griebel","Christoph M. Flath"
-         ],
-         "authors": [
-         	
-            	{"first" : "Adrian",	"last" : "Krenzer"},
-            	{"first" : "Nikolai",	"last" : "Stein"},
-            	{"first" : "Matthias",	"last" : "Griebel"},
-            	{"first" : "Christoph M.",	"last" : "Flath"}
-         ],
-         
-         "bibtexKey": "krenzer2019augmented"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/2ede9b4154d2b326a800192a1addb2960/cflath",         
-         "tags" : [
-            "sys:relevantfor:wi-wue","3dprinting","myown","proceedings","stein"
-         ],
-         
-         "intraHash" : "ede9b4154d2b326a800192a1addb2960",
-         "interHash" : "306fcab6107442bf1f3843a0b2486ff8",
-         "label" : "Towards Open Production: Designing a marketplace for 3D-printing capacities",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2019-09-26 11:18:33",
-         "changeDate" : "2020-01-23 17:44:01",
-         "count" : 4,
-         "pub-type": "incollection",
-         "booktitle": "Proceedings of the 40th International Conference on Information Systems (ICIS)",
-         "year": "2019", 
-         "url": "", 
-         
-         "author": [ 
-            "Nikolai Stein","Benedikt Walter","Christoph M. Flath"
-         ],
-         "authors": [
-         	
-            	{"first" : "Nikolai",	"last" : "Stein"},
-            	{"first" : "Benedikt",	"last" : "Walter"},
-            	{"first" : "Christoph M.",	"last" : "Flath"}
-         ],
-         
-         "bibtexKey": "steintowards"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/2a4d95c383b67b072277187db301e7f49/cflath",         
-         "tags" : [
-            "sys:relevantfor:wi-wue","myown","proceedings","stein"
-         ],
-         
-         "intraHash" : "a4d95c383b67b072277187db301e7f49",
-         "interHash" : "1f86ab79bb21ef97fa3f5bb507d12715",
-         "label" : "Predictive Analytics for Application Management Services",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2019-04-05 10:54:09",
-         "changeDate" : "2020-01-23 17:44:11",
-         "count" : 3,
-         "pub-type": "inproceedings",
-         "booktitle": "Proceedings of the 26th European Conference on Information Systems",
-         "year": "2018", 
-         "url": "", 
-         
-         "author": [ 
-            "Nikolai Stein","Christoph M. Flath","Carsten Boehm"
-         ],
-         "authors": [
-         	
-            	{"first" : "Nikolai",	"last" : "Stein"},
-            	{"first" : "Christoph M.",	"last" : "Flath"},
-            	{"first" : "Carsten",	"last" : "Boehm"}
-         ],
-         
-         "bibtexKey": "stein2018predictive"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/2c444ca7e965100539745f350d66e6c17/cflath",         
-         "tags" : [
-            "sys:relevantfor:wi-wue","highlight","journal","myown"
-         ],
-         
-         "intraHash" : "c444ca7e965100539745f350d66e6c17",
-         "interHash" : "0edccbc6c72f86109680cf57c939a36c",
-         "label" : "Disruptive Innovation, Market Entry and Production Flexibility in Heterogeneous Oligopoly",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2018-12-08 22:39:58",
-         "changeDate" : "2020-01-23 18:00:48",
-         "count" : 2,
-         "pub-type": "article",
-         "journal": "Production and Operations Management",
-         "year": "2019", 
-         "url": "", 
-         
-         "author": [ 
-            "Benoit Chevalier-Roignant","Christoph M. Flath","Lenos Trigeorgis"
-         ],
-         "authors": [
-         	
-            	{"first" : "Benoit",	"last" : "Chevalier-Roignant"},
-            	{"first" : "Christoph M.",	"last" : "Flath"},
-            	{"first" : "Lenos",	"last" : "Trigeorgis"}
-         ],
-         "volume": "28","number": "7","pages": "1641-1657",
-         "bibtexKey": "chevalierroignant2019disruptive"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/2b7eddc0645026a87541532bf0ce0d397/cflath",         
-         "tags" : [
-            "sys:relevantfor:wi-wue","3dprinting","highlight","journal","myown"
-         ],
-         
-         "intraHash" : "b7eddc0645026a87541532bf0ce0d397",
-         "interHash" : "38027c09257d459bbf7018080ce07c94",
-         "label" : "Creativity and Productivity in Product Design for Additive Manufacturing: Mechanisms and Platform Outcomes of Remixing",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2018-10-19 21:41:09",
-         "changeDate" : "2020-10-19 14:39:20",
-         "count" : 4,
-         "pub-type": "article",
-         "journal": "Journal of Operations Management",
-         "year": "2019", 
-         "url": "", 
-         
-         "author": [ 
-            "Sascha Friesike","Christoph M. Flath","Marco Wirth","Frédéric Thiesse"
-         ],
-         "authors": [
-         	
-            	{"first" : "Sascha",	"last" : "Friesike"},
-            	{"first" : "Christoph M.",	"last" : "Flath"},
-            	{"first" : "Marco",	"last" : "Wirth"},
-            	{"first" : "Frédéric",	"last" : "Thiesse"}
-         ],
-         "volume": "65","number": "8","pages": "735-752",
-         "bibtexKey": "friesike2019creativity"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/29eb23540a973c508a387ecfed454980f/cflath",         
-         "tags" : [
-            "sys:relevantfor:wi-wue","journal","myown"
-         ],
-         
-         "intraHash" : "9eb23540a973c508a387ecfed454980f",
-         "interHash" : "78a8711f4383c29bdad31dc3a832c607",
-         "label" : "Towards Digital Transformation in Fashion Retailing: A Design-oriented IS Research Study of Automated Checkout Systems",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2018-09-21 18:58:44",
-         "changeDate" : "2020-10-19 14:41:36",
-         "count" : 4,
-         "pub-type": "article",
-         "journal": "Business & Information Systems Engineering",
-         "year": "2019", 
-         "url": "", 
-         
-         "author": [ 
-            "Matthias Hauser","Sebastian A. Günther","Christoph M. Flath","Frédéric Thiesse"
-         ],
-         "authors": [
-         	
-            	{"first" : "Matthias",	"last" : "Hauser"},
-            	{"first" : "Sebastian A.",	"last" : "Günther"},
-            	{"first" : "Christoph M.",	"last" : "Flath"},
-            	{"first" : "Frédéric",	"last" : "Thiesse"}
-         ],
-         "volume": "61","pages": "51-66",
-         "bibtexKey": "hauserforthcomingtowards"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/2a32d778e29891e4b4110d80b515710e3/cflath",         
-         "tags" : [
-            "sys:relevantfor:wi-wue","highlight","journal","myown"
-         ],
-         
-         "intraHash" : "a32d778e29891e4b4110d80b515710e3",
-         "interHash" : "5bd4b497b8839ed3fcf6f5aa97020e5d",
-         "label" : "Privacy in the Sharing Economy",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2018-03-13 22:57:33",
-         "changeDate" : "2020-10-19 14:12:56",
-         "count" : 3,
-         "pub-type": "article",
-         "journal": "Journal of the Association for Information Systems",
-         "year": "2019", 
-         "url": "", 
-         
-         "author": [ 
-            "Timm Teubner","Christoph M. Flath"
-         ],
-         "authors": [
-         	
-            	{"first" : "Timm",	"last" : "Teubner"},
-            	{"first" : "Christoph M.",	"last" : "Flath"}
-         ],
-         "volume": "20","number": "3","pages": "213-242",
-         "bibtexKey": "teubner2018privacy"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/225a526fcf714a2162a9083b9c1063ef9/cflath",         
-         "tags" : [
-            "sys:relevantfor:wi-wue","analytics","iot","journal","manufacturing","myown","stein"
-         ],
-         
-         "intraHash" : "25a526fcf714a2162a9083b9c1063ef9",
-         "interHash" : "f725877cda23174cb2d72614423e9390",
-         "label" : "Big Data on the Shop-floor: Towards Sensor-Based Decision-Support for Manual Processes",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2017-12-19 12:43:10",
-         "changeDate" : "2020-10-19 14:40:12",
-         "count" : 2,
-         "pub-type": "article",
-         "journal": "Journal of Business Economics",
-         "year": "2018", 
-         "url": "", 
-         
-         "author": [ 
-            "Nikolai Stein","Jan Meller","Christoph M. Flath"
-         ],
-         "authors": [
-         	
-            	{"first" : "Nikolai",	"last" : "Stein"},
-            	{"first" : "Jan",	"last" : "Meller"},
-            	{"first" : "Christoph M.",	"last" : "Flath"}
-         ],
-         "volume": "88","pages": "593\u2013616",
-         "bibtexKey": "stein2018shopfloor"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/2e364bf3a52181aba916584bfb695f537/cflath",         
-         "tags" : [
-            "sys:relevantfor:wi-wue","highlight","journal","mobility","myown","optimization","sharingEconomy"
-         ],
-         
-         "intraHash" : "e364bf3a52181aba916584bfb695f537",
-         "interHash" : "3d188a2ac5a4e925fce002198d6ad7bc",
-         "label" : "Leveraging Customer Flexibility for Car-sharing Fleet Optimization",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2017-11-03 20:22:15",
-         "changeDate" : "2020-10-19 14:21:34",
-         "count" : 4,
-         "pub-type": "article",
-         "journal": "Transportation Science",
-         "year": "2019", 
-         "url": "", 
-         
-         "author": [ 
-            "Philipp Ströhle","Christoph M. Flath","Johannes Gärttner"
-         ],
-         "authors": [
-         	
-            	{"first" : "Philipp",	"last" : "Ströhle"},
-            	{"first" : "Christoph M.",	"last" : "Flath"},
-            	{"first" : "Johannes",	"last" : "Gärttner"}
-         ],
-         "volume": "53","number": "1","pages": "42-61",
-         "bibtexKey": "strohleleveraging"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/2e3a91c5b3761a436b6a6b14a9e7488c8/cflath",         
-         "tags" : [
-            "sys:relevantfor:wi-wue","RFID","design_science","myown","proceedings"
-         ],
-         
-         "intraHash" : "e3a91c5b3761a436b6a6b14a9e7488c8",
-         "interHash" : "22daec1da19e3e947e42dc401d580c24",
-         "label" : "Designing Pervasive Information Systems: A Fashion Retail Case Study",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2017-09-21 19:57:27",
-         "changeDate" : "2018-03-13 21:55:02",
-         "count" : 3,
-         "pub-type": "inproceedings",
-         "booktitle": "Proceedings of the International Conference on Information Systems",
-         "year": "2017", 
-         "url": "", 
-         
-         "author": [ 
-            "Matthias Hauser","Sebastian A. Günther","Christoph M. Flath","Frédéric Thiesse"
-         ],
-         "authors": [
-         	
-            	{"first" : "Matthias",	"last" : "Hauser"},
-            	{"first" : "Sebastian A.",	"last" : "Günther"},
-            	{"first" : "Christoph M.",	"last" : "Flath"},
-            	{"first" : "Frédéric",	"last" : "Thiesse"}
-         ],
-         
-         "bibtexKey": "hauserdesigning"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/2377c373f35e920a4fd6ed3b67af5b5b6/cflath",         
-         "tags" : [
-            "sys:relevantfor:wi-wue","coordination","highlight","journal","myown","optimization","smartGrid"
-         ],
-         
-         "intraHash" : "377c373f35e920a4fd6ed3b67af5b5b6",
-         "interHash" : "0a7a39621c007f61e5d124a34a67baea",
-         "label" : "Portfolio and Contract Design for Demand Response Resources",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2017-09-12 21:51:52",
-         "changeDate" : "2020-01-23 18:01:56",
-         "count" : 1,
-         "pub-type": "article",
-         "journal": "European Journal of Operational Research",
-         "year": "2017", 
-         "url": "", 
-         
-         "author": [ 
-            "Johannes Gärttner","Christoph M. Flath","Christof Weinhardt"
-         ],
-         "authors": [
-         	
-            	{"first" : "Johannes",	"last" : "Gärttner"},
-            	{"first" : "Christoph M.",	"last" : "Flath"},
-            	{"first" : "Christof",	"last" : "Weinhardt"}
-         ],
-         "volume": "266","number": "1","pages": "340-353",
-         "bibtexKey": "garttnerportfolio"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/280a5d46e688620e89b3f7411ab80548d/cflath",         
-         "tags" : [
-            "sys:relevantfor:wi-wue","data_science","highlight","journal","manufacturing","myown","stein"
-         ],
-         
-         "intraHash" : "80a5d46e688620e89b3f7411ab80548d",
-         "interHash" : "cfb53c0e9609959223aa3cb45634f46c",
-         "label" : "Towards a Data Science Toolbox for Industrial Analytics Applications",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2017-09-12 14:05:53",
-         "changeDate" : "2020-10-19 14:37:58",
-         "count" : 7,
-         "pub-type": "article",
-         "journal": "Computers in Industry",
-         "year": "2018", 
-         "url": "", 
-         
-         "author": [ 
-            "Christoph M. Flath","Nikolai Stein"
-         ],
-         "authors": [
-         	
-            	{"first" : "Christoph M.",	"last" : "Flath"},
-            	{"first" : "Nikolai",	"last" : "Stein"}
-         ],
-         "volume": "94","pages": "16-25",
-         "bibtexKey": "flathtowards"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/24555731ec0b1f67a81599c379f57e8ee/cflath",         
-         "tags" : [
-            "sys:relevantfor:wi-wue","analytics","journal","myown"
-         ],
-         
-         "intraHash" : "4555731ec0b1f67a81599c379f57e8ee",
-         "interHash" : "091ef1695f55210ec9aabf55bfcb0b3c",
-         "label" : "How a Traditional Company Seeded New Analytics Capabilities",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2017-07-18 18:25:08",
-         "changeDate" : "2020-10-19 14:42:38",
-         "count" : 3,
-         "pub-type": "article",
-         "journal": "MIS Quarterly Executive",
-         "year": "2017", 
-         "url": "", 
-         
-         "author": [ 
-            "Gunther Gust","Christoph M. Flath","Tobias Brandt","Philipp Ströhle","Dirk Neumann"
-         ],
-         "authors": [
-         	
-            	{"first" : "Gunther",	"last" : "Gust"},
-            	{"first" : "Christoph M.",	"last" : "Flath"},
-            	{"first" : "Tobias",	"last" : "Brandt"},
-            	{"first" : "Philipp",	"last" : "Ströhle"},
-            	{"first" : "Dirk",	"last" : "Neumann"}
-         ],
-         "volume": "16","number": "3",
-         "bibtexKey": "gust2017seeding"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/237368257ed50d2c7bee5e1063ad7d0d6/cflath",         
-         "tags" : [
-            "sys:relevantfor:wi-wue","dataScience","myown","proceedings","stein"
-         ],
-         
-         "intraHash" : "37368257ed50d2c7bee5e1063ad7d0d6",
-         "interHash" : "cba5535de5ec2ddb63da58799561e40a",
-         "label" : "Applying data science for shop-floor performance prediction",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2017-05-02 23:02:28",
-         "changeDate" : "2020-01-23 17:45:19",
-         "count" : 4,
-         "pub-type": "inproceedings",
-         "booktitle": "Proceedings of the European Conference on Information Systems",
-         "year": "2017", 
-         "url": "", 
-         
-         "author": [ 
-            "Nikolai Stein","Christoph M. Flath"
-         ],
-         "authors": [
-         	
-            	{"first" : "Nikolai",	"last" : "Stein"},
-            	{"first" : "Christoph M.",	"last" : "Flath"}
-         ],
-         
-         "bibtexKey": "stein2017applying"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/294cc4df865804430d3038e096f3479e2/cflath",         
-         "tags" : [
-            "3dprinting","highlight","journal","myown"
-         ],
-         
-         "intraHash" : "94cc4df865804430d3038e096f3479e2",
-         "interHash" : "238cd4b38c01609ae257999299ffcdb8",
-         "label" : "Copy, Transform, Combine: Exploring the Remix as a Form of Innovation",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2017-04-10 17:28:05",
-         "changeDate" : "2024-11-11 10:17:40",
-         "count" : 6,
-         "pub-type": "article",
-         "journal": "Journal of Information Technology",
-         "year": "2017", 
-         "url": "", 
-         
-         "author": [ 
-            "Christoph Flath","Sascha Friesike","Marco Wirth","Frederic Thiesse"
-         ],
-         "authors": [
-         	
-            	{"first" : "Christoph",	"last" : "Flath"},
-            	{"first" : "Sascha",	"last" : "Friesike"},
-            	{"first" : "Marco",	"last" : "Wirth"},
-            	{"first" : "Frederic",	"last" : "Thiesse"}
-         ],
-         "volume": "32","number": "4","pages": "306-325",
-         "bibtexKey": "flath2017transform"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/28d890da91cae977717616ed7434e1aeb/cflath",         
-         "tags" : [
-            "sys:relevantfor:wi-wue","journal","myown"
-         ],
-         
-         "intraHash" : "8d890da91cae977717616ed7434e1aeb",
-         "interHash" : "4223c33671db64e333fa964fe918d61a",
-         "label" : "Dient die 10-Punkte-Agenda der Bundesregierung einer erfolgreichen Energiewende?",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2017-03-13 16:27:12",
-         "changeDate" : "2017-03-13 16:27:51",
-         "count" : 1,
-         "pub-type": "article",
-         "journal": "et - Energiewirtschaftliche Tagesfragen",
-         "year": "2017", 
-         "url": "http://et-energie-online.de/AktuellesHeft/WeitereThemen/tabid/71/Year/2017/Month/3/NewsModule/425/NewsId/3061/Dient-die-10PunkteAgenda-der-Bundesregierung-einer-erfolgreichen-Energiewende.aspx", 
-         
-         "author": [ 
-            "Clemens van Dinther","Bernhard Fey","Sven Renelt","Jens Strüker","Christoph Flath","Orestis Terzidis","Peter Bretschneider"
-         ],
-         "authors": [
-         	
-            	{"first" : "Clemens",	"last" : "van Dinther"},
-            	{"first" : "Bernhard",	"last" : "Fey"},
-            	{"first" : "Sven",	"last" : "Renelt"},
-            	{"first" : "Jens",	"last" : "Strüker"},
-            	{"first" : "Christoph",	"last" : "Flath"},
-            	{"first" : "Orestis",	"last" : "Terzidis"},
-            	{"first" : "Peter",	"last" : "Bretschneider"}
-         ],
-         "volume": "67","number": "3",
-         "bibtexKey": "vandinther2017dient"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/2f651dbe9ecd0121239ed7af2b9f0742a/cflath",         
-         "tags" : [
-            "journal","myown"
-         ],
-         
-         "intraHash" : "f651dbe9ecd0121239ed7af2b9f0742a",
-         "interHash" : "00d06f1842717708b3e58435473854e1",
-         "label" : "Morphological analysis of energy services: Paving the way to quality differentiation in the power sector",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2017-03-12 21:51:01",
-         "changeDate" : "2020-10-19 14:37:14",
-         "count" : 9,
-         "pub-type": "article",
-         "journal": "Energy Policy",
-         "year": "2017", 
-         "url": "", 
-         
-         "author": [ 
-            "Florian Salah","Christoph M. Flath","Christian Will","Alexander Schuller","Christof Weinhardt"
-         ],
-         "authors": [
-         	
-            	{"first" : "Florian",	"last" : "Salah"},
-            	{"first" : "Christoph M.",	"last" : "Flath"},
-            	{"first" : "Christian",	"last" : "Will"},
-            	{"first" : "Alexander",	"last" : "Schuller"},
-            	{"first" : "Christof",	"last" : "Weinhardt"}
-         ],
-         "volume": "106","pages": "614-624",
-         "bibtexKey": "salahmorphological"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/2a338c7246b9b3ad3f1c0f2501bb913fc/cflath",         
-         "tags" : [
-            "iot","myown","proceedings","rfid"
-         ],
-         
-         "intraHash" : "a338c7246b9b3ad3f1c0f2501bb913fc",
-         "interHash" : "82c25a009a47e2cd1f667e399ea2434e",
-         "label" : "Leveraging RFID Data Analytics for the Design of an Automated Checkout System",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2017-01-23 17:54:17",
-         "changeDate" : "2018-03-13 21:55:36",
-         "count" : 3,
-         "pub-type": "inproceedings",
-         "booktitle": "Proceedings of the International Conference on Wirtschaftsinformatik",
-         "year": "2017", 
-         "url": "", 
-         
-         "author": [ 
-            "Matthias Hauser","Sebastian Günther","Christoph M. Flath","Frédéric Thiesse"
-         ],
-         "authors": [
-         	
-            	{"first" : "Matthias",	"last" : "Hauser"},
-            	{"first" : "Sebastian",	"last" : "Günther"},
-            	{"first" : "Christoph M.",	"last" : "Flath"},
-            	{"first" : "Frédéric",	"last" : "Thiesse"}
-         ],
-         
-         "bibtexKey": "hauser2017leveraging"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/288287b2af04d3d796885a0549b839aca/cflath",         
-         "tags" : [
-            "sys:relevantfor:wi-wue","analytics","machineLearning","myown","proceedings","security","stein"
-         ],
-         
-         "intraHash" : "88287b2af04d3d796885a0549b839aca",
-         "interHash" : "8088494165b675388c18578d31eac8c4",
-         "label" : "Dynamic Intrusion Detection in Database Systems: A Machine-Learning Approach",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2016-09-25 09:06:39",
-         "changeDate" : "2020-01-23 17:45:41",
-         "count" : 5,
-         "pub-type": "inproceedings",
-         "booktitle": "Proceedings of the International Conference on Information Systems","address":"Dublin, Ireland",
-         "year": "2016", 
-         "url": "", 
-         
-         "author": [ 
-            "Niklas Rappel","Nikolai Stein","Christoph M. Flath"
-         ],
-         "authors": [
-         	
-            	{"first" : "Niklas",	"last" : "Rappel"},
-            	{"first" : "Nikolai",	"last" : "Stein"},
-            	{"first" : "Christoph M.",	"last" : "Flath"}
-         ],
-         
-         "bibtexKey": "rappel2016dynamic"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/23cb85c5d6a00406b0e2bdd7aaadf3767/cflath",         
-         "tags" : [
-            "sys:relevantfor:wi-wue","analytics","myown","proceedings","smartGrid"
-         ],
-         
-         "intraHash" : "3cb85c5d6a00406b0e2bdd7aaadf3767",
-         "interHash" : "7f1626b547a219b64f1869a89155a44b",
-         "label" : "Bringing Analytics into Practice: Evidence from the Power Sector",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2016-09-25 09:04:43",
-         "changeDate" : "2018-03-13 21:56:27",
-         "count" : 2,
-         "pub-type": "inproceedings",
-         "booktitle": "Proceedings of the International Conference on Information Systems","address":"Dublin, Ireland",
-         "year": "2016", 
-         "url": "", 
-         
-         "author": [ 
-            "Gunther Gust","Christoph M. Flath","Tobias Brandt","Philipp Ströhle","Dirk Neumann"
-         ],
-         "authors": [
-         	
-            	{"first" : "Gunther",	"last" : "Gust"},
-            	{"first" : "Christoph M.",	"last" : "Flath"},
-            	{"first" : "Tobias",	"last" : "Brandt"},
-            	{"first" : "Philipp",	"last" : "Ströhle"},
-            	{"first" : "Dirk",	"last" : "Neumann"}
-         ],
-         
-         "bibtexKey": "gust2016bringing"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/2ca3e92f2782f7c148d38d990cc90f388/cflath",         
-         "tags" : [
-            "sys:relevantfor:wi-wue","myown","optimization","pricing","proceedings","smartGrid","stein"
-         ],
-         
-         "intraHash" : "ca3e92f2782f7c148d38d990cc90f388",
-         "interHash" : "6570e01470a794615c3ef14dd7d32069",
-         "label" : "Decision Support for Group-based Electricity Prices in Smart Grids",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2016-09-06 13:20:31",
-         "changeDate" : "2020-01-23 17:45:49",
-         "count" : 7,
-         "pub-type": "inproceedings",
-         "booktitle": "Proceedings of the Americas Conference on Information Systems","address":"San Diego, CA, USA",
-         "year": "2016", 
-         "url": "", 
-         
-         "author": [ 
-            "Nikolai Stein","Christoph M. Flath"
-         ],
-         "authors": [
-         	
-            	{"first" : "Nikolai",	"last" : "Stein"},
-            	{"first" : "Christoph M.",	"last" : "Flath"}
-         ],
-         
-         "bibtexKey": "stein2016decision"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/2147e227b6ff061e7b35cf3f40ae31051/cflath",         
-         "tags" : [
-            "sys:relevantfor:wi-wue","highlight","journal","marketDesign","myown","smartGrid"
-         ],
-         
-         "intraHash" : "147e227b6ff061e7b35cf3f40ae31051",
-         "interHash" : "4824751680978ca2e421aa5ac03a2285",
-         "label" : "Local Matching of Flexible Load in Smart Grids",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2016-03-02 20:52:13",
-         "changeDate" : "2020-01-23 18:02:46",
-         "count" : 4,
-         "pub-type": "article",
-         "journal": "European Journal of Operational Research",
-         "year": "2016", 
-         "url": "", 
-         
-         "author": [ 
-            "Philipp Ströhle","Christoph M. Flath"
-         ],
-         "authors": [
-         	
-            	{"first" : "Philipp",	"last" : "Ströhle"},
-            	{"first" : "Christoph M.",	"last" : "Flath"}
-         ],
-         "volume": "253","number": "13","pages": "811-824",
-         "bibtexKey": "strohle2016local"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/256471271f885fc0caa42dfdbb20e934a/cflath",         
-         "tags" : [
-            "sys:relevantfor:wi-wue","electricvehicles","journal","myown","optimization","smartGrid"
-         ],
-         
-         "intraHash" : "56471271f885fc0caa42dfdbb20e934a",
-         "interHash" : "3a69830fe0df709ff6c633cec1ea6934",
-         "label" : "Price-based Load Coordination Revisited: Augmenting Open-Loop Coordination Approaches",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2016-02-15 17:58:05",
-         "changeDate" : "2016-11-16 10:55:19",
-         "count" : 4,
-         "pub-type": "article",
-         "journal": "Business Research",
-         "year": "2016", 
-         "url": "", 
-         
-         "author": [ 
-            "Christoph M. Flath","Sebastian Gottwalt"
-         ],
-         "authors": [
-         	
-            	{"first" : "Christoph M.",	"last" : "Flath"},
-            	{"first" : "Sebastian",	"last" : "Gottwalt"}
-         ],
-         "volume": "9","number": "1","pages": "157-178",
-         "bibtexKey": "flath2016pricebased"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/2dcc8710ff6cb7e65e6deec9dfa4840dd/cflath",         
-         "tags" : [
-            "sys:relevantfor:wi-wue","RFID","analytics","myown","proceedings"
-         ],
-         
-         "intraHash" : "dcc8710ff6cb7e65e6deec9dfa4840dd",
-         "interHash" : "0f62552d9b8a793eac328b417669b136",
-         "label" : "Pushing the limits of RFID: Empowering RFID-based Electronic Article Surveillance with Data Analytics Techniques",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2015-09-15 16:48:21",
-         "changeDate" : "2018-03-13 21:56:36",
-         "count" : 5,
-         "pub-type": "inproceedings",
-         "booktitle": "Proceedings of the International Conference on Information Systems",
-         "year": "2015", 
-         "url": "", 
-         
-         "author": [ 
-            "Matthias Hauser","Daniel Zügner","Christoph M. Flath","Frédéric Thiesse"
-         ],
-         "authors": [
-         	
-            	{"first" : "Matthias",	"last" : "Hauser"},
-            	{"first" : "Daniel",	"last" : "Zügner"},
-            	{"first" : "Christoph M.",	"last" : "Flath"},
-            	{"first" : "Frédéric",	"last" : "Thiesse"}
-         ],
-         
-         "bibtexKey": "hauserpushing"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/2ab36e5aeb0377fcdc1b19cd170e0b936/cflath",         
-         "tags" : [
-            "sys:relevantfor:wi-wue","journal","mobility","myown","service","sharingEconomy"
-         ],
-         
-         "intraHash" : "ab36e5aeb0377fcdc1b19cd170e0b936",
-         "interHash" : "2d9c45dad844dd3f94070befb189b396",
-         "label" : "The Economics of Multi-Hop Ride Sharing: Creating new mobility networks through IS",
-         "user" : "cflath",
-         "description" : "in press",
-         "date" : "2015-07-07 18:56:58",
-         "changeDate" : "2016-11-16 10:56:42",
-         "count" : 6,
-         "pub-type": "article",
-         "journal": "Business & Information Systems Engineering",
-         "year": "2015", 
-         "url": "", 
-         
-         "author": [ 
-            "Timm Teubner","Christoph M. Flath"
-         ],
-         "authors": [
-         	
-            	{"first" : "Timm",	"last" : "Teubner"},
-            	{"first" : "Christoph M.",	"last" : "Flath"}
-         ],
-         "volume": "57","number": "5","pages": "311-324",
-         "bibtexKey": "teubnereconomics"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/22fed49741a03f703d99b0c80f9e22826/cflath",         
-         "tags" : [
-            "sys:relevantfor:wi-wue","3dprinting","myown","proceedings","remix"
-         ],
-         
-         "intraHash" : "2fed49741a03f703d99b0c80f9e22826",
-         "interHash" : "4edf03b648f7331873fb850d563f3b77",
-         "label" : "PATTERNS OF REMIXES OR WHERE DO INNOVATIONS COME FROM: EVIDENCE FROM 3D PRINTING",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2015-04-06 14:08:35",
-         "changeDate" : "2018-03-13 21:56:04",
-         "count" : 3,
-         "pub-type": "inproceedings",
-         "booktitle": "Proceedings of the European Conference on Information Systems",
-         "year": "2015", 
-         "url": "", 
-         
-         "author": [ 
-            "Marco Wirth","Sascha Friesike","Christoph M. Flath","Frédéric Thiesse"
-         ],
-         "authors": [
-         	
-            	{"first" : "Marco",	"last" : "Wirth"},
-            	{"first" : "Sascha",	"last" : "Friesike"},
-            	{"first" : "Christoph M.",	"last" : "Flath"},
-            	{"first" : "Frédéric",	"last" : "Thiesse"}
-         ],
-         
-         "bibtexKey": "wirth2015patterns"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/268a9011b0a36ca41259ebb8f266888d8/cflath",         
-         "tags" : [
-            "sys:relevantfor:wi-wue","electricvehicles","journal","myown","optimization"
-         ],
-         
-         "intraHash" : "68a9011b0a36ca41259ebb8f266888d8",
-         "interHash" : "e7816d6fa8ef4ecfc4953af1c70c25fa",
-         "label" : "Quantifying Load Flexibility of Electric Vehicles for Renewable Energy Integration",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2015-04-06 13:11:23",
-         "changeDate" : "2016-11-16 10:58:04",
-         "count" : 12,
-         "pub-type": "article",
-         "journal": "Applied Energy",
-         "year": "2015", 
-         "url": "/brokenurl#10.1016/j.apenergy.2015.04.004", 
-         
-         "author": [ 
-            "Alexander Schuller","Christoph M. Flath","Sebastian Gottwalt"
-         ],
-         "authors": [
-         	
-            	{"first" : "Alexander",	"last" : "Schuller"},
-            	{"first" : "Christoph M.",	"last" : "Flath"},
-            	{"first" : "Sebastian",	"last" : "Gottwalt"}
-         ],
-         "volume": "151","pages": "335-344",
-         "bibtexKey": "schuller2015quantifying"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/2a42417fea1142ec7ee129c7dae25517e/cflath",         
-         "tags" : [
-            "electricvehicles","energyinformatics","journal","myown","pricing"
-         ],
-         
-         "intraHash" : "a42417fea1142ec7ee129c7dae25517e",
-         "interHash" : "1ec2b655758066e1c085a55114509992",
-         "label" : "Deadline differentiated pricing in practice: marketing EV charging in car parks",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2014-11-28 21:58:03",
-         "changeDate" : "2016-11-16 10:40:07",
-         "count" : 5,
-         "pub-type": "article",
-         "journal": "Computer Science - Research and Development","publisher":"Springer Berlin Heidelberg",
-         "year": "2016", 
-         "url": "http://dx.doi.org/10.1007/s00450-014-0293-5", 
-         
-         "author": [ 
-            "Florian Salah","Christoph M. Flath"
-         ],
-         "authors": [
-         	
-            	{"first" : "Florian",	"last" : "Salah"},
-            	{"first" : "Christoph M.",	"last" : "Flath"}
-         ],
-         "volume": "31","number": "1","pages": "33-40",
-         "issn" : "1865-2034",
-         
-         "language" : "English",
-         
-         "doi" : "10.1007/s00450-014-0293-5",
-         
-         "bibtexKey": "salah2014deadline"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/236eb4440fda7ae7ba493a8e5ffe4a06d/cflath",         
-         "tags" : [
-            "coordination","electricvehicles","journal","myown","optimization"
-         ],
-         
-         "intraHash" : "36eb4440fda7ae7ba493a8e5ffe4a06d",
-         "interHash" : "823c9579717c5e91927171951ea32f19",
-         "label" : "Impact of Electric Vehicles on Distribution Substations: A Swiss Case Study",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2014-09-29 10:08:52",
-         "changeDate" : "2014-11-30 12:02:42",
-         "count" : 8,
-         "pub-type": "article",
-         "journal": "Applied Energy",
-         "year": "2015", 
-         "url": "http://dx.doi.org/10.1016/j.apenergy.2014.09.091", 
-         
-         "author": [ 
-            "Florian Salah","Jens P. Ilg","Christoph M. Flath","Hauke Basse","Clemens van Dinther"
-         ],
-         "authors": [
-         	
-            	{"first" : "Florian",	"last" : "Salah"},
-            	{"first" : "Jens P.",	"last" : "Ilg"},
-            	{"first" : "Christoph M.",	"last" : "Flath"},
-            	{"first" : "Hauke",	"last" : "Basse"},
-            	{"first" : "Clemens",	"last" : "van Dinther"}
-         ],
-         "volume": "137","number": "1","pages": "88-96",
-         "bibtexKey": "salah2014impact"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/2b0ff27579dff7f165ef99a3a1b3cea1e/cflath",         
-         "tags" : [
-            "energyinformatics","journal","marketDesign","myown","privacy","smartGrid"
-         ],
-         
-         "intraHash" : "b0ff27579dff7f165ef99a3a1b3cea1e",
-         "interHash" : "aa58e055b6f3a96aa26e0775e8b1a51d",
-         "label" : "Allocative and Strategic Effects of Privacy Enhancement in Smart Grids",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2014-09-24 13:41:38",
-         "changeDate" : "2016-11-16 10:58:47",
-         "count" : 7,
-         "pub-type": "article",
-         "journal": "Information Systems",
-         "year": "2015", 
-         "url": "http://dx.doi.org/10.1016/j.is.2014.09.007", 
-         
-         "author": [ 
-            "Stephan Kessler","Christoph M. Flath","Klemens Böhm"
-         ],
-         "authors": [
-         	
-            	{"first" : "Stephan",	"last" : "Kessler"},
-            	{"first" : "Christoph M.",	"last" : "Flath"},
-            	{"first" : "Klemens",	"last" : "Böhm"}
-         ],
-         "volume": "53","pages": "170-181",
-         "bibtexKey": "kessler2015allocative"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/22d964a2737f7ad0198047784ea4a2a66/cflath",         
-         "tags" : [
-            "sys:relevantfor:wi-wue","cloud","journal","myown","service"
-         ],
-         
-         "intraHash" : "2d964a2737f7ad0198047784ea4a2a66",
-         "interHash" : "10841490a93b7afdd34d1685ab706237",
-         "label" : "A utility-based approach for customised cloud service selection",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2014-06-18 10:53:18",
-         "changeDate" : "2015-02-01 14:06:44",
-         "count" : 2,
-         "pub-type": "article",
-         "journal": "International Journal of Computational Science and Engineering",
-         "year": "2015", 
-         "url": "http://inderscience.metapress.com/content/b30x54802x6883t5/", 
-         
-         "author": [ 
-            "Foued Jrad","Jie Tao","Rico Knapper","Christoph M. Flath","Achim Streit"
-         ],
-         "authors": [
-         	
-            	{"first" : "Foued",	"last" : "Jrad"},
-            	{"first" : "Jie",	"last" : "Tao"},
-            	{"first" : "Rico",	"last" : "Knapper"},
-            	{"first" : "Christoph M.",	"last" : "Flath"},
-            	{"first" : "Achim",	"last" : "Streit"}
-         ],
-         "volume": "10","number": "1","pages": "32-44",
-         "bibtexKey": "CitationKey"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/206656538e0807edc0cac5409d30baa73/cflath",         
-         "tags" : [
-            "ElectricVehicles","coordination","highlight","journal","myown","optimization","pricing"
-         ],
-         
-         "intraHash" : "06656538e0807edc0cac5409d30baa73",
-         "interHash" : "5a2f44618a5551196f7a006347d134ab",
-         "label" : "Improving Electric Vehicle Charging Coordination Through Area Pricing",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2014-06-18 10:47:08",
-         "changeDate" : "2024-11-11 10:17:23",
-         "count" : 1,
-         "pub-type": "article",
-         "journal": "Transportation Science",
-         "year": "2014", 
-         "url": "", 
-         
-         "author": [ 
-            "Christoph M. Flath","Jens Ilg","Sebastian Gottwalt","Hartmut Schmeck","Christof Weinhardt"
-         ],
-         "authors": [
-         	
-            	{"first" : "Christoph M.",	"last" : "Flath"},
-            	{"first" : "Jens",	"last" : "Ilg"},
-            	{"first" : "Sebastian",	"last" : "Gottwalt"},
-            	{"first" : "Hartmut",	"last" : "Schmeck"},
-            	{"first" : "Christof",	"last" : "Weinhardt"}
-         ],
-         "volume": "48","number": "4","pages": "619-634",
-         "bibtexKey": "flath2014improving"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/2f8258f8d0ad0a0f9d710c7e5162a713f/cflath",         
-         "tags" : [
-            "DemandResponse","ElectricVehicles","journal","myown","v2g"
-         ],
-         
-         "intraHash" : "f8258f8d0ad0a0f9d710c7e5162a713f",
-         "interHash" : "00dc3b2e68d6ee2244900da186d10ee6",
-         "label" : "Charging Strategies for Battery Electric Vehicles: Economic Benchmark\r\nand V2G Potential",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2014-06-18 10:46:14",
-         "changeDate" : "2016-11-16 11:07:35",
-         "count" : 1,
-         "pub-type": "article",
-         "journal": "IEEE Transactions on Power Systems",
-         "year": "2014", 
-         "url": "http://dx.doi.org/10.1109/TPWRS.2014.2301024?", 
-         
-         "author": [ 
-            "Alexander Schuller","Benjamin Dietz","Christoph Flath","Christof Weinhardt"
-         ],
-         "authors": [
-         	
-            	{"first" : "Alexander",	"last" : "Schuller"},
-            	{"first" : "Benjamin",	"last" : "Dietz"},
-            	{"first" : "Christoph",	"last" : "Flath"},
-            	{"first" : "Christof",	"last" : "Weinhardt"}
-         ],
-         "volume": "29","number": "5","pages": "2014-2022",
-         "doi" : "10.1109/TPWRS.2014.2301024",
-         
-         "bibtexKey": "CitationKey"
-
-      }
-,
-      {
-         "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/287fd367bb0bbadce76a166701fc3ce16/cflath",         
-         "tags" : [
-            "EnergyInformatics","journal","myown"
-         ],
-         
-         "intraHash" : "87fd367bb0bbadce76a166701fc3ce16",
-         "interHash" : "a26221525306a9b5ffad7d37da4acb9b",
-         "label" : "Energy Informatics",
-         "user" : "cflath",
-         "description" : "",
-         "date" : "2014-06-18 10:45:45",
-         "changeDate" : "2016-11-16 11:03:26",
-         "count" : 1,
-         "pub-type": "article",
-         "journal": "Business & Information Systems Engineering",
-         "year": "2014", 
-         "url": "http://dx.doi.org/10.1007/s12599-013-0304-2", 
-         
-         "author": [ 
-            "Christoph Goebel","Hans-Arno Jacobsen","Victor Razo","Christoph Doblander","Jose Rivera","Jens Ilg","Christoph Flath","Hartmut Schmeck","Christof Weinhardt","Daniel Pathmaperuma","Hans-Jürgen Appelrath","Michael Sonnenschein","Sebastian Lehnhoff","Oliver Kramer","Thorsten Staake","Elgar Fleisch","Dirk Neumann","Jens Strüker","Koray Erek","Rüdiger Zarnekow","Holger Ziekow","Jörg Lässig"
-         ],
-         "authors": [
-         	
-            	{"first" : "Christoph",	"last" : "Goebel"},
-            	{"first" : "Hans-Arno",	"last" : "Jacobsen"},
-            	{"first" : "Victor",	"last" : "Razo"},
-            	{"first" : "Christoph",	"last" : "Doblander"},
-            	{"first" : "Jose",	"last" : "Rivera"},
-            	{"first" : "Jens",	"last" : "Ilg"},
-            	{"first" : "Christoph",	"last" : "Flath"},
-            	{"first" : "Hartmut",	"last" : "Schmeck"},
-            	{"first" : "Christof",	"last" : "Weinhardt"},
-            	{"first" : "Daniel",	"last" : "Pathmaperuma"},
-            	{"first" : "Hans-Jürgen",	"last" : "Appelrath"},
-            	{"first" : "Michael",	"last" : "Sonnenschein"},
-            	{"first" : "Sebastian",	"last" : "Lehnhoff"},
-            	{"first" : "Oliver",	"last" : "Kramer"},
-            	{"first" : "Thorsten",	"last" : "Staake"},
-            	{"first" : "Elgar",	"last" : "Fleisch"},
-            	{"first" : "Dirk",	"last" : "Neumann"},
-            	{"first" : "Jens",	"last" : "Strüker"},
-            	{"first" : "Koray",	"last" : "Erek"},
-            	{"first" : "Rüdiger",	"last" : "Zarnekow"},
-            	{"first" : "Holger",	"last" : "Ziekow"},
-            	{"first" : "Jörg",	"last" : "Lässig"}
-         ],
-         "volume": "6","number": "1","pages": "25-31",
-         "doi" : "10.1007/s12599-013-0304-2",
-         
-         "bibtexKey": "CitationKey"
-
-      }
-	  
-   ]
+{
+  "types": {
+    "Bookmark": {
+      "pluralLabel": "Bookmarks"
+    },
+    "Publication": {
+      "pluralLabel": "Publications"
+    },
+    "GoldStandardPublication": {
+      "pluralLabel": "GoldStandardPublications"
+    },
+    "GoldStandardBookmark": {
+      "pluralLabel": "GoldStandardBookmarks"
+    },
+    "Tag": {
+      "pluralLabel": "Tags"
+    },
+    "User": {
+      "pluralLabel": "Users"
+    },
+    "Group": {
+      "pluralLabel": "Groups"
+    },
+    "Sphere": {
+      "pluralLabel": "Spheres"
+    }
+  },
+  "properties": {
+    "count": {
+      "valueType": "number"
+    },
+    "date": {
+      "valueType": "date"
+    },
+    "changeDate": {
+      "valueType": "date"
+    },
+    "url": {
+      "valueType": "url"
+    },
+    "id": {
+      "valueType": "url"
+    },
+    "tags": {
+      "valueType": "item"
+    },
+    "user": {
+      "valueType": "item"
+    }
+  },
+  "items": [
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/24948e4a78c3d0061a2ced756bf274858/cflath",
+      "tags": [
+        "myown",
+        "proceedings"
+      ],
+      "intraHash": "4948e4a78c3d0061a2ced756bf274858",
+      "interHash": "37093a94230b4c31ee7be9e10fc96130",
+      "label": "Experts versus Novices: Analyzing Behavioral Variability in Complex Process Environments.",
+      "user": "cflath",
+      "description": "",
+      "date": "2026-01-15 12:04:44",
+      "changeDate": "2026-01-15 19:29:16",
+      "count": 3,
+      "pub-type": "inproceedings",
+      "booktitle": "Wirtschaftsinformatik 2024 Proceedings",
+      "year": "2024",
+      "url": "",
+      "author": [
+        "Nico Elbert",
+        "Christoph Michael Flath"
+      ],
+      "authors": [
+        {
+          "first": "Nico",
+          "last": "Elbert"
+        },
+        {
+          "first": "Christoph Michael",
+          "last": "Flath"
+        }
+      ],
+      "bibtexKey": "elbert2024experts"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/234c7f62e1c64dd3ff3efb9226164a2d3/cflath",
+      "tags": [
+        "journal",
+        "myown"
+      ],
+      "intraHash": "34c7f62e1c64dd3ff3efb9226164a2d3",
+      "interHash": "c824ded3b12808878eae8a8e6c4f6227",
+      "label": "Challenges and Outcomes Using Big Data as a Service",
+      "user": "cflath",
+      "description": "",
+      "date": "2026-01-15 12:04:30",
+      "changeDate": "2026-01-15 12:04:30",
+      "count": 2,
+      "pub-type": "article",
+      "journal": "Business & Information Systems Engineering",
+      "year": "2024",
+      "url": "",
+      "author": [
+        "Gautam Srivastava",
+        "Christoph M. Flath",
+        "Jerry Chun-Wei Lin",
+        "Yudong Zhang"
+      ],
+      "authors": [
+        {
+          "first": "Gautam",
+          "last": "Srivastava"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        },
+        {
+          "first": "Jerry Chun-Wei",
+          "last": "Lin"
+        },
+        {
+          "first": "Yudong",
+          "last": "Zhang"
+        }
+      ],
+      "volume": "66",
+      "number": "1",
+      "pages": "1--2",
+      "bibtexKey": "srivastava2024bigdata"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/2ce334766176254cb283541d8226f73a0/cflath",
+      "tags": [
+        "myown",
+        "proceedings"
+      ],
+      "intraHash": "ce334766176254cb283541d8226f73a0",
+      "interHash": "1de9e65e80e959e3d870575c633c32c2",
+      "label": "Process Mining for Game Analytics",
+      "user": "cflath",
+      "description": "",
+      "date": "2026-01-15 12:04:09",
+      "changeDate": "2026-01-15 12:04:09",
+      "count": 3,
+      "pub-type": "inproceedings",
+      "booktitle": "2024 IEEE Conference on Games (CoG)",
+      "publisher": "IEEE",
+      "year": "2024",
+      "url": "",
+      "author": [
+        "Nico Elbert",
+        "Christoph M. Flath"
+      ],
+      "authors": [
+        {
+          "first": "Nico",
+          "last": "Elbert"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        }
+      ],
+      "pages": "1--4",
+      "bibtexKey": "elbert2024processmining"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/24003971647040e650b6408ad45676d23/cflath",
+      "tags": [
+        "journal",
+        "myown"
+      ],
+      "intraHash": "4003971647040e650b6408ad45676d23",
+      "interHash": "9f430b47f0f9ab705633832211e5e0d6",
+      "label": "The faster, the better? The impact of short delivery times on product returns in online retailing",
+      "user": "cflath",
+      "description": "",
+      "date": "2026-01-15 12:03:49",
+      "changeDate": "2026-01-15 12:03:49",
+      "count": 3,
+      "pub-type": "article",
+      "journal": "Journal of Retailing",
+      "year": "2024",
+      "url": "",
+      "author": [
+        "Simon Masuch",
+        "Jan R. Landwehr",
+        "Christoph M. Flath",
+        "Fr\u00e9d\u00e9ric Thiesse"
+      ],
+      "authors": [
+        {
+          "first": "Simon",
+          "last": "Masuch"
+        },
+        {
+          "first": "Jan R.",
+          "last": "Landwehr"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        },
+        {
+          "first": "Fr\u00e9d\u00e9ric",
+          "last": "Thiesse"
+        }
+      ],
+      "volume": "100",
+      "number": "3",
+      "pages": "475--485",
+      "bibtexKey": "masuch2024faster"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/28960812b6f12f177c6ddebfefc228532/cflath",
+      "tags": [
+        "myown",
+        "proceedings"
+      ],
+      "intraHash": "8960812b6f12f177c6ddebfefc228532",
+      "interHash": "14134918da4abd7f092c387f93e7c3e6",
+      "label": "Framework for Extracting Real-World Object-Centric Event Logs from Game Data",
+      "user": "cflath",
+      "description": "",
+      "date": "2026-01-15 12:03:22",
+      "changeDate": "2026-01-15 19:30:22",
+      "count": 2,
+      "pub-type": "inproceedings",
+      "booktitle": "ICPM Workshops",
+      "year": "2024",
+      "url": "",
+      "author": [
+        "Lukas Liss",
+        "Nico Elbert",
+        "Christoph M. Flath",
+        "Wil M. P. van der Aalst"
+      ],
+      "authors": [
+        {
+          "first": "Lukas",
+          "last": "Liss"
+        },
+        {
+          "first": "Nico",
+          "last": "Elbert"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        },
+        {
+          "first": "Wil M. P.",
+          "last": "van der Aalst"
+        }
+      ],
+      "pages": "363--375",
+      "bibtexKey": "liss2024ocel"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/258aacbf54381894785c8998f632de4e7/cflath",
+      "tags": [
+        "myown",
+        "proceedings"
+      ],
+      "intraHash": "58aacbf54381894785c8998f632de4e7",
+      "interHash": "cc2401a15b3b8a9632b8935626d5b5e8",
+      "label": "Beyond Play: Competitive Game Data as an Empirical Resource for IS Research",
+      "user": "cflath",
+      "description": "",
+      "date": "2026-01-15 12:03:06",
+      "changeDate": "2026-01-15 20:16:45",
+      "count": 1,
+      "pub-type": "inproceedings",
+      "booktitle": "Proceedings of the International Conference on Information Systems",
+      "year": "2025",
+      "url": "",
+      "author": [
+        "Nico Elbert",
+        "Nikolai Stein",
+        "Christoph M. Flath"
+      ],
+      "authors": [
+        {
+          "first": "Nico",
+          "last": "Elbert"
+        },
+        {
+          "first": "Nikolai",
+          "last": "Stein"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        }
+      ],
+      "bibtexKey": "elbert2025beyondplay"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/2b6433309c219395333033b037d42badd/cflath",
+      "tags": [
+        "proceedings"
+      ],
+      "intraHash": "b6433309c219395333033b037d42badd",
+      "interHash": "1cc4a63cae150c4dac2e3d526ecbb8ee",
+      "label": "Framework for Extracting Real-World Object-Centric Event Logs from Game",
+      "user": "cflath",
+      "description": "",
+      "date": "2026-01-15 12:02:53",
+      "changeDate": "2026-01-15 12:02:53",
+      "count": 1,
+      "pub-type": "inproceedings",
+      "booktitle": "Process Mining Workshops: ICPM 2024 International Workshops",
+      "address": "Lyngby, Denmark",
+      "year": "2025",
+      "url": "",
+      "author": [
+        "Lukas Liss",
+        "Niklas Elbert",
+        "Christoph M. Flath"
+      ],
+      "authors": [
+        {
+          "first": "Lukas",
+          "last": "Liss"
+        },
+        {
+          "first": "Niklas",
+          "last": "Elbert"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        }
+      ],
+      "bibtexKey": "liss2025framework"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/29a0e229c8c38e00d009cb472adf3ebdf/cflath",
+      "tags": [
+        "myown",
+        "proceedings"
+      ],
+      "intraHash": "9a0e229c8c38e00d009cb472adf3ebdf",
+      "interHash": "2c4e0423db902e2efae304dcc77cfd94",
+      "label": "Assessing Electricity Customers Using Procurement Cost Metrics: A Data-Driven Framework for Modeling Tariff-Driven Behavior",
+      "user": "cflath",
+      "description": "",
+      "date": "2026-01-15 12:02:32",
+      "changeDate": "2026-01-15 12:02:32",
+      "count": 2,
+      "pub-type": "inproceedings",
+      "booktitle": "Proceedings of the 16th ACM International Conference on Future and Sustainable Energy Systems",
+      "publisher": "ACM",
+      "year": "2025",
+      "url": "",
+      "author": [
+        "Robin Thomas Derzbach",
+        "Christoph Michael Flath"
+      ],
+      "authors": [
+        {
+          "first": "Robin Thomas",
+          "last": "Derzbach"
+        },
+        {
+          "first": "Christoph Michael",
+          "last": "Flath"
+        }
+      ],
+      "bibtexKey": "derzbach2025electricity"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/25f0bb733177b40c5ea50561d17a4df1d/cflath",
+      "tags": [
+        "myown",
+        "proceedings"
+      ],
+      "intraHash": "5f0bb733177b40c5ea50561d17a4df1d",
+      "interHash": "061ccfd79f11dfcf7f5e1069eb40cc36",
+      "label": "Matchmaking Beyond Elo: Why Teams are More Than the Sum of Individual Skill",
+      "user": "cflath",
+      "description": "",
+      "date": "2026-01-15 12:01:58",
+      "changeDate": "2026-01-15 19:30:36",
+      "count": 3,
+      "pub-type": "inproceedings",
+      "booktitle": "2025 IEEE Conference on Games (CoG)",
+      "publisher": "IEEE",
+      "year": "2025",
+      "url": "",
+      "author": [
+        "Nico Elbert",
+        "Christoph M Flath",
+        "Victor Klockmann",
+        "Fabian Kosse",
+        "Alicia von Schenk",
+        "Nikolai Stein"
+      ],
+      "authors": [
+        {
+          "first": "Nico",
+          "last": "Elbert"
+        },
+        {
+          "first": "Christoph M",
+          "last": "Flath"
+        },
+        {
+          "first": "Victor",
+          "last": "Klockmann"
+        },
+        {
+          "first": "Fabian",
+          "last": "Kosse"
+        },
+        {
+          "first": "Alicia",
+          "last": "von Schenk"
+        },
+        {
+          "first": "Nikolai",
+          "last": "Stein"
+        }
+      ],
+      "pages": "1--8",
+      "bibtexKey": "elbert2025matchmaking"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/287663f11d51d12b5568110e204dbcbcf/cflath",
+      "tags": [
+        "proceedings",
+        "stein"
+      ],
+      "intraHash": "87663f11d51d12b5568110e204dbcbcf",
+      "interHash": "8425ee0390d5be891c36d8a9217a2cd9",
+      "label": "Process and Strategy Mining in Real-Time Strategy Games",
+      "user": "cflath",
+      "description": "",
+      "date": "2024-11-11 10:35:51",
+      "changeDate": "2024-11-11 10:38:25",
+      "count": 3,
+      "pub-type": "inproceedings",
+      "booktitle": "Wirtschaftsinformatik Proceedings",
+      "year": "2023",
+      "url": "",
+      "author": [
+        "Nico Elbert",
+        "Nikolai Stein",
+        "Christoph M. Flath"
+      ],
+      "authors": [
+        {
+          "first": "Nico",
+          "last": "Elbert"
+        },
+        {
+          "first": "Nikolai",
+          "last": "Stein"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        }
+      ],
+      "bibtexKey": "elbert2023process"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/23c2111e445564a07cf798e48391b0e17/cflath",
+      "tags": [
+        "highlight",
+        "journal",
+        "myown"
+      ],
+      "intraHash": "3c2111e445564a07cf798e48391b0e17",
+      "interHash": "9f430b47f0f9ab705633832211e5e0d6",
+      "label": "The faster, the better? The impact of short delivery times on product returns in online retailing",
+      "user": "cflath",
+      "description": "",
+      "date": "2024-11-11 10:13:50",
+      "changeDate": "2024-11-11 10:13:50",
+      "count": 3,
+      "pub-type": "article",
+      "journal": "Journal of Retailing",
+      "year": "2024",
+      "url": "",
+      "author": [
+        "Simon Masuch",
+        "Jan R. Landwehr",
+        "Christoph M. Flath",
+        "Frederic Thiesse"
+      ],
+      "authors": [
+        {
+          "first": "Simon",
+          "last": "Masuch"
+        },
+        {
+          "first": "Jan R.",
+          "last": "Landwehr"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        },
+        {
+          "first": "Frederic",
+          "last": "Thiesse"
+        }
+      ],
+      "volume": "100",
+      "bibtexKey": "masuch2024faster"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/2e72febd27d9792e784dd06a46fac79da/cflath",
+      "tags": [
+        "journal",
+        "myown"
+      ],
+      "intraHash": "e72febd27d9792e784dd06a46fac79da",
+      "interHash": "edd0243d333c7b3a189274a7fe707f1e",
+      "label": "Welcome to the Era of ChatGPT et al.",
+      "user": "cflath",
+      "description": "",
+      "date": "2024-11-11 10:09:04",
+      "changeDate": "2024-11-11 10:09:19",
+      "count": 2,
+      "pub-type": "article",
+      "journal": "Business & Information Systems Engineering",
+      "year": "2023",
+      "url": "",
+      "author": [
+        "Timm Teubner",
+        "Christoph Michael Flath",
+        "Christof Weinhardt",
+        "Wil van der Aalst",
+        "Oliver Hinz"
+      ],
+      "authors": [
+        {
+          "first": "Timm",
+          "last": "Teubner"
+        },
+        {
+          "first": "Christoph Michael",
+          "last": "Flath"
+        },
+        {
+          "first": "Christof",
+          "last": "Weinhardt"
+        },
+        {
+          "first": "Wil",
+          "last": "van der Aalst"
+        },
+        {
+          "first": "Oliver",
+          "last": "Hinz"
+        }
+      ],
+      "volume": "65",
+      "pages": "95-101",
+      "bibtexKey": "teubner2023welcome"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/218e6566d554443345594b99d347cf436/cflath",
+      "tags": [
+        "myown",
+        "proceedings",
+        "stein"
+      ],
+      "intraHash": "18e6566d554443345594b99d347cf436",
+      "interHash": "a63df01be7c5ad82924841b08fa615fd",
+      "label": "The Layers of Change: Multilevel Adaptations to Exogenous Game Patches in CS: GO",
+      "user": "cflath",
+      "description": "",
+      "date": "2024-11-11 10:06:30",
+      "changeDate": "2024-11-11 10:06:30",
+      "count": 3,
+      "pub-type": "inproceedings",
+      "booktitle": "IEEE Conference on Games (CoG)",
+      "year": "2023",
+      "url": "",
+      "author": [
+        "Nico Elbert",
+        "Emil Paskovski",
+        "Nikolai Stein",
+        "Christoph M. Flath"
+      ],
+      "authors": [
+        {
+          "first": "Nico",
+          "last": "Elbert"
+        },
+        {
+          "first": "Emil",
+          "last": "Paskovski"
+        },
+        {
+          "first": "Nikolai",
+          "last": "Stein"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        }
+      ],
+      "bibtexKey": "elbert2024layers"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/23fd1331805206c4b4034277c1e4227f4/cflath",
+      "tags": [
+        "myown",
+        "proceedings"
+      ],
+      "intraHash": "3fd1331805206c4b4034277c1e4227f4",
+      "interHash": "37093a94230b4c31ee7be9e10fc96130",
+      "label": "Experts versus Novices: Analyzing Behavioral Variability in Complex Process Environments",
+      "user": "cflath",
+      "description": "",
+      "date": "2024-11-11 10:04:03",
+      "changeDate": "2024-11-20 12:36:07",
+      "count": 3,
+      "pub-type": "inproceedings",
+      "booktitle": "Wirtschaftsinformatik Proceedings",
+      "year": "2024",
+      "url": "",
+      "author": [
+        "Nico Elbert",
+        "Christoph Michael Flath"
+      ],
+      "authors": [
+        {
+          "first": "Nico",
+          "last": "Elbert"
+        },
+        {
+          "first": "Christoph Michael",
+          "last": "Flath"
+        }
+      ],
+      "bibtexKey": "2024experts"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/2f148bcd899690650d820edb510073bd3/cflath",
+      "tags": [
+        "myown",
+        "proceedings"
+      ],
+      "intraHash": "f148bcd899690650d820edb510073bd3",
+      "interHash": "1de9e65e80e959e3d870575c633c32c2",
+      "label": "Process Mining for Game Analytics",
+      "user": "cflath",
+      "description": "",
+      "date": "2024-11-11 10:02:49",
+      "changeDate": "2024-11-20 12:36:32",
+      "count": 3,
+      "pub-type": "inproceedings",
+      "booktitle": "IEEE Conference on Games (CoG)",
+      "year": "2024",
+      "url": "",
+      "author": [
+        "Nico Elbert",
+        "Christoph M. Flath"
+      ],
+      "authors": [
+        {
+          "first": "Nico",
+          "last": "Elbert"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        }
+      ],
+      "bibtexKey": "noauthororeditor2024process"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/2eb92e1c2fa13f6b724e6afb2135a10d2/cflath",
+      "tags": [
+        "DeepLearning",
+        "Predictive",
+        "PredictiveProcessAnalytics",
+        "ProcessMining",
+        "journal",
+        "myown",
+        "stein"
+      ],
+      "intraHash": "eb92e1c2fa13f6b724e6afb2135a10d2",
+      "interHash": "5b9a8f2bcc5f8bfbdae2e5d75338eaaf",
+      "label": "Predictive End-to-End Enterprise Process Network Monitoring",
+      "user": "cflath",
+      "description": "",
+      "date": "2023-02-28 15:41:18",
+      "changeDate": "2023-02-28 15:41:18",
+      "count": 3,
+      "pub-type": "article",
+      "journal": "Business & Information Systems Engineering",
+      "year": "2022",
+      "url": "",
+      "author": [
+        "Felix Oberdorf",
+        "Myriam Schaschek",
+        "Sven Weinzierl",
+        "Nikolai Stein",
+        "Martin Matzner",
+        "Christoph M. Flath"
+      ],
+      "authors": [
+        {
+          "first": "Felix",
+          "last": "Oberdorf"
+        },
+        {
+          "first": "Myriam",
+          "last": "Schaschek"
+        },
+        {
+          "first": "Sven",
+          "last": "Weinzierl"
+        },
+        {
+          "first": "Nikolai",
+          "last": "Stein"
+        },
+        {
+          "first": "Martin",
+          "last": "Matzner"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        }
+      ],
+      "doi": "10.1007/s12599-022-00778-4",
+      "bibtexKey": "oberdorf2022predictive"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/2d09da00edf4152e7c60fd73bcaecfb72/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "deep_learning",
+        "highlight",
+        "journal",
+        "myown"
+      ],
+      "intraHash": "d09da00edf4152e7c60fd73bcaecfb72",
+      "interHash": "77316484c065edbac8fe96699d9c22f0",
+      "label": "Deep learning-enabled segmentation of ambiguous bioimages with deepflash2",
+      "user": "cflath",
+      "description": "",
+      "date": "2023-02-25 02:12:40",
+      "changeDate": "2023-02-25 02:13:21",
+      "count": 2,
+      "pub-type": "article",
+      "journal": "Nature Communications",
+      "year": "2023",
+      "url": "",
+      "author": [
+        "Matthias Griebel",
+        "Dennis Segebarth",
+        "Nikolai Stein",
+        "Nina Schukraft",
+        "Philip Tovote",
+        "Robert Blum",
+        "Christoph M. Flath"
+      ],
+      "authors": [
+        {
+          "first": "Matthias",
+          "last": "Griebel"
+        },
+        {
+          "first": "Dennis",
+          "last": "Segebarth"
+        },
+        {
+          "first": "Nikolai",
+          "last": "Stein"
+        },
+        {
+          "first": "Nina",
+          "last": "Schukraft"
+        },
+        {
+          "first": "Philip",
+          "last": "Tovote"
+        },
+        {
+          "first": "Robert",
+          "last": "Blum"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        }
+      ],
+      "bibtexKey": "griebellearningenabled"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/262d1823ad5b4d7a888a1227ff2c64451/cflath",
+      "tags": [
+        "analytics",
+        "highlight",
+        "journal",
+        "myown",
+        "stein"
+      ],
+      "intraHash": "62d1823ad5b4d7a888a1227ff2c64451",
+      "interHash": "4112b9af613b452764947542236a5ef6",
+      "label": "Information Value Analysis for Real-time Silo Fill-level Monitoring",
+      "user": "cflath",
+      "description": "",
+      "date": "2022-12-21 17:24:44",
+      "changeDate": "2024-11-11 10:11:06",
+      "count": 2,
+      "pub-type": "article",
+      "journal": "INFORMS Journal on Applied Analytics",
+      "year": "2023",
+      "url": "",
+      "author": [
+        "Toni Greif",
+        "Nikolai Stein",
+        "Christoph M. Flath"
+      ],
+      "authors": [
+        {
+          "first": "Toni",
+          "last": "Greif"
+        },
+        {
+          "first": "Nikolai",
+          "last": "Stein"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        }
+      ],
+      "volume": "53",
+      "number": "4",
+      "pages": "283-294",
+      "bibtexKey": "greif2022information"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/2079c4abd7161c3e9aa23728ce09d9b15/cflath",
+      "tags": [
+        "analytics",
+        "industry4.0",
+        "journal",
+        "myown",
+        "stein"
+      ],
+      "intraHash": "079c4abd7161c3e9aa23728ce09d9b15",
+      "interHash": "2796d97cd79fcfc7f5cb578adb9aeb51",
+      "label": "Analytics-enabled escalation management: System development and business value assessment",
+      "user": "cflath",
+      "description": "",
+      "date": "2021-05-06 21:45:34",
+      "changeDate": "2024-11-15 13:21:40",
+      "count": 4,
+      "pub-type": "article",
+      "journal": "Computers in Industry",
+      "year": "2021",
+      "url": "",
+      "author": [
+        "Felix Oberdorf",
+        "Nikolai Stein",
+        "Christoph M. Flath"
+      ],
+      "authors": [
+        {
+          "first": "Felix",
+          "last": "Oberdorf"
+        },
+        {
+          "first": "Nikolai",
+          "last": "Stein"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        }
+      ],
+      "bibtexKey": "oberdorf2021analyticsenabled"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/24fb56676ffe30abd0edff266398a4313/cflath",
+      "tags": [
+        "analytics",
+        "highlight",
+        "journal",
+        "myown",
+        "stein"
+      ],
+      "intraHash": "4fb56676ffe30abd0edff266398a4313",
+      "interHash": "3e4a1c9f53fd5490724dbb49704b761b",
+      "label": "Analytics Applications in Fashion Supply Chain Management - A Review of Literature and Practice",
+      "user": "cflath",
+      "description": "",
+      "date": "2021-04-20 23:20:26",
+      "changeDate": "2024-11-18 15:38:12",
+      "count": 3,
+      "pub-type": "article",
+      "journal": "IEEE Transactions on Engineering Management",
+      "year": "2021",
+      "url": "",
+      "author": [
+        "Christina Stahl",
+        "Nikolai Stein",
+        "Christoph M. Flath"
+      ],
+      "authors": [
+        {
+          "first": "Christina",
+          "last": "Stahl"
+        },
+        {
+          "first": "Nikolai",
+          "last": "Stein"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        }
+      ],
+      "bibtexKey": "stahl2021analytics"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/2797b8ad73dc9d2d7bc7dd385b2ed9797/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "analytics",
+        "journal",
+        "machineLearning",
+        "myown",
+        "rfid"
+      ],
+      "intraHash": "797b8ad73dc9d2d7bc7dd385b2ed9797",
+      "interHash": "fecd221955d876dcf041fa8cc49f727c",
+      "label": "Catch me if You Scan: Data-Driven Prescriptive Modeling for Smart Store Environments",
+      "user": "cflath",
+      "description": "",
+      "date": "2020-12-23 21:53:43",
+      "changeDate": "2020-12-23 21:53:43",
+      "count": 3,
+      "pub-type": "article",
+      "journal": "European Journal of Operational Research",
+      "year": "2021",
+      "url": "",
+      "author": [
+        "Matthias Hauser",
+        "Christoph M. Flath",
+        "Frederic Thiesse"
+      ],
+      "authors": [
+        {
+          "first": "Matthias",
+          "last": "Hauser"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        },
+        {
+          "first": "Frederic",
+          "last": "Thiesse"
+        }
+      ],
+      "bibtexKey": "hauser2021catch"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/2157fc45f77296a87aac401bffff4763d/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "deep_learning",
+        "griebel",
+        "journal",
+        "myown",
+        "stein"
+      ],
+      "intraHash": "157fc45f77296a87aac401bffff4763d",
+      "interHash": "2662216ce16e3400a96b929189905aa6",
+      "label": "On the objectivity, reliability, and validity of deep learning enabled bioimage analyses",
+      "user": "cflath",
+      "description": "",
+      "date": "2020-10-17 10:33:58",
+      "changeDate": "2023-02-25 02:13:53",
+      "count": 1,
+      "pub-type": "article",
+      "journal": "eLife",
+      "year": "2020",
+      "url": "",
+      "author": [
+        "Dennis Segebarth",
+        "Matthias Griebel",
+        "Nikolai Stein",
+        "Cora R von Collenberg",
+        "Corinna Martin",
+        "Dominik Fiedler",
+        "Lucas B Comeras",
+        "Anupam Sah",
+        "Victoria Schoeffler",
+        "Theresa Lueffe",
+        "Christoph M. Flath"
+      ],
+      "authors": [
+        {
+          "first": "Dennis",
+          "last": "Segebarth"
+        },
+        {
+          "first": "Matthias",
+          "last": "Griebel"
+        },
+        {
+          "first": "Nikolai",
+          "last": "Stein"
+        },
+        {
+          "first": "Cora R",
+          "last": "von Collenberg"
+        },
+        {
+          "first": "Corinna",
+          "last": "Martin"
+        },
+        {
+          "first": "Dominik",
+          "last": "Fiedler"
+        },
+        {
+          "first": "Lucas B",
+          "last": "Comeras"
+        },
+        {
+          "first": "Anupam",
+          "last": "Sah"
+        },
+        {
+          "first": "Victoria",
+          "last": "Schoeffler"
+        },
+        {
+          "first": "Theresa",
+          "last": "Lueffe"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        }
+      ],
+      "bibtexKey": "segebarth2020objectivity"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/28ed4587f0e0cf8d3254a668937b9baa9/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "myown",
+        "oberdorf",
+        "proceedings",
+        "stein"
+      ],
+      "intraHash": "8ed4587f0e0cf8d3254a668937b9baa9",
+      "interHash": "7a336e49ebdf64200c41dc746b06c5a2",
+      "label": "Data-Driven Cycling Policy Guidance using GIS",
+      "user": "cflath",
+      "description": "",
+      "date": "2020-09-26 00:08:33",
+      "changeDate": "2020-09-26 00:08:33",
+      "count": 3,
+      "pub-type": "inproceedings",
+      "booktitle": "Proceedings of the 41st International Conference on Information Systems (ICIS)",
+      "year": "2020",
+      "url": "",
+      "author": [
+        "Felix Oberdorf",
+        "Nikolai Stein",
+        "Christoph M. Flath"
+      ],
+      "authors": [
+        {
+          "first": "Felix",
+          "last": "Oberdorf"
+        },
+        {
+          "first": "Nikolai",
+          "last": "Stein"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        }
+      ],
+      "bibtexKey": "oberdorf2020datadriven"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/270718223852c48d5e60be94125ef7eae/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "greif",
+        "myown",
+        "proceedings",
+        "stein"
+      ],
+      "intraHash": "70718223852c48d5e60be94125ef7eae",
+      "interHash": "5d27e2f70ec05e1c17a6a0f58e29be56",
+      "label": "Support Your Local: IS-Based Collaborative Delivery Service for Urban Communities",
+      "user": "cflath",
+      "description": "",
+      "date": "2020-09-25 20:55:21",
+      "changeDate": "2020-09-25 20:55:21",
+      "count": 3,
+      "pub-type": "inproceedings",
+      "booktitle": "Proceedings of the 41st International Conference on Information Systems (ICIS)",
+      "year": "2020",
+      "url": "",
+      "author": [
+        "Toni Greif",
+        "Nikolai Stein",
+        "Christoph M. Flath"
+      ],
+      "authors": [
+        {
+          "first": "Toni",
+          "last": "Greif"
+        },
+        {
+          "first": "Nikolai",
+          "last": "Stein"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        }
+      ],
+      "bibtexKey": "greif2020support"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/216a97b8e402410f7ecf481046613af64/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "griebel",
+        "myown",
+        "oberdorf",
+        "proceedings",
+        "stein"
+      ],
+      "intraHash": "16a97b8e402410f7ecf481046613af64",
+      "interHash": "c3240661a6aeb72121f2173e8f68c161",
+      "label": "ADR for Big-Data IT Artifact Development: An Escalation Management Example",
+      "user": "cflath",
+      "description": "",
+      "date": "2020-09-25 20:52:56",
+      "changeDate": "2020-09-25 20:53:40",
+      "count": 3,
+      "pub-type": "inproceedings",
+      "booktitle": "Proceedings of the 41st International Conference on Information Systems (ICIS)",
+      "year": "2020",
+      "url": "",
+      "author": [
+        "Felix Oberdorf",
+        "Nikolai Stein",
+        "Nicolas Walk",
+        "Matthias Griebel",
+        "Christoph M. Flath"
+      ],
+      "authors": [
+        {
+          "first": "Felix",
+          "last": "Oberdorf"
+        },
+        {
+          "first": "Nikolai",
+          "last": "Stein"
+        },
+        {
+          "first": "Nicolas",
+          "last": "Walk"
+        },
+        {
+          "first": "Matthias",
+          "last": "Griebel"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        }
+      ],
+      "bibtexKey": "oberdorfbigdata"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/2de071903aee89ca6c6efc3034b5b90d7/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "investment",
+        "journal",
+        "myown"
+      ],
+      "intraHash": "de071903aee89ca6c6efc3034b5b90d7",
+      "interHash": "e65e98578d17066dca7f5f273c6a590d",
+      "label": "Capacity investment choices under cost heterogeneity and output flexibility in oligopoly",
+      "user": "cflath",
+      "description": "",
+      "date": "2020-08-28 14:12:46",
+      "changeDate": "2020-08-28 14:12:46",
+      "count": 1,
+      "pub-type": "article",
+      "journal": "European Journal of Operational Research",
+      "year": "2020",
+      "url": "",
+      "author": [
+        "Benoit Chevalier-Roignant",
+        "Christoph M. Flath",
+        "Peter M. Kort",
+        "Lenos Trigeorgis"
+      ],
+      "authors": [
+        {
+          "first": "Benoit",
+          "last": "Chevalier-Roignant"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        },
+        {
+          "first": "Peter M.",
+          "last": "Kort"
+        },
+        {
+          "first": "Lenos",
+          "last": "Trigeorgis"
+        }
+      ],
+      "bibtexKey": "chevalierroignantcapacity"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/2abc675438ecd332e3cbed0995a1e07b7/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "greif",
+        "journal",
+        "myown",
+        "stein"
+      ],
+      "intraHash": "abc675438ecd332e3cbed0995a1e07b7",
+      "interHash": "e10ee1932b31a4775c7b49af12484972",
+      "label": "Peeking into the Void: Digital Twins for Construction Site Logistics",
+      "user": "cflath",
+      "description": "",
+      "date": "2020-05-16 14:57:43",
+      "changeDate": "2020-10-19 14:44:02",
+      "count": 5,
+      "pub-type": "article",
+      "journal": "Computers in Industry",
+      "year": "2020",
+      "url": "",
+      "author": [
+        "Toni Greif",
+        "Nikolai Stein",
+        "Christoph. M. Flath"
+      ],
+      "authors": [
+        {
+          "first": "Toni",
+          "last": "Greif"
+        },
+        {
+          "first": "Nikolai",
+          "last": "Stein"
+        },
+        {
+          "first": "Christoph. M.",
+          "last": "Flath"
+        }
+      ],
+      "volume": "121",
+      "bibtexKey": "greif2020peeking"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/2534780eee57bf777733382aa15757c82/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "greif",
+        "griebel",
+        "myown",
+        "proceedings"
+      ],
+      "intraHash": "534780eee57bf777733382aa15757c82",
+      "interHash": "bf9715558fa16829c4ada383d100532e",
+      "label": "A Picture is Worth More than a Thousand Purchases: Designing an Image-based Fashion Curation System.",
+      "user": "cflath",
+      "description": "",
+      "date": "2019-10-09 23:18:23",
+      "changeDate": "2020-01-23 17:43:11",
+      "count": 4,
+      "pub-type": "inproceedings",
+      "booktitle": "Proceedings of the 27th European Conference on Information Systems",
+      "year": "2019",
+      "url": "",
+      "author": [
+        "Matthias Griebel",
+        "Giacomo Welsch",
+        "Toni Greif",
+        "Christoph M. Flath"
+      ],
+      "authors": [
+        {
+          "first": "Matthias",
+          "last": "Griebel"
+        },
+        {
+          "first": "Giacomo",
+          "last": "Welsch"
+        },
+        {
+          "first": "Toni",
+          "last": "Greif"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        }
+      ],
+      "bibtexKey": "griebel2019picture"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/20ca9c2823b8a827684e5f6c1f6a156c0/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "griebel",
+        "machineLearning",
+        "myown",
+        "proceedings",
+        "stein"
+      ],
+      "intraHash": "0ca9c2823b8a827684e5f6c1f6a156c0",
+      "interHash": "1fcf297f42cb83b7439c12bf9d4ea588",
+      "label": "Augmented Intelligence for Quality Control of Manual Assembly Processes using Industrial Wearable Systems",
+      "user": "cflath",
+      "description": "",
+      "date": "2019-09-26 11:19:37",
+      "changeDate": "2020-01-23 17:43:35",
+      "count": 4,
+      "pub-type": "inproceedings",
+      "booktitle": "Proceedings of the 40th International Conference on Information Systems (ICIS)",
+      "year": "2019",
+      "url": "",
+      "author": [
+        "Adrian Krenzer",
+        "Nikolai Stein",
+        "Matthias Griebel",
+        "Christoph M. Flath"
+      ],
+      "authors": [
+        {
+          "first": "Adrian",
+          "last": "Krenzer"
+        },
+        {
+          "first": "Nikolai",
+          "last": "Stein"
+        },
+        {
+          "first": "Matthias",
+          "last": "Griebel"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        }
+      ],
+      "bibtexKey": "krenzer2019augmented"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/2ede9b4154d2b326a800192a1addb2960/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "3dprinting",
+        "myown",
+        "proceedings",
+        "stein"
+      ],
+      "intraHash": "ede9b4154d2b326a800192a1addb2960",
+      "interHash": "306fcab6107442bf1f3843a0b2486ff8",
+      "label": "Towards Open Production: Designing a marketplace for 3D-printing capacities",
+      "user": "cflath",
+      "description": "",
+      "date": "2019-09-26 11:18:33",
+      "changeDate": "2020-01-23 17:44:01",
+      "count": 4,
+      "pub-type": "incollection",
+      "booktitle": "Proceedings of the 40th International Conference on Information Systems (ICIS)",
+      "year": "2019",
+      "url": "",
+      "author": [
+        "Nikolai Stein",
+        "Benedikt Walter",
+        "Christoph M. Flath"
+      ],
+      "authors": [
+        {
+          "first": "Nikolai",
+          "last": "Stein"
+        },
+        {
+          "first": "Benedikt",
+          "last": "Walter"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        }
+      ],
+      "bibtexKey": "steintowards"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/2a4d95c383b67b072277187db301e7f49/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "myown",
+        "proceedings",
+        "stein"
+      ],
+      "intraHash": "a4d95c383b67b072277187db301e7f49",
+      "interHash": "1f86ab79bb21ef97fa3f5bb507d12715",
+      "label": "Predictive Analytics for Application Management Services",
+      "user": "cflath",
+      "description": "",
+      "date": "2019-04-05 10:54:09",
+      "changeDate": "2020-01-23 17:44:11",
+      "count": 3,
+      "pub-type": "inproceedings",
+      "booktitle": "Proceedings of the 26th European Conference on Information Systems",
+      "year": "2018",
+      "url": "",
+      "author": [
+        "Nikolai Stein",
+        "Christoph M. Flath",
+        "Carsten Boehm"
+      ],
+      "authors": [
+        {
+          "first": "Nikolai",
+          "last": "Stein"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        },
+        {
+          "first": "Carsten",
+          "last": "Boehm"
+        }
+      ],
+      "bibtexKey": "stein2018predictive"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/2c444ca7e965100539745f350d66e6c17/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "highlight",
+        "journal",
+        "myown"
+      ],
+      "intraHash": "c444ca7e965100539745f350d66e6c17",
+      "interHash": "0edccbc6c72f86109680cf57c939a36c",
+      "label": "Disruptive Innovation, Market Entry and Production Flexibility in Heterogeneous Oligopoly",
+      "user": "cflath",
+      "description": "",
+      "date": "2018-12-08 22:39:58",
+      "changeDate": "2020-01-23 18:00:48",
+      "count": 2,
+      "pub-type": "article",
+      "journal": "Production and Operations Management",
+      "year": "2019",
+      "url": "",
+      "author": [
+        "Benoit Chevalier-Roignant",
+        "Christoph M. Flath",
+        "Lenos Trigeorgis"
+      ],
+      "authors": [
+        {
+          "first": "Benoit",
+          "last": "Chevalier-Roignant"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        },
+        {
+          "first": "Lenos",
+          "last": "Trigeorgis"
+        }
+      ],
+      "volume": "28",
+      "number": "7",
+      "pages": "1641-1657",
+      "bibtexKey": "chevalierroignant2019disruptive"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/2b7eddc0645026a87541532bf0ce0d397/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "3dprinting",
+        "highlight",
+        "journal",
+        "myown"
+      ],
+      "intraHash": "b7eddc0645026a87541532bf0ce0d397",
+      "interHash": "38027c09257d459bbf7018080ce07c94",
+      "label": "Creativity and Productivity in Product Design for Additive Manufacturing: Mechanisms and Platform Outcomes of Remixing",
+      "user": "cflath",
+      "description": "",
+      "date": "2018-10-19 21:41:09",
+      "changeDate": "2020-10-19 14:39:20",
+      "count": 4,
+      "pub-type": "article",
+      "journal": "Journal of Operations Management",
+      "year": "2019",
+      "url": "",
+      "author": [
+        "Sascha Friesike",
+        "Christoph M. Flath",
+        "Marco Wirth",
+        "Fr\u00e9d\u00e9ric Thiesse"
+      ],
+      "authors": [
+        {
+          "first": "Sascha",
+          "last": "Friesike"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        },
+        {
+          "first": "Marco",
+          "last": "Wirth"
+        },
+        {
+          "first": "Fr\u00e9d\u00e9ric",
+          "last": "Thiesse"
+        }
+      ],
+      "volume": "65",
+      "number": "8",
+      "pages": "735-752",
+      "bibtexKey": "friesike2019creativity"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/29eb23540a973c508a387ecfed454980f/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "journal",
+        "myown"
+      ],
+      "intraHash": "9eb23540a973c508a387ecfed454980f",
+      "interHash": "78a8711f4383c29bdad31dc3a832c607",
+      "label": "Towards Digital Transformation in Fashion Retailing: A Design-oriented IS Research Study of Automated Checkout Systems",
+      "user": "cflath",
+      "description": "",
+      "date": "2018-09-21 18:58:44",
+      "changeDate": "2020-10-19 14:41:36",
+      "count": 4,
+      "pub-type": "article",
+      "journal": "Business & Information Systems Engineering",
+      "year": "2019",
+      "url": "",
+      "author": [
+        "Matthias Hauser",
+        "Sebastian A. G\u00fcnther",
+        "Christoph M. Flath",
+        "Fr\u00e9d\u00e9ric Thiesse"
+      ],
+      "authors": [
+        {
+          "first": "Matthias",
+          "last": "Hauser"
+        },
+        {
+          "first": "Sebastian A.",
+          "last": "G\u00fcnther"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        },
+        {
+          "first": "Fr\u00e9d\u00e9ric",
+          "last": "Thiesse"
+        }
+      ],
+      "volume": "61",
+      "pages": "51-66",
+      "bibtexKey": "hauserforthcomingtowards"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/2a32d778e29891e4b4110d80b515710e3/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "highlight",
+        "journal",
+        "myown"
+      ],
+      "intraHash": "a32d778e29891e4b4110d80b515710e3",
+      "interHash": "5bd4b497b8839ed3fcf6f5aa97020e5d",
+      "label": "Privacy in the Sharing Economy",
+      "user": "cflath",
+      "description": "",
+      "date": "2018-03-13 22:57:33",
+      "changeDate": "2020-10-19 14:12:56",
+      "count": 3,
+      "pub-type": "article",
+      "journal": "Journal of the Association for Information Systems",
+      "year": "2019",
+      "url": "",
+      "author": [
+        "Timm Teubner",
+        "Christoph M. Flath"
+      ],
+      "authors": [
+        {
+          "first": "Timm",
+          "last": "Teubner"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        }
+      ],
+      "volume": "20",
+      "number": "3",
+      "pages": "213-242",
+      "bibtexKey": "teubner2018privacy"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/225a526fcf714a2162a9083b9c1063ef9/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "analytics",
+        "iot",
+        "journal",
+        "manufacturing",
+        "myown",
+        "stein"
+      ],
+      "intraHash": "25a526fcf714a2162a9083b9c1063ef9",
+      "interHash": "f725877cda23174cb2d72614423e9390",
+      "label": "Big Data on the Shop-floor: Towards Sensor-Based Decision-Support for Manual Processes",
+      "user": "cflath",
+      "description": "",
+      "date": "2017-12-19 12:43:10",
+      "changeDate": "2020-10-19 14:40:12",
+      "count": 2,
+      "pub-type": "article",
+      "journal": "Journal of Business Economics",
+      "year": "2018",
+      "url": "",
+      "author": [
+        "Nikolai Stein",
+        "Jan Meller",
+        "Christoph M. Flath"
+      ],
+      "authors": [
+        {
+          "first": "Nikolai",
+          "last": "Stein"
+        },
+        {
+          "first": "Jan",
+          "last": "Meller"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        }
+      ],
+      "volume": "88",
+      "pages": "593\u2013616",
+      "bibtexKey": "stein2018shopfloor"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/2e364bf3a52181aba916584bfb695f537/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "highlight",
+        "journal",
+        "mobility",
+        "myown",
+        "optimization",
+        "sharingEconomy"
+      ],
+      "intraHash": "e364bf3a52181aba916584bfb695f537",
+      "interHash": "3d188a2ac5a4e925fce002198d6ad7bc",
+      "label": "Leveraging Customer Flexibility for Car-sharing Fleet Optimization",
+      "user": "cflath",
+      "description": "",
+      "date": "2017-11-03 20:22:15",
+      "changeDate": "2020-10-19 14:21:34",
+      "count": 4,
+      "pub-type": "article",
+      "journal": "Transportation Science",
+      "year": "2019",
+      "url": "",
+      "author": [
+        "Philipp Str\u00f6hle",
+        "Christoph M. Flath",
+        "Johannes G\u00e4rttner"
+      ],
+      "authors": [
+        {
+          "first": "Philipp",
+          "last": "Str\u00f6hle"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        },
+        {
+          "first": "Johannes",
+          "last": "G\u00e4rttner"
+        }
+      ],
+      "volume": "53",
+      "number": "1",
+      "pages": "42-61",
+      "bibtexKey": "strohleleveraging"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/2e3a91c5b3761a436b6a6b14a9e7488c8/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "RFID",
+        "design_science",
+        "myown",
+        "proceedings"
+      ],
+      "intraHash": "e3a91c5b3761a436b6a6b14a9e7488c8",
+      "interHash": "22daec1da19e3e947e42dc401d580c24",
+      "label": "Designing Pervasive Information Systems: A Fashion Retail Case Study",
+      "user": "cflath",
+      "description": "",
+      "date": "2017-09-21 19:57:27",
+      "changeDate": "2018-03-13 21:55:02",
+      "count": 3,
+      "pub-type": "inproceedings",
+      "booktitle": "Proceedings of the International Conference on Information Systems",
+      "year": "2017",
+      "url": "",
+      "author": [
+        "Matthias Hauser",
+        "Sebastian A. G\u00fcnther",
+        "Christoph M. Flath",
+        "Fr\u00e9d\u00e9ric Thiesse"
+      ],
+      "authors": [
+        {
+          "first": "Matthias",
+          "last": "Hauser"
+        },
+        {
+          "first": "Sebastian A.",
+          "last": "G\u00fcnther"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        },
+        {
+          "first": "Fr\u00e9d\u00e9ric",
+          "last": "Thiesse"
+        }
+      ],
+      "bibtexKey": "hauserdesigning"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/2377c373f35e920a4fd6ed3b67af5b5b6/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "coordination",
+        "highlight",
+        "journal",
+        "myown",
+        "optimization",
+        "smartGrid"
+      ],
+      "intraHash": "377c373f35e920a4fd6ed3b67af5b5b6",
+      "interHash": "0a7a39621c007f61e5d124a34a67baea",
+      "label": "Portfolio and Contract Design for Demand Response Resources",
+      "user": "cflath",
+      "description": "",
+      "date": "2017-09-12 21:51:52",
+      "changeDate": "2020-01-23 18:01:56",
+      "count": 1,
+      "pub-type": "article",
+      "journal": "European Journal of Operational Research",
+      "year": "2017",
+      "url": "",
+      "author": [
+        "Johannes G\u00e4rttner",
+        "Christoph M. Flath",
+        "Christof Weinhardt"
+      ],
+      "authors": [
+        {
+          "first": "Johannes",
+          "last": "G\u00e4rttner"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        },
+        {
+          "first": "Christof",
+          "last": "Weinhardt"
+        }
+      ],
+      "volume": "266",
+      "number": "1",
+      "pages": "340-353",
+      "bibtexKey": "garttnerportfolio"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/280a5d46e688620e89b3f7411ab80548d/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "data_science",
+        "highlight",
+        "journal",
+        "manufacturing",
+        "myown",
+        "stein"
+      ],
+      "intraHash": "80a5d46e688620e89b3f7411ab80548d",
+      "interHash": "cfb53c0e9609959223aa3cb45634f46c",
+      "label": "Towards a Data Science Toolbox for Industrial Analytics Applications",
+      "user": "cflath",
+      "description": "",
+      "date": "2017-09-12 14:05:53",
+      "changeDate": "2020-10-19 14:37:58",
+      "count": 7,
+      "pub-type": "article",
+      "journal": "Computers in Industry",
+      "year": "2018",
+      "url": "",
+      "author": [
+        "Christoph M. Flath",
+        "Nikolai Stein"
+      ],
+      "authors": [
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        },
+        {
+          "first": "Nikolai",
+          "last": "Stein"
+        }
+      ],
+      "volume": "94",
+      "pages": "16-25",
+      "bibtexKey": "flathtowards"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/24555731ec0b1f67a81599c379f57e8ee/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "analytics",
+        "journal",
+        "myown"
+      ],
+      "intraHash": "4555731ec0b1f67a81599c379f57e8ee",
+      "interHash": "091ef1695f55210ec9aabf55bfcb0b3c",
+      "label": "How a Traditional Company Seeded New Analytics Capabilities",
+      "user": "cflath",
+      "description": "",
+      "date": "2017-07-18 18:25:08",
+      "changeDate": "2020-10-19 14:42:38",
+      "count": 3,
+      "pub-type": "article",
+      "journal": "MIS Quarterly Executive",
+      "year": "2017",
+      "url": "",
+      "author": [
+        "Gunther Gust",
+        "Christoph M. Flath",
+        "Tobias Brandt",
+        "Philipp Str\u00f6hle",
+        "Dirk Neumann"
+      ],
+      "authors": [
+        {
+          "first": "Gunther",
+          "last": "Gust"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        },
+        {
+          "first": "Tobias",
+          "last": "Brandt"
+        },
+        {
+          "first": "Philipp",
+          "last": "Str\u00f6hle"
+        },
+        {
+          "first": "Dirk",
+          "last": "Neumann"
+        }
+      ],
+      "volume": "16",
+      "number": "3",
+      "bibtexKey": "gust2017seeding"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/237368257ed50d2c7bee5e1063ad7d0d6/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "dataScience",
+        "myown",
+        "proceedings",
+        "stein"
+      ],
+      "intraHash": "37368257ed50d2c7bee5e1063ad7d0d6",
+      "interHash": "cba5535de5ec2ddb63da58799561e40a",
+      "label": "Applying data science for shop-floor performance prediction",
+      "user": "cflath",
+      "description": "",
+      "date": "2017-05-02 23:02:28",
+      "changeDate": "2020-01-23 17:45:19",
+      "count": 4,
+      "pub-type": "inproceedings",
+      "booktitle": "Proceedings of the European Conference on Information Systems",
+      "year": "2017",
+      "url": "",
+      "author": [
+        "Nikolai Stein",
+        "Christoph M. Flath"
+      ],
+      "authors": [
+        {
+          "first": "Nikolai",
+          "last": "Stein"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        }
+      ],
+      "bibtexKey": "stein2017applying"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/294cc4df865804430d3038e096f3479e2/cflath",
+      "tags": [
+        "3dprinting",
+        "highlight",
+        "journal",
+        "myown"
+      ],
+      "intraHash": "94cc4df865804430d3038e096f3479e2",
+      "interHash": "238cd4b38c01609ae257999299ffcdb8",
+      "label": "Copy, Transform, Combine: Exploring the Remix as a Form of Innovation",
+      "user": "cflath",
+      "description": "",
+      "date": "2017-04-10 17:28:05",
+      "changeDate": "2024-11-11 10:17:40",
+      "count": 6,
+      "pub-type": "article",
+      "journal": "Journal of Information Technology",
+      "year": "2017",
+      "url": "",
+      "author": [
+        "Christoph Flath",
+        "Sascha Friesike",
+        "Marco Wirth",
+        "Frederic Thiesse"
+      ],
+      "authors": [
+        {
+          "first": "Christoph",
+          "last": "Flath"
+        },
+        {
+          "first": "Sascha",
+          "last": "Friesike"
+        },
+        {
+          "first": "Marco",
+          "last": "Wirth"
+        },
+        {
+          "first": "Frederic",
+          "last": "Thiesse"
+        }
+      ],
+      "volume": "32",
+      "number": "4",
+      "pages": "306-325",
+      "bibtexKey": "flath2017transform"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/28d890da91cae977717616ed7434e1aeb/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "journal",
+        "myown"
+      ],
+      "intraHash": "8d890da91cae977717616ed7434e1aeb",
+      "interHash": "4223c33671db64e333fa964fe918d61a",
+      "label": "Dient die 10-Punkte-Agenda der Bundesregierung einer erfolgreichen Energiewende?",
+      "user": "cflath",
+      "description": "",
+      "date": "2017-03-13 16:27:12",
+      "changeDate": "2017-03-13 16:27:51",
+      "count": 1,
+      "pub-type": "article",
+      "journal": "et - Energiewirtschaftliche Tagesfragen",
+      "year": "2017",
+      "url": "http://et-energie-online.de/AktuellesHeft/WeitereThemen/tabid/71/Year/2017/Month/3/NewsModule/425/NewsId/3061/Dient-die-10PunkteAgenda-der-Bundesregierung-einer-erfolgreichen-Energiewende.aspx",
+      "author": [
+        "Clemens van Dinther",
+        "Bernhard Fey",
+        "Sven Renelt",
+        "Jens Str\u00fcker",
+        "Christoph Flath",
+        "Orestis Terzidis",
+        "Peter Bretschneider"
+      ],
+      "authors": [
+        {
+          "first": "Clemens",
+          "last": "van Dinther"
+        },
+        {
+          "first": "Bernhard",
+          "last": "Fey"
+        },
+        {
+          "first": "Sven",
+          "last": "Renelt"
+        },
+        {
+          "first": "Jens",
+          "last": "Str\u00fcker"
+        },
+        {
+          "first": "Christoph",
+          "last": "Flath"
+        },
+        {
+          "first": "Orestis",
+          "last": "Terzidis"
+        },
+        {
+          "first": "Peter",
+          "last": "Bretschneider"
+        }
+      ],
+      "volume": "67",
+      "number": "3",
+      "bibtexKey": "vandinther2017dient"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/2f651dbe9ecd0121239ed7af2b9f0742a/cflath",
+      "tags": [
+        "journal",
+        "myown"
+      ],
+      "intraHash": "f651dbe9ecd0121239ed7af2b9f0742a",
+      "interHash": "00d06f1842717708b3e58435473854e1",
+      "label": "Morphological analysis of energy services: Paving the way to quality differentiation in the power sector",
+      "user": "cflath",
+      "description": "",
+      "date": "2017-03-12 21:51:01",
+      "changeDate": "2020-10-19 14:37:14",
+      "count": 9,
+      "pub-type": "article",
+      "journal": "Energy Policy",
+      "year": "2017",
+      "url": "",
+      "author": [
+        "Florian Salah",
+        "Christoph M. Flath",
+        "Christian Will",
+        "Alexander Schuller",
+        "Christof Weinhardt"
+      ],
+      "authors": [
+        {
+          "first": "Florian",
+          "last": "Salah"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        },
+        {
+          "first": "Christian",
+          "last": "Will"
+        },
+        {
+          "first": "Alexander",
+          "last": "Schuller"
+        },
+        {
+          "first": "Christof",
+          "last": "Weinhardt"
+        }
+      ],
+      "volume": "106",
+      "pages": "614-624",
+      "bibtexKey": "salahmorphological"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/2a338c7246b9b3ad3f1c0f2501bb913fc/cflath",
+      "tags": [
+        "iot",
+        "myown",
+        "proceedings",
+        "rfid"
+      ],
+      "intraHash": "a338c7246b9b3ad3f1c0f2501bb913fc",
+      "interHash": "82c25a009a47e2cd1f667e399ea2434e",
+      "label": "Leveraging RFID Data Analytics for the Design of an Automated Checkout System",
+      "user": "cflath",
+      "description": "",
+      "date": "2017-01-23 17:54:17",
+      "changeDate": "2018-03-13 21:55:36",
+      "count": 3,
+      "pub-type": "inproceedings",
+      "booktitle": "Proceedings of the International Conference on Wirtschaftsinformatik",
+      "year": "2017",
+      "url": "",
+      "author": [
+        "Matthias Hauser",
+        "Sebastian G\u00fcnther",
+        "Christoph M. Flath",
+        "Fr\u00e9d\u00e9ric Thiesse"
+      ],
+      "authors": [
+        {
+          "first": "Matthias",
+          "last": "Hauser"
+        },
+        {
+          "first": "Sebastian",
+          "last": "G\u00fcnther"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        },
+        {
+          "first": "Fr\u00e9d\u00e9ric",
+          "last": "Thiesse"
+        }
+      ],
+      "bibtexKey": "hauser2017leveraging"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/288287b2af04d3d796885a0549b839aca/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "analytics",
+        "machineLearning",
+        "myown",
+        "proceedings",
+        "security",
+        "stein"
+      ],
+      "intraHash": "88287b2af04d3d796885a0549b839aca",
+      "interHash": "8088494165b675388c18578d31eac8c4",
+      "label": "Dynamic Intrusion Detection in Database Systems: A Machine-Learning Approach",
+      "user": "cflath",
+      "description": "",
+      "date": "2016-09-25 09:06:39",
+      "changeDate": "2020-01-23 17:45:41",
+      "count": 5,
+      "pub-type": "inproceedings",
+      "booktitle": "Proceedings of the International Conference on Information Systems",
+      "address": "Dublin, Ireland",
+      "year": "2016",
+      "url": "",
+      "author": [
+        "Niklas Rappel",
+        "Nikolai Stein",
+        "Christoph M. Flath"
+      ],
+      "authors": [
+        {
+          "first": "Niklas",
+          "last": "Rappel"
+        },
+        {
+          "first": "Nikolai",
+          "last": "Stein"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        }
+      ],
+      "bibtexKey": "rappel2016dynamic"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/23cb85c5d6a00406b0e2bdd7aaadf3767/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "analytics",
+        "myown",
+        "proceedings",
+        "smartGrid"
+      ],
+      "intraHash": "3cb85c5d6a00406b0e2bdd7aaadf3767",
+      "interHash": "7f1626b547a219b64f1869a89155a44b",
+      "label": "Bringing Analytics into Practice: Evidence from the Power Sector",
+      "user": "cflath",
+      "description": "",
+      "date": "2016-09-25 09:04:43",
+      "changeDate": "2018-03-13 21:56:27",
+      "count": 2,
+      "pub-type": "inproceedings",
+      "booktitle": "Proceedings of the International Conference on Information Systems",
+      "address": "Dublin, Ireland",
+      "year": "2016",
+      "url": "",
+      "author": [
+        "Gunther Gust",
+        "Christoph M. Flath",
+        "Tobias Brandt",
+        "Philipp Str\u00f6hle",
+        "Dirk Neumann"
+      ],
+      "authors": [
+        {
+          "first": "Gunther",
+          "last": "Gust"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        },
+        {
+          "first": "Tobias",
+          "last": "Brandt"
+        },
+        {
+          "first": "Philipp",
+          "last": "Str\u00f6hle"
+        },
+        {
+          "first": "Dirk",
+          "last": "Neumann"
+        }
+      ],
+      "bibtexKey": "gust2016bringing"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/2ca3e92f2782f7c148d38d990cc90f388/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "myown",
+        "optimization",
+        "pricing",
+        "proceedings",
+        "smartGrid",
+        "stein"
+      ],
+      "intraHash": "ca3e92f2782f7c148d38d990cc90f388",
+      "interHash": "6570e01470a794615c3ef14dd7d32069",
+      "label": "Decision Support for Group-based Electricity Prices in Smart Grids",
+      "user": "cflath",
+      "description": "",
+      "date": "2016-09-06 13:20:31",
+      "changeDate": "2020-01-23 17:45:49",
+      "count": 7,
+      "pub-type": "inproceedings",
+      "booktitle": "Proceedings of the Americas Conference on Information Systems",
+      "address": "San Diego, CA, USA",
+      "year": "2016",
+      "url": "",
+      "author": [
+        "Nikolai Stein",
+        "Christoph M. Flath"
+      ],
+      "authors": [
+        {
+          "first": "Nikolai",
+          "last": "Stein"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        }
+      ],
+      "bibtexKey": "stein2016decision"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/2147e227b6ff061e7b35cf3f40ae31051/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "highlight",
+        "journal",
+        "marketDesign",
+        "myown",
+        "smartGrid"
+      ],
+      "intraHash": "147e227b6ff061e7b35cf3f40ae31051",
+      "interHash": "4824751680978ca2e421aa5ac03a2285",
+      "label": "Local Matching of Flexible Load in Smart Grids",
+      "user": "cflath",
+      "description": "",
+      "date": "2016-03-02 20:52:13",
+      "changeDate": "2020-01-23 18:02:46",
+      "count": 4,
+      "pub-type": "article",
+      "journal": "European Journal of Operational Research",
+      "year": "2016",
+      "url": "",
+      "author": [
+        "Philipp Str\u00f6hle",
+        "Christoph M. Flath"
+      ],
+      "authors": [
+        {
+          "first": "Philipp",
+          "last": "Str\u00f6hle"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        }
+      ],
+      "volume": "253",
+      "number": "13",
+      "pages": "811-824",
+      "bibtexKey": "strohle2016local"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/256471271f885fc0caa42dfdbb20e934a/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "electricvehicles",
+        "journal",
+        "myown",
+        "optimization",
+        "smartGrid"
+      ],
+      "intraHash": "56471271f885fc0caa42dfdbb20e934a",
+      "interHash": "3a69830fe0df709ff6c633cec1ea6934",
+      "label": "Price-based Load Coordination Revisited: Augmenting Open-Loop Coordination Approaches",
+      "user": "cflath",
+      "description": "",
+      "date": "2016-02-15 17:58:05",
+      "changeDate": "2016-11-16 10:55:19",
+      "count": 4,
+      "pub-type": "article",
+      "journal": "Business Research",
+      "year": "2016",
+      "url": "",
+      "author": [
+        "Christoph M. Flath",
+        "Sebastian Gottwalt"
+      ],
+      "authors": [
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        },
+        {
+          "first": "Sebastian",
+          "last": "Gottwalt"
+        }
+      ],
+      "volume": "9",
+      "number": "1",
+      "pages": "157-178",
+      "bibtexKey": "flath2016pricebased"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/2dcc8710ff6cb7e65e6deec9dfa4840dd/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "RFID",
+        "analytics",
+        "myown",
+        "proceedings"
+      ],
+      "intraHash": "dcc8710ff6cb7e65e6deec9dfa4840dd",
+      "interHash": "0f62552d9b8a793eac328b417669b136",
+      "label": "Pushing the limits of RFID: Empowering RFID-based Electronic Article Surveillance with Data Analytics Techniques",
+      "user": "cflath",
+      "description": "",
+      "date": "2015-09-15 16:48:21",
+      "changeDate": "2018-03-13 21:56:36",
+      "count": 5,
+      "pub-type": "inproceedings",
+      "booktitle": "Proceedings of the International Conference on Information Systems",
+      "year": "2015",
+      "url": "",
+      "author": [
+        "Matthias Hauser",
+        "Daniel Z\u00fcgner",
+        "Christoph M. Flath",
+        "Fr\u00e9d\u00e9ric Thiesse"
+      ],
+      "authors": [
+        {
+          "first": "Matthias",
+          "last": "Hauser"
+        },
+        {
+          "first": "Daniel",
+          "last": "Z\u00fcgner"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        },
+        {
+          "first": "Fr\u00e9d\u00e9ric",
+          "last": "Thiesse"
+        }
+      ],
+      "bibtexKey": "hauserpushing"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/2ab36e5aeb0377fcdc1b19cd170e0b936/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "journal",
+        "mobility",
+        "myown",
+        "service",
+        "sharingEconomy"
+      ],
+      "intraHash": "ab36e5aeb0377fcdc1b19cd170e0b936",
+      "interHash": "2d9c45dad844dd3f94070befb189b396",
+      "label": "The Economics of Multi-Hop Ride Sharing: Creating new mobility networks through IS",
+      "user": "cflath",
+      "description": "in press",
+      "date": "2015-07-07 18:56:58",
+      "changeDate": "2016-11-16 10:56:42",
+      "count": 6,
+      "pub-type": "article",
+      "journal": "Business & Information Systems Engineering",
+      "year": "2015",
+      "url": "",
+      "author": [
+        "Timm Teubner",
+        "Christoph M. Flath"
+      ],
+      "authors": [
+        {
+          "first": "Timm",
+          "last": "Teubner"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        }
+      ],
+      "volume": "57",
+      "number": "5",
+      "pages": "311-324",
+      "bibtexKey": "teubnereconomics"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/22fed49741a03f703d99b0c80f9e22826/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "3dprinting",
+        "myown",
+        "proceedings",
+        "remix"
+      ],
+      "intraHash": "2fed49741a03f703d99b0c80f9e22826",
+      "interHash": "4edf03b648f7331873fb850d563f3b77",
+      "label": "PATTERNS OF REMIXES OR WHERE DO INNOVATIONS COME FROM: EVIDENCE FROM 3D PRINTING",
+      "user": "cflath",
+      "description": "",
+      "date": "2015-04-06 14:08:35",
+      "changeDate": "2018-03-13 21:56:04",
+      "count": 3,
+      "pub-type": "inproceedings",
+      "booktitle": "Proceedings of the European Conference on Information Systems",
+      "year": "2015",
+      "url": "",
+      "author": [
+        "Marco Wirth",
+        "Sascha Friesike",
+        "Christoph M. Flath",
+        "Fr\u00e9d\u00e9ric Thiesse"
+      ],
+      "authors": [
+        {
+          "first": "Marco",
+          "last": "Wirth"
+        },
+        {
+          "first": "Sascha",
+          "last": "Friesike"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        },
+        {
+          "first": "Fr\u00e9d\u00e9ric",
+          "last": "Thiesse"
+        }
+      ],
+      "bibtexKey": "wirth2015patterns"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/20f652f8ec64893a2f5c69feed3d4f567/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "electricvehicles",
+        "proceedings"
+      ],
+      "intraHash": "0f652f8ec64893a2f5c69feed3d4f567",
+      "interHash": "c302a1509b7e7dae8407c25ac2b624e0",
+      "label": "Simulation-based Evaluation of Battery Switching Stations for Electric Vehicles",
+      "user": "cflath",
+      "description": "",
+      "date": "2015-04-06 14:05:56",
+      "changeDate": "2018-03-13 21:57:00",
+      "count": 2,
+      "pub-type": "inproceedings",
+      "booktitle": "Proceedings of the European Conference on Information Systems",
+      "year": "2015",
+      "url": "",
+      "author": [
+        "David Dauer",
+        "Christoph M. Flath"
+      ],
+      "authors": [
+        {
+          "first": "David",
+          "last": "Dauer"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        }
+      ],
+      "bibtexKey": "dauer2015simulationbased"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/268a9011b0a36ca41259ebb8f266888d8/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "electricvehicles",
+        "journal",
+        "myown",
+        "optimization"
+      ],
+      "intraHash": "68a9011b0a36ca41259ebb8f266888d8",
+      "interHash": "e7816d6fa8ef4ecfc4953af1c70c25fa",
+      "label": "Quantifying Load Flexibility of Electric Vehicles for Renewable Energy Integration",
+      "user": "cflath",
+      "description": "",
+      "date": "2015-04-06 13:11:23",
+      "changeDate": "2016-11-16 10:58:04",
+      "count": 12,
+      "pub-type": "article",
+      "journal": "Applied Energy",
+      "year": "2015",
+      "url": "/brokenurl#10.1016/j.apenergy.2015.04.004",
+      "author": [
+        "Alexander Schuller",
+        "Christoph M. Flath",
+        "Sebastian Gottwalt"
+      ],
+      "authors": [
+        {
+          "first": "Alexander",
+          "last": "Schuller"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        },
+        {
+          "first": "Sebastian",
+          "last": "Gottwalt"
+        }
+      ],
+      "volume": "151",
+      "pages": "335-344",
+      "bibtexKey": "schuller2015quantifying"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/2a42417fea1142ec7ee129c7dae25517e/cflath",
+      "tags": [
+        "electricvehicles",
+        "energyinformatics",
+        "journal",
+        "myown",
+        "pricing"
+      ],
+      "intraHash": "a42417fea1142ec7ee129c7dae25517e",
+      "interHash": "1ec2b655758066e1c085a55114509992",
+      "label": "Deadline differentiated pricing in practice: marketing EV charging in car parks",
+      "user": "cflath",
+      "description": "",
+      "date": "2014-11-28 21:58:03",
+      "changeDate": "2016-11-16 10:40:07",
+      "count": 5,
+      "pub-type": "article",
+      "journal": "Computer Science - Research and Development",
+      "publisher": "Springer Berlin Heidelberg",
+      "year": "2016",
+      "url": "http://dx.doi.org/10.1007/s00450-014-0293-5",
+      "author": [
+        "Florian Salah",
+        "Christoph M. Flath"
+      ],
+      "authors": [
+        {
+          "first": "Florian",
+          "last": "Salah"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        }
+      ],
+      "volume": "31",
+      "number": "1",
+      "pages": "33-40",
+      "issn": "1865-2034",
+      "language": "English",
+      "doi": "10.1007/s00450-014-0293-5",
+      "bibtexKey": "salah2014deadline"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/236eb4440fda7ae7ba493a8e5ffe4a06d/cflath",
+      "tags": [
+        "coordination",
+        "electricvehicles",
+        "journal",
+        "myown",
+        "optimization"
+      ],
+      "intraHash": "36eb4440fda7ae7ba493a8e5ffe4a06d",
+      "interHash": "823c9579717c5e91927171951ea32f19",
+      "label": "Impact of Electric Vehicles on Distribution Substations: A Swiss Case Study",
+      "user": "cflath",
+      "description": "",
+      "date": "2014-09-29 10:08:52",
+      "changeDate": "2014-11-30 12:02:42",
+      "count": 8,
+      "pub-type": "article",
+      "journal": "Applied Energy",
+      "year": "2015",
+      "url": "http://dx.doi.org/10.1016/j.apenergy.2014.09.091",
+      "author": [
+        "Florian Salah",
+        "Jens P. Ilg",
+        "Christoph M. Flath",
+        "Hauke Basse",
+        "Clemens van Dinther"
+      ],
+      "authors": [
+        {
+          "first": "Florian",
+          "last": "Salah"
+        },
+        {
+          "first": "Jens P.",
+          "last": "Ilg"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        },
+        {
+          "first": "Hauke",
+          "last": "Basse"
+        },
+        {
+          "first": "Clemens",
+          "last": "van Dinther"
+        }
+      ],
+      "volume": "137",
+      "number": "1",
+      "pages": "88-96",
+      "bibtexKey": "salah2014impact"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/2b0ff27579dff7f165ef99a3a1b3cea1e/cflath",
+      "tags": [
+        "energyinformatics",
+        "journal",
+        "marketDesign",
+        "myown",
+        "privacy",
+        "smartGrid"
+      ],
+      "intraHash": "b0ff27579dff7f165ef99a3a1b3cea1e",
+      "interHash": "aa58e055b6f3a96aa26e0775e8b1a51d",
+      "label": "Allocative and Strategic Effects of Privacy Enhancement in Smart Grids",
+      "user": "cflath",
+      "description": "",
+      "date": "2014-09-24 13:41:38",
+      "changeDate": "2016-11-16 10:58:47",
+      "count": 7,
+      "pub-type": "article",
+      "journal": "Information Systems",
+      "year": "2015",
+      "url": "http://dx.doi.org/10.1016/j.is.2014.09.007",
+      "author": [
+        "Stephan Kessler",
+        "Christoph M. Flath",
+        "Klemens B\u00f6hm"
+      ],
+      "authors": [
+        {
+          "first": "Stephan",
+          "last": "Kessler"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        },
+        {
+          "first": "Klemens",
+          "last": "B\u00f6hm"
+        }
+      ],
+      "volume": "53",
+      "pages": "170-181",
+      "bibtexKey": "kessler2015allocative"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/22d964a2737f7ad0198047784ea4a2a66/cflath",
+      "tags": [
+        "sys:relevantfor:wi-wue",
+        "cloud",
+        "journal",
+        "myown",
+        "service"
+      ],
+      "intraHash": "2d964a2737f7ad0198047784ea4a2a66",
+      "interHash": "10841490a93b7afdd34d1685ab706237",
+      "label": "A utility-based approach for customised cloud service selection",
+      "user": "cflath",
+      "description": "",
+      "date": "2014-06-18 10:53:18",
+      "changeDate": "2015-02-01 14:06:44",
+      "count": 2,
+      "pub-type": "article",
+      "journal": "International Journal of Computational Science and Engineering",
+      "year": "2015",
+      "url": "http://inderscience.metapress.com/content/b30x54802x6883t5/",
+      "author": [
+        "Foued Jrad",
+        "Jie Tao",
+        "Rico Knapper",
+        "Christoph M. Flath",
+        "Achim Streit"
+      ],
+      "authors": [
+        {
+          "first": "Foued",
+          "last": "Jrad"
+        },
+        {
+          "first": "Jie",
+          "last": "Tao"
+        },
+        {
+          "first": "Rico",
+          "last": "Knapper"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        },
+        {
+          "first": "Achim",
+          "last": "Streit"
+        }
+      ],
+      "volume": "10",
+      "number": "1",
+      "pages": "32-44",
+      "bibtexKey": "CitationKey"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/2f300bac9dac1796b8fe6196159730e21/cflath",
+      "tags": [
+        "PortfolioDesign",
+        "optimization",
+        "proceedings",
+        "service"
+      ],
+      "intraHash": "f300bac9dac1796b8fe6196159730e21",
+      "interHash": "9195a0cc82df79f61b18ed6b4a215d92",
+      "label": "A Multi-Attribute Service Portfolio Design Problem",
+      "user": "cflath",
+      "description": "",
+      "date": "2014-06-18 10:52:20",
+      "changeDate": "2014-11-28 22:18:27",
+      "count": 2,
+      "pub-type": "inproceedings",
+      "booktitle": "Proceedings of the IEEE International Conference on Service OrientedComputing & Applications (SOCA 2011)",
+      "address": "Irvine, CA, US",
+      "year": "2011",
+      "url": "",
+      "author": [
+        "Rico Knapper",
+        "Christoph Flath",
+        "Benjamin Blau",
+        "Anca Sailer",
+        "Christof Weinhardt"
+      ],
+      "authors": [
+        {
+          "first": "Rico",
+          "last": "Knapper"
+        },
+        {
+          "first": "Christoph",
+          "last": "Flath"
+        },
+        {
+          "first": "Benjamin",
+          "last": "Blau"
+        },
+        {
+          "first": "Anca",
+          "last": "Sailer"
+        },
+        {
+          "first": "Christof",
+          "last": "Weinhardt"
+        }
+      ],
+      "abstract": "Increasing popularity of cloud-based services has led to the emergence\r\nof cloud marketplaces where services from different providers are offered, usually\r\nin the form of a catalog.\r\n\r\nThe customers' decision about buying offered services is based on idiosyncratic\r\npreferences regarding non-functional service attributes, e.g., price, provider\r\nreputation, and quality of service. Customer preferences are typically unknown\r\nto providers at the time the service portfolio (i.e. quality and price choices)\r\nis specified. Thus, from a microeconomic perspective, we have to deal with\r\ninformation asymmetry in markets, which complicates the challenge of finding\r\nthe profit maximizing service portfolio.\r\n\r\nThis paper presents a generic economic framework based on customer self-selection\r\nto address the above-mentioned optimization for a cloud service provider. The\r\ncontribution is two-fold: We characterize a multi-attributive customer preference\r\nfunction for cloud services based on a continuum of potential customers. Thereby\r\neach infinitesimal demand of a customer is characterized by a vector of minimum\r\nquality values for each of the different attributes and a maximum willingness\r\nto pay. The demand framework addresses the phenomenon of product cannibalization.\r\n\r\nWe then formulate the service providers' optimal service portfolio design. This\r\ngrants the provider maximal profit through optimal combination of potential\r\nvalues of the chosen attributes.",
+      "bibtexKey": "CitationKey"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/2994c834bbd3159038a2ec024eafad81d/cflath",
+      "tags": [
+        "ElectricVehicles",
+        "RevenueManagement",
+        "coordination",
+        "proceedings"
+      ],
+      "intraHash": "994c834bbd3159038a2ec024eafad81d",
+      "interHash": "f2c849e0ab30eba8b8521c6a63d2657e",
+      "label": "A Revenue Management Approach for Efficient Vehicle Charging Coordination",
+      "user": "cflath",
+      "description": "",
+      "date": "2014-06-18 10:51:57",
+      "changeDate": "2018-03-13 21:57:51",
+      "count": 1,
+      "pub-type": "inproceedings",
+      "booktitle": "Proceedings of the Hawaii International Conference on System Sciences",
+      "address": "Maui, HI",
+      "year": "2012",
+      "url": "http://ieeexplore.ieee.org/xpl/freeabs_all.jsp?arnumber=6149116",
+      "author": [
+        "Christoph M. Flath",
+        "Sebastian Gottwalt",
+        "Jens Ilg"
+      ],
+      "authors": [
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        },
+        {
+          "first": "Sebastian",
+          "last": "Gottwalt"
+        },
+        {
+          "first": "Jens",
+          "last": "Ilg"
+        }
+      ],
+      "bibtexKey": "CitationKey"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/28cb33fce60d3d9d23e732067b968f1e4/cflath",
+      "tags": [
+        "RateDesign",
+        "optimization",
+        "proceedings"
+      ],
+      "intraHash": "8cb33fce60d3d9d23e732067b968f1e4",
+      "interHash": "f5c1e8edbc19544ed5a1108d80defc8d",
+      "label": "Ein Vorgehensmodell zur Gestaltung kundengruppenspezifischer Time-of-Use\r\nTarife",
+      "user": "cflath",
+      "description": "",
+      "date": "2014-06-18 10:51:35",
+      "changeDate": "2018-03-13 21:58:54",
+      "count": 2,
+      "pub-type": "inproceedings",
+      "booktitle": "Proceedings of the Multikonferenz Wirtschaftsinformatik",
+      "year": "2012",
+      "url": "",
+      "author": [
+        "Zohra Ighli",
+        "Lilia Filipova-Neumann",
+        "Christoph Flath"
+      ],
+      "authors": [
+        {
+          "first": "Zohra",
+          "last": "Ighli"
+        },
+        {
+          "first": "Lilia",
+          "last": "Filipova-Neumann"
+        },
+        {
+          "first": "Christoph",
+          "last": "Flath"
+        }
+      ],
+      "bibtexKey": "CitationKey"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/217758361ca63e2a8e49c58c1fd99da59/cflath",
+      "tags": [
+        "GridFees",
+        "IndustrialOrganization",
+        "pricing",
+        "proceedings"
+      ],
+      "intraHash": "17758361ca63e2a8e49c58c1fd99da59",
+      "interHash": "c8e7662d3a89691d3ea02f1b6d534793",
+      "label": "A Note on the Economics of Metered Grid Pricing",
+      "user": "cflath",
+      "description": "",
+      "date": "2014-06-18 10:51:16",
+      "changeDate": "2014-11-28 22:18:40",
+      "count": 1,
+      "pub-type": "inproceedings",
+      "booktitle": "Proceedings of the 9th International Conference on the EuropeanEnergy Market (EEM)",
+      "publisher": "IEEE",
+      "address": "Florence, Italy, 10-12 May 2012",
+      "year": "2012",
+      "url": "",
+      "author": [
+        "Jens Ilg",
+        "Christoph Flath",
+        "Jan Kr\u00e4mer"
+      ],
+      "authors": [
+        {
+          "first": "Jens",
+          "last": "Ilg"
+        },
+        {
+          "first": "Christoph",
+          "last": "Flath"
+        },
+        {
+          "first": "Jan",
+          "last": "Kr\u00e4mer"
+        }
+      ],
+      "pages": "1-6",
+      "note": "ISBN 978-1-4673-0832-8",
+      "abstract": "Imbalances in generation and demand locality in the German power\r\nmarket give rise to seemingly unfair grid cost allocations: few customers in\r\nwind-rich north-east Germany pay a major share of the costs of transmitting\r\npower to customers in the south. This development has prompted demands for billing\r\nthe extend of grid usage - i.e., a customer's costs should be lower when procuring\r\n`local' power than in the case of distant power. We call this a `metered' grid\r\ncosts approach as opposed to the standard global levy. Using an economic model\r\nwe find that such metered grid costs may increase total welfare by inducing\r\nhigher cost efficiency. However, they will typically also give rise to\r\nsignificantly higher consumer costs as generators may leverage grid costs as\r\ndifferentiation devices to enhance their profits.",
+      "bibtexKey": "CitationKey"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/25233d876d9cdaeb5ea98207bff324511/cflath",
+      "tags": [
+        "DecisionSupport",
+        "ElectricVehicles",
+        "EnergyInformatics",
+        "coordination",
+        "dss",
+        "optimization",
+        "proceedings"
+      ],
+      "intraHash": "5233d876d9cdaeb5ea98207bff324511",
+      "interHash": "7e06f4d1526c6cacb77555550eefe1a7",
+      "label": "Decision Support for Electric Vehicle Charging",
+      "user": "cflath",
+      "description": "",
+      "date": "2014-06-18 10:50:32",
+      "changeDate": "2018-03-13 21:59:49",
+      "count": 2,
+      "pub-type": "inproceedings",
+      "booktitle": "Proceedings of the Americas Conference on Information Systems",
+      "address": "Seattle, Washington",
+      "year": "2012",
+      "url": "",
+      "author": [
+        "Christoph Flath",
+        "Jens Ilg",
+        "Christof Weinhardt"
+      ],
+      "authors": [
+        {
+          "first": "Christoph",
+          "last": "Flath"
+        },
+        {
+          "first": "Jens",
+          "last": "Ilg"
+        },
+        {
+          "first": "Christof",
+          "last": "Weinhardt"
+        }
+      ],
+      "bibtexKey": "CitationKey"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/2e8a351002b8d4d6a16c17ac4d56d0d0a/cflath",
+      "tags": [
+        "ElectricVehicles",
+        "coordination",
+        "energy",
+        "proceedings"
+      ],
+      "intraHash": "e8a351002b8d4d6a16c17ac4d56d0d0a",
+      "interHash": "e9307fa9dc08e438a1c4f0a619a8826d",
+      "label": "Assessing Load Flexibility in Smart Grids: Electric Vehicles for\r\nRenewable Energy Integration",
+      "user": "cflath",
+      "description": "",
+      "date": "2014-06-18 10:50:09",
+      "changeDate": "2014-11-28 22:18:51",
+      "count": 2,
+      "pub-type": "inproceedings",
+      "booktitle": "Proceedings of the 2013 IEEE Power & Energy Society General Meeting",
+      "year": "2013",
+      "url": "http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=6672854&contentType=Conference+Publications",
+      "author": [
+        "Sebastian Gottwalt",
+        "Alexander Schuller",
+        "Christoph Flath",
+        "Hartmut Schmeck",
+        "Christof Weinhardt"
+      ],
+      "authors": [
+        {
+          "first": "Sebastian",
+          "last": "Gottwalt"
+        },
+        {
+          "first": "Alexander",
+          "last": "Schuller"
+        },
+        {
+          "first": "Christoph",
+          "last": "Flath"
+        },
+        {
+          "first": "Hartmut",
+          "last": "Schmeck"
+        },
+        {
+          "first": "Christof",
+          "last": "Weinhardt"
+        }
+      ],
+      "doi": "10.1109/PESMG.2013.6672854",
+      "bibtexKey": "CitationKey"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/280abdcea1466189192d553495ef9b14b/cflath",
+      "tags": [
+        "ElectricVehicles",
+        "MarketDesign",
+        "coordination",
+        "proceedings"
+      ],
+      "intraHash": "80abdcea1466189192d553495ef9b14b",
+      "interHash": "2913f0372f6cd7603a38d9db71b15c6a",
+      "label": "Market-Based EV Charging Coordination",
+      "user": "cflath",
+      "description": "",
+      "date": "2014-06-18 10:49:52",
+      "changeDate": "2014-11-28 22:18:56",
+      "count": 1,
+      "pub-type": "inproceedings",
+      "booktitle": "IEEE/WIC/ACM International Conference on Intelligent Agent Technology(IAT-13)",
+      "year": "2013",
+      "url": "",
+      "author": [
+        "David Dauer",
+        "Christoph M. Flath",
+        "Philipp Str\u00f6hle",
+        "Christof Weinhardt"
+      ],
+      "authors": [
+        {
+          "first": "David",
+          "last": "Dauer"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        },
+        {
+          "first": "Philipp",
+          "last": "Str\u00f6hle"
+        },
+        {
+          "first": "Christof",
+          "last": "Weinhardt"
+        }
+      ],
+      "volume": "2",
+      "pages": "102-107",
+      "note": "978-1-4799-2902-3",
+      "doi": "10.1109/WI-IAT.2013.97",
+      "bibtexKey": "CitationKey"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/2ad13970222fc2917b4d84aea6d34642f/cflath",
+      "tags": [
+        "RateDesign",
+        "SmartMetering",
+        "optimization",
+        "proceedings"
+      ],
+      "intraHash": "ad13970222fc2917b4d84aea6d34642f",
+      "interHash": "c46be7a7952cecf2f80fcc36f39d3444",
+      "label": "An optimization approach for the design of time-of-use rates",
+      "user": "cflath",
+      "description": "",
+      "date": "2014-06-18 10:49:35",
+      "changeDate": "2014-11-28 22:19:01",
+      "count": 2,
+      "pub-type": "inproceedings",
+      "booktitle": "Industrial Electronics Society, IECON 2013 - 39th Annual Conferenceof the IEEE",
+      "year": "2013",
+      "url": "",
+      "author": [
+        "Christoph M. Flath"
+      ],
+      "authors": [
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        }
+      ],
+      "pages": "4727-4732",
+      "doi": "10.1109/IECON.2013.6699899",
+      "bibtexKey": "CitationKey"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/206a3ae0c6263de27829b6c8471e35f79/cflath",
+      "tags": [
+        "EnergyInformatics",
+        "RateDesign",
+        "SmartMetering",
+        "optimization",
+        "proceedings"
+      ],
+      "intraHash": "06a3ae0c6263de27829b6c8471e35f79",
+      "interHash": "2dd19e6b5adf339b71a7566066eac132",
+      "label": "EVALUATING TIME-OF-USE DESIGN OPTIONS",
+      "user": "cflath",
+      "description": "",
+      "date": "2014-06-18 10:49:16",
+      "changeDate": "2018-03-13 21:59:35",
+      "count": 2,
+      "pub-type": "inproceedings",
+      "booktitle": "Proceedings of the European Conference on Information Systems",
+      "publisher": "AIS Electronic Library",
+      "year": "2014",
+      "url": "http://aisel.aisnet.org/ecis/",
+      "author": [
+        "Christoph M. Flath"
+      ],
+      "authors": [
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        }
+      ],
+      "bibtexKey": "CitationKey"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/288ed9314851dbe87a8bebeec5b45a9f6/cflath",
+      "tags": [
+        "DemandResponse",
+        "PortfolioDesign",
+        "optimization",
+        "proceedings"
+      ],
+      "intraHash": "88ed9314851dbe87a8bebeec5b45a9f6",
+      "interHash": "2084d98219ff81d5c412e2d4c3fbfb7f",
+      "label": "Load Shifting, Interrupting or Both? Customer Portfolio Composition\r\nin Demand Side Management",
+      "user": "cflath",
+      "description": "",
+      "date": "2014-06-18 10:48:56",
+      "changeDate": "2018-03-13 21:37:25",
+      "count": 1,
+      "pub-type": "inproceedings",
+      "booktitle": "Proceedings of the Computational Management Science Conference",
+      "series": "Springer Lecture Notes in Computer Science",
+      "year": "2014",
+      "url": "",
+      "author": [
+        "Johannes G\u00e4rttner",
+        "Christoph M. Flath",
+        "Christof Weinhardt"
+      ],
+      "authors": [
+        {
+          "first": "Johannes",
+          "last": "G\u00e4rttner"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        },
+        {
+          "first": "Christof",
+          "last": "Weinhardt"
+        }
+      ],
+      "editor": [
+        "Raquel Fonseca",
+        "Jo\u00e3o Telhada",
+        "Gerhard-Wilhelm Weber"
+      ],
+      "editors": [
+        {
+          "first": "Raquel",
+          "last": "Fonseca"
+        },
+        {
+          "first": "Jo\u00e3o",
+          "last": "Telhada"
+        },
+        {
+          "first": "Gerhard-Wilhelm",
+          "last": "Weber"
+        }
+      ],
+      "bibtexKey": "CitationKey"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/24f48dcc08406a247eef830273505e4b0/cflath",
+      "tags": [
+        "DemandResponse",
+        "PortfolioDesign",
+        "optimization",
+        "proceedings"
+      ],
+      "intraHash": "4f48dcc08406a247eef830273505e4b0",
+      "interHash": "be49d4e4eff4f6a8785db79baef39bff",
+      "label": "Designing Demand Response Portfolios",
+      "user": "cflath",
+      "description": "",
+      "date": "2014-06-18 10:48:38",
+      "changeDate": "2014-11-28 22:19:16",
+      "count": 1,
+      "pub-type": "inproceedings",
+      "booktitle": "1st International Workshop on Demand Response",
+      "year": "2014",
+      "url": "",
+      "author": [
+        "Johannes G\u00e4rttner",
+        "Christoph M. Flath",
+        "Christof Weinhardt"
+      ],
+      "authors": [
+        {
+          "first": "Johannes",
+          "last": "G\u00e4rttner"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        },
+        {
+          "first": "Christof",
+          "last": "Weinhardt"
+        }
+      ],
+      "bibtexKey": "CitationKey"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/22f3fa8a379e26f49ffdc66531547be5a/cflath",
+      "tags": [
+        "RealOptions",
+        "finance",
+        "investment",
+        "journal"
+      ],
+      "intraHash": "2f3fa8a379e26f49ffdc66531547be5a",
+      "interHash": "9e31c679c6d9b0232314fe161f183fce",
+      "label": "Strategic investment under uncertainty: A synthesis",
+      "user": "cflath",
+      "description": "",
+      "date": "2014-06-18 10:48:10",
+      "changeDate": "2014-11-28 22:12:14",
+      "count": 1,
+      "pub-type": "article",
+      "journal": "European Journal of Operational Research",
+      "year": "2011",
+      "url": "http://www.sciencedirect.com/science/article/pii/S0377221711004863",
+      "author": [
+        "Beno\u00eet Chevalier-Roignant",
+        "Christoph M. Flath",
+        "Arnd Huchzermeier",
+        "Lenos Trigeorgis"
+      ],
+      "authors": [
+        {
+          "first": "Beno\u00eet",
+          "last": "Chevalier-Roignant"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        },
+        {
+          "first": "Arnd",
+          "last": "Huchzermeier"
+        },
+        {
+          "first": "Lenos",
+          "last": "Trigeorgis"
+        }
+      ],
+      "volume": "215",
+      "number": "3",
+      "pages": "639 - 650",
+      "doi": "DOI: 10.1016/j.ejor.2011.05.038",
+      "bibtexKey": "CitationKey"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/29944ba645844e53e5848aa058213eae5/cflath",
+      "tags": [
+        "ClusterAnalysis",
+        "EnergyInformatics",
+        "SmartMetering",
+        "journal"
+      ],
+      "intraHash": "9944ba645844e53e5848aa058213eae5",
+      "interHash": "a9ea303d63621d8873e00df879dd9e07",
+      "label": "Clusteranalyse von Smart Meter Daten - Eine praxisorientierte\r\nUmsetzung",
+      "user": "cflath",
+      "description": "",
+      "date": "2014-06-18 10:47:46",
+      "changeDate": "2018-03-13 21:58:28",
+      "count": 2,
+      "pub-type": "article",
+      "journal": "Business & Information Systems Engineering",
+      "year": "2012",
+      "url": "http://dx.doi.org/10.1007/s11576-011-0309-8",
+      "author": [
+        "Christoph M. Flath",
+        "David Nicolay",
+        "Tobias Conte",
+        "Clemens van Dinther",
+        "Lilia Filipova-Neumann"
+      ],
+      "authors": [
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        },
+        {
+          "first": "David",
+          "last": "Nicolay"
+        },
+        {
+          "first": "Tobias",
+          "last": "Conte"
+        },
+        {
+          "first": "Clemens",
+          "last": "van Dinther"
+        },
+        {
+          "first": "Lilia",
+          "last": "Filipova-Neumann"
+        }
+      ],
+      "bibtexKey": "CitationKey"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/206656538e0807edc0cac5409d30baa73/cflath",
+      "tags": [
+        "ElectricVehicles",
+        "coordination",
+        "highlight",
+        "journal",
+        "myown",
+        "optimization",
+        "pricing"
+      ],
+      "intraHash": "06656538e0807edc0cac5409d30baa73",
+      "interHash": "5a2f44618a5551196f7a006347d134ab",
+      "label": "Improving Electric Vehicle Charging Coordination Through Area Pricing",
+      "user": "cflath",
+      "description": "",
+      "date": "2014-06-18 10:47:08",
+      "changeDate": "2024-11-11 10:17:23",
+      "count": 1,
+      "pub-type": "article",
+      "journal": "Transportation Science",
+      "year": "2014",
+      "url": "",
+      "author": [
+        "Christoph M. Flath",
+        "Jens Ilg",
+        "Sebastian Gottwalt",
+        "Hartmut Schmeck",
+        "Christof Weinhardt"
+      ],
+      "authors": [
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        },
+        {
+          "first": "Jens",
+          "last": "Ilg"
+        },
+        {
+          "first": "Sebastian",
+          "last": "Gottwalt"
+        },
+        {
+          "first": "Hartmut",
+          "last": "Schmeck"
+        },
+        {
+          "first": "Christof",
+          "last": "Weinhardt"
+        }
+      ],
+      "volume": "48",
+      "number": "4",
+      "pages": "619-634",
+      "bibtexKey": "flath2014improving"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/27d21f6f97d739d740c6e0fba6cad8079/cflath",
+      "tags": [
+        "csp",
+        "energy",
+        "journal",
+        "optimization"
+      ],
+      "intraHash": "7d21f6f97d739d740c6e0fba6cad8079",
+      "interHash": "9e0ebbd3538c8aa52b6549579c8b802e",
+      "label": "Concentrating solar power plant investment and operation decisions\r\nunder different price and support mechanisms",
+      "user": "cflath",
+      "description": "",
+      "date": "2014-06-18 10:46:41",
+      "changeDate": "2014-11-28 22:12:29",
+      "count": 1,
+      "pub-type": "article",
+      "journal": "Energy Policy",
+      "year": "2013",
+      "url": "http://www.sciencedirect.com/science/article/pii/S0301421513003765",
+      "author": [
+        "Christoph Kost",
+        "Christoph M. Flath",
+        "Dominik M\u00f6st"
+      ],
+      "authors": [
+        {
+          "first": "Christoph",
+          "last": "Kost"
+        },
+        {
+          "first": "Christoph M.",
+          "last": "Flath"
+        },
+        {
+          "first": "Dominik",
+          "last": "M\u00f6st"
+        }
+      ],
+      "volume": "61",
+      "number": "0",
+      "pages": "238 - 248",
+      "doi": "http://dx.doi.org/10.1016/j.enpol.2013.05.040",
+      "bibtexKey": "CitationKey"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/2f8258f8d0ad0a0f9d710c7e5162a713f/cflath",
+      "tags": [
+        "DemandResponse",
+        "ElectricVehicles",
+        "journal",
+        "myown",
+        "v2g"
+      ],
+      "intraHash": "f8258f8d0ad0a0f9d710c7e5162a713f",
+      "interHash": "00dc3b2e68d6ee2244900da186d10ee6",
+      "label": "Charging Strategies for Battery Electric Vehicles: Economic Benchmark\r\nand V2G Potential",
+      "user": "cflath",
+      "description": "",
+      "date": "2014-06-18 10:46:14",
+      "changeDate": "2016-11-16 11:07:35",
+      "count": 1,
+      "pub-type": "article",
+      "journal": "IEEE Transactions on Power Systems",
+      "year": "2014",
+      "url": "http://dx.doi.org/10.1109/TPWRS.2014.2301024?",
+      "author": [
+        "Alexander Schuller",
+        "Benjamin Dietz",
+        "Christoph Flath",
+        "Christof Weinhardt"
+      ],
+      "authors": [
+        {
+          "first": "Alexander",
+          "last": "Schuller"
+        },
+        {
+          "first": "Benjamin",
+          "last": "Dietz"
+        },
+        {
+          "first": "Christoph",
+          "last": "Flath"
+        },
+        {
+          "first": "Christof",
+          "last": "Weinhardt"
+        }
+      ],
+      "volume": "29",
+      "number": "5",
+      "pages": "2014-2022",
+      "doi": "10.1109/TPWRS.2014.2301024",
+      "bibtexKey": "CitationKey"
+    },
+    {
+      "type": "Publication",
+      "id": "https://www.bibsonomy.org/bibtex/287fd367bb0bbadce76a166701fc3ce16/cflath",
+      "tags": [
+        "EnergyInformatics",
+        "journal",
+        "myown"
+      ],
+      "intraHash": "87fd367bb0bbadce76a166701fc3ce16",
+      "interHash": "a26221525306a9b5ffad7d37da4acb9b",
+      "label": "Energy Informatics",
+      "user": "cflath",
+      "description": "",
+      "date": "2014-06-18 10:45:45",
+      "changeDate": "2016-11-16 11:03:26",
+      "count": 1,
+      "pub-type": "article",
+      "journal": "Business & Information Systems Engineering",
+      "year": "2014",
+      "url": "http://dx.doi.org/10.1007/s12599-013-0304-2",
+      "author": [
+        "Christoph Goebel",
+        "Hans-Arno Jacobsen",
+        "Victor Razo",
+        "Christoph Doblander",
+        "Jose Rivera",
+        "Jens Ilg",
+        "Christoph Flath",
+        "Hartmut Schmeck",
+        "Christof Weinhardt",
+        "Daniel Pathmaperuma",
+        "Hans-J\u00fcrgen Appelrath",
+        "Michael Sonnenschein",
+        "Sebastian Lehnhoff",
+        "Oliver Kramer",
+        "Thorsten Staake",
+        "Elgar Fleisch",
+        "Dirk Neumann",
+        "Jens Str\u00fcker",
+        "Koray Erek",
+        "R\u00fcdiger Zarnekow",
+        "Holger Ziekow",
+        "J\u00f6rg L\u00e4ssig"
+      ],
+      "authors": [
+        {
+          "first": "Christoph",
+          "last": "Goebel"
+        },
+        {
+          "first": "Hans-Arno",
+          "last": "Jacobsen"
+        },
+        {
+          "first": "Victor",
+          "last": "Razo"
+        },
+        {
+          "first": "Christoph",
+          "last": "Doblander"
+        },
+        {
+          "first": "Jose",
+          "last": "Rivera"
+        },
+        {
+          "first": "Jens",
+          "last": "Ilg"
+        },
+        {
+          "first": "Christoph",
+          "last": "Flath"
+        },
+        {
+          "first": "Hartmut",
+          "last": "Schmeck"
+        },
+        {
+          "first": "Christof",
+          "last": "Weinhardt"
+        },
+        {
+          "first": "Daniel",
+          "last": "Pathmaperuma"
+        },
+        {
+          "first": "Hans-J\u00fcrgen",
+          "last": "Appelrath"
+        },
+        {
+          "first": "Michael",
+          "last": "Sonnenschein"
+        },
+        {
+          "first": "Sebastian",
+          "last": "Lehnhoff"
+        },
+        {
+          "first": "Oliver",
+          "last": "Kramer"
+        },
+        {
+          "first": "Thorsten",
+          "last": "Staake"
+        },
+        {
+          "first": "Elgar",
+          "last": "Fleisch"
+        },
+        {
+          "first": "Dirk",
+          "last": "Neumann"
+        },
+        {
+          "first": "Jens",
+          "last": "Str\u00fcker"
+        },
+        {
+          "first": "Koray",
+          "last": "Erek"
+        },
+        {
+          "first": "R\u00fcdiger",
+          "last": "Zarnekow"
+        },
+        {
+          "first": "Holger",
+          "last": "Ziekow"
+        },
+        {
+          "first": "J\u00f6rg",
+          "last": "L\u00e4ssig"
+        }
+      ],
+      "volume": "6",
+      "number": "1",
+      "pages": "25-31",
+      "doi": "10.1007/s12599-013-0304-2",
+      "bibtexKey": "CitationKey"
+    }
+  ]
 }
