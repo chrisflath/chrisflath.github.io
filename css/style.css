@@ -466,7 +466,7 @@ a.research-card h3 {
     gap: var(--spacing-lg);
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    padding: var(--spacing-md) var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg) var(--spacing-md) var(--spacing-sm);
     margin: 0 calc(-1 * var(--spacing-sm));
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
