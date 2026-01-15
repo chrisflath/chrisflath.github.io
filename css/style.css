@@ -1,20 +1,20 @@
-/* Academic Website - Moleskine-Inspired Theme */
-/* Elegant, warm, notebook aesthetic with pencil-like typography */
+/* Academic Website - Lab Notebook Theme */
+/* Hand-drawn pencil sketch aesthetic */
 
 :root {
-    /* Moleskine-inspired Color Palette */
-    --primary-color: #2c3e50;         /* Deep charcoal blue */
-    --secondary-color: #5d6d7e;       /* Slate gray */
-    --accent-color: #1a6b5c;          /* Moleskine teal/green */
-    --accent-light: #2d8b7a;          /* Lighter teal */
-    --text-color: #3d3d3d;            /* Soft charcoal */
-    --text-light: #6b6b6b;            /* Muted gray */
-    --background: #faf8f5;            /* Warm cream paper */
-    --background-alt: #f5f2ed;        /* Slightly darker cream */
-    --border-color: #e5dfd7;          /* Warm border */
-    --paper-shadow: rgba(139, 126, 102, 0.1);
+    /* University of Würzburg Blue Palette */
+    --primary-color: #00356b;         /* Uni Würzburg dark blue */
+    --secondary-color: #1e4d7b;       /* Mid blue */
+    --accent-color: #00356b;          /* Same blue for accents */
+    --accent-light: #2a5a8a;          /* Lighter blue */
+    --text-color: #2d2d2d;            /* Pencil dark */
+    --text-light: #5a5a5a;            /* Pencil light */
+    --background: #fdfcf9;            /* Cream paper */
+    --background-alt: #f8f6f1;        /* Aged paper */
+    --border-color: #d4cfc4;          /* Pencil line */
+    --pencil-gray: #6b6b6b;           /* Graphite */
 
-    /* Typography - Elegant Serifs */
+    /* Typography */
     --font-heading: 'Cormorant Garamond', Georgia, serif;
     --font-main: 'Crimson Pro', Georgia, serif;
     --font-accent: 'Caveat', cursive;
@@ -49,8 +49,9 @@ body {
     background: var(--background);
     line-height: 1.75;
     min-height: 100vh;
-    /* Subtle paper texture */
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    /* Paper texture */
+    background-image:
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
 }
 
 /* Typography */
@@ -60,40 +61,25 @@ h1, h2, h3, h4 {
     line-height: 1.25;
     margin-bottom: var(--spacing-md);
     font-weight: 500;
-    letter-spacing: 0.01em;
 }
 
-h1 {
-    font-size: 2.8rem;
-    font-weight: 400;
-}
-h2 {
-    font-size: 1.9rem;
-    font-weight: 500;
-}
-h3 {
-    font-size: 1.4rem;
-    font-weight: 600;
-}
-h4 {
-    font-size: 1.15rem;
-    font-weight: 600;
-}
+h1 { font-size: 2.8rem; font-weight: 400; }
+h2 { font-size: 1.9rem; font-weight: 500; }
+h3 { font-size: 1.4rem; font-weight: 600; }
+h4 { font-size: 1.15rem; font-weight: 600; }
 
 p {
     margin-bottom: var(--spacing-md);
 }
 
 a {
-    color: var(--accent-color);
+    color: var(--primary-color);
     text-decoration: none;
-    border-bottom: 1px solid transparent;
-    transition: all 0.2s ease;
+    border-bottom: 1px solid var(--border-color);
 }
 
 a:hover {
-    color: var(--accent-light);
-    border-bottom-color: var(--accent-light);
+    border-bottom-color: var(--primary-color);
 }
 
 /* Layout */
@@ -103,14 +89,13 @@ a:hover {
     padding: 0 var(--spacing-lg);
 }
 
-/* Header / Navigation */
+/* Header */
 .site-header {
     background: var(--primary-color);
     padding: var(--spacing-md) 0;
     position: sticky;
     top: 0;
     z-index: 100;
-    box-shadow: 0 2px 20px rgba(0,0,0,0.15);
 }
 
 .site-header .container {
@@ -129,7 +114,6 @@ a:hover {
 }
 
 .site-title:hover {
-    color: var(--background);
     border-bottom: none;
 }
 
@@ -139,13 +123,12 @@ a:hover {
 }
 
 .main-nav a {
-    color: rgba(250, 248, 245, 0.85);
+    color: rgba(253, 252, 249, 0.85);
     font-family: var(--font-main);
     font-weight: 500;
     font-size: 0.95rem;
     padding: var(--spacing-sm) 0;
-    position: relative;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.02em;
     text-transform: uppercase;
     border-bottom: none;
 }
@@ -153,23 +136,6 @@ a:hover {
 .main-nav a:hover,
 .main-nav a.active {
     color: var(--background);
-    border-bottom: none;
-}
-
-.main-nav a::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 1px;
-    background: var(--background);
-    transition: width 0.3s ease;
-}
-
-.main-nav a:hover::after,
-.main-nav a.active::after {
-    width: 100%;
 }
 
 /* Mobile Navigation */
@@ -183,10 +149,7 @@ a:hover {
 }
 
 @media (max-width: 768px) {
-    .nav-toggle {
-        display: block;
-    }
-
+    .nav-toggle { display: block; }
     .main-nav {
         display: none;
         position: absolute;
@@ -198,13 +161,10 @@ a:hover {
         padding: var(--spacing-md);
         gap: var(--spacing-sm);
     }
-
-    .main-nav.active {
-        display: flex;
-    }
+    .main-nav.active { display: flex; }
 }
 
-/* Hero Section (Home Page) */
+/* Hero Section */
 .hero {
     padding: var(--spacing-xl) 0;
     background: var(--background);
@@ -228,13 +188,10 @@ a:hover {
 .profile-image {
     width: 100%;
     max-width: 240px;
-    border-radius: 4px;
-    box-shadow: 0 4px 20px var(--paper-shadow);
-    border: 4px solid white;
-}
-
-.hero-text h1 {
-    margin-bottom: var(--spacing-xs);
+    /* Pencil sketch frame effect */
+    border: 2px solid var(--pencil-gray);
+    box-shadow: 3px 3px 0 var(--border-color);
+    filter: contrast(1.02);
 }
 
 .hero-subtitle {
@@ -242,6 +199,8 @@ a:hover {
     font-size: 1.15rem;
     font-style: italic;
     margin-bottom: var(--spacing-lg);
+    padding-left: var(--spacing-md);
+    border-left: 2px solid var(--pencil-gray);
 }
 
 .hero-description {
@@ -258,9 +217,7 @@ a:hover {
 }
 
 @media (max-width: 768px) {
-    .contact-links {
-        justify-content: center;
-    }
+    .contact-links { justify-content: center; }
 }
 
 .contact-link {
@@ -268,19 +225,11 @@ a:hover {
     align-items: center;
     gap: var(--spacing-sm);
     padding: var(--spacing-sm) var(--spacing-md);
-    background: white;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
+    background: var(--background);
+    border: 1px solid var(--pencil-gray);
     color: var(--text-color);
     font-size: 0.9rem;
-    transition: all 0.2s ease;
-    box-shadow: 0 1px 3px var(--paper-shadow);
-}
-
-.contact-link:hover {
-    border-color: var(--accent-color);
-    box-shadow: 0 2px 8px var(--paper-shadow);
-    transform: translateY(-1px);
+    box-shadow: 2px 2px 0 var(--border-color);
 }
 
 .contact-link svg {
@@ -298,6 +247,7 @@ a:hover {
     background: var(--background-alt);
 }
 
+/* Pencil underline for section titles */
 .section-title {
     margin-bottom: var(--spacing-lg);
     position: relative;
@@ -307,14 +257,17 @@ a:hover {
 .section-title::after {
     content: '';
     position: absolute;
-    bottom: -8px;
+    bottom: -6px;
     left: 0;
-    width: 60px;
+    width: 100%;
     height: 2px;
-    background: var(--accent-color);
+    background: var(--pencil-gray);
+    /* Rough pencil line effect */
+    mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 4' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 2 Q10 0, 20 2 T40 2 T60 2 T80 2 T100 2' stroke='black' fill='none' stroke-width='3'/%3E%3C/svg%3E");
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 4' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 2 Q10 0, 20 2 T40 2 T60 2 T80 2 T100 2' stroke='black' fill='none' stroke-width='3'/%3E%3C/svg%3E");
 }
 
-/* Research Interests */
+/* Research Cards - Notebook style */
 .research-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -322,21 +275,26 @@ a:hover {
 }
 
 .research-card {
-    background: white;
+    background: var(--background);
     padding: var(--spacing-lg);
-    border-radius: 4px;
-    box-shadow: 0 2px 12px var(--paper-shadow);
-    border: 1px solid var(--border-color);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid var(--pencil-gray);
+    box-shadow: 3px 3px 0 var(--border-color);
+    position: relative;
 }
 
-.research-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px var(--paper-shadow);
+/* Corner fold effect */
+.research-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(135deg, var(--background-alt) 50%, var(--border-color) 50%);
 }
 
 .research-card h3 {
-    color: var(--accent-color);
+    color: var(--primary-color);
     margin-bottom: var(--spacing-sm);
     font-family: var(--font-heading);
 }
@@ -347,7 +305,7 @@ a:hover {
     margin-bottom: 0;
 }
 
-/* Publications */
+/* Publications - Lab notebook entries */
 .publication-list {
     display: flex;
     flex-direction: column;
@@ -355,16 +313,29 @@ a:hover {
 }
 
 .publication-item {
-    background: white;
+    background: var(--background);
     padding: var(--spacing-lg);
-    border-radius: 4px;
-    border-left: 3px solid var(--accent-color);
-    box-shadow: 0 2px 8px var(--paper-shadow);
-    transition: box-shadow 0.2s ease;
+    border-left: 3px solid var(--primary-color);
+    border-bottom: 1px dashed var(--border-color);
+    position: relative;
 }
 
-.publication-item:hover {
-    box-shadow: 0 4px 16px var(--paper-shadow);
+/* Margin line like notebook */
+.publication-item::before {
+    content: '';
+    position: absolute;
+    left: var(--spacing-lg);
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: repeating-linear-gradient(
+        to bottom,
+        var(--border-color) 0px,
+        var(--border-color) 4px,
+        transparent 4px,
+        transparent 8px
+    );
+    opacity: 0.5;
 }
 
 .publication-title {
@@ -390,14 +361,12 @@ a:hover {
 
 .publication-year {
     display: inline-block;
-    background: var(--accent-color);
+    background: var(--primary-color);
     color: white;
     padding: 2px 10px;
-    border-radius: 3px;
     font-size: 0.8rem;
     font-family: var(--font-main);
     margin-right: var(--spacing-sm);
-    letter-spacing: 0.02em;
 }
 
 .publication-links {
@@ -411,16 +380,9 @@ a:hover {
     font-size: 0.82rem;
     padding: 4px 12px;
     background: var(--background-alt);
-    border-radius: 3px;
-    color: var(--accent-color);
     border: 1px solid var(--border-color);
+    color: var(--primary-color);
     font-family: var(--font-main);
-}
-
-.pub-link:hover {
-    background: var(--accent-color);
-    color: white;
-    border-color: var(--accent-color);
 }
 
 /* Publication Filters */
@@ -433,24 +395,21 @@ a:hover {
 
 .filter-btn {
     padding: var(--spacing-sm) var(--spacing-md);
-    background: white;
+    background: var(--background);
     border: 1px solid var(--border-color);
-    border-radius: 4px;
     cursor: pointer;
     font-family: var(--font-main);
     font-size: 0.88rem;
-    transition: all 0.2s ease;
     color: var(--text-color);
 }
 
-.filter-btn:hover,
 .filter-btn.active {
-    background: var(--accent-color);
+    background: var(--primary-color);
     color: white;
-    border-color: var(--accent-color);
+    border-color: var(--primary-color);
 }
 
-/* Stats */
+/* Stats - Handwritten style numbers */
 .stats-row {
     display: flex;
     gap: var(--spacing-xl);
@@ -463,22 +422,40 @@ a:hover {
 }
 
 .stat-number {
-    font-family: var(--font-heading);
-    font-size: 2.8rem;
-    font-weight: 400;
-    color: var(--accent-color);
+    font-family: var(--font-accent);
+    font-size: 3.2rem;
+    color: var(--primary-color);
     display: block;
-    line-height: 1.1;
+    line-height: 1;
 }
 
 .stat-label {
     color: var(--text-light);
-    font-size: 0.88rem;
+    font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
 }
 
-/* Projects Page */
+/* PhD Students */
+.phd-students {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+}
+
+.phd-student {
+    font-family: var(--font-accent);
+    font-size: 1.4rem;
+    color: var(--text-color);
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-bottom: 1px solid var(--pencil-gray);
+}
+
+.phd-student::before {
+    content: none;
+}
+
+/* Projects */
 .project-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -486,17 +463,10 @@ a:hover {
 }
 
 .project-card {
-    background: white;
-    border-radius: 4px;
+    background: var(--background);
+    border: 1px solid var(--pencil-gray);
+    box-shadow: 3px 3px 0 var(--border-color);
     overflow: hidden;
-    box-shadow: 0 2px 12px var(--paper-shadow);
-    border: 1px solid var(--border-color);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.project-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px var(--paper-shadow);
 }
 
 .project-image {
@@ -504,6 +474,7 @@ a:hover {
     height: 160px;
     object-fit: cover;
     background: var(--background-alt);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .project-content {
@@ -518,20 +489,19 @@ a:hover {
 .project-status {
     display: inline-block;
     padding: 2px 10px;
-    border-radius: 3px;
     font-size: 0.78rem;
     margin-bottom: var(--spacing-sm);
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    border: 1px solid var(--border-color);
 }
 
 .project-status.active {
-    background: #d4edda;
-    color: #155724;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
 }
 
 .project-status.completed {
-    background: var(--background-alt);
     color: var(--text-light);
 }
 
@@ -542,7 +512,7 @@ a:hover {
 
 .cv-section h2 {
     font-family: var(--font-heading);
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--pencil-gray);
     padding-bottom: var(--spacing-sm);
 }
 
@@ -551,7 +521,7 @@ a:hover {
     grid-template-columns: 110px 1fr;
     gap: var(--spacing-lg);
     padding: var(--spacing-md) 0;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px dashed var(--border-color);
 }
 
 @media (max-width: 600px) {
@@ -562,10 +532,9 @@ a:hover {
 }
 
 .cv-date {
-    color: var(--text-light);
-    font-size: 0.88rem;
     font-family: var(--font-accent);
-    font-size: 1.1rem;
+    font-size: 1.2rem;
+    color: var(--pencil-gray);
 }
 
 .cv-title {
@@ -574,13 +543,33 @@ a:hover {
 }
 
 .cv-org {
-    color: var(--accent-color);
+    color: var(--primary-color);
+}
+
+/* Awards */
+.awards-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.award-item {
+    display: flex;
+    gap: var(--spacing-md);
+    align-items: baseline;
+}
+
+.award-year {
+    font-family: var(--font-accent);
+    font-size: 1.2rem;
+    color: var(--pencil-gray);
+    min-width: 80px;
 }
 
 /* Footer */
 .site-footer {
     background: var(--primary-color);
-    color: rgba(250, 248, 245, 0.8);
+    color: rgba(253, 252, 249, 0.8);
     padding: var(--spacing-lg) 0;
     margin-top: var(--spacing-xl);
 }
@@ -604,13 +593,9 @@ a:hover {
 }
 
 .footer-links a {
-    color: rgba(250, 248, 245, 0.8);
+    color: rgba(253, 252, 249, 0.8);
     font-size: 0.9rem;
     border-bottom: none;
-}
-
-.footer-links a:hover {
-    color: var(--background);
 }
 
 /* Utility Classes */
@@ -621,282 +606,41 @@ a:hover {
 .mb-1 { margin-bottom: var(--spacing-md); }
 .mb-2 { margin-bottom: var(--spacing-lg); }
 
-/* Handwritten accent class */
+/* Handwritten class */
 .handwritten {
     font-family: var(--font-accent);
     font-size: 1.3em;
-    color: var(--accent-color);
 }
 
 /* Page transitions */
 .page-content {
-    animation: fadeIn 0.4s ease;
+    animation: fadeIn 0.3s ease;
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Awards list for CV */
-.awards-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-sm);
-}
-
-.award-item {
-    display: flex;
-    gap: var(--spacing-md);
-    align-items: baseline;
-}
-
-.award-year {
-    font-family: var(--font-accent);
-    font-size: 1.1rem;
-    color: var(--text-light);
-    min-width: 80px;
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 /* Print styles */
 @media print {
-    .site-header, .site-footer, .nav-toggle {
-        display: none;
-    }
-
-    .container {
-        max-width: 100%;
-    }
-
-    body {
-        background: white;
-        background-image: none;
-    }
-
-    a {
-        color: var(--text-color);
-        border-bottom: none;
-    }
+    .site-header, .site-footer, .nav-toggle { display: none; }
+    .container { max-width: 100%; }
+    body { background: white; background-image: none; }
+    a { color: var(--text-color); border-bottom: none; }
 }
 
-/* Blockquote styling for potential use */
+/* Selection */
+::selection {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* Blockquote */
 blockquote {
-    border-left: 3px solid var(--accent-color);
+    border-left: 2px solid var(--pencil-gray);
     padding-left: var(--spacing-md);
     margin: var(--spacing-lg) 0;
     font-style: italic;
     color: var(--text-light);
-}
-
-/* Selection color */
-::selection {
-    background: var(--accent-color);
-    color: white;
-}
-
-/* ========================================
-   Pencil Gradient & Sketch Styling
-   ======================================== */
-
-/* Pencil shading gradient for cards */
-.research-card,
-.publication-item,
-.project-card,
-.contact-link {
-    position: relative;
-    background: linear-gradient(
-        135deg,
-        #ffffff 0%,
-        #fdfcfa 50%,
-        #f8f6f2 100%
-    );
-}
-
-/* Sketchy underline effect for section titles */
-.section-title::after {
-    background: linear-gradient(
-        90deg,
-        var(--accent-color) 0%,
-        var(--accent-color) 60%,
-        transparent 100%
-    );
-    height: 2px;
-    width: 80px;
-}
-
-/* Pencil stroke effect on left borders */
-.publication-item {
-    border-left: 3px solid transparent;
-    border-image: linear-gradient(
-        180deg,
-        var(--accent-color) 0%,
-        var(--accent-light) 50%,
-        rgba(26, 107, 92, 0.3) 100%
-    ) 1;
-}
-
-/* Subtle pencil shadow on hover */
-.research-card:hover,
-.project-card:hover {
-    box-shadow:
-        0 6px 20px var(--paper-shadow),
-        inset 0 -2px 4px rgba(0,0,0,0.02);
-}
-
-/* Stats with pencil-drawn number effect */
-.stat-number {
-    background: linear-gradient(
-        180deg,
-        var(--accent-color) 0%,
-        #0d4a40 100%
-    );
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-/* Sketch-style year badges */
-.publication-year {
-    background: linear-gradient(
-        135deg,
-        var(--accent-color) 0%,
-        var(--accent-light) 100%
-    );
-    box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-}
-
-/* Header with subtle gradient */
-.site-header {
-    background: linear-gradient(
-        180deg,
-        #2c3e50 0%,
-        #1a2a3a 100%
-    );
-}
-
-/* Footer gradient */
-.site-footer {
-    background: linear-gradient(
-        180deg,
-        #1a2a3a 0%,
-        #2c3e50 100%
-    );
-}
-
-/* Profile image pencil sketch border */
-.profile-image {
-    border: 3px solid white;
-    box-shadow:
-        0 4px 20px var(--paper-shadow),
-        0 0 0 1px rgba(0,0,0,0.05);
-}
-
-/* ========================================
-   PhD Students Styling
-   ======================================== */
-
-.phd-students {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--spacing-lg);
-    justify-content: flex-start;
-}
-
-.phd-student {
-    font-family: var(--font-heading);
-    font-size: 1.25rem;
-    font-weight: 500;
-    color: var(--primary-color);
-    padding: var(--spacing-sm) var(--spacing-lg);
-    background: linear-gradient(
-        135deg,
-        #ffffff 0%,
-        #fdfcfa 100%
-    );
-    border-radius: 4px;
-    box-shadow: 0 2px 8px var(--paper-shadow);
-    border-left: 3px solid var(--accent-color);
-    position: relative;
-}
-
-.phd-student::before {
-    content: '✓';
-    font-family: var(--font-accent);
-    font-size: 1rem;
-    color: var(--accent-color);
-    margin-right: var(--spacing-sm);
-    opacity: 0.7;
-}
-
-/* Notebook ruled line effect for sections */
-.section:nth-child(odd) .container::before {
-    content: '';
-    position: absolute;
-    left: var(--spacing-lg);
-    right: var(--spacing-lg);
-    top: 0;
-    height: 1px;
-    background: linear-gradient(
-        90deg,
-        transparent 0%,
-        var(--border-color) 10%,
-        var(--border-color) 90%,
-        transparent 100%
-    );
-}
-
-/* Hero subtitle pencil styling */
-.hero-subtitle {
-    position: relative;
-    padding-left: var(--spacing-md);
-    border-left: 2px solid var(--accent-color);
-    background: linear-gradient(
-        90deg,
-        rgba(26, 107, 92, 0.05) 0%,
-        transparent 100%
-    );
-}
-
-/* Filter buttons with pencil hover */
-.filter-btn {
-    position: relative;
-    overflow: hidden;
-}
-
-.filter-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-        90deg,
-        transparent 0%,
-        rgba(26, 107, 92, 0.1) 50%,
-        transparent 100%
-    );
-    transition: left 0.3s ease;
-}
-
-.filter-btn:hover::before {
-    left: 100%;
-}
-
-/* Pub links pencil style */
-.pub-link {
-    position: relative;
-    background: linear-gradient(
-        180deg,
-        var(--background-alt) 0%,
-        #ebe7e0 100%
-    );
-}
-
-.pub-link:hover {
-    background: linear-gradient(
-        180deg,
-        var(--accent-color) 0%,
-        var(--accent-light) 100%
-    );
 }
