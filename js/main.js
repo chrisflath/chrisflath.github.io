@@ -120,7 +120,7 @@ async function loadBibsonomyPublications(container) {
     try {
         // Use JSONP to bypass CORS restrictions
         const callbackName = 'bibsonomyCallback_' + Date.now();
-        const url = `https://www.bibsonomy.org/json/user/${username}?callback=${callbackName}`;
+        const url = `https://www.bibsonomy.org/json/user/${username}?items=200&callback=${callbackName}`;
 
         const data = await new Promise((resolve, reject) => {
             // Set timeout for the request
@@ -246,6 +246,12 @@ function renderBibsonomyPublications(container, data) {
     });
 
     container.innerHTML = html;
+
+    // Update publication count
+    const pubCountEl = document.getElementById('pub-count');
+    if (pubCountEl) {
+        pubCountEl.textContent = items.length;
+    }
 
     // Re-initialize filters after dynamic content load
     initPublicationFilters();
