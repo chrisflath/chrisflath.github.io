@@ -693,3 +693,210 @@ blockquote {
     background: var(--accent-color);
     color: white;
 }
+
+/* ========================================
+   Pencil Gradient & Sketch Styling
+   ======================================== */
+
+/* Pencil shading gradient for cards */
+.research-card,
+.publication-item,
+.project-card,
+.contact-link {
+    position: relative;
+    background: linear-gradient(
+        135deg,
+        #ffffff 0%,
+        #fdfcfa 50%,
+        #f8f6f2 100%
+    );
+}
+
+/* Sketchy underline effect for section titles */
+.section-title::after {
+    background: linear-gradient(
+        90deg,
+        var(--accent-color) 0%,
+        var(--accent-color) 60%,
+        transparent 100%
+    );
+    height: 2px;
+    width: 80px;
+}
+
+/* Pencil stroke effect on left borders */
+.publication-item {
+    border-left: 3px solid transparent;
+    border-image: linear-gradient(
+        180deg,
+        var(--accent-color) 0%,
+        var(--accent-light) 50%,
+        rgba(26, 107, 92, 0.3) 100%
+    ) 1;
+}
+
+/* Subtle pencil shadow on hover */
+.research-card:hover,
+.project-card:hover {
+    box-shadow:
+        0 6px 20px var(--paper-shadow),
+        inset 0 -2px 4px rgba(0,0,0,0.02);
+}
+
+/* Stats with pencil-drawn number effect */
+.stat-number {
+    background: linear-gradient(
+        180deg,
+        var(--accent-color) 0%,
+        #0d4a40 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Sketch-style year badges */
+.publication-year {
+    background: linear-gradient(
+        135deg,
+        var(--accent-color) 0%,
+        var(--accent-light) 100%
+    );
+    box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+/* Header with subtle gradient */
+.site-header {
+    background: linear-gradient(
+        180deg,
+        #2c3e50 0%,
+        #1a2a3a 100%
+    );
+}
+
+/* Footer gradient */
+.site-footer {
+    background: linear-gradient(
+        180deg,
+        #1a2a3a 0%,
+        #2c3e50 100%
+    );
+}
+
+/* Profile image pencil sketch border */
+.profile-image {
+    border: 3px solid white;
+    box-shadow:
+        0 4px 20px var(--paper-shadow),
+        0 0 0 1px rgba(0,0,0,0.05);
+}
+
+/* ========================================
+   PhD Students Styling
+   ======================================== */
+
+.phd-students {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-lg);
+    justify-content: flex-start;
+}
+
+.phd-student {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--primary-color);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    background: linear-gradient(
+        135deg,
+        #ffffff 0%,
+        #fdfcfa 100%
+    );
+    border-radius: 4px;
+    box-shadow: 0 2px 8px var(--paper-shadow);
+    border-left: 3px solid var(--accent-color);
+    position: relative;
+}
+
+.phd-student::before {
+    content: '✓';
+    font-family: var(--font-accent);
+    font-size: 1rem;
+    color: var(--accent-color);
+    margin-right: var(--spacing-sm);
+    opacity: 0.7;
+}
+
+/* Notebook ruled line effect for sections */
+.section:nth-child(odd) .container::before {
+    content: '';
+    position: absolute;
+    left: var(--spacing-lg);
+    right: var(--spacing-lg);
+    top: 0;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        var(--border-color) 10%,
+        var(--border-color) 90%,
+        transparent 100%
+    );
+}
+
+/* Hero subtitle pencil styling */
+.hero-subtitle {
+    position: relative;
+    padding-left: var(--spacing-md);
+    border-left: 2px solid var(--accent-color);
+    background: linear-gradient(
+        90deg,
+        rgba(26, 107, 92, 0.05) 0%,
+        transparent 100%
+    );
+}
+
+/* Filter buttons with pencil hover */
+.filter-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.filter-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(26, 107, 92, 0.1) 50%,
+        transparent 100%
+    );
+    transition: left 0.3s ease;
+}
+
+.filter-btn:hover::before {
+    left: 100%;
+}
+
+/* Pub links pencil style */
+.pub-link {
+    position: relative;
+    background: linear-gradient(
+        180deg,
+        var(--background-alt) 0%,
+        #ebe7e0 100%
+    );
+}
+
+.pub-link:hover {
+    background: linear-gradient(
+        180deg,
+        var(--accent-color) 0%,
+        var(--accent-light) 100%
+    );
+}
