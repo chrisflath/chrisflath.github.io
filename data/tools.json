@@ -1,0 +1,16 @@
+{
+  "categories": [
+    {
+      "name": "Languages",
+      "items": ["Python", "R", "SQL"]
+    },
+    {
+      "name": "ML / DL",
+      "items": ["PyTorch", "scikit-learn", "deepflash2"]
+    },
+    {
+      "name": "Analytics",
+      "items": ["Gurobi", "PM4Py", "pandas"]
+    }
+  ]
+}
