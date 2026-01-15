@@ -145,57 +145,22 @@ async function loadOpenAlexMetrics() {
 }
 
 /**
- * Fetch publications from Bibsonomy API using JSONP (to bypass CORS)
+ * Load publications from local JSON file (exported from Bibsonomy)
  */
 async function loadBibsonomyPublications(container) {
-    const { username, resourceType } = BIBSONOMY_CONFIG;
-
     // Show loading state
-    container.innerHTML = '<p class="text-muted">Loading publications from Bibsonomy...</p>';
+    container.innerHTML = '<p class="text-muted">Loading publications...</p>';
 
     try {
-        // Use JSONP to bypass CORS restrictions
-        const callbackName = 'bibsonomyCallback_' + Date.now();
-        const url = `https://www.bibsonomy.org/json/user/${username}?items=200&callback=${callbackName}`;
-
-        const data = await new Promise((resolve, reject) => {
-            // Set timeout for the request
-            const timeout = setTimeout(() => {
-                cleanup();
-                reject(new Error('Request timed out'));
-            }, 10000);
-
-            // Create callback function
-            window[callbackName] = function(response) {
-                cleanup();
-                resolve(response);
-            };
-
-            // Cleanup function
-            function cleanup() {
-                clearTimeout(timeout);
-                delete window[callbackName];
-                if (script.parentNode) {
-                    script.parentNode.removeChild(script);
-                }
-            }
-
-            // Create and inject script tag
-            const script = document.createElement('script');
-            script.src = url;
-            script.onerror = function() {
-                cleanup();
-                reject(new Error('Failed to load script'));
-            };
-            document.head.appendChild(script);
-        });
-
+        const response = await fetch('data/publications.json');
+        if (!response.ok) throw new Error('Failed to load publications');
+        const data = await response.json();
         renderBibsonomyPublications(container, data);
     } catch (error) {
-        console.error('Error fetching from Bibsonomy:', error);
+        console.error('Error loading publications:', error);
         container.innerHTML = `
             <p class="text-muted">
-                Unable to load publications dynamically.
+                Unable to load publications.
                 Please visit <a href="https://www.bibsonomy.org/user/${BIBSONOMY_CONFIG.username}" target="_blank">my Bibsonomy profile</a>
                 or <a href="https://scholar.google.com/citations?user=5Iy85HsAAAAJ" target="_blank">Google Scholar</a> for a complete list.
             </p>
