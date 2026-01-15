@@ -128,10 +128,8 @@ async function loadOpenAlexMetrics() {
 
         const author = await response.json();
 
-        // Only set pub count from OpenAlex on pages without Bibsonomy publications
-        // (publications page sets this from Bibsonomy data instead)
-        const hasBibsonomy = document.getElementById('bibsonomy-publications');
-        if (pubCountEl && author.works_count && !hasBibsonomy) {
+        // Set pub count from OpenAlex on all pages
+        if (pubCountEl && author.works_count) {
             pubCountEl.textContent = author.works_count.toLocaleString();
         }
         if (citationsEl && author.cited_by_count) {
@@ -284,12 +282,6 @@ function renderBibsonomyPublications(container, data) {
     });
 
     container.innerHTML = html;
-
-    // Update publication count
-    const pubCountEl = document.getElementById('pub-count');
-    if (pubCountEl) {
-        pubCountEl.textContent = items.length;
-    }
 
     // Re-initialize filters after dynamic content load
     initPublicationFilters();
