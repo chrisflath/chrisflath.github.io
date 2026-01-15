@@ -97,6 +97,52 @@
             font-style: italic;
             color: var(--text-light);
         }
+
+        /* Mobile: simplified research cards */
+        @media (max-width: 768px) {
+            .research-area {
+                padding: var(--spacing-md);
+                background: var(--background);
+                border: 1px solid var(--border-color);
+                box-shadow: none;
+                transform: none;
+                border-radius: 4px;
+                margin-bottom: var(--spacing-lg);
+            }
+
+            .research-area:nth-child(odd),
+            .research-area:nth-child(even) {
+                transform: none;
+                border-radius: 4px;
+            }
+
+            .research-area h2 {
+                font-family: var(--font-body);
+                font-size: 1.2rem;
+                font-weight: 600;
+            }
+
+            .research-description {
+                font-size: 0.95rem;
+                line-height: 1.6;
+                margin-bottom: var(--spacing-md);
+            }
+
+            .selected-papers h4 {
+                font-family: var(--font-body);
+                font-size: 1rem;
+            }
+
+            .paper-list li {
+                font-size: 0.9rem;
+                line-height: 1.5;
+            }
+
+            .paper-venue {
+                display: block;
+                font-size: 0.85rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -167,7 +213,7 @@
                             <li>Schuller, Flath & Gottwalt (2015) — <a href="https://www.sciencedirect.com/science/article/pii/S0306261915004432" target="_blank">Quantifying Load Flexibility of Electric Vehicles</a> <span class="paper-venue">(Applied Energy)</span></li>
                             <li>Salah et al. (2015) — <a href="https://www.sciencedirect.com/science/article/pii/S0306261914010393" target="_blank">Impact of Electric Vehicles on Distribution Substations</a> <span class="paper-venue">(Applied Energy)</span></li>
                             <li>Flath et al. (2012) — <a href="https://link.springer.com/article/10.1007/s12599-011-0201-5" target="_blank">Cluster Analysis of Smart Metering Data</a> <span class="paper-venue">(Business & Information Systems Engineering)</span></li>
-                            <li>Gärttner, Flath & Weinhardt (2017) — <a href="https://www.sciencedirect.com/science/article/pii/S037722171730807X" target="_blank">Portfolio and Contract Design for Demand Response Resources</a> <span class="paper-venue">(EJOR)</span></li>
+                            <li>Gärttner, Flath & Weinhardt (2017) — <a href="https://www.sciencedirect.com/science/article/pii/S037722171730807X" target="_blank">Portfolio and Contract Design for Demand Response Resources</a> <span class="paper-venue">(European Journal of Operational Research)</span></li>
                         </ul>
                     </div>
                 </div>
@@ -183,7 +229,7 @@
                         <ul class="paper-list">
                             <li>Flath & Stein (2018) — <a href="https://doi.org/10.1016/j.compind.2017.09.003" target="_blank">Towards a Data Science Toolbox for Industrial Analytics Applications</a> <span class="paper-venue">(Computers in Industry)</span></li>
                             <li>Griebel et al. (2023) — <a href="https://doi.org/10.1038/s41467-023-36960-9" target="_blank">Deep Learning-Enabled Segmentation of Ambiguous Bioimages with deepflash2</a> <span class="paper-venue">(Nature Communications)</span></li>
-                            <li>Stahl, Stein & Flath (2021) — <a href="https://doi.org/10.1109/TEM.2021.3075936" target="_blank">Analytics Applications in Fashion Supply Chain Management</a> <span class="paper-venue">(IEEE TEM)</span></li>
+                            <li>Stahl, Stein & Flath (2021) — <a href="https://doi.org/10.1109/TEM.2021.3075936" target="_blank">Analytics Applications in Fashion Supply Chain Management</a> <span class="paper-venue">(IEEE Transactions on Engineering Management)</span></li>
                             <li>Greif, Stein & Flath (2023) — <a href="https://econpapers.repec.org/RePEc:inm:orinte:v:53:y:2023:i:4:p:283-294" target="_blank">Information Value Analysis for Real-Time Silo Fill-Level Monitoring</a> <span class="paper-venue">(INFORMS J. Applied Analytics)</span></li>
                         </ul>
                     </div>
