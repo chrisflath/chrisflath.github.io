@@ -449,10 +449,7 @@ a:hover {
     color: var(--text-color);
     padding: var(--spacing-xs) var(--spacing-md);
     border-bottom: 1px solid var(--pencil-gray);
-}
-
-.phd-student::before {
-    content: none;
+    text-decoration: none;
 }
 
 /* Projects */
