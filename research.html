@@ -245,31 +245,44 @@
             }
         }
 
+        /* Assets area - contains data links and polaroids */
+        .research-assets {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-md);
+        }
+
+        .polaroid-gallery {
+            display: none; /* Temporarily hidden - remove to re-enable */
+            gap: var(--spacing-sm);
+            flex-wrap: wrap;
+        }
+
         /* Polaroid figure style */
         .polaroid {
-            position: absolute;
-            top: var(--spacing-lg);
-            right: -20px;
+            position: relative;
             background: #fff;
             padding: 5px 5px 18px 5px;
             box-shadow:
                 0 2px 4px rgba(0,0,0,0.12),
                 0 3px 6px rgba(0,0,0,0.08);
-            max-width: 130px;
-            transform: rotate(3deg);
-            z-index: 10;
+            max-width: 104px;
         }
 
-        .polaroid:nth-of-type(2) {
-            top: auto;
-            bottom: var(--spacing-lg);
-            right: 20px;
+        .polaroid:nth-child(odd) {
+            transform: rotate(2deg);
+        }
+
+        .polaroid:nth-child(even) {
             transform: rotate(-2deg);
         }
 
         .polaroid img {
             width: 100%;
-            height: auto;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
             display: block;
         }
 
@@ -299,16 +312,7 @@
 
         @media (max-width: 768px) {
             .polaroid {
-                position: relative;
-                top: auto;
-                right: auto;
-                display: block;
-                margin: var(--spacing-sm) auto;
-                max-width: 80px;
-                transform: rotate(1deg);
-            }
-            .polaroid:nth-of-type(2) {
-                bottom: auto;
+                max-width: 64px;
             }
         }
     </style>
@@ -345,10 +349,6 @@
                 <!-- Research Area 1 -->
                 <div class="research-area" id="platforms">
                     <h2>Digital Markets, Platforms, and Data-Driven Commerce</h2>
-                    <div class="polaroid">
-                        <img src="images/papers/copy_transform_combine_fig4.png" alt="Remix flows between categories">
-                        <div class="polaroid-caption">Remix knowledge flows</div>
-                    </div>
                     <p class="research-description">
                         I study decision-making and market outcomes in digital ecosystems—where incentives, information, and platform design shape behavior. This includes sharing-economy and mobility platforms as well as data-driven retail and operational decision problems (e.g., service design, fulfillment, and returns).
                     </p>
@@ -363,6 +363,26 @@
                             <li>Flath, Friesike, Wirth & Thiesse (2017) — <a href="https://link.springer.com/article/10.1057/s41265-017-0043-9" target="_blank">Copy, Transform, Combine: Exploring the Remix as a Form of Innovation</a> <span class="paper-venue">(Journal of Information Technology)</span></li>
                             <li>Teubner & Flath (2015) — <a href="https://link.springer.com/article/10.1007/s12599-015-0396-y" target="_blank">The Economics of Multi-Hop Ride Sharing</a> <span class="paper-venue">(Business & Information Systems Engineering)</span></li>
                         </ul>
+                    </div>
+                    <div class="research-assets">
+                        <div class="polaroid-gallery">
+                            <div class="polaroid">
+                                <img src="images/papers/copy_transform_combine_fig4.png" alt="Remix flows between categories">
+                                <div class="polaroid-caption">Remix knowledge flows</div>
+                            </div>
+                            <div class="polaroid">
+                                <img src="images/papers/catch_me_scan.jpg" alt="Smart store prescriptive model">
+                                <div class="polaroid-caption">Catch me if you scan</div>
+                            </div>
+                            <div class="polaroid">
+                                <img src="images/papers/digital_transformation_retail.png" alt="Digital transformation in fashion retail">
+                                <div class="polaroid-caption">Digital retail transformation</div>
+                            </div>
+                            <div class="polaroid">
+                                <img src="images/papers/privacy.jpg" alt="Privacy in the sharing economy">
+                                <div class="polaroid-caption">Sharing economy privacy</div>
+                            </div>
+                        </div>
                     </div>
                     <a href="#top" class="back-to-top">↑ Top</a>
                 </div>
@@ -382,19 +402,27 @@
                             <li>Elbert, Stein & Flath (2023) — <a href="https://link.springer.com/chapter/10.1007/978-3-031-80122-8_14" target="_blank">Process and Strategy Mining in Real-Time Strategy Games</a> <span class="paper-venue">(Wirtschaftsinformatik Proceedings)</span></li>
                         </ul>
                     </div>
-                    <div class="data-links">
-                        <a href="https://zenodo.org/records/13365584" target="_blank" rel="noopener" class="data-link">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
-                            AoE2 event logs
-                        </a>
-                        <a href="https://www.kaggle.com/datasets/nicoelbert/aoe-matchups" target="_blank" rel="noopener" class="data-link">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                            200k+ match dataset
-                        </a>
-                        <a href="https://github.com/nicoelbert/rtsgamestates" target="_blank" rel="noopener" class="data-link">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-                            RTS game states
-                        </a>
+                    <div class="research-assets">
+                        <div class="data-links">
+                            <a href="https://zenodo.org/records/13365584" target="_blank" rel="noopener" class="data-link">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                                AoE2 event logs
+                            </a>
+                            <a href="https://www.kaggle.com/datasets/nicoelbert/aoe-matchups" target="_blank" rel="noopener" class="data-link">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                                200k+ match dataset
+                            </a>
+                            <a href="https://github.com/nicoelbert/rtsgamestates" target="_blank" rel="noopener" class="data-link">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                                RTS game states
+                            </a>
+                        </div>
+                        <div class="polaroid-gallery">
+                            <div class="polaroid">
+                                <img src="images/papers/teamplayer_effect.png" alt="Team player effect analysis">
+                                <div class="polaroid-caption">Team player effect</div>
+                            </div>
+                        </div>
                     </div>
                     <a href="#top" class="back-to-top">↑ Top</a>
                 </div>
@@ -402,10 +430,6 @@
                 <!-- Research Area 3 -->
                 <div class="research-area" id="energy">
                     <h2>Energy Systems, Flexibility, and Market Design</h2>
-                    <div class="polaroid">
-                        <img src="images/papers/ev_distribution_grid.jpg" alt="Swiss distribution grid">
-                        <div class="polaroid-caption">BKW grid topology</div>
-                    </div>
                     <p class="research-description">
                         I work on data-driven and optimization-based approaches to coordinate distributed energy resources under uncertainty—linking economic incentives, operational constraints, and real-world behavior.
                     </p>
@@ -420,16 +444,24 @@
                             <li>Flath et al. (2012) — <a href="https://link.springer.com/article/10.1007/s12599-011-0201-5" target="_blank">Cluster Analysis of Smart Metering Data</a> <span class="paper-venue">(Business & Information Systems Engineering)</span></li>
                         </ul>
                     </div>
+                    <div class="research-assets">
+                        <div class="polaroid-gallery">
+                            <div class="polaroid">
+                                <img src="images/papers/ev_distribution_grid.jpg" alt="Swiss distribution grid">
+                                <div class="polaroid-caption">BKW grid topology</div>
+                            </div>
+                            <div class="polaroid">
+                                <img src="images/papers/procurement_costs.jpg" alt="Procurement cost metrics">
+                                <div class="polaroid-caption">Procurement costs</div>
+                            </div>
+                        </div>
+                    </div>
                     <a href="#top" class="back-to-top">↑ Top</a>
                 </div>
 
                 <!-- Research Area 4 -->
                 <div class="research-area" id="methods">
                     <h2>Methods for Decision Intelligence and Business Analytics</h2>
-                    <div class="polaroid">
-                        <img src="images/papers/deepflash2_p3_1.png" alt="Deep learning segmentation results">
-                        <div class="polaroid-caption">deepflash2 segmentation</div>
-                    </div>
                     <p class="research-description">
                         Across domains, I develop reusable analytics methods and toolchains—spanning machine learning, process analytics, and optimization—to support robust decision-making in business settings.
                     </p>
@@ -443,11 +475,23 @@
                             <li>Flath & Stein (2018) — <a href="https://doi.org/10.1016/j.compind.2017.09.003" target="_blank">Towards a Data Science Toolbox for Industrial Analytics Applications</a> <span class="paper-venue">(Computers in Industry)</span></li>
                         </ul>
                     </div>
-                    <div class="data-links">
-                        <a href="https://github.com/matjesg/deepflash2" target="_blank" rel="noopener" class="data-link">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-                            deepflash2 on GitHub
-                        </a>
+                    <div class="research-assets">
+                        <div class="data-links">
+                            <a href="https://github.com/matjesg/deepflash2" target="_blank" rel="noopener" class="data-link">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                                deepflash2 on GitHub
+                            </a>
+                        </div>
+                        <div class="polaroid-gallery">
+                            <div class="polaroid">
+                                <img src="images/papers/deepflash2_p3_1.png" alt="Deep learning segmentation results">
+                                <div class="polaroid-caption">deepflash2 segmentation</div>
+                            </div>
+                            <div class="polaroid">
+                                <img src="images/papers/data_science_toolbox.jpg" alt="Data science toolbox framework">
+                                <div class="polaroid-caption">Data science toolbox</div>
+                            </div>
+                        </div>
                     </div>
                     <a href="#top" class="back-to-top">↑ Top</a>
                 </div>
