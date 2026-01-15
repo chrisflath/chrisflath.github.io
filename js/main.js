@@ -266,14 +266,9 @@ function renderBibsonomyPublications(container, data) {
             html += `
                 <div class="publication-item" data-type="${type}">
                     <span class="publication-year">${escapeHtml(String(itemYear))}</span>
-                    <h4 class="publication-title">${escapeHtml(title)}</h4>
+                    <h4 class="publication-title"><a href="${scholarSearch}" target="_blank">${escapeHtml(title)}</a></h4>
                     <p class="publication-authors">${escapeHtml(author)}</p>
                     <p class="publication-venue">${escapeHtml(venue)}</p>
-                    <div class="publication-links">
-                        ${url ? `<a href="${escapeHtml(url)}" class="pub-link" target="_blank">Link</a>` : ''}
-                        ${doi ? `<a href="https://doi.org/${escapeHtml(doi)}" class="pub-link" target="_blank">DOI</a>` : ''}
-                        <a href="${scholarSearch}" class="pub-link" target="_blank">Scholar</a>
-                    </div>
                 </div>
             `;
         });
