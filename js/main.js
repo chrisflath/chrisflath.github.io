@@ -8,7 +8,29 @@ document.addEventListener('DOMContentLoaded', function() {
     initPublicationFilters();
     initBibsonomy();
     setActiveNavLink();
+    initCarouselButtons();
 });
+
+/**
+ * Carousel scroll buttons
+ */
+function initCarouselButtons() {
+    const carousel = document.querySelector('.pub-carousel');
+    const leftBtn = document.querySelector('.carousel-btn-left');
+    const rightBtn = document.querySelector('.carousel-btn-right');
+
+    if (!carousel || !leftBtn || !rightBtn) return;
+
+    const scrollAmount = 300;
+
+    leftBtn.addEventListener('click', () => {
+        carousel.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+    });
+
+    rightBtn.addEventListener('click', () => {
+        carousel.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    });
+}
 
 /**
  * Mobile Navigation Toggle

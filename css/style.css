@@ -491,6 +491,33 @@ a.research-card h3 {
     scroll-snap-align: start;
 }
 
+.carousel-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.carousel-btn {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border: 2px solid var(--pencil-gray);
+    background: var(--background);
+    color: var(--text-color);
+    font-size: 1.2rem;
+    cursor: pointer;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.carousel-btn:hover {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
 .carousel-hint {
     text-align: center;
     font-size: 0.85rem;
