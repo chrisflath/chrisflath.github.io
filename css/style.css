@@ -894,7 +894,6 @@ a.research-card h3 {
     padding: 0.4rem 0.8rem;
     background: linear-gradient(135deg, #fffef8 0%, #f5f3e8 100%);
     border: 1px dashed var(--pencil-gray);
-    border-bottom: none;
     font-family: var(--font-accent);
     font-size: 0.95rem;
     color: var(--text-color);
