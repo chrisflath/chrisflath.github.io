@@ -661,11 +661,22 @@ a.research-card h3 {
 }
 
 /* PhD Students */
+.phd-section {
+    margin-top: var(--spacing-lg);
+}
+
+.phd-label {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin-bottom: var(--spacing-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
 .phd-students {
     display: flex;
     flex-wrap: wrap;
     gap: var(--spacing-md);
-    justify-content: center;
 }
 
 .phd-student {
