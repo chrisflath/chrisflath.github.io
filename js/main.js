@@ -82,7 +82,7 @@ function initPublicationFilters() {
 
 // Configuration - UPDATE THESE VALUES
 const BIBSONOMY_CONFIG = {
-    username: 'flath',  // Your Bibsonomy username
+    username: 'cflath',  // Your Bibsonomy username
     apiKey: '6aecc79a36444ef0edaab8ff5f2bfbac',
     baseUrl: 'https://www.bibsonomy.org/api',
     resourceType: 'bibtex'  // or 'bookmark'
