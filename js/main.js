@@ -259,7 +259,7 @@ function renderBibsonomyPublications(container, data) {
             const url = item.url || '';
             const doi = item.doi || '';
             const venue = item.journal || item.booktitle || '';
-            const bibtexKey = item.id || '';
+            const scholarSearch = `https://scholar.google.com/scholar?q=${encodeURIComponent(title)}`;
 
             const type = getPublicationType(entrytype);
 
@@ -272,7 +272,7 @@ function renderBibsonomyPublications(container, data) {
                     <div class="publication-links">
                         ${url ? `<a href="${escapeHtml(url)}" class="pub-link" target="_blank">Link</a>` : ''}
                         ${doi ? `<a href="https://doi.org/${escapeHtml(doi)}" class="pub-link" target="_blank">DOI</a>` : ''}
-                        ${bibtexKey ? `<a href="https://www.bibsonomy.org/bibtex/${escapeHtml(bibtexKey)}/${BIBSONOMY_CONFIG.username}" class="pub-link" target="_blank">BibTeX</a>` : ''}
+                        <a href="${scholarSearch}" class="pub-link" target="_blank">Scholar</a>
                     </div>
                 </div>
             `;
