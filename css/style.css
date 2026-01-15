@@ -185,6 +185,7 @@ a:hover {
 
 /* Hero stats below photo - paper snippet style */
 .hero-stats {
+    display: flex;
     flex-direction: column;
     gap: var(--spacing-xs);
     margin-top: var(--spacing-lg);
@@ -198,6 +199,8 @@ a:hover {
     box-shadow:
         3px 3px 0 var(--border-color),
         4px 4px 8px rgba(0,0,0,0.08);
+    width: fit-content;
+    height: fit-content;
 }
 
 .hero-stats .stat-item {
