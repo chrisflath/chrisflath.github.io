@@ -848,6 +848,48 @@ a.research-card h3 {
     color: var(--primary-color);
 }
 
+/* Mobile: simplified cards with regular fonts */
+@media (max-width: 768px) {
+    .research-card h3,
+    a.research-card h3 {
+        font-family: var(--font-main);
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    .publication-title {
+        font-family: var(--font-main);
+        font-size: 1.05rem;
+        font-weight: 600;
+    }
+
+    .contact-link {
+        font-family: var(--font-main);
+        font-size: 0.9rem;
+    }
+
+    .phd-student {
+        font-family: var(--font-main);
+        font-size: 1rem;
+    }
+
+    /* Simplify card styling on mobile */
+    .research-card,
+    .publication-item,
+    .contact-link,
+    .phd-student {
+        transform: none;
+        border-radius: 4px;
+        box-shadow: none;
+        border: 1px solid var(--border-color);
+        background: var(--background);
+    }
+
+    .pub-carousel .research-card {
+        flex: 0 0 240px;
+    }
+}
+
 /* Utility Classes */
 .text-center { text-align: center; }
 .text-muted { color: var(--text-light); }
