@@ -116,30 +116,51 @@ function initBibsonomy() {
 }
 
 /**
- * Fetch publications from Bibsonomy API
+ * Fetch publications from Bibsonomy API using JSONP (to bypass CORS)
  */
 async function loadBibsonomyPublications(container) {
-    const { username, apiKey, baseUrl, resourceType } = BIBSONOMY_CONFIG;
+    const { username, resourceType } = BIBSONOMY_CONFIG;
 
     // Show loading state
     container.innerHTML = '<p class="text-muted">Loading publications from Bibsonomy...</p>';
 
     try {
-        // Bibsonomy API endpoint for user's posts
-        const url = `${baseUrl}/users/${username}/posts?resourcetype=${resourceType}&format=json`;
+        // Use JSONP to bypass CORS restrictions
+        const callbackName = 'bibsonomyCallback_' + Date.now();
+        const url = `https://www.bibsonomy.org/json/user/${username}?callback=${callbackName}`;
 
-        const response = await fetch(url, {
-            headers: {
-                'Authorization': 'Basic ' + btoa(username + ':' + apiKey),
-                'Accept': 'application/json'
+        const data = await new Promise((resolve, reject) => {
+            // Set timeout for the request
+            const timeout = setTimeout(() => {
+                cleanup();
+                reject(new Error('Request timed out'));
+            }, 10000);
+
+            // Create callback function
+            window[callbackName] = function(response) {
+                cleanup();
+                resolve(response);
+            };
+
+            // Cleanup function
+            function cleanup() {
+                clearTimeout(timeout);
+                delete window[callbackName];
+                if (script.parentNode) {
+                    script.parentNode.removeChild(script);
+                }
             }
+
+            // Create and inject script tag
+            const script = document.createElement('script');
+            script.src = url;
+            script.onerror = function() {
+                cleanup();
+                reject(new Error('Failed to load script'));
+            };
+            document.head.appendChild(script);
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
         renderBibsonomyPublications(container, data);
     } catch (error) {
         console.error('Error fetching from Bibsonomy:', error);
@@ -155,24 +176,34 @@ async function loadBibsonomyPublications(container) {
 
 /**
  * Render Bibsonomy publications to the page
+ * Handles both JSONP format (items array) and API format (posts.post array)
  */
 function renderBibsonomyPublications(container, data) {
-    if (!data.posts || !data.posts.post || data.posts.post.length === 0) {
+    // Handle JSONP format (items array) or API format (posts.post array)
+    let items = [];
+
+    if (data.items && Array.isArray(data.items)) {
+        // JSONP format
+        items = data.items;
+    } else if (data.posts && data.posts.post) {
+        // API format
+        items = Array.isArray(data.posts.post) ? data.posts.post : [data.posts.post];
+    }
+
+    if (items.length === 0) {
         container.innerHTML = '<p class="text-muted">No publications found.</p>';
         return;
     }
 
-    const posts = data.posts.post;
-
     // Group by year
     const publicationsByYear = {};
-    posts.forEach(post => {
-        const bibtex = post.bibtex;
-        const year = bibtex.year || 'Unknown';
+    items.forEach(item => {
+        // JSONP format has different structure
+        const year = item.year || (item.bibtex && item.bibtex.year) || 'Unknown';
         if (!publicationsByYear[year]) {
             publicationsByYear[year] = [];
         }
-        publicationsByYear[year].push(post);
+        publicationsByYear[year].push(item);
     });
 
     // Sort years descending
@@ -183,20 +214,30 @@ function renderBibsonomyPublications(container, data) {
         html += `<h2 class="section-title mt-2">${year}</h2>`;
         html += '<div class="publication-list">';
 
-        publicationsByYear[year].forEach(post => {
-            const bibtex = post.bibtex;
-            const type = getPublicationType(bibtex.entrytype);
+        publicationsByYear[year].forEach(item => {
+            // Handle both JSONP and API formats
+            const title = item.title || (item.bibtex && item.bibtex.title) || 'Untitled';
+            const author = item.author || (item.bibtex && item.bibtex.author) || '';
+            const entrytype = item.entrytype || (item.bibtex && item.bibtex.entrytype) || 'misc';
+            const itemYear = item.year || (item.bibtex && item.bibtex.year) || '';
+            const url = item.url || (item.bibtex && item.bibtex.url) || '';
+            const doi = item.doi || (item.bibtex && item.bibtex.doi) || '';
+            const venue = item.journal || item.booktitle || item.publisher ||
+                         (item.bibtex && (item.bibtex.journal || item.bibtex.booktitle || item.bibtex.publisher)) || '';
+            const bibtexKey = item.bibtexKey || item.id || '';
+
+            const type = getPublicationType(entrytype);
 
             html += `
                 <div class="publication-item" data-type="${type}">
-                    <span class="publication-year">${bibtex.year || ''}</span>
-                    <h4 class="publication-title">${escapeHtml(bibtex.title || 'Untitled')}</h4>
-                    <p class="publication-authors">${escapeHtml(bibtex.author || '')}</p>
-                    <p class="publication-venue">${escapeHtml(getVenue(bibtex))}</p>
+                    <span class="publication-year">${escapeHtml(String(itemYear))}</span>
+                    <h4 class="publication-title">${escapeHtml(title)}</h4>
+                    <p class="publication-authors">${escapeHtml(author)}</p>
+                    <p class="publication-venue">${escapeHtml(venue)}</p>
                     <div class="publication-links">
-                        ${bibtex.url ? `<a href="${bibtex.url}" class="pub-link" target="_blank">Link</a>` : ''}
-                        ${bibtex.doi ? `<a href="https://doi.org/${bibtex.doi}" class="pub-link" target="_blank">DOI</a>` : ''}
-                        <a href="https://www.bibsonomy.org/bibtex/${post.postingdate ? post.postingdate.replace(/[^a-zA-Z0-9]/g, '') : ''}" class="pub-link" target="_blank">BibTeX</a>
+                        ${url ? `<a href="${escapeHtml(url)}" class="pub-link" target="_blank">Link</a>` : ''}
+                        ${doi ? `<a href="https://doi.org/${escapeHtml(doi)}" class="pub-link" target="_blank">DOI</a>` : ''}
+                        ${bibtexKey ? `<a href="https://www.bibsonomy.org/bibtex/${escapeHtml(bibtexKey)}/${BIBSONOMY_CONFIG.username}" class="pub-link" target="_blank">BibTeX</a>` : ''}
                     </div>
                 </div>
             `;
@@ -209,16 +250,6 @@ function renderBibsonomyPublications(container, data) {
 
     // Re-initialize filters after dynamic content load
     initPublicationFilters();
-}
-
-/**
- * Get publication venue (journal, booktitle, etc.)
- */
-function getVenue(bibtex) {
-    if (bibtex.journal) return bibtex.journal;
-    if (bibtex.booktitle) return bibtex.booktitle;
-    if (bibtex.publisher) return bibtex.publisher;
-    return '';
 }
 
 /**
