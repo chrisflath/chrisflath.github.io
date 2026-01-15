@@ -178,7 +178,8 @@ a:hover {
 
 /* Hero stats below photo - paper snippet style */
 .hero-stats {
-    gap: var(--spacing-lg);
+    flex-direction: column;
+    gap: var(--spacing-xs);
     margin-top: var(--spacing-lg);
     margin-bottom: var(--spacing-sm);
     background: linear-gradient(135deg, #fffef8 0%, #faf8f0 100%);
@@ -193,16 +194,18 @@ a:hover {
 }
 
 .hero-stats .stat-item {
-    flex: 1;
-    min-width: 60px;
+    display: flex;
+    align-items: baseline;
+    gap: var(--spacing-sm);
 }
 
 .hero-stats .stat-number {
-    font-size: 2.2rem;
+    font-size: 1.8rem;
+    min-width: 70px;
 }
 
 .hero-stats .stat-label {
-    font-size: 0.75rem;
+    font-size: 0.85rem;
 }
 
 .hero-stats-source {
