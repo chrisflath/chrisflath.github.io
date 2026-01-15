@@ -879,6 +879,57 @@ a.research-card h3 {
     border-bottom: none;
 }
 
+/* Data/Code links - taped-on style */
+.data-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+}
+
+.data-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.8rem;
+    background: linear-gradient(135deg, #fffef8 0%, #f5f3e8 100%);
+    border: 1px dashed var(--pencil-gray);
+    border-bottom: none;
+    font-family: var(--font-accent);
+    font-size: 0.95rem;
+    color: var(--text-color);
+    position: relative;
+    transform: rotate(-0.5deg);
+    text-decoration: none;
+}
+
+.data-link:nth-child(2) { transform: rotate(0.7deg); }
+.data-link:nth-child(3) { transform: rotate(-0.3deg); }
+
+/* Tape effect - translucent strip across top */
+.data-link::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 15%;
+    right: 15%;
+    height: 14px;
+    background: linear-gradient(180deg, rgba(255,255,245,0.9) 0%, rgba(245,243,235,0.7) 100%);
+    border: 1px solid rgba(180, 175, 165, 0.4);
+    border-radius: 1px;
+    transform: rotate(0.5deg);
+}
+
+.data-link:hover {
+    color: var(--primary-color);
+}
+
+.data-link svg {
+    width: 14px;
+    height: 14px;
+    opacity: 0.6;
+}
+
 /* Subtle hover for all card elements - text color shift */
 .contact-link:hover,
 .research-card:hover,
@@ -926,6 +977,18 @@ a.research-card h3 {
 
     .pub-carousel .research-card {
         flex: 0 0 240px;
+    }
+
+    .data-link {
+        font-family: var(--font-main);
+        font-size: 0.85rem;
+        transform: none;
+        border: 1px solid var(--border-color);
+        background: var(--background);
+    }
+
+    .data-link::before {
+        display: none;
     }
 }
 
