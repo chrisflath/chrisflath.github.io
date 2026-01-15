@@ -307,13 +307,6 @@ a:hover {
 .contact-link:nth-child(3) { transform: rotate(0.4deg); }
 .contact-link:nth-child(4) { transform: rotate(-0.5deg); }
 
-.contact-link:hover {
-    transform: rotate(0deg) translateY(-2px);
-    box-shadow:
-        2px 2px 0 var(--border-color),
-        4px 4px 10px rgba(0,0,0,0.1);
-}
-
 .contact-link svg {
     width: 16px;
     height: 16px;
@@ -845,6 +838,16 @@ a.research-card h3 {
     color: rgba(253, 252, 249, 0.8);
     font-size: 0.9rem;
     border-bottom: none;
+}
+
+/* Subtle hover for all card elements */
+.contact-link:hover,
+.research-card:hover,
+.phd-student:hover,
+.publication-item:hover,
+.hero-stats:hover,
+.hero-description:hover {
+    background: linear-gradient(135deg, #fffdf5 0%, #f5f3e8 100%);
 }
 
 /* Utility Classes */
