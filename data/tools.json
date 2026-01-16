@@ -2,15 +2,19 @@
   "categories": [
     {
       "name": "Languages",
-      "items": ["Python", "R", "SQL"]
+      "items": ["Python", "R"]
     },
     {
-      "name": "ML / DL",
-      "items": ["PyTorch", "scikit-learn", "deepflash2"]
+      "name": "Notebooks / Viz",
+      "items": ["marimo", "networkx", "lets-plot", "ggplot"]
     },
     {
-      "name": "Analytics",
-      "items": ["Gurobi", "PM4Py", "pandas"]
+      "name": "Optimization",
+      "items": ["PuLP", "Gurobi", "HiGHS", "CVXPY"]
+    },
+    {
+      "name": "Data Science",
+      "items": ["pandas", "scikit-learn", "polars", "PM4Py", "SQL"]
     }
   ]
 }
