@@ -260,6 +260,10 @@ def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
                 <a href="teaching.html" class="active">Teaching</a>
                 <a href="cv.html">CV</a>
             </nav>
+            <button class="theme-toggle" aria-label="Toggle dark mode">
+                <span class="icon-moon">🌙</span>
+                <span class="icon-sun">☀️</span>
+            </button>
         </div>
     </header>
 
@@ -275,7 +279,7 @@ def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
                 </p>
                 <div class="marimo-badge">
                     <span>Powered by</span>
-                    <a href="https://marimo.io" target="_blank" rel="noopener">
+                    <a href="https://marimo.io" target="_blank" rel="noopener noreferrer">
                         <img src="https://raw.githubusercontent.com/marimo-team/marimo/main/docs/_static/marimo-logotype-thick.svg" alt="marimo">
                     </a>
                 </div>

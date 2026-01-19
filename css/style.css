@@ -13,6 +13,9 @@
     --background-alt: #f8f6f1;        /* Aged paper */
     --border-color: #d4cfc4;          /* Pencil line */
     --pencil-gray: #6b6b6b;           /* Graphite */
+    --card-gradient-start: #fffef8;
+    --card-gradient-end: #faf8f0;
+    --rule-line-color: rgba(180, 200, 220, 0.25);
 
     /* Typography */
     --font-heading: 'Cormorant Garamond', Georgia, serif;
@@ -29,6 +32,42 @@
     /* Layout */
     --max-width: 1000px;
     --sidebar-width: 260px;
+}
+
+/* Dark mode */
+[data-theme="dark"] {
+    --primary-color: #4a9eff;         /* Lighter blue for dark mode */
+    --secondary-color: #6bb3ff;
+    --accent-color: #4a9eff;
+    --accent-light: #7ac4ff;
+    --text-color: #e8e6e3;            /* Light text */
+    --text-light: #a8a5a0;            /* Muted light text */
+    --background: #1a1a1a;            /* Dark paper */
+    --background-alt: #242424;        /* Slightly lighter */
+    --border-color: #3a3a3a;          /* Dark border */
+    --pencil-gray: #888888;           /* Lighter graphite */
+    --card-gradient-start: #242424;
+    --card-gradient-end: #1e1e1e;
+    --rule-line-color: rgba(80, 90, 100, 0.3);
+}
+
+/* Respect system preference */
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --primary-color: #4a9eff;
+        --secondary-color: #6bb3ff;
+        --accent-color: #4a9eff;
+        --accent-light: #7ac4ff;
+        --text-color: #e8e6e3;
+        --text-light: #a8a5a0;
+        --background: #1a1a1a;
+        --background-alt: #242424;
+        --border-color: #3a3a3a;
+        --pencil-gray: #888888;
+        --card-gradient-start: #242424;
+        --card-gradient-end: #1e1e1e;
+        --rule-line-color: rgba(80, 90, 100, 0.3);
+    }
 }
 
 /* Skip to content link for accessibility */
@@ -72,8 +111,8 @@ body {
             to bottom,
             transparent,
             transparent 27px,
-            rgba(180, 200, 220, 0.25) 27px,
-            rgba(180, 200, 220, 0.25) 28px
+            var(--rule-line-color) 27px,
+            var(--rule-line-color) 28px
         ),
         /* Paper texture */
         url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
@@ -146,7 +185,7 @@ a:hover {
 }
 
 .main-nav a {
-    color: rgba(253, 252, 249, 0.85);
+    color: rgba(253, 252, 249, 0.95);
     font-family: var(--font-main);
     font-weight: 500;
     font-size: 0.95rem;
@@ -175,6 +214,40 @@ a:hover {
     color: var(--background);
     font-size: 1.5rem;
     cursor: pointer;
+}
+
+/* Theme Toggle */
+.theme-toggle {
+    background: none;
+    border: none;
+    color: var(--background);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: var(--spacing-xs);
+    margin-left: var(--spacing-md);
+    opacity: 0.9;
+    transition: opacity 0.2s;
+}
+
+.theme-toggle:hover {
+    opacity: 1;
+}
+
+.theme-toggle:focus-visible {
+    outline: 2px solid var(--background);
+    outline-offset: 2px;
+}
+
+/* Hide moon in dark mode, sun in light mode */
+.theme-toggle .icon-sun { display: none; }
+.theme-toggle .icon-moon { display: inline; }
+
+[data-theme="dark"] .theme-toggle .icon-sun { display: inline; }
+[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .theme-toggle .icon-sun { display: inline; }
+    :root:not([data-theme="light"]) .theme-toggle .icon-moon { display: none; }
 }
 
 @media (max-width: 768px) {
@@ -221,7 +294,7 @@ a:hover {
     gap: var(--spacing-xs);
     margin-top: var(--spacing-lg);
     margin-bottom: var(--spacing-sm);
-    background: linear-gradient(135deg, #fffef8 0%, #faf8f0 100%);
+    background: linear-gradient(135deg, var(--card-gradient-start) 0%, var(--card-gradient-end) 100%);
     padding: var(--spacing-md) var(--spacing-lg);
     position: relative;
     transform: rotate(-0.6deg);
@@ -301,7 +374,7 @@ a:hover {
 .hero-description {
     font-size: 1.05rem;
     max-width: 580px;
-    background: linear-gradient(145deg, #fffef8 0%, #f9f7ef 100%);
+    background: linear-gradient(145deg, var(--card-gradient-start) 0%, var(--card-gradient-end) 100%);
     padding: var(--spacing-lg);
     position: relative;
     transform: rotate(0.4deg);
@@ -333,7 +406,7 @@ a:hover {
     justify-content: center;
     gap: var(--spacing-xs);
     padding: var(--spacing-sm) var(--spacing-md);
-    background: linear-gradient(135deg, #fffef8 0%, #faf8f0 100%);
+    background: linear-gradient(135deg, var(--card-gradient-start) 0%, var(--card-gradient-end) 100%);
     border: 2px solid var(--pencil-gray);
     border-radius: 3px 5px 4px 6px;
     color: var(--text-color);
@@ -408,7 +481,7 @@ a:hover {
 }
 
 .research-card {
-    background: linear-gradient(140deg, #fffef8 0%, #f8f6ee 100%);
+    background: linear-gradient(140deg, var(--card-gradient-start) 0%, var(--card-gradient-end) 100%);
     padding: var(--spacing-sm) var(--spacing-md);
     position: relative;
     /* Squiggly border effect */
@@ -423,7 +496,7 @@ a:hover {
     transform: rotate(-0.6deg);
     /* Hand-drawn border simulation */
     background-image:
-        linear-gradient(140deg, #fffef8 0%, #f8f6ee 100%),
+        linear-gradient(140deg, var(--card-gradient-start) 0%, var(--card-gradient-end) 100%),
         url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,0 Q25,3 50,0 T100,0 L100,3 Q75,0 50,3 T0,3 Z' fill='%236b6b6b' opacity='0.4'/%3E%3C/svg%3E");
     background-clip: padding-box, border-box;
 }
@@ -579,7 +652,7 @@ a.research-card h3 {
 }
 
 .publication-item {
-    background: linear-gradient(135deg, #fffef8 0%, #f8f6ee 100%);
+    background: linear-gradient(135deg, var(--card-gradient-start) 0%, var(--card-gradient-end) 100%);
     padding: var(--spacing-md);
     position: relative;
     border: 2px solid var(--pencil-gray);
@@ -758,7 +831,7 @@ a.research-card h3 {
     font-size: 1.2rem;
     color: var(--text-color);
     padding: var(--spacing-sm) var(--spacing-md);
-    background: linear-gradient(135deg, #fffef8 0%, #faf8f0 100%);
+    background: linear-gradient(135deg, var(--card-gradient-start) 0%, var(--card-gradient-end) 100%);
     border: 1px solid var(--pencil-gray);
     box-shadow: 2px 2px 0 var(--border-color);
     border-radius: 2px 4px 3px 5px;
@@ -926,7 +999,7 @@ a.research-card h3 {
     align-items: center;
     gap: 0.4rem;
     padding: 0.4rem 0.8rem;
-    background: linear-gradient(135deg, #fffef8 0%, #f5f3e8 100%);
+    background: linear-gradient(135deg, var(--card-gradient-start) 0%, var(--card-gradient-end) 100%);
     border: 1px dashed var(--pencil-gray);
     font-family: var(--font-accent);
     font-size: 0.95rem;

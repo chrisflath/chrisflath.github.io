@@ -10,7 +10,40 @@ document.addEventListener('DOMContentLoaded', function() {
     setActiveNavLink();
     initCarouselButtons();
     updateCopyrightYear();
+    initThemeToggle();
 });
+
+/**
+ * Theme Toggle (Dark Mode)
+ */
+function initThemeToggle() {
+    const toggle = document.querySelector('.theme-toggle');
+    if (!toggle) return;
+
+    // Check for saved preference or system preference
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+
+    toggle.addEventListener('click', function() {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        let newTheme;
+        if (currentTheme === 'dark') {
+            newTheme = 'light';
+        } else if (currentTheme === 'light') {
+            newTheme = 'dark';
+        } else {
+            // No explicit theme set, toggle from system preference
+            newTheme = prefersDark ? 'light' : 'dark';
+        }
+
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+    });
+}
 
 /**
  * Update copyright year dynamically
@@ -71,6 +104,7 @@ function initMobileNav() {
         document.addEventListener('click', function(e) {
             if (!mainNav.contains(e.target) && !navToggle.contains(e.target)) {
                 mainNav.classList.remove('active');
+                navToggle.setAttribute('aria-expanded', 'false');
             }
         });
     }
