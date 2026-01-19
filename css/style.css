@@ -37,15 +37,15 @@
 /* Dark mode */
 [data-theme="dark"] {
     --primary-color: #4a9eff;         /* Lighter blue for dark mode */
-    --secondary-color: #6bb3ff;
+    --secondary-color: #7ac4ff;
     --accent-color: #4a9eff;
-    --accent-light: #7ac4ff;
+    --accent-light: #8ed0ff;
     --text-color: #e8e6e3;            /* Light text */
-    --text-light: #a8a5a0;            /* Muted light text */
+    --text-light: #b8b5b0;            /* Muted light text - brighter */
     --background: #1a1a1a;            /* Dark paper */
     --background-alt: #242424;        /* Slightly lighter */
-    --border-color: #3a3a3a;          /* Dark border */
-    --pencil-gray: #888888;           /* Lighter graphite */
+    --border-color: #404040;          /* Dark border - slightly lighter */
+    --pencil-gray: #9a9a9a;           /* Lighter graphite */
     --card-gradient-start: #242424;
     --card-gradient-end: #1e1e1e;
     --rule-line-color: rgba(80, 90, 100, 0.3);
@@ -55,15 +55,15 @@
 @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
         --primary-color: #4a9eff;
-        --secondary-color: #6bb3ff;
+        --secondary-color: #7ac4ff;
         --accent-color: #4a9eff;
-        --accent-light: #7ac4ff;
+        --accent-light: #8ed0ff;
         --text-color: #e8e6e3;
-        --text-light: #a8a5a0;
+        --text-light: #b8b5b0;
         --background: #1a1a1a;
         --background-alt: #242424;
-        --border-color: #3a3a3a;
-        --pencil-gray: #888888;
+        --border-color: #404040;
+        --pencil-gray: #9a9a9a;
         --card-gradient-start: #242424;
         --card-gradient-end: #1e1e1e;
         --rule-line-color: rgba(80, 90, 100, 0.3);
