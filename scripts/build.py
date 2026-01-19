@@ -204,8 +204,8 @@ def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: var(--spacing-sm) var(--spacing-md);
-            height: 52px;
+            padding: var(--spacing-md) var(--spacing-lg);
+            height: 60px;
             background: linear-gradient(135deg, #fffef8 0%, #faf8f0 100%);
             border: 2px solid var(--pencil-gray);
             border-radius: 3px 5px 4px 6px;
@@ -225,9 +225,8 @@ def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
         .notebook-name {
             font-family: var(--font-main);
             font-weight: 500;
-            font-size: 0.9rem;
-            line-height: 1.2;
             color: var(--text-color);
+            line-height: 1.3;
         }
         .notebook-arrow {
             color: var(--primary-color);
