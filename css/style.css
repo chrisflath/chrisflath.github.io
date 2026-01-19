@@ -452,7 +452,14 @@ a:hover {
 }
 
 .section:nth-child(even) {
-    background: var(--background-alt);
+    background-color: var(--background-alt);
+    background-image: repeating-linear-gradient(
+        to bottom,
+        transparent,
+        transparent 27px,
+        var(--rule-line-color) 27px,
+        var(--rule-line-color) 28px
+    );
 }
 
 /* Pencil underline for section titles */
