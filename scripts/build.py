@@ -3,8 +3,53 @@
 import os
 import subprocess
 import argparse
+import shutil
 from typing import List
 from pathlib import Path
+
+
+# Academic site files to copy (relative to repo root)
+ACADEMIC_SITE_FILES = [
+    "index.html",
+    "cv.html",
+    "research.html",
+    "publications.html",
+    "teaching.html",
+    "favicon.svg",
+    ".nojekyll",
+]
+
+ACADEMIC_SITE_DIRS = [
+    "css",
+    "js",
+    "images",
+    "data",
+]
+
+
+def copy_academic_site(output_dir: str) -> None:
+    """Copy academic site files to output directory."""
+    print("Copying academic site files...")
+
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Copy individual files
+    for filename in ACADEMIC_SITE_FILES:
+        src = Path(filename)
+        if src.exists():
+            dst = Path(output_dir) / filename
+            shutil.copy2(src, dst)
+            print(f"  Copied {filename}")
+
+    # Copy directories
+    for dirname in ACADEMIC_SITE_DIRS:
+        src = Path(dirname)
+        if src.exists():
+            dst = Path(output_dir) / dirname
+            if dst.exists():
+                shutil.rmtree(dst)
+            shutil.copytree(src, dst)
+            print(f"  Copied {dirname}/")
 
 
 def export_html_wasm(notebook_path: str, output_dir: str, as_app: bool = False) -> bool:
@@ -39,59 +84,206 @@ def export_html_wasm(notebook_path: str, output_dir: str, as_app: bool = False) 
         return False
 
 
-def generate_index(all_notebooks: List[str], output_dir: str) -> None:
-    """Generate the index.html file."""
-    print("Generating index.html")
+def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
+    """Generate the teaching.html page with notebook links."""
+    print("Generating teaching.html")
 
-    index_path = os.path.join(output_dir, "index.html")
-    os.makedirs(output_dir, exist_ok=True)
+    # Separate apps and notebooks
+    apps = [nb for nb in all_notebooks if nb.startswith("apps/")]
+    notebooks = [nb for nb in all_notebooks if nb.startswith("notebooks/")]
+
+    teaching_path = os.path.join(output_dir, "teaching.html")
+
+    def make_card(notebook: str) -> str:
+        notebook_name = notebook.split("/")[-1].replace(".py", "")
+        display_name = notebook_name.replace("_", " ").replace("-", " ").title()
+        html_path = notebook.replace(".py", ".html")
+        return f'''                <a href="{html_path}" class="notebook-card">
+                    <span class="notebook-name">{display_name}</span>
+                    <span class="notebook-arrow">&#8594;</span>
+                </a>'''
 
     try:
-        with open(index_path, "w") as f:
+        with open(teaching_path, "w") as f:
             f.write(
                 """<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>marimo</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  </head>
-  <body class="font-sans max-w-2xl mx-auto p-8 leading-relaxed">
-    <div class="mb-8">
-      <img src="https://raw.githubusercontent.com/marimo-team/marimo/main/docs/_static/marimo-logotype-thick.svg" alt="marimo" class="h-20" />
-    </div>
-    <div class="grid gap-4">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive teaching materials - marimo notebooks by Prof. Dr. Christoph M. Flath">
+    <title>Teaching Materials | Christoph M. Flath</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Crimson+Pro:ital,wght@0,400;0,500;0,600;1,400&family=Caveat:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .teaching-intro {
+            margin-bottom: var(--spacing-xl);
+        }
+        .teaching-intro p {
+            font-size: 1.1rem;
+            color: var(--text-light);
+        }
+        .marimo-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: var(--spacing-md);
+        }
+        .marimo-badge img {
+            height: 24px;
+        }
+        .notebook-section {
+            margin-bottom: var(--spacing-xl);
+        }
+        .notebook-section h2 {
+            font-family: var(--font-accent);
+            font-size: 1.6rem;
+            color: var(--primary-color);
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-sm);
+            border-bottom: 2px solid var(--border-color);
+        }
+        .notebook-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: var(--spacing-md);
+        }
+        .notebook-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: var(--background-alt);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .notebook-card:hover {
+            background: white;
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 53, 107, 0.1);
+        }
+        .notebook-name {
+            font-family: var(--font-main);
+            font-weight: 500;
+            color: var(--text-color);
+        }
+        .notebook-arrow {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+        .page-content {
+            padding: var(--spacing-xl) 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="site-header">
+        <div class="container">
+            <a href="index.html" class="site-title">Christoph M. Flath</a>
+            <button class="nav-toggle" aria-label="Toggle navigation">&#9776;</button>
+            <nav class="main-nav">
+                <a href="index.html">Home</a>
+                <a href="publications.html">Publications</a>
+                <a href="research.html">Research Areas</a>
+                <a href="teaching.html" class="active">Teaching</a>
+                <a href="cv.html">CV</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page-content">
+        <div class="container">
+            <h1>Interactive Teaching Materials</h1>
+
+            <div class="teaching-intro">
+                <p>
+                    These interactive notebooks are built with marimo, a reactive Python notebook environment.
+                    They run entirely in your browser using WebAssembly - no installation required.
+                    Feel free to explore, modify, and experiment with the code.
+                </p>
+                <div class="marimo-badge">
+                    <span>Powered by</span>
+                    <a href="https://marimo.io" target="_blank" rel="noopener">
+                        <img src="https://raw.githubusercontent.com/marimo-team/marimo/main/docs/_static/marimo-logotype-thick.svg" alt="marimo">
+                    </a>
+                </div>
+            </div>
 """
             )
-            for notebook in all_notebooks:
-                notebook_name = notebook.split("/")[-1].replace(".py", "")
-                display_name = notebook_name.replace("_", " ").title()
 
+            # Apps section
+            if apps:
                 f.write(
-                    f'      <div class="p-4 border border-gray-200 rounded">\n'
-                    f'        <h3 class="text-lg font-semibold mb-2">{display_name}</h3>\n'
-                    f'        <div class="flex gap-2">\n'
-                    f'          <a href="{notebook.replace(".py", ".html")}" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded">Open Notebook</a>\n'
-                    f"        </div>\n"
-                    f"      </div>\n"
+                    """
+            <section class="notebook-section">
+                <h2>Interactive Applications</h2>
+                <div class="notebook-grid">
+"""
                 )
+                for nb in sorted(apps):
+                    f.write(make_card(nb) + "\n")
+                f.write(
+                    """                </div>
+            </section>
+"""
+                )
+
+            # Notebooks section
+            if notebooks:
+                f.write(
+                    """
+            <section class="notebook-section">
+                <h2>Course Notebooks</h2>
+                <div class="notebook-grid">
+"""
+                )
+                for nb in sorted(notebooks):
+                    f.write(make_card(nb) + "\n")
+                f.write(
+                    """                </div>
+            </section>
+"""
+                )
+
             f.write(
-                """    </div>
-  </body>
+                """
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2025 Christoph M. Flath. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
 </html>"""
             )
+        print(f"  Generated {teaching_path}")
     except IOError as e:
-        print(f"Error generating index.html: {e}")
+        print(f"Error generating teaching.html: {e}")
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Build marimo notebooks")
+    parser = argparse.ArgumentParser(description="Build academic site with marimo notebooks")
     parser.add_argument(
         "--output-dir", default="_site", help="Output directory for built files"
     )
     args = parser.parse_args()
 
+    # Step 1: Copy academic site files
+    copy_academic_site(args.output_dir)
+
+    # Step 2: Find all notebooks
     all_notebooks: List[str] = []
     for directory in ["notebooks", "apps"]:
         dir_path = Path(directory)
@@ -99,18 +291,24 @@ def main() -> None:
             print(f"Warning: Directory not found: {dir_path}")
             continue
 
-        all_notebooks.extend(str(path) for path in dir_path.rglob("*.py"))
+        # Only get .py files directly in the directory, not in subdirs like __marimo__
+        for path in dir_path.glob("*.py"):
+            all_notebooks.append(str(path))
 
     if not all_notebooks:
         print("No notebooks found!")
         return
 
-    # Export notebooks sequentially
+    print(f"\nFound {len(all_notebooks)} notebooks to export")
+
+    # Step 3: Export notebooks sequentially
     for nb in all_notebooks:
         export_html_wasm(nb, args.output_dir, as_app=nb.startswith("apps/"))
 
-    # Generate index only if all exports succeeded
-    generate_index(all_notebooks, args.output_dir)
+    # Step 4: Generate teaching page
+    generate_teaching_page(all_notebooks, args.output_dir)
+
+    print(f"\nBuild complete! Output in {args.output_dir}/")
 
 
 if __name__ == "__main__":
