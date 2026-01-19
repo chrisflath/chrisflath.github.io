@@ -9,7 +9,18 @@ document.addEventListener('DOMContentLoaded', function() {
     initBibsonomy();
     setActiveNavLink();
     initCarouselButtons();
+    updateCopyrightYear();
 });
+
+/**
+ * Update copyright year dynamically
+ */
+function updateCopyrightYear() {
+    const yearEl = document.getElementById('copyright-year');
+    if (yearEl) {
+        yearEl.textContent = new Date().getFullYear();
+    }
+}
 
 /**
  * Carousel scroll buttons and shuffle
@@ -154,8 +165,14 @@ async function loadOpenAlexMetrics() {
 
     if (!citationsEl && !hIndexEl && !pubCountEl) return;
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+
     try {
-        const response = await fetch(`https://api.openalex.org/authors/${OPENALEX_CONFIG.authorId}`);
+        const response = await fetch(`https://api.openalex.org/authors/${OPENALEX_CONFIG.authorId}`, {
+            signal: controller.signal
+        });
+        clearTimeout(timeoutId);
         if (!response.ok) throw new Error('Failed to fetch');
 
         const author = await response.json();

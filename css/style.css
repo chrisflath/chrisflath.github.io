@@ -31,6 +31,22 @@
     --sidebar-width: 260px;
 }
 
+/* Skip to content link for accessibility */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--primary-color);
+    color: var(--background);
+    padding: var(--spacing-sm) var(--spacing-md);
+    z-index: 200;
+    border-bottom: none;
+}
+
+.skip-link:focus {
+    top: 0;
+}
+
 /* Reset & Base */
 *, *::before, *::after {
     box-sizing: border-box;
@@ -143,6 +159,12 @@ a:hover {
 .main-nav a:hover,
 .main-nav a.active {
     color: var(--background);
+}
+
+.main-nav a:focus-visible {
+    color: var(--background);
+    outline: 2px solid var(--background);
+    outline-offset: 2px;
 }
 
 /* Mobile Navigation */

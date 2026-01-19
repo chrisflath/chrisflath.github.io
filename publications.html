@@ -15,11 +15,12 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Skip to content</a>
     <!-- Header -->
     <header class="site-header">
         <div class="container">
             <a href="index.html" class="site-title">Christoph M. Flath</a>
-            <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+            <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
             <nav class="main-nav">
                 <a href="index.html">Home</a>
                 <a href="publications.html" class="active">Publications</a>
@@ -31,7 +32,7 @@
     </header>
 
     <!-- Main Content -->
-    <main class="page-content">
+    <main class="page-content" id="main-content">
         <section class="section">
             <div class="container">
                 <h1>Publications</h1>
@@ -68,7 +69,7 @@
     <!-- Footer -->
     <footer class="site-footer">
         <div class="container">
-            <p>&copy; 2026 Christoph M. Flath</p>
+            <p>&copy; <span id="copyright-year">2026</span> Christoph M. Flath</p>
             <div class="footer-links">
                 <a href="https://www.uni-wuerzburg.de/en/" target="_blank" rel="noopener">University of Würzburg</a>
                 <a href="https://www.wiwi.uni-wuerzburg.de/wiba/" target="_blank" rel="noopener">Chair Website</a>

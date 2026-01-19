@@ -247,11 +247,12 @@ def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
     </style>
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Skip to content</a>
     <!-- Header -->
     <header class="site-header">
         <div class="container">
             <a href="index.html" class="site-title">Christoph M. Flath</a>
-            <button class="nav-toggle" aria-label="Toggle navigation">&#9776;</button>
+            <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">&#9776;</button>
             <nav class="main-nav">
                 <a href="index.html">Home</a>
                 <a href="publications.html">Publications</a>
@@ -262,7 +263,7 @@ def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
         </div>
     </header>
 
-    <main class="page-content">
+    <main class="page-content" id="main-content">
         <div class="container">
             <h1>Interactive Teaching Materials</h1>
 
@@ -302,7 +303,7 @@ def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
     <!-- Footer -->
     <footer class="site-footer">
         <div class="container">
-            <p>&copy; 2025 Christoph M. Flath. All rights reserved.</p>
+            <p>&copy; <span id="copyright-year">2026</span> Christoph M. Flath</p>
         </div>
     </footer>
 
