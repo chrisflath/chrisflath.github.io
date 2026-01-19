@@ -8,7 +8,9 @@
         "apps/classification_playground.py",
         "apps/regression_playground.py",
         "notebooks/aist3-dataintegration.py",
-        "notebooks/aist3-dataintegration_solution.py"
+        "notebooks/aist3-dataintegration_solution.py",
+        "notebooks/sql-murder.py",
+        "notebooks/sql-murder_solution.py"
       ]
     },
     {
@@ -18,8 +20,6 @@
         "notebooks/datenanalyse.py",
         "notebooks/dma-sql-2.py",
         "notebooks/dma-sql-2-loesung.py",
-        "notebooks/sql-murder.py",
-        "notebooks/sql-murder_solution.py",
         "notebooks/Zeitreihenanalyse.py",
         "notebooks/Zeitreihenanalyse-GPUs.py"
       ]
