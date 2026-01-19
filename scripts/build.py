@@ -181,8 +181,19 @@ def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
             font-size: 1.6rem;
             color: var(--primary-color);
             margin-bottom: var(--spacing-lg);
-            padding-bottom: var(--spacing-sm);
-            border-bottom: 2px solid var(--border-color);
+            position: relative;
+            display: inline-block;
+        }
+        .notebook-section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--pencil-gray);
+            mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 4' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 2 Q10 0, 20 2 T40 2 T60 2 T80 2 T100 2' stroke='black' fill='none' stroke-width='3'/%3E%3C/svg%3E");
+            -webkit-mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 4' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 2 Q10 0, 20 2 T40 2 T60 2 T80 2 T100 2' stroke='black' fill='none' stroke-width='3'/%3E%3C/svg%3E");
         }
         .notebook-grid {
             display: grid;
