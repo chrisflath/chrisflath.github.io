@@ -144,54 +144,6 @@
             white-space: nowrap;
         }
 
-        /* Toolbox margin - desktop only */
-        .toolbox-margin {
-            position: fixed;
-            right: 60px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 140px;
-            padding: var(--spacing-md);
-            background: linear-gradient(145deg, #fffef8 0%, #f9f7ef 100%);
-            border: 2px solid var(--pencil-gray);
-            border-radius: 4px 8px 6px 10px;
-            box-shadow: 3px 3px 0 var(--border-color);
-            z-index: 50;
-        }
-
-        .toolbox-margin h4 {
-            font-family: var(--font-accent);
-            font-size: 1.1rem;
-            color: var(--pencil-gray);
-            margin-bottom: var(--spacing-sm);
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: var(--spacing-xs);
-        }
-
-        .toolbox-category {
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .toolbox-category-name {
-            font-size: 0.75rem;
-            color: var(--border-color);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 1px;
-        }
-
-        .toolbox-items {
-            font-family: var(--font-accent);
-            font-size: 0.95rem;
-            color: var(--text-color);
-            line-height: 1.4;
-        }
-
-        @media (max-width: 1200px) {
-            .toolbox-margin {
-                display: none;
-            }
-        }
     </style>
 </head>
 <body>
@@ -378,12 +330,6 @@
         </section>
     </main>
 
-    <!-- Toolbox Margin -->
-    <aside class="toolbox-margin" id="toolbox">
-        <h4>Toolbox</h4>
-        <div id="toolbox-content"></div>
-    </aside>
-
     <!-- Footer -->
     <footer class="site-footer">
         <div class="container">
@@ -396,24 +342,5 @@
     </footer>
 
     <script src="js/main.js"></script>
-    <script>
-        // Load toolbox content from JSON
-        fetch('data/tools.json')
-            .then(response => response.json())
-            .then(data => {
-                const container = document.getElementById('toolbox-content');
-                if (!container || !data.categories) return;
-
-                let html = '';
-                data.categories.forEach(cat => {
-                    html += `<div class="toolbox-category">
-                        <div class="toolbox-category-name">${cat.name}</div>
-                        <div class="toolbox-items">${cat.items.join(', ')}</div>
-                    </div>`;
-                });
-                container.innerHTML = html;
-            })
-            .catch(err => console.error('Error loading toolbox:', err));
-    </script>
 </body>
 </html>
