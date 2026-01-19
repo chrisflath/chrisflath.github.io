@@ -266,11 +266,7 @@ def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
                 if section_html:
                     f.write(section_html)
 
-            # Add unconfigured notebooks if any
-            if unconfigured:
-                section_html = make_section("Other Materials", None, sorted(unconfigured))
-                if section_html:
-                    f.write(section_html)
+            # Unconfigured notebooks are intentionally hidden
 
             f.write(
                 """

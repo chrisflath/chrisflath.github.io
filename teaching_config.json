@@ -48,17 +48,6 @@
       "notebooks": [
         "notebooks/SNA.py"
       ]
-    },
-    {
-      "name": "Miscellaneous",
-      "code": null,
-      "notebooks": [
-        "apps/charts.py",
-        "apps/classTest.py",
-        "apps/dwzExplorer.py",
-        "apps/klausurtagung.py",
-        "notebooks/klausurtagung.py"
-      ]
     }
   ]
 }
