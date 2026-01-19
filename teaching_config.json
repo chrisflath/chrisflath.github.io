@@ -21,6 +21,29 @@
       ]
     },
     {
+      "name": "D3 in Practice",
+      "code": "D3",
+      "notebooks": [
+        "apps/demand_management.py",
+        "notebooks/bookingLimits.py",
+        "notebooks/demand_management.py"
+      ]
+    },
+    {
+      "name": "Planen und Entscheiden",
+      "code": "PuE",
+      "notebooks": [
+        "notebooks/PuE-Probleme.py"
+      ]
+    },
+    {
+      "name": "Information Systems",
+      "code": "IS",
+      "notebooks": [
+        "notebooks/SNA.py"
+      ]
+    },
+    {
       "name": "Machine Learning Playgrounds",
       "code": "ML",
       "notebooks": [
@@ -30,26 +53,15 @@
       ]
     },
     {
-      "name": "Revenue Management",
-      "code": "RM",
-      "notebooks": [
-        "apps/RMExploration.py",
-        "apps/demand_management.py",
-        "notebooks/bookingLimits.py",
-        "notebooks/demand_management.py"
-      ]
-    },
-    {
       "name": "Miscellaneous",
       "code": null,
       "notebooks": [
+        "apps/RMExploration.py",
         "apps/charts.py",
         "apps/classTest.py",
         "apps/dwzExplorer.py",
         "apps/klausurtagung.py",
         "notebooks/DiskreteOptimierung.py",
-        "notebooks/PuE-Probleme.py",
-        "notebooks/SNA.py",
         "notebooks/Zeitreihenanalyse.py",
         "notebooks/Zeitreihenanalyse-GPUs.py",
         "notebooks/fibonacci.py",
