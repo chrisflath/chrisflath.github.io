@@ -4,7 +4,8 @@ import os
 import subprocess
 import argparse
 import shutil
-from typing import List
+import json
+from typing import List, Dict, Any
 from pathlib import Path
 
 
@@ -14,7 +15,6 @@ ACADEMIC_SITE_FILES = [
     "cv.html",
     "research.html",
     "publications.html",
-    "teaching.html",
     "favicon.svg",
     ".nojekyll",
 ]
@@ -84,15 +84,29 @@ def export_html_wasm(notebook_path: str, output_dir: str, as_app: bool = False) 
         return False
 
 
+def load_teaching_config() -> Dict[str, Any]:
+    """Load teaching configuration from JSON file."""
+    config_path = Path("teaching_config.json")
+    if config_path.exists():
+        with open(config_path) as f:
+            return json.load(f)
+    return {"courses": []}
+
+
 def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
-    """Generate the teaching.html page with notebook links."""
+    """Generate the teaching.html page with notebook links grouped by course."""
     print("Generating teaching.html")
 
-    # Separate apps and notebooks
-    apps = [nb for nb in all_notebooks if nb.startswith("apps/")]
-    notebooks = [nb for nb in all_notebooks if nb.startswith("notebooks/")]
-
+    config = load_teaching_config()
     teaching_path = os.path.join(output_dir, "teaching.html")
+
+    # Build a set of all configured notebooks
+    configured_notebooks = set()
+    for course in config.get("courses", []):
+        configured_notebooks.update(course.get("notebooks", []))
+
+    # Find unconfigured notebooks
+    unconfigured = [nb for nb in all_notebooks if nb not in configured_notebooks]
 
     def make_card(notebook: str) -> str:
         notebook_name = notebook.split("/")[-1].replace(".py", "")
@@ -102,6 +116,24 @@ def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
                     <span class="notebook-name">{display_name}</span>
                     <span class="notebook-arrow">&#8594;</span>
                 </a>'''
+
+    def make_section(title: str, code: str | None, notebooks: List[str]) -> str:
+        """Generate HTML for a course section."""
+        # Filter to only existing notebooks
+        existing = [nb for nb in notebooks if nb in all_notebooks]
+        if not existing:
+            return ""
+
+        header = f"{title} ({code})" if code else title
+        cards = "\n".join(make_card(nb) for nb in existing)
+        return f'''
+            <section class="notebook-section">
+                <h2>{header}</h2>
+                <div class="notebook-grid">
+{cards}
+                </div>
+            </section>
+'''
 
     try:
         with open(teaching_path, "w") as f:
@@ -224,39 +256,21 @@ def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
 """
             )
 
-            # Apps section
-            if apps:
-                f.write(
-                    """
-            <section class="notebook-section">
-                <h2>Interactive Applications</h2>
-                <div class="notebook-grid">
-"""
+            # Generate sections from config
+            for course in config.get("courses", []):
+                section_html = make_section(
+                    course.get("name", "Untitled"),
+                    course.get("code"),
+                    course.get("notebooks", [])
                 )
-                for nb in sorted(apps):
-                    f.write(make_card(nb) + "\n")
-                f.write(
-                    """                </div>
-            </section>
-"""
-                )
+                if section_html:
+                    f.write(section_html)
 
-            # Notebooks section
-            if notebooks:
-                f.write(
-                    """
-            <section class="notebook-section">
-                <h2>Course Notebooks</h2>
-                <div class="notebook-grid">
-"""
-                )
-                for nb in sorted(notebooks):
-                    f.write(make_card(nb) + "\n")
-                f.write(
-                    """                </div>
-            </section>
-"""
-                )
+            # Add unconfigured notebooks if any
+            if unconfigured:
+                section_html = make_section("Other Materials", None, sorted(unconfigured))
+                if section_html:
+                    f.write(section_html)
 
             f.write(
                 """
