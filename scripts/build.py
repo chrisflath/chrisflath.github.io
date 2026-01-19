@@ -194,17 +194,21 @@ def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
             justify-content: space-between;
             align-items: center;
             padding: var(--spacing-md) var(--spacing-lg);
-            background: var(--background-alt);
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            transition: all 0.2s ease;
-            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(135deg, #fffef8 0%, #faf8f0 100%);
+            border: 2px solid var(--pencil-gray);
+            border-radius: 3px 5px 4px 6px;
+            box-shadow:
+                2px 2px 0 var(--border-color),
+                3px 3px 6px rgba(0,0,0,0.06);
         }
+        .notebook-card:nth-child(1) { transform: rotate(-0.6deg); }
+        .notebook-card:nth-child(2) { transform: rotate(0.8deg); }
+        .notebook-card:nth-child(3) { transform: rotate(0.4deg); }
+        .notebook-card:nth-child(4) { transform: rotate(-0.5deg); }
+        .notebook-card:nth-child(5) { transform: rotate(0.7deg); }
+        .notebook-card:nth-child(6) { transform: rotate(-0.4deg); }
         .notebook-card:hover {
-            background: white;
-            border-color: var(--primary-color);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 53, 107, 0.1);
+            color: var(--primary-color);
         }
         .notebook-name {
             font-family: var(--font-main);
@@ -214,6 +218,15 @@ def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
         .notebook-arrow {
             color: var(--primary-color);
             font-size: 1.2rem;
+        }
+        @media (max-width: 768px) {
+            .notebook-card {
+                transform: none;
+                border-radius: 4px;
+                box-shadow: none;
+                border: 1px solid var(--border-color);
+                background: var(--background);
+            }
         }
         .page-content {
             padding: var(--spacing-xl) 0;
