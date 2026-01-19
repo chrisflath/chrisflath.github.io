@@ -206,7 +206,7 @@ def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
             align-items: center;
             padding: var(--spacing-md) var(--spacing-lg);
             height: 60px;
-            background: linear-gradient(135deg, #fffef8 0%, #faf8f0 100%);
+            background: linear-gradient(135deg, var(--card-gradient-start) 0%, var(--card-gradient-end) 100%);
             border: 2px solid var(--pencil-gray);
             border-radius: 3px 5px 4px 6px;
             box-shadow:
