@@ -135,6 +135,12 @@ def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
         .marimo-badge img {
             height: 24px;
         }
+        .marimo-badge a {
+            border-bottom: none;
+        }
+        .marimo-badge a:hover {
+            border-bottom: none;
+        }
         .notebook-section {
             margin-bottom: var(--spacing-xl);
         }
