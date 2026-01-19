@@ -36,37 +36,37 @@
 
 /* Dark mode */
 [data-theme="dark"] {
-    --primary-color: #4a9eff;         /* Lighter blue for dark mode */
-    --secondary-color: #7ac4ff;
-    --accent-color: #4a9eff;
-    --accent-light: #8ed0ff;
-    --text-color: #e8e6e3;            /* Light text */
-    --text-light: #b8b5b0;            /* Muted light text - brighter */
+    --primary-color: #6ab0ff;         /* Lighter blue for dark mode */
+    --secondary-color: #8eccff;
+    --accent-color: #6ab0ff;
+    --accent-light: #a0d8ff;
+    --text-color: #efefef;            /* Light text */
+    --text-light: #c8c8c8;            /* Muted light text - much brighter */
     --background: #1a1a1a;            /* Dark paper */
     --background-alt: #242424;        /* Slightly lighter */
-    --border-color: #404040;          /* Dark border - slightly lighter */
-    --pencil-gray: #9a9a9a;           /* Lighter graphite */
-    --card-gradient-start: #242424;
-    --card-gradient-end: #1e1e1e;
-    --rule-line-color: rgba(80, 90, 100, 0.3);
+    --border-color: #505050;          /* Dark border - more visible */
+    --pencil-gray: #aaaaaa;           /* Lighter graphite */
+    --card-gradient-start: #262626;
+    --card-gradient-end: #202020;
+    --rule-line-color: rgba(100, 110, 120, 0.35);
 }
 
 /* Respect system preference */
 @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-        --primary-color: #4a9eff;
-        --secondary-color: #7ac4ff;
-        --accent-color: #4a9eff;
-        --accent-light: #8ed0ff;
-        --text-color: #e8e6e3;
-        --text-light: #b8b5b0;
+        --primary-color: #6ab0ff;
+        --secondary-color: #8eccff;
+        --accent-color: #6ab0ff;
+        --accent-light: #a0d8ff;
+        --text-color: #efefef;
+        --text-light: #c8c8c8;
         --background: #1a1a1a;
         --background-alt: #242424;
-        --border-color: #404040;
-        --pencil-gray: #9a9a9a;
-        --card-gradient-start: #242424;
-        --card-gradient-end: #1e1e1e;
-        --rule-line-color: rgba(80, 90, 100, 0.3);
+        --border-color: #505050;
+        --pencil-gray: #aaaaaa;
+        --card-gradient-start: #262626;
+        --card-gradient-end: #202020;
+        --rule-line-color: rgba(100, 110, 120, 0.35);
     }
 }
 
