@@ -19,7 +19,9 @@
         "notebooks/dma-sql-2.py",
         "notebooks/dma-sql-2-loesung.py",
         "notebooks/sql-murder.py",
-        "notebooks/sql-murder_solution.py"
+        "notebooks/sql-murder_solution.py",
+        "notebooks/Zeitreihenanalyse.py",
+        "notebooks/Zeitreihenanalyse-GPUs.py"
       ]
     },
     {
@@ -36,7 +38,8 @@
       "name": "Planen und Entscheiden",
       "code": "PuE",
       "notebooks": [
-        "notebooks/PuE-Probleme.py"
+        "notebooks/PuE-Probleme.py",
+        "notebooks/DiskreteOptimierung.py"
       ]
     },
     {
@@ -54,10 +57,6 @@
         "apps/classTest.py",
         "apps/dwzExplorer.py",
         "apps/klausurtagung.py",
-        "notebooks/DiskreteOptimierung.py",
-        "notebooks/Zeitreihenanalyse.py",
-        "notebooks/Zeitreihenanalyse-GPUs.py",
-        "notebooks/fibonacci.py",
         "notebooks/klausurtagung.py"
       ]
     }
