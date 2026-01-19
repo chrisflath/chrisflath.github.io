@@ -219,14 +219,14 @@ def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
         .notebook-card:nth-child(4) { transform: rotate(-0.5deg); }
         .notebook-card:nth-child(5) { transform: rotate(0.7deg); }
         .notebook-card:nth-child(6) { transform: rotate(-0.4deg); }
-        .notebook-card:hover {
-            color: var(--primary-color);
-        }
         .notebook-name {
             font-family: var(--font-main);
             font-weight: 500;
             color: var(--text-color);
             line-height: 1.3;
+        }
+        .notebook-card:hover .notebook-name {
+            color: var(--primary-color);
         }
         .notebook-arrow {
             color: var(--primary-color);
