@@ -136,16 +136,18 @@ def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
             return ""
 
         header = f"{title} ({code})" if code else title
+        section_id = code.lower() if code else title.lower().replace(" ", "-")
         cards = "\n".join(make_card(nb) for nb in existing)
         external_cards = "\n".join(make_external_card(nb) for nb in external)
         all_cards = "\n".join(filter(None, [cards, external_cards]))
 
         return f'''
-            <section class="notebook-section">
+            <section class="notebook-section" id="{section_id}">
                 <h2>{header}</h2>
                 <div class="notebook-grid">
 {all_cards}
                 </div>
+                <a href="#top" class="back-to-top">&uarr; Top</a>
             </section>
 '''
 
@@ -252,6 +254,76 @@ def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
         .external-notebook .notebook-arrow {
             font-size: 1rem;
         }
+        /* Course navigation links */
+        .course-nav {
+            margin-bottom: var(--spacing-xl);
+        }
+        .course-nav-level {
+            margin-bottom: var(--spacing-md);
+        }
+        .course-nav-level h3 {
+            font-family: var(--font-accent);
+            font-size: 1.1rem;
+            color: var(--text-light);
+            margin-bottom: var(--spacing-sm);
+        }
+        .course-nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-sm);
+        }
+        .course-nav-link {
+            font-family: var(--font-accent);
+            font-size: 1.1rem;
+            color: var(--text-color);
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: linear-gradient(135deg, var(--card-gradient-start) 0%, var(--card-gradient-end) 100%);
+            border: 2px solid var(--pencil-gray);
+            box-shadow: 2px 2px 0 var(--border-color);
+            border-radius: 3px 5px 4px 6px;
+            text-decoration: none;
+        }
+        .course-nav-link:nth-child(1) { transform: rotate(-0.5deg); }
+        .course-nav-link:nth-child(2) { transform: rotate(0.7deg); }
+        .course-nav-link:nth-child(3) { transform: rotate(-0.4deg); }
+        .course-nav-link:nth-child(4) { transform: rotate(0.6deg); }
+        .course-nav-link:hover {
+            color: var(--primary-color);
+        }
+        .back-to-top {
+            display: block;
+            text-align: right;
+            margin-top: var(--spacing-md);
+            font-family: var(--font-accent);
+            font-size: 0.9rem;
+            color: var(--text-light);
+            border-bottom: none;
+        }
+        .back-to-top:hover {
+            color: var(--primary-color);
+        }
+        .level-header {
+            font-family: var(--font-accent);
+            font-size: 1.3rem;
+            color: var(--text-light);
+            margin: var(--spacing-xl) 0 var(--spacing-md) 0;
+            padding-bottom: var(--spacing-sm);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .level-header:first-of-type {
+            margin-top: 0;
+        }
+        @media (max-width: 768px) {
+            .course-nav-link {
+                font-family: var(--font-main);
+                font-size: 0.9rem;
+                transform: none;
+                border-radius: 4px;
+                box-shadow: none;
+                border: 1px solid var(--border-color);
+                background: var(--background);
+            }
+        }
         @media (max-width: 768px) {
             .notebook-card {
                 transform: none;
@@ -291,7 +363,7 @@ def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
 
     <main class="page-content" id="main-content">
         <div class="container">
-            <h1>Interactive Teaching Materials</h1>
+            <h1 id="top">Interactive Teaching Materials</h1>
 
             <div class="teaching-intro">
                 <p>
@@ -309,8 +381,61 @@ def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
 """
             )
 
-            # Generate sections from config
-            for course in config.get("courses", []):
+            # Group courses by level
+            courses = config.get("courses", [])
+            bachelor_courses = [c for c in courses if c.get("level") == "bachelor"]
+            master_courses = [c for c in courses if c.get("level") == "master"]
+
+            # Helper to check if course has content
+            def course_has_content(course: Dict[str, Any]) -> bool:
+                local_nbs = [nb for nb in course.get("notebooks", []) if nb in all_notebooks]
+                external_nbs = course.get("external_notebooks", [])
+                return bool(local_nbs or external_nbs)
+
+            # Generate navigation
+            nav_html = '''
+            <nav class="course-nav">
+                <div class="course-nav-level">
+                    <h3>Bachelor</h3>
+                    <div class="course-nav-links">
+'''
+            for course in bachelor_courses:
+                if course_has_content(course):
+                    code = course.get("code", "")
+                    section_id = code.lower() if code else course.get("name", "").lower().replace(" ", "-")
+                    nav_html += f'                        <a href="#{section_id}" class="course-nav-link">{course.get("name", "")}</a>\n'
+            nav_html += '''                    </div>
+                </div>
+                <div class="course-nav-level">
+                    <h3>Master</h3>
+                    <div class="course-nav-links">
+'''
+            for course in master_courses:
+                if course_has_content(course):
+                    code = course.get("code", "")
+                    section_id = code.lower() if code else course.get("name", "").lower().replace(" ", "-")
+                    nav_html += f'                        <a href="#{section_id}" class="course-nav-link">{course.get("name", "")}</a>\n'
+            nav_html += '''                    </div>
+                </div>
+            </nav>
+'''
+            f.write(nav_html)
+
+            # Generate Bachelor sections
+            f.write('            <h3 class="level-header">Bachelor Courses</h3>\n')
+            for course in bachelor_courses:
+                section_html = make_section(
+                    course.get("name", "Untitled"),
+                    course.get("code"),
+                    course.get("notebooks", []),
+                    course.get("external_notebooks", [])
+                )
+                if section_html:
+                    f.write(section_html)
+
+            # Generate Master sections
+            f.write('            <h3 class="level-header">Master Courses</h3>\n')
+            for course in master_courses:
                 section_html = make_section(
                     course.get("name", "Untitled"),
                     course.get("code"),

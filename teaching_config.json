@@ -3,6 +3,7 @@
     {
       "name": "Analytical Information Systems",
       "code": "AIS",
+      "level": "master",
       "notebooks": [
         "apps/ais2-datamanagement.py",
         "apps/classification_playground.py",
@@ -16,6 +17,7 @@
     {
       "name": "Datenmanagement & -analyse",
       "code": "DMA",
+      "level": "bachelor",
       "notebooks": [
         "notebooks/datenanalyse.py",
         "notebooks/dma-sql-2.py",
@@ -27,6 +29,7 @@
     {
       "name": "D3 in Practice",
       "code": "D3",
+      "level": "bachelor",
       "notebooks": [
         "apps/RMExploration.py",
         "apps/demand_management.py",
@@ -37,6 +40,7 @@
     {
       "name": "Planen und Entscheiden",
       "code": "PuE",
+      "level": "bachelor",
       "notebooks": [
         "notebooks/PuE-Probleme.py",
         "notebooks/DiskreteOptimierung.py"
@@ -45,6 +49,7 @@
     {
       "name": "Information Systems",
       "code": "IS",
+      "level": "master",
       "notebooks": [
         "notebooks/SNA.py"
       ],
@@ -55,6 +60,7 @@
     {
       "name": "Optimization in Practice",
       "code": "OIP",
+      "level": "master",
       "notebooks": [],
       "external_notebooks": [
         {"name": "Sensitivity Analysis", "url": "https://molab.marimo.io/notebooks/nb_AS6fhvXF8bQ6uRzngeq4Py"},
@@ -75,6 +81,7 @@
     {
       "name": "Decision Support Systems",
       "code": "DSS",
+      "level": "master",
       "notebooks": [],
       "external_notebooks": [
         {"name": "DSS Kickoff Live", "url": "https://molab.marimo.io/notebooks/nb_uDXDF3sfZf1ruiRcrA9rvF"},
