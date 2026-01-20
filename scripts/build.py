@@ -302,17 +302,6 @@ def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
         .back-to-top:hover {
             color: var(--primary-color);
         }
-        .level-header {
-            font-family: var(--font-accent);
-            font-size: 1.3rem;
-            color: var(--text-light);
-            margin: var(--spacing-xl) 0 var(--spacing-md) 0;
-            padding-bottom: var(--spacing-sm);
-            border-bottom: 1px solid var(--border-color);
-        }
-        .level-header:first-of-type {
-            margin-top: 0;
-        }
         @media (max-width: 768px) {
             .course-nav-link {
                 font-family: var(--font-main);
@@ -422,7 +411,6 @@ def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
             f.write(nav_html)
 
             # Generate Bachelor sections
-            f.write('            <h3 class="level-header">Bachelor Courses</h3>\n')
             for course in bachelor_courses:
                 section_html = make_section(
                     course.get("name", "Untitled"),
@@ -434,7 +422,6 @@ def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
                     f.write(section_html)
 
             # Generate Master sections
-            f.write('            <h3 class="level-header">Master Courses</h3>\n')
             for course in master_courses:
                 section_html = make_section(
                     course.get("name", "Untitled"),
