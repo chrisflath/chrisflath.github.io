@@ -49,7 +49,7 @@
         "notebooks/SNA.py"
       ],
       "external_notebooks": [
-        "https://molab.marimo.io/notebooks/nb_gBYZVacg3WYLe7LNnemAsf"
+        {"name": "SNA New", "url": "https://molab.marimo.io/notebooks/nb_gBYZVacg3WYLe7LNnemAsf"}
       ]
     },
     {
@@ -57,19 +57,19 @@
       "code": "OIP",
       "notebooks": [],
       "external_notebooks": [
-        "https://molab.marimo.io/notebooks/nb_AS6fhvXF8bQ6uRzngeq4Py",
-        "https://molab.marimo.io/notebooks/nb_nmK99yLRR6fTt7jYzhLMP5",
-        "https://molab.marimo.io/notebooks/nb_DK2zKMGKZ6RqbXdkacWgin",
-        "https://molab.marimo.io/notebooks/nb_tWAJVx6Rfz32UbEtKHPY56",
-        "https://molab.marimo.io/notebooks/nb_xZArJg4mnYS884tvTqVEUY",
-        "https://molab.marimo.io/notebooks/nb_XZvQkYFmbBZkoryMv9Prce",
-        "https://molab.marimo.io/notebooks/nb_SDNpk9YfWPoAMHpRNEeARf",
-        "https://molab.marimo.io/notebooks/nb_xSa5dJmgFELzyHmkx1S1Bn",
-        "https://molab.marimo.io/notebooks/nb_zMNCTpxD7ahfMKEUS9cyme",
-        "https://molab.marimo.io/notebooks/nb_3Er4Swcwi9ZJ2YW6XMrBy2",
-        "https://molab.marimo.io/notebooks/nb_jEJnQQ4f9ihcu7Z9mi71xX",
-        "https://molab.marimo.io/notebooks/nb_qgrQpyZ53c99oQSkABQHWY",
-        "https://molab.marimo.io/notebooks/nb_4pN7NgrJ8KQsAHRLdartpT"
+        {"name": "Sensitivity Analysis", "url": "https://molab.marimo.io/notebooks/nb_AS6fhvXF8bQ6uRzngeq4Py"},
+        {"name": "NW Petroleum", "url": "https://molab.marimo.io/notebooks/nb_nmK99yLRR6fTt7jYzhLMP5"},
+        {"name": "FCC Supply Chain", "url": "https://molab.marimo.io/notebooks/nb_DK2zKMGKZ6RqbXdkacWgin"},
+        {"name": "Bavarian Motor Company", "url": "https://molab.marimo.io/notebooks/nb_tWAJVx6Rfz32UbEtKHPY56"},
+        {"name": "The Perfect Blend", "url": "https://molab.marimo.io/notebooks/nb_xZArJg4mnYS884tvTqVEUY"},
+        {"name": "Cafe Emergency Exit", "url": "https://molab.marimo.io/notebooks/nb_XZvQkYFmbBZkoryMv9Prce"},
+        {"name": "Coffee Demand Regression", "url": "https://molab.marimo.io/notebooks/nb_SDNpk9YfWPoAMHpRNEeARf"},
+        {"name": "Cafe 2.0", "url": "https://molab.marimo.io/notebooks/nb_xSa5dJmgFELzyHmkx1S1Bn"},
+        {"name": "Cafe Rostering Basic", "url": "https://molab.marimo.io/notebooks/nb_zMNCTpxD7ahfMKEUS9cyme"},
+        {"name": "OIP WLP Base", "url": "https://molab.marimo.io/notebooks/nb_3Er4Swcwi9ZJ2YW6XMrBy2"},
+        {"name": "Santa TSP MTZ", "url": "https://molab.marimo.io/notebooks/nb_jEJnQQ4f9ihcu7Z9mi71xX"},
+        {"name": "Integer Programming", "url": "https://molab.marimo.io/notebooks/nb_qgrQpyZ53c99oQSkABQHWY"},
+        {"name": "Media Planning Optimization", "url": "https://molab.marimo.io/notebooks/nb_4pN7NgrJ8KQsAHRLdartpT"}
       ]
     },
     {
@@ -77,9 +77,9 @@
       "code": "DSS",
       "notebooks": [],
       "external_notebooks": [
-        "https://molab.marimo.io/notebooks/nb_uDXDF3sfZf1ruiRcrA9rvF",
-        "https://molab.marimo.io/notebooks/nb_pfy4aCcayQMjdfuwj1dMN6",
-        "https://molab.marimo.io/notebooks/nb_jtiU7bE5kmRgBKmqoU5WxT"
+        {"name": "DSS Kickoff Live", "url": "https://molab.marimo.io/notebooks/nb_uDXDF3sfZf1ruiRcrA9rvF"},
+        {"name": "Toy Factory PuLP", "url": "https://molab.marimo.io/notebooks/nb_pfy4aCcayQMjdfuwj1dMN6"},
+        {"name": "Santa TSP Marimo", "url": "https://molab.marimo.io/notebooks/nb_jtiU7bE5kmRgBKmqoU5WxT"}
       ]
     }
   ]

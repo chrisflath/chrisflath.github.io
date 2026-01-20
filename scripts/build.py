@@ -117,15 +117,16 @@ def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
                     <span class="notebook-arrow">&#8594;</span>
                 </a>'''
 
-    def make_external_card(url: str, index: int) -> str:
+    def make_external_card(notebook: Dict[str, str]) -> str:
         """Generate HTML card for an external molab notebook."""
-        display_name = f"Notebook {index}"
+        display_name = notebook.get("name", "Notebook")
+        url = notebook.get("url", "#")
         return f'''                <a href="{url}" class="notebook-card external-notebook" target="_blank" rel="noopener noreferrer">
                     <span class="notebook-name">{display_name}</span>
                     <span class="notebook-arrow">&#8599;</span>
                 </a>'''
 
-    def make_section(title: str, code: str | None, notebooks: List[str], external_notebooks: List[str] | None = None) -> str:
+    def make_section(title: str, code: str | None, notebooks: List[str], external_notebooks: List[Dict[str, str]] | None = None) -> str:
         """Generate HTML for a course section."""
         # Filter to only existing local notebooks
         existing = [nb for nb in notebooks if nb in all_notebooks]
@@ -136,7 +137,7 @@ def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
 
         header = f"{title} ({code})" if code else title
         cards = "\n".join(make_card(nb) for nb in existing)
-        external_cards = "\n".join(make_external_card(url, i + 1) for i, url in enumerate(external))
+        external_cards = "\n".join(make_external_card(nb) for nb in external)
         all_cards = "\n".join(filter(None, [cards, external_cards]))
 
         return f'''
