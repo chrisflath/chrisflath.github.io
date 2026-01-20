@@ -47,6 +47,39 @@
       "code": "IS",
       "notebooks": [
         "notebooks/SNA.py"
+      ],
+      "external_notebooks": [
+        "https://molab.marimo.io/notebooks/nb_gBYZVacg3WYLe7LNnemAsf"
+      ]
+    },
+    {
+      "name": "Optimization in Practice",
+      "code": "OIP",
+      "notebooks": [],
+      "external_notebooks": [
+        "https://molab.marimo.io/notebooks/nb_AS6fhvXF8bQ6uRzngeq4Py",
+        "https://molab.marimo.io/notebooks/nb_nmK99yLRR6fTt7jYzhLMP5",
+        "https://molab.marimo.io/notebooks/nb_DK2zKMGKZ6RqbXdkacWgin",
+        "https://molab.marimo.io/notebooks/nb_tWAJVx6Rfz32UbEtKHPY56",
+        "https://molab.marimo.io/notebooks/nb_xZArJg4mnYS884tvTqVEUY",
+        "https://molab.marimo.io/notebooks/nb_XZvQkYFmbBZkoryMv9Prce",
+        "https://molab.marimo.io/notebooks/nb_SDNpk9YfWPoAMHpRNEeARf",
+        "https://molab.marimo.io/notebooks/nb_xSa5dJmgFELzyHmkx1S1Bn",
+        "https://molab.marimo.io/notebooks/nb_zMNCTpxD7ahfMKEUS9cyme",
+        "https://molab.marimo.io/notebooks/nb_3Er4Swcwi9ZJ2YW6XMrBy2",
+        "https://molab.marimo.io/notebooks/nb_jEJnQQ4f9ihcu7Z9mi71xX",
+        "https://molab.marimo.io/notebooks/nb_qgrQpyZ53c99oQSkABQHWY",
+        "https://molab.marimo.io/notebooks/nb_4pN7NgrJ8KQsAHRLdartpT"
+      ]
+    },
+    {
+      "name": "Decision Support Systems",
+      "code": "DSS",
+      "notebooks": [],
+      "external_notebooks": [
+        "https://molab.marimo.io/notebooks/nb_uDXDF3sfZf1ruiRcrA9rvF",
+        "https://molab.marimo.io/notebooks/nb_pfy4aCcayQMjdfuwj1dMN6",
+        "https://molab.marimo.io/notebooks/nb_jtiU7bE5kmRgBKmqoU5WxT"
       ]
     }
   ]

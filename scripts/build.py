@@ -117,20 +117,33 @@ def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
                     <span class="notebook-arrow">&#8594;</span>
                 </a>'''
 
-    def make_section(title: str, code: str | None, notebooks: List[str]) -> str:
+    def make_external_card(url: str, index: int) -> str:
+        """Generate HTML card for an external molab notebook."""
+        display_name = f"Notebook {index}"
+        return f'''                <a href="{url}" class="notebook-card external-notebook" target="_blank" rel="noopener noreferrer">
+                    <span class="notebook-name">{display_name}</span>
+                    <span class="notebook-arrow">&#8599;</span>
+                </a>'''
+
+    def make_section(title: str, code: str | None, notebooks: List[str], external_notebooks: List[str] | None = None) -> str:
         """Generate HTML for a course section."""
-        # Filter to only existing notebooks
+        # Filter to only existing local notebooks
         existing = [nb for nb in notebooks if nb in all_notebooks]
-        if not existing:
+        external = external_notebooks or []
+
+        if not existing and not external:
             return ""
 
         header = f"{title} ({code})" if code else title
         cards = "\n".join(make_card(nb) for nb in existing)
+        external_cards = "\n".join(make_external_card(url, i + 1) for i, url in enumerate(external))
+        all_cards = "\n".join(filter(None, [cards, external_cards]))
+
         return f'''
             <section class="notebook-section">
                 <h2>{header}</h2>
                 <div class="notebook-grid">
-{cards}
+{all_cards}
                 </div>
             </section>
 '''
@@ -232,6 +245,12 @@ def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
             color: var(--primary-color);
             font-size: 1.2rem;
         }
+        .external-notebook {
+            border-style: dashed;
+        }
+        .external-notebook .notebook-arrow {
+            font-size: 1rem;
+        }
         @media (max-width: 768px) {
             .notebook-card {
                 transform: none;
@@ -294,7 +313,8 @@ def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
                 section_html = make_section(
                     course.get("name", "Untitled"),
                     course.get("code"),
-                    course.get("notebooks", [])
+                    course.get("notebooks", []),
+                    course.get("external_notebooks", [])
                 )
                 if section_html:
                     f.write(section_html)
