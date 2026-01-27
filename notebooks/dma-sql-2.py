@@ -149,9 +149,9 @@ def _(bundesliga, mo):
     # Ergänzen Sie: ORDER BY Punkte DESC, ??? DESC
     _df = mo.sql(
         f"""
-        SELECT Mannschaft, Punkte, Tordifferenz
+        SELECT ???
         FROM bundesliga
-        ORDER BY Punkte DESC, ???
+        ORDER BY ???
         """
     )
     return
@@ -385,9 +385,8 @@ def _(mo, spieler):
     # Ergänzen Sie die zweite Spalte nach Position:
     _df = mo.sql(
         f"""
-        SELECT DISTINCT Position, ???
+        SELECT DISTINCT ???
         FROM spieler
-        ORDER BY Position
         """
     )
     return
@@ -662,13 +661,8 @@ def _(mo, spieler):
     # Ergänzen Sie: COALESCE(???, 0) + COALESCE(???, 0)
     _df = mo.sql(
         f"""
-        SELECT
-            Name,
-            COALESCE(???, 0) AS Tore,
-            COALESCE(???, 0) AS Vorlagen,
-            COALESCE(???, 0) + COALESCE(???, 0) AS Scorerpunkte
+        SELECT ???
         FROM spieler
-        ORDER BY Scorerpunkte DESC
         """
     )
     return
