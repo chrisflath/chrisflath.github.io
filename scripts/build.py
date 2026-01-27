@@ -93,6 +93,22 @@ def load_teaching_config() -> Dict[str, Any]:
     return {"courses": []}
 
 
+def get_notebook_path(notebook) -> str:
+    """Extract notebook path from either string or dict format."""
+    if isinstance(notebook, dict):
+        return notebook.get("file", "")
+    return notebook
+
+
+def get_notebook_title(notebook) -> str:
+    """Extract display title from either string or dict format."""
+    if isinstance(notebook, dict):
+        return notebook.get("title", "")
+    # Fallback: generate from filename
+    notebook_name = notebook.split("/")[-1].replace(".py", "")
+    return notebook_name.replace("_", " ").replace("-", " ").title()
+
+
 def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
     """Generate the teaching.html page with notebook links grouped by course."""
     print("Generating teaching.html")
@@ -100,18 +116,21 @@ def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
     config = load_teaching_config()
     teaching_path = os.path.join(output_dir, "teaching.html")
 
-    # Build a set of all configured notebooks
+    # Build a set of all configured notebooks (handle both string and dict formats)
     configured_notebooks = set()
     for course in config.get("courses", []):
-        configured_notebooks.update(course.get("notebooks", []))
+        for nb in course.get("notebooks", []):
+            configured_notebooks.add(get_notebook_path(nb))
+        # Also include legacy notebooks
+        configured_notebooks.update(course.get("legacy_notebooks", []))
 
     # Find unconfigured notebooks
     unconfigured = [nb for nb in all_notebooks if nb not in configured_notebooks]
 
-    def make_card(notebook: str) -> str:
-        notebook_name = notebook.split("/")[-1].replace(".py", "")
-        display_name = notebook_name.replace("_", " ").replace("-", " ").title()
-        html_path = notebook.replace(".py", ".html")
+    def make_card(notebook) -> str:
+        notebook_path = get_notebook_path(notebook)
+        display_name = get_notebook_title(notebook)
+        html_path = notebook_path.replace(".py", ".html")
         return f'''                <a href="{html_path}" class="notebook-card">
                     <span class="notebook-name">{display_name}</span>
                     <span class="notebook-arrow">&#8594;</span>
@@ -126,10 +145,10 @@ def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
                     <span class="notebook-arrow">&#8599;</span>
                 </a>'''
 
-    def make_section(title: str, code: str | None, notebooks: List[str], external_notebooks: List[Dict[str, str]] | None = None) -> str:
+    def make_section(title: str, code: str | None, notebooks: List, external_notebooks: List[Dict[str, str]] | None = None) -> str:
         """Generate HTML for a course section."""
-        # Filter to only existing local notebooks
-        existing = [nb for nb in notebooks if nb in all_notebooks]
+        # Filter to only existing local notebooks (handle both string and dict formats)
+        existing = [nb for nb in notebooks if get_notebook_path(nb) in all_notebooks]
         external = external_notebooks or []
 
         if not existing and not external:
@@ -377,7 +396,7 @@ def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
 
             # Helper to check if course has content
             def course_has_content(course: Dict[str, Any]) -> bool:
-                local_nbs = [nb for nb in course.get("notebooks", []) if nb in all_notebooks]
+                local_nbs = [nb for nb in course.get("notebooks", []) if get_notebook_path(nb) in all_notebooks]
                 external_nbs = course.get("external_notebooks", [])
                 return bool(local_nbs or external_nbs)
 
