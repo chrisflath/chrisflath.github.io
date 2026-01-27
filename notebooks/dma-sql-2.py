@@ -57,104 +57,20 @@ def _(mo):
 @app.cell(hide_code=True)
 def _():
     import pandas as pd
-    import sys
 
-    # Check if running in WASM/Pyodide (browser) - network requests blocked by CORS
-    IS_WASM = 'pyodide' in sys.modules or 'pyodide_js' in sys.modules
-
-    def lade_bundesliga_tabelle(saison: str = "2026") -> pd.DataFrame:
-        """Lädt die aktuelle Bundesliga-Tabelle von fussballdaten.de."""
-        url = f"https://www.fussballdaten.de/bundesliga/{saison}/tabelle/"
-
-        def get_fallback():
-            return pd.DataFrame({
-                "Mannschaft": ["Bayern München", "Borussia Dortmund", "VfB Stuttgart",
-                              "RB Leipzig", "Bayer Leverkusen", "Eintracht Frankfurt",
-                              "SC Freiburg", "TSG Hoffenheim", "Werder Bremen", "VfL Wolfsburg",
-                              "1. FC Union Berlin", "FC Augsburg", "Borussia M'gladbach",
-                              "1. FSV Mainz 05", "1. FC Heidenheim", "VfL Bochum",
-                              "FC St. Pauli", "Holstein Kiel"],
-                "Spiele": [19, 19, 19, 18, 18, 19, 18, 18, 19, 19, 18, 19, 18, 19, 19, 19, 18, 19],
-                "Siege": [16, 12, 11, 11, 10, 9, 9, 11, 7, 6, 6, 6, 6, 5, 5, 3, 4, 3],
-                "Unentschieden": [2, 6, 3, 2, 2, 6, 3, 3, 6, 7, 5, 5, 3, 6, 4, 5, 3, 3],
-                "Niederlagen": [1, 1, 5, 5, 6, 4, 6, 4, 6, 6, 7, 8, 9, 8, 10, 11, 11, 13],
-                "ToreGeschossen": [72, 38, 40, 32, 41, 35, 28, 38, 29, 31, 22, 21, 26, 24, 28, 17, 14, 18],
-                "ToreKassiert": [16, 17, 30, 20, 31, 24, 26, 22, 32, 34, 24, 32, 33, 28, 40, 38, 25, 45],
-                "Tordifferenz": [56, 21, 10, 12, 10, 11, 2, 16, -3, -3, -2, -11, -7, -4, -12, -21, -11, -27],
-                "Punkte": [50, 42, 36, 35, 32, 33, 30, 36, 27, 25, 23, 23, 21, 21, 19, 14, 15, 12]
-            }), "Offline-Beispieldaten (Saison 2024/25)"
-
-        # In WASM mode, skip network request (blocked by CORS)
-        if IS_WASM:
-            return get_fallback()
-
-        try:
-            df = None
-            for parser in ['html.parser', 'lxml', 'html5lib']:
-                try:
-                    tabellen = pd.read_html(url, flavor=parser)
-                    df = tabellen[0]
-                    break
-                except:
-                    continue
-
-            if df is None:
-                return get_fallback()
-
-            spalten_mapping = {
-                "Pts": "Punkte", "Pkt": "Punkte",
-                "S": "Siege",
-                "D": "Unentschieden", "U": "Unentschieden",
-                "L": "Niederlagen", "V": "Niederlagen",
-                "Sp.": "Spiele",
-                "Goals": "Tore", "Tore": "Tore",
-                "Diff.": "Tordifferenz"
-            }
-            df = df.rename(columns={k: v for k, v in spalten_mapping.items() if k in df.columns})
-
-            if "Tordifferenz" not in df.columns and "Tore" in df.columns:
-                df[["ToreGeschossen", "ToreKassiert"]] = df["Tore"].str.split(":", expand=True).astype(int)
-                df["Tordifferenz"] = df["ToreGeschossen"] - df["ToreKassiert"]
-            elif "Tordifferenz" in df.columns:
-                df["Tordifferenz"] = pd.to_numeric(df["Tordifferenz"], errors="coerce").fillna(0).astype(int)
-                if "Tore" in df.columns:
-                    df[["ToreGeschossen", "ToreKassiert"]] = df["Tore"].str.split(":", expand=True).astype(int)
-
-            gewuenschte_spalten = ["Mannschaft", "Spiele", "Siege", "Unentschieden", "Niederlagen",
-                                   "ToreGeschossen", "ToreKassiert", "Tordifferenz", "Punkte"]
-            df = df[[c for c in gewuenschte_spalten if c in df.columns]]
-            quelle = f"Live von fussballdaten.de (Saison {saison})"
-
-        except:
-            return get_fallback()
-
-        return df, quelle
-
-    bundesliga, daten_quelle = lade_bundesliga_tabelle("2026")
-    return bundesliga, daten_quelle, lade_bundesliga_tabelle, pd
+    # Load data from CSV (works in both local and WASM/browser mode)
+    bundesliga = pd.read_csv("public/bundesliga.csv")
+    daten_quelle = "Beispieldaten Bundesliga Saison 2024/25"
+    return bundesliga, daten_quelle, pd
 
 
 @app.cell(hide_code=True)
 def _(pd):
-    # Spieler-Daten mit NULL-Werten für Übungen
-    spieler = pd.DataFrame({
-        "Name": ["Müller", "Neuer", "Kimmich", "Sané", "Musiala", "Gündogan",
-                 "Havertz", "Wirtz", "Füllkrug", "Schlotterbeck", "Rüdiger", "Tah"],
-        "Vorname": ["Thomas", "Manuel", "Joshua", "Leroy", "Jamal", "İlkay",
-                    "Kai", "Florian", "Niclas", "Nico", "Antonio", "Jonathan"],
-        "Position": ["Sturm", "Tor", "Mittelfeld", "Sturm", "Mittelfeld", "Mittelfeld",
-                     "Sturm", "Mittelfeld", "Sturm", "Abwehr", "Abwehr", "Abwehr"],
-        "Verein": ["Bayern München", "Bayern München", "Bayern München", "Bayern München",
-                   "Bayern München", None, "Arsenal", "Bayer Leverkusen",
-                   "West Ham", "Borussia Dortmund", "Real Madrid", "Bayer Leverkusen"],
-        "Tore": [8, 0, 3, 5, 12, None, 9, 11, 6, 1, 2, None],
-        "Vorlagen": [4, None, 8, 3, 7, 2, 5, 9, 2, None, 1, 0],
-        "Spitzname": ["Mülli", None, "Jo", None, None, "Günni", None, "Flo", "Fülle", None, "Rüdi", None]
-    })
-    # Konvertiere zu nullable integer types
+    # Load player data from CSV (with intentional NULL values for exercises)
+    spieler = pd.read_csv("public/spieler.csv")
+    # Convert to nullable integer types (pandas reads empty cells as NaN)
     spieler["Tore"] = spieler["Tore"].astype("Int64")
     spieler["Vorlagen"] = spieler["Vorlagen"].astype("Int64")
-    spieler
     return (spieler,)
 
 
