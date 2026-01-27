@@ -119,7 +119,6 @@ def _():
         return df, quelle
 
     bundesliga, daten_quelle = lade_bundesliga_tabelle("2026")
-    bundesliga
     return bundesliga, daten_quelle, lade_bundesliga_tabelle, pd
 
 
