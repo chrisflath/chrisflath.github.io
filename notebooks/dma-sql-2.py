@@ -55,8 +55,17 @@ def _():
         url = f"https://www.fussballdaten.de/bundesliga/{saison}/tabelle/"
 
         try:
-            tabellen = pd.read_html(url)
-            df = tabellen[0]
+            # Try different parsers for compatibility
+            # html.parser is in stdlib, lxml/html5lib need installation
+            for parser in ['html.parser', 'lxml', 'html5lib']:
+                try:
+                    tabellen = pd.read_html(url, flavor=parser)
+                    df = tabellen[0]
+                    break
+                except Exception:
+                    continue
+            else:
+                raise ImportError("No HTML parser available")
 
             spalten_mapping = {
                 "Pts": "Punkte", "Pkt": "Punkte",
