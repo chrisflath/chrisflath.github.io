@@ -18,7 +18,30 @@
       "name": "Datenmanagement & -analyse",
       "code": "DMA",
       "level": "bachelor",
+      "semester": "SS2026",
       "notebooks": [
+        {
+          "file": "notebooks/dma-sql-1.py",
+          "title": "Sitzung 1: SQL-Grundlagen",
+          "topics": ["SELECT", "WHERE", "AND/OR/NOT", "BETWEEN", "IN", "LIKE"]
+        }
+      ],
+      "notebooks_planned": [
+        {"session": 2, "title": "SQL für Datenexploration", "topics": ["ORDER BY", "DISTINCT", "NULL", "COALESCE"]},
+        {"session": 3, "title": "Aggregation & Gruppierung", "topics": ["COUNT", "SUM", "AVG", "GROUP BY", "HAVING"]},
+        {"session": 4, "title": "Datenanalyseprozesse", "topics": ["CRISP-DM", "Shipman Case Study"]},
+        {"session": 5, "title": "Motivation Datenmodellierung", "topics": ["Redundanz", "Anomalien"]},
+        {"session": 6, "title": "ER-Modellierung", "topics": ["Entitäten", "Beziehungen", "Kardinalitäten"]},
+        {"session": 7, "title": "Relationales Modell", "topics": ["Transformation", "Schlüssel", "CREATE TABLE"]},
+        {"session": 8, "title": "Normalisierung", "topics": ["1NF", "2NF", "3NF", "BCNF"]},
+        {"session": 9, "title": "Joins", "topics": ["INNER JOIN", "LEFT JOIN", "Self-Joins"]},
+        {"session": 10, "title": "Subqueries & Transaktionen", "topics": ["CTEs", "Views", "ACID"]},
+        {"session": 11, "title": "Explorative Datenanalyse", "topics": ["EDA", "Visualisierung"]},
+        {"session": 12, "title": "Zeitreihenanalyse", "topics": ["Window Functions", "LAG", "Moving Average"]},
+        {"session": 13, "title": "Textanalyse", "topics": ["String-Funktionen", "Regex", "TF-IDF"]},
+        {"session": 14, "title": "Statistische Inferenz & A/B-Tests", "topics": ["Hypothesentests", "p-Wert"]}
+      ],
+      "legacy_notebooks": [
         "notebooks/datenanalyse.py",
         "notebooks/dma-sql-2.py",
         "notebooks/dma-sql-2-loesung.py",
