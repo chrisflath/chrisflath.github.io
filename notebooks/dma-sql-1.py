@@ -51,9 +51,10 @@ def _(mo):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _():
     import pandas as pd
+    import lxml  # Pre-load for pandas read_html parser
 
     def lade_bundesliga_tabelle(saison: str = "2026") -> pd.DataFrame:
         """Lädt die aktuelle Bundesliga-Tabelle."""
