@@ -22,7 +22,7 @@
       "notebooks": [
         {
           "file": "notebooks/dma-sql-1.py",
-          "title": "Sitzung 1: SQL-Grundlagen",
+          "title": "Session 1: SQL-Grundlagen",
           "topics": ["SELECT", "WHERE", "AND/OR/NOT", "BETWEEN", "IN", "LIKE"]
         }
       ],

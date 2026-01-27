@@ -3,7 +3,7 @@ import marimo
 __generated_with = "0.13.0"
 app = marimo.App(
     width="medium",
-    app_title="DMA Sitzung 1: SQL-Grundlagen",
+    app_title="DMA Session 1: SQL-Grundlagen",
 )
 
 
@@ -17,7 +17,7 @@ def _():
 def _(mo):
     mo.md(
         r"""
-        # Sitzung 1: SQL-Grundlagen
+        # Session 1: SQL-Grundlagen
 
         Willkommen zur ersten Hands-on-Session! In diesem Notebook lernen Sie:
 
@@ -517,7 +517,7 @@ def _(mo):
         | Werteliste | `IN` | `WHERE Mannschaft IN ('A', 'B', 'C')` |
         | Mustersuche | `LIKE` | `WHERE Mannschaft LIKE 'B%'` |
 
-        **Nächste Sitzung:** Sortieren, DISTINCT, NULL-Werte
+        **Nächste Session:** Sortieren, DISTINCT, NULL-Werte
         """
     )
     return
