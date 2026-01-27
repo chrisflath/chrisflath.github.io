@@ -268,7 +268,7 @@ def generate_teaching_page(all_notebooks: List[str], output_dir: str) -> None:
             font-size: 1.2rem;
         }
         .external-notebook {
-            border-style: dashed;
+            /* Same style as local notebooks */
         }
         .external-notebook .notebook-arrow {
             font-size: 1rem;
