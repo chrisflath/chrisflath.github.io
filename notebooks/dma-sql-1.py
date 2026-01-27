@@ -52,18 +52,14 @@ def _(mo):
 
 
 @app.cell(hide_code=True)
-def _():
+def _(mo):
     import pandas as pd
-    import sys
 
-    # In WASM/browser mode, use URL; locally use file path
-    IS_WASM = 'pyodide' in sys.modules
-    BASE_URL = "https://chrisflath.github.io/notebooks/"
-
-    csv_path = f"{BASE_URL}public/bundesliga.csv" if IS_WASM else "public/bundesliga.csv"
-    bundesliga = pd.read_csv(csv_path)
+    # Works both locally and in WASM/browser mode
+    csv_path = mo.notebook_location() / "public" / "bundesliga.csv"
+    bundesliga = pd.read_csv(str(csv_path))
     daten_quelle = "Beispieldaten Bundesliga Saison 2024/25"
-    return BASE_URL, IS_WASM, bundesliga, daten_quelle, pd
+    return bundesliga, daten_quelle, pd
 
 
 @app.cell(hide_code=True)
