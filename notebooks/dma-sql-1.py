@@ -53,13 +53,13 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    import pandas as pd
+    import polars as pl
 
     # Works both locally and in WASM/browser mode
     csv_path = mo.notebook_location() / "public" / "bundesliga.csv"
-    bundesliga = pd.read_csv(str(csv_path), compression=None)
+    bundesliga = pl.read_csv(str(csv_path)).to_pandas()
     daten_quelle = "Beispieldaten Bundesliga Saison 2024/25"
-    return bundesliga, daten_quelle, pd
+    return bundesliga, daten_quelle, pl
 
 
 @app.cell(hide_code=True)

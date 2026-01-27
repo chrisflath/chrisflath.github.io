@@ -56,21 +56,21 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    import pandas as pd
+    import polars as pl
 
     # Works both locally and in WASM/browser mode
     csv_path = mo.notebook_location() / "public" / "bundesliga.csv"
-    bundesliga = pd.read_csv(str(csv_path), compression=None)
+    bundesliga = pl.read_csv(str(csv_path)).to_pandas()
     daten_quelle = "Beispieldaten Bundesliga Saison 2024/25"
-    return bundesliga, daten_quelle, pd
+    return bundesliga, daten_quelle, pl
 
 
 @app.cell(hide_code=True)
-def _(mo, pd):
+def _(mo, pl):
     # Load player data from CSV (with intentional NULL values for exercises)
     csv_path = mo.notebook_location() / "public" / "spieler.csv"
-    spieler = pd.read_csv(str(csv_path), compression=None)
-    # Convert to nullable integer types (pandas reads empty cells as NaN)
+    spieler = pl.read_csv(str(csv_path)).to_pandas()
+    # Convert to nullable integer types (polars reads empty cells as null)
     spieler["Tore"] = spieler["Tore"].astype("Int64")
     spieler["Vorlagen"] = spieler["Vorlagen"].astype("Int64")
     return (spieler,)
