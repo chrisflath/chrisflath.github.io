@@ -133,7 +133,7 @@ def _(bundesliga, mo):
     # Ergänzen Sie die dritte Spalte nach dem Komma
     _df = mo.sql(
         f"""
-        SELECT Mannschaft, Siege, Niederlagen
+        SELECT Mannschaft, Siege, ???
         FROM bundesliga
         """
     )
