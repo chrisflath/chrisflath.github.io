@@ -138,7 +138,7 @@ def _(mo):
         ### 🟡 Aufgabe 2.3: Mehrere Sortierkriterien (scaffolded)
 
         Sortieren Sie nach Punkten (absteigend), bei Gleichstand nach Tordifferenz.
-        Ergänzen Sie das zweite Sortierkriterium:
+        Ergänze das zweite Sortierkriterium:
         """
     )
     return
@@ -146,7 +146,7 @@ def _(mo):
 
 @app.cell
 def _(bundesliga, mo):
-    # Ergänzen Sie: ORDER BY Punkte DESC, ??? DESC
+    # Ergänze: ORDER BY Punkte DESC, ??? DESC
     _df = mo.sql(
         f"""
         SELECT Mannschaft, Punkte, Tordifferenz
@@ -374,7 +374,7 @@ def _(mo):
         ### 🟡 Aufgabe 4.3: Kombinationen finden (scaffolded)
 
         Finden Sie alle eindeutigen Kombinationen von Position und Verein.
-        Ergänzen Sie die Spalten:
+        Ergänze die zweite Spalte:
         """
     )
     return
@@ -382,7 +382,7 @@ def _(mo):
 
 @app.cell
 def _(mo, spieler):
-    # Ergänzen Sie die zweite Spalte nach Position:
+    # Ergänze die zweite Spalte
     _df = mo.sql(
         f"""
         SELECT DISTINCT Position, ???
@@ -650,7 +650,7 @@ def _(mo):
         ### 🟡 Aufgabe 6.5: COALESCE anwenden (scaffolded)
 
         Berechnen Sie Scorerpunkte (Tore + Vorlagen), aber ersetzen Sie NULL durch 0.
-        Ergänzen Sie die COALESCE-Aufrufe:
+        Ergänze die COALESCE-Aufrufe:
         """
     )
     return
@@ -658,7 +658,7 @@ def _(mo):
 
 @app.cell
 def _(mo, spieler):
-    # Ergänzen Sie: COALESCE(???, 0) + COALESCE(???, 0)
+    # Ergänze: COALESCE(???, 0) + COALESCE(???, 0)
     _df = mo.sql(
         f"""
         SELECT

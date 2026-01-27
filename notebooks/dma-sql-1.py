@@ -122,7 +122,7 @@ def _(mo):
         r"""
         ### 🟡 Aufgabe 2.3: Drei Spalten auswählen (scaffolded)
 
-        Ergänzen Sie die fehlende Spalte, um Mannschaft, Siege und Niederlagen zu zeigen:
+        Ergänze den folgenden Befehl, um Mannschaft, Siege und Niederlagen anzuzeigen:
         """
     )
     return
@@ -130,7 +130,7 @@ def _(mo):
 
 @app.cell
 def _(bundesliga, mo):
-    # Ergänzen Sie die dritte Spalte nach dem Komma
+    # Ergänze die fehlende Spalte
     _df = mo.sql(
         f"""
         SELECT ???
