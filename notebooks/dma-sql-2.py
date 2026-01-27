@@ -57,10 +57,10 @@ def _(mo):
 @app.cell(hide_code=True)
 def _():
     import pandas as pd
-    import lxml  # Pre-load for pandas read_html parser
+    import sys
 
-    # Configure pandas for plain text display
-    pd.set_option('display.notebook_repr_html', False)
+    # Check if running in WASM/Pyodide (browser) - network requests blocked by CORS
+    IS_WASM = 'pyodide' in sys.modules or 'pyodide_js' in sys.modules
 
     def lade_bundesliga_tabelle(saison: str = "2026") -> pd.DataFrame:
         """Lädt die aktuelle Bundesliga-Tabelle von fussballdaten.de."""
@@ -83,6 +83,10 @@ def _():
                 "Tordifferenz": [56, 21, 10, 12, 10, 11, 2, 16, -3, -3, -2, -11, -7, -4, -12, -21, -11, -27],
                 "Punkte": [50, 42, 36, 35, 32, 33, 30, 36, 27, 25, 23, 23, 21, 21, 19, 14, 15, 12]
             }), "Offline-Beispieldaten (Saison 2024/25)"
+
+        # In WASM mode, skip network request (blocked by CORS)
+        if IS_WASM:
+            return get_fallback()
 
         try:
             df = None
