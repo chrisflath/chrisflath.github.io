@@ -29,10 +29,14 @@
           "file": "notebooks/dma-sql-2.py",
           "title": "Session 2: SQL für Datenexploration",
           "topics": ["ORDER BY", "DISTINCT", "NULL", "COALESCE", "LIMIT"]
+        },
+        {
+          "file": "notebooks/dma-sql-3.py",
+          "title": "Session 3: Aggregation & Gruppierung",
+          "topics": ["COUNT", "SUM", "AVG", "MIN", "MAX", "GROUP BY", "HAVING"]
         }
       ],
       "notebooks_planned": [
-        {"session": 3, "title": "Aggregation & Gruppierung", "topics": ["COUNT", "SUM", "AVG", "GROUP BY", "HAVING"]},
         {"session": 4, "title": "Datenanalyseprozesse", "topics": ["CRISP-DM", "Shipman Case Study"]},
         {"session": 5, "title": "Motivation Datenmodellierung", "topics": ["Redundanz", "Anomalien"]},
         {"session": 6, "title": "ER-Modellierung", "topics": ["Entitäten", "Beziehungen", "Kardinalitäten"]},

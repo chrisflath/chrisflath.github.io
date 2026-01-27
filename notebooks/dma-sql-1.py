@@ -55,18 +55,38 @@ def _():
         """
         url = f"https://www.fussballdaten.de/bundesliga/{saison}/tabelle/"
 
+        # Use fallback data function
+        def get_fallback():
+            return pd.DataFrame({
+                "Mannschaft": ["Bayern München", "Borussia Dortmund", "VfB Stuttgart",
+                              "RB Leipzig", "Bayer Leverkusen", "Eintracht Frankfurt",
+                              "SC Freiburg", "TSG Hoffenheim", "Werder Bremen", "VfL Wolfsburg",
+                              "1. FC Union Berlin", "FC Augsburg", "Borussia M'gladbach",
+                              "1. FSV Mainz 05", "1. FC Heidenheim", "VfL Bochum",
+                              "FC St. Pauli", "Holstein Kiel"],
+                "Spiele": [19, 19, 19, 18, 18, 19, 18, 18, 19, 19, 18, 19, 18, 19, 19, 19, 18, 19],
+                "Siege": [16, 12, 11, 11, 10, 9, 9, 11, 7, 6, 6, 6, 6, 5, 5, 3, 4, 3],
+                "Unentschieden": [2, 6, 3, 2, 2, 6, 3, 3, 6, 7, 5, 5, 3, 6, 4, 5, 3, 3],
+                "Niederlagen": [1, 1, 5, 5, 6, 4, 6, 4, 6, 6, 7, 8, 9, 8, 10, 11, 11, 13],
+                "ToreGeschossen": [72, 38, 40, 32, 41, 35, 28, 38, 29, 31, 22, 21, 26, 24, 28, 17, 14, 18],
+                "ToreKassiert": [16, 17, 30, 20, 31, 24, 26, 22, 32, 34, 24, 32, 33, 28, 40, 38, 25, 45],
+                "Tordifferenz": [56, 21, 10, 12, 10, 11, 2, 16, -3, -3, -2, -11, -7, -4, -12, -21, -11, -27],
+                "Punkte": [50, 42, 36, 35, 32, 33, 30, 36, 27, 25, 23, 23, 21, 21, 19, 14, 15, 12]
+            }), "Offline-Beispieldaten (Saison 2024/25)"
+
         try:
             # Try different parsers for compatibility
-            # html.parser is in stdlib, lxml/html5lib need installation
+            df = None
             for parser in ['html.parser', 'lxml', 'html5lib']:
                 try:
                     tabellen = pd.read_html(url, flavor=parser)
                     df = tabellen[0]
                     break
-                except Exception:
+                except:
                     continue
-            else:
-                raise ImportError("No HTML parser available")
+
+            if df is None:
+                return get_fallback()
 
             # Spalten umbenennen (Website verwendet englische/deutsche Mix-Namen)
             spalten_mapping = {
@@ -103,25 +123,8 @@ def _():
 
             quelle = f"Live von fussballdaten.de (Saison {saison})"
 
-        except Exception as e:
-            # Fallback: Beispieldaten
-            df = pd.DataFrame({
-                "Mannschaft": ["Bayern München", "Bayer Leverkusen", "VfB Stuttgart",
-                              "Borussia Dortmund", "RB Leipzig", "Eintracht Frankfurt",
-                              "SC Freiburg", "TSG Hoffenheim", "Werder Bremen", "VfL Wolfsburg",
-                              "1. FC Union Berlin", "FC Augsburg", "Borussia M'gladbach",
-                              "1. FSV Mainz 05", "1. FC Heidenheim", "VfL Bochum",
-                              "FC St. Pauli", "Holstein Kiel"],
-                "Spiele": [17]*18,
-                "Siege": [13, 12, 10, 9, 9, 8, 7, 7, 6, 6, 5, 5, 5, 4, 4, 3, 3, 2],
-                "Unentschieden": [2, 3, 4, 4, 3, 5, 6, 4, 5, 4, 6, 5, 4, 6, 5, 4, 3, 4],
-                "Niederlagen": [2, 2, 3, 4, 5, 4, 4, 6, 6, 7, 6, 7, 8, 7, 8, 10, 11, 11],
-                "ToreGeschossen": [53, 41, 40, 38, 32, 35, 28, 32, 29, 31, 22, 21, 26, 24, 22, 17, 14, 18],
-                "ToreKassiert": [18, 22, 25, 28, 22, 24, 26, 30, 32, 34, 24, 32, 33, 28, 35, 38, 25, 45],
-                "Tordifferenz": [35, 19, 15, 10, 10, 11, 2, 2, -3, -3, -2, -11, -7, -4, -13, -21, -11, -27],
-                "Punkte": [41, 39, 34, 31, 30, 29, 27, 25, 23, 22, 21, 20, 19, 18, 17, 13, 12, 10]
-            })
-            quelle = f"Offline-Beispieldaten (Fehler: {e})"
+        except:
+            return get_fallback()
 
         return df, quelle
 
