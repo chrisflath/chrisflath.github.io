@@ -1,367 +1,162 @@
 import marimo
 
-__generated_with = "0.13.4"
-app = marimo.App(width="full", app_title="SQL Einführung 2")
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""# Komplexe Abfragen auf mehreren Tabellen""")
-    return
+__generated_with = "0.13.0"
+app = marimo.App(
+    width="medium",
+    app_title="DMA Session 2: SQL für Datenexploration",
+)
 
 
 @app.cell(hide_code=True)
 def _():
-
-    import requests
-    import marimo as mo    
-    import sqlalchemy
-
-
-
-    # URL of the dataset (must allow direct downloads)
-    url = "https://raw.githubusercontent.com/WIBA-DMA/exam-2024-pprm/refs/heads/main/bundesliga.db"
-
-    # Download and save the file
-    filename = "bundesliga.db"
-
-    response = requests.get(url)
-    if response.status_code == 200:
-        with open(filename, "wb") as file:
-            file.write(response.content)
-        print(f"SQL DB setup successfull")
-    else:
-        print(f"Failed to download, status: {response.status_code}")
-
-    DATABASE_URL = "sqlite:///bundesliga.db"
-    engine = sqlalchemy.create_engine(DATABASE_URL)
-    return engine, mo, requests, sqlalchemy
+    import marimo as mo
+    return (mo,)
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""## Predict Tasks""")
-    return
+    mo.md(
+        r"""
+        # Session 2: SQL für Datenexploration
 
+        In dieser Session lernen Sie:
 
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""### UPDATE""")
-    return
+        - Ergebnisse **sortieren** mit `ORDER BY`
+        - **Eindeutige Werte** finden mit `DISTINCT`
+        - **Mustersuche** mit `LIKE`
+        - Mit **NULL-Werten** umgehen
 
-
-@app.cell
-def _(aktuelleTabelle, engine, mo):
-    _df = mo.sql(
-        f"""
-        SELECT * from aktuelleTabelle;
-        """,
-        engine=engine
-    )
-    return
-
-
-@app.cell(disabled=True)
-def _(aktuelleTabelle, engine, mo):
-    _df = mo.sql(
-        f"""
-        UPDATE aktuelleTabelle
-        SET Spiele = 31, S = 25, U = 6, N = 0, Tore = "77:22", Tordifferenz = 55, Punkte = 81
-        WHERE Mannschaft = "Bayer 04 Leverkusen";
-        """,
-        engine=engine
-    )
-    return
-
-
-@app.cell(disabled=True)
-def _(aktuelleTabelle, engine, mo):
-    _df = mo.sql(
-        f"""
-        SELECT * from aktuelleTabelle;
-        """,
-        engine=engine
-    )
-    return
-
-
-@app.cell(disabled=True)
-def _(aktuelleTabelle, engine, mo):
-    _df = mo.sql(
-        f"""
-        UPDATE aktuelleTabelle
-        SET Spiele = 0, S = 0, U = 0, N = 0, Tore = "0:0", Tordifferenz = 0, Punkte = 0
-        WHERE Spiele > 0;
-        """,
-        engine=engine
-    )
-    return
-
-
-@app.cell(disabled=True)
-def _(aktuelleTabelle, engine, mo):
-    _df = mo.sql(
-        f"""
-        SELECT * from aktuelleTabelle;
-        """,
-        engine=engine
+        ---
+        """
     )
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""### INSERT""")
-    return
+    mo.md(
+        r"""
+        ## Daten laden
 
-
-@app.cell(disabled=True)
-def _(aktuelleTabelle, engine, mo):
-    _df = mo.sql(
-        f"""
-        INSERT INTO aktuelleTabelle
-        (Mannschaft, Spiele, S, U, N, Tore, Tordifferenz, Punkte)
-        VALUES
-        ("Würzburger Kickers",0,0,0,0,"0:0",0,0);
-        """,
-        engine=engine
-    )
-    return
-
-
-@app.cell(disabled=True)
-def _(aktuelleTabelle, engine, mo):
-    _df = mo.sql(
-        f"""
-        SELECT * FROM aktuelleTabelle;
-        """,
-        engine=engine
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""### INSERT 2""")
-    return
-
-
-@app.cell(disabled=True)
-def _(aktuelleTabelle, engine, mo):
-    _df = mo.sql(
-        f"""
-        INSERT INTO aktuelleTabelle
-        SELECT Mannschaft || " B-Team" AS Mannschaft, Spiele,  S,  U,  N,  Tore,  Tordifferenz,  Punkte FROM aktuelleTabelle
-        LIMIT 2;
-        """,
-        engine=engine
-    )
-    return
-
-
-@app.cell(disabled=True)
-def _(aktuelleTabelle, engine, mo):
-    _df = mo.sql(
-        f"""
-        SELECT * FROM aktuelleTabelle;
-        """,
-        engine=engine
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""### SELECT modifiers""")
-    return
-
-
-@app.cell(disabled=True)
-def _(aktuelleTabelle, engine, mo):
-    _df = mo.sql(
-        f"""
-        SELECT COUNT(*) from aktuelleTabelle;
-        """,
-        engine=engine
-    )
-    return
-
-
-@app.cell(disabled=True)
-def _(aktuelleTabelle, engine, mo):
-    _df = mo.sql(
-        f"""
-        SELECT DISTINCT substr(Mannschaft, 0, 11) FROM aktuelleTabelle; 
-        """,
-        engine=engine
-    )
-    return
-
-
-@app.cell(disabled=True)
-def _(aktuelleTabelle, engine, mo):
-    _df = mo.sql(
-        f"""
-        SELECT COUNT (DISTINCT substr(Mannschaft, 0, 11)) FROM aktuelleTabelle;
-
-
-        """,
-        engine=engine
+        Wir arbeiten heute mit zwei Datensätzen:
+        1. **Bundesliga-Tabelle** (wie letzte Woche)
+        2. **Spieler-Daten** (mit fehlenden Werten für NULL-Übungen)
+        """
     )
     return
 
 
 @app.cell
 def _():
-    ### DELETE
-    return
+    import pandas as pd
+
+    def lade_bundesliga_tabelle(saison: str = "2026") -> pd.DataFrame:
+        """Lädt die aktuelle Bundesliga-Tabelle von fussballdaten.de."""
+        url = f"https://www.fussballdaten.de/bundesliga/{saison}/tabelle/"
+
+        try:
+            tabellen = pd.read_html(url)
+            df = tabellen[0]
+
+            spalten_mapping = {
+                "Pts": "Punkte", "Pkt": "Punkte",
+                "S": "Siege",
+                "D": "Unentschieden", "U": "Unentschieden",
+                "L": "Niederlagen", "V": "Niederlagen",
+                "Sp.": "Spiele",
+                "Goals": "Tore", "Tore": "Tore",
+                "Diff.": "Tordifferenz"
+            }
+            df = df.rename(columns={k: v for k, v in spalten_mapping.items() if k in df.columns})
+
+            if "Tordifferenz" not in df.columns and "Tore" in df.columns:
+                df[["ToreGeschossen", "ToreKassiert"]] = df["Tore"].str.split(":", expand=True).astype(int)
+                df["Tordifferenz"] = df["ToreGeschossen"] - df["ToreKassiert"]
+            elif "Tordifferenz" in df.columns:
+                df["Tordifferenz"] = pd.to_numeric(df["Tordifferenz"], errors="coerce").fillna(0).astype(int)
+                if "Tore" in df.columns:
+                    df[["ToreGeschossen", "ToreKassiert"]] = df["Tore"].str.split(":", expand=True).astype(int)
+
+            gewuenschte_spalten = ["Mannschaft", "Spiele", "Siege", "Unentschieden", "Niederlagen",
+                                   "ToreGeschossen", "ToreKassiert", "Tordifferenz", "Punkte"]
+            df = df[[c for c in gewuenschte_spalten if c in df.columns]]
+            quelle = f"Live von fussballdaten.de (Saison {saison})"
+
+        except Exception as e:
+            df = pd.DataFrame({
+                "Mannschaft": ["Bayern München", "Borussia Dortmund", "VfB Stuttgart",
+                              "RB Leipzig", "Bayer Leverkusen", "Eintracht Frankfurt",
+                              "SC Freiburg", "TSG Hoffenheim", "Werder Bremen", "VfL Wolfsburg",
+                              "1. FC Union Berlin", "FC Augsburg", "Borussia M'gladbach",
+                              "1. FSV Mainz 05", "1. FC Heidenheim", "VfL Bochum",
+                              "FC St. Pauli", "Holstein Kiel"],
+                "Spiele": [19, 19, 19, 18, 18, 19, 18, 18, 19, 19, 18, 19, 18, 19, 19, 19, 18, 19],
+                "Siege": [16, 12, 11, 11, 10, 9, 9, 11, 7, 6, 6, 6, 6, 5, 5, 3, 4, 3],
+                "Unentschieden": [2, 6, 3, 2, 2, 6, 3, 3, 6, 7, 5, 5, 3, 6, 4, 5, 3, 3],
+                "Niederlagen": [1, 1, 5, 5, 6, 4, 6, 4, 6, 6, 7, 8, 9, 8, 10, 11, 11, 13],
+                "ToreGeschossen": [72, 38, 40, 32, 41, 35, 28, 38, 29, 31, 22, 21, 26, 24, 28, 17, 14, 18],
+                "ToreKassiert": [16, 17, 30, 20, 31, 24, 26, 22, 32, 34, 24, 32, 33, 28, 40, 38, 25, 45],
+                "Tordifferenz": [56, 21, 10, 12, 10, 11, 2, 16, -3, -3, -2, -11, -7, -4, -12, -21, -11, -27],
+                "Punkte": [50, 42, 36, 35, 32, 33, 30, 36, 27, 25, 23, 23, 21, 21, 19, 14, 15, 12]
+            })
+            quelle = f"Offline-Beispieldaten (Fehler: {e})"
+
+        return df, quelle
+
+    bundesliga, daten_quelle = lade_bundesliga_tabelle("2026")
+    return bundesliga, daten_quelle, lade_bundesliga_tabelle, pd
 
 
-@app.cell(disabled=True)
-def _(aktuelleTabelle, engine, mo):
-    _df = mo.sql(
-        f"""
-        DELETE FROM aktuelleTabelle
-        WHERE Team LIKE "%B-Team";
-
-        """,
-        engine=engine
-    )
-    return
-
-
-@app.cell(disabled=True)
-def _(aktuelleTabelle, engine, mo):
-    _df = mo.sql(
-        f"""
-        DELETE FROM aktuelleTabelle
-        WHERE Mannschaft = "Würzburger Kickers";
-
-        """,
-        engine=engine
-    )
-    return
-
-
-@app.cell(disabled=True)
-def _(aktuelleTabelle, engine, mo):
-    _df = mo.sql(
-        f"""
-        SELECT * FROM aktuelleTabelle;
-        """,
-        engine=engine
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""### Aggregation""")
-    return
-
-
-@app.cell(disabled=True)
-def _(engine, ewigeTabelle, mo):
-    _df = mo.sql(
-        f"""
-        SELECT * from ewigeTabelle;
-
-        """,
-        engine=engine
-    )
-    return
-
-
-@app.cell(disabled=True)
-def _(engine, ewigeTabelle, mo):
-    _df = mo.sql(
-        f"""
-        SELECT Mannschaft, Punkte, Saison
-        FROM ewigeTabelle
-        WHERE Punkte = (SELECT MAX(Punkte) FROM ewigeTabelle);
-
-        """,
-        engine=engine
-    )
-    return
-
-
-@app.cell(disabled=True)
-def _(engine, ewigeTabelle, mo):
-    _df = mo.sql(
-        f"""
-        SELECT Mannschaft, Punkte, Saison
-        FROM ewigeTabelle
-        WHERE
-        Punkte = (SELECT MAX(Punkte) FROM ewigeTabelle WHERE Rang = 18)
-        AND Rang = 18;
-
-        """,
-        engine=engine
-    )
-    return
-
-
-@app.cell(disabled=True)
-def _(engine, ewigeTabelle, mo):
-    _df = mo.sql(
-        f"""
-        SELECT Mannschaft, S, Saison
-        FROM ewigeTabelle
-        WHERE
-        S = (SELECT MIN(S) FROM ewigeTabelle WHERE Rang = 1)
-        AND Rang = 1;
-        """,
-        engine=engine
-    )
-    return
+@app.cell
+def _(pd):
+    # Spieler-Daten mit NULL-Werten für Übungen
+    spieler = pd.DataFrame({
+        "Name": ["Müller", "Neuer", "Kimmich", "Sané", "Musiala", "Gündogan",
+                 "Havertz", "Wirtz", "Füllkrug", "Schlotterbeck", "Rüdiger", "Tah"],
+        "Vorname": ["Thomas", "Manuel", "Joshua", "Leroy", "Jamal", "İlkay",
+                    "Kai", "Florian", "Niclas", "Nico", "Antonio", "Jonathan"],
+        "Position": ["Sturm", "Tor", "Mittelfeld", "Sturm", "Mittelfeld", "Mittelfeld",
+                     "Sturm", "Mittelfeld", "Sturm", "Abwehr", "Abwehr", "Abwehr"],
+        "Verein": ["Bayern München", "Bayern München", "Bayern München", "Bayern München",
+                   "Bayern München", None, "Arsenal", "Bayer Leverkusen",
+                   "West Ham", "Borussia Dortmund", "Real Madrid", "Bayer Leverkusen"],
+        "Tore": [8, 0, 3, 5, 12, None, 9, 11, 6, 1, 2, None],
+        "Vorlagen": [4, None, 8, 3, 7, 2, 5, 9, 2, None, 1, 0],
+        "Spitzname": ["Mülli", None, "Jo", None, None, "Günni", None, "Flo", "Fülle", None, "Rüdi", None]
+    })
+    # Konvertiere zu nullable integer types
+    spieler["Tore"] = spieler["Tore"].astype("Int64")
+    spieler["Vorlagen"] = spieler["Vorlagen"].astype("Int64")
+    spieler
+    return (spieler,)
 
 
 @app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""### GROUP BY""")
-    return
-
-
-@app.cell(disabled=True)
-def _(engine, ewigeTabelle, mo):
-    _df = mo.sql(
+def _(daten_quelle, mo):
+    mo.md(
         f"""
-        SELECT Mannschaft, COUNT(*) FROM ewigeTabelle WHERE Rang = 1 GROUP BY Mannschaft;
-        """,
-        engine=engine
+        **Datenquelle Bundesliga:** {daten_quelle}
+
+        ---
+
+        ## Phase 2: Daten sortieren mit ORDER BY
+
+        ### Aufgabe 2.1: Einfache Sortierung
+
+        Sortieren Sie die Bundesliga-Tabelle nach Punkten (absteigend):
+        """
     )
     return
 
 
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""### Mengenoperationen""")
-    return
-
-
-@app.cell(disabled=True)
-def _(engine, ewigeTabelle, mo):
+@app.cell
+def _(bundesliga, mo):
     _df = mo.sql(
         f"""
-        SELECT Mannschaft FROM ewigeTabelle WHERE Saison = "2022/2023"
-        INTERSECT
-        SELECT Mannschaft FROM ewigeTabelle WHERE Saison = "2021/2022";
-        """,
-        engine=engine
-    )
-    return
-
-
-@app.cell(disabled=True)
-def _(engine, ewigeTabelle, mo):
-    _df = mo.sql(
-        f"""
-        SELECT Mannschaft FROM ewigeTabelle WHERE Saison = "2022/2023"
-        EXCEPT
-        SELECT Mannschaft FROM ewigeTabelle WHERE Saison = "2021/2022";
-        """,
-        engine=engine
+        SELECT Mannschaft, Punkte
+        FROM bundesliga
+        ORDER BY Punkte DESC
+        """
     )
     return
 
@@ -370,16 +165,22 @@ def _(engine, ewigeTabelle, mo):
 def _(mo):
     mo.md(
         r"""
-    ## Modify Tasks - Aggregation
+        ### Aufgabe 2.2: Aufsteigende Sortierung
 
-    - Welche Mannschaft braucht wieviel Tore pro Punkt?
-    - Was war die niedrigste Punktzahl je Verein?
-    - Welcher Verein hat wieviele Saisons / Spiele gespielt?
-    - Wie viel Tore wurden pro Saison geschossen?
-    - Welche Platzierungen haben die Bayern, der BVB und Gladbach wie oft belegt?
-    - Welches Bundesliga-Matchup ist historisch am torreichsten?
-    - Welche Mannschaft schießt daheim die meisten (die wenigsten) Tore pro Spiel?
-    """
+        Zeigen Sie die Teams mit der schlechtesten Tordifferenz zuerst:
+        """
+    )
+    return
+
+
+@app.cell
+def _(bundesliga, mo):
+    _df = mo.sql(
+        f"""
+        SELECT Mannschaft, Tordifferenz
+        FROM bundesliga
+        ORDER BY Tordifferenz ASC
+        """
     )
     return
 
@@ -388,80 +189,22 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-    ## Modify Tasks - GROUP BY
+        ### Aufgabe 2.3: Mehrere Sortierkriterien
 
-    - Wie viele Punkte holen die Vereine durchschnittlich pro Spiel?
-    - Wie viele Tore schießen die Vereine durchschnittlich pro Spiel?
-    - Welche Mannschaft braucht wieviel Tore pro Punkt?
-    - Was war die niedrigste Punktzahl je Verein?
-    - Welcher Verein hat wieviele Saisons / Spiele gespielt?
-    - Wie viel Tore wurden pro Saison geschossen?
-    - Welche Platzierungen haben die Bayern, der BVB und Gladbach wie oft belegt?
-    - Welches Bundesliga-Matchup ist historisch am torreichsten?
-    - Welche Mannschaft schießt daheim die meisten (die wenigsten) Tore pro Spiel?
-    """
+        Sortieren Sie nach Punkten (absteigend), bei Gleichstand nach Tordifferenz:
+        """
     )
     return
 
 
-@app.cell(hide_code=True)
-def _():
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-    ## Modify Tasks - HAVING
-    - Von den Vereinen die mindestens drei Mal Meister wurden, wer wurde wie oft Meister?
-    - Gegen welchen Verein hat Bayern daheim die beste Gewinnrate (mind. 20 Partien)?
-    - Welches Bundesliga-Matchup ist historisch am torärmsten (mind. 40 Partien)?
-    - Welche Mannschaften haben gegen mindestens 5 Vereine mit mindestens 5 Toren Vorsprung auswärts gewonnen?
-    - In welchen Saisons gab es mindestens 15 Spiele mit einer Tordifferenz von 5 Toren?
-    """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""# Übungsaufgaben""")
-    return
-
-
-@app.cell(hide_code=True)
-def _(requests, sqlalchemy):
-    # URL of the dataset (must allow direct downloads)
-    url2 = "https://raw.githubusercontent.com/WIBA-DMA/exam-2024-pprm/refs/heads/main/rheinwerk.db"
-
-    # Download and save the file
-    filename2 = "rheinwerk.db"
-
-    response2 = requests.get(url2)
-    if response2.status_code == 200:
-        with open(filename2, "wb") as file2:
-            file2.write(response2.content)
-        print(f"SQL DB setup successfull")
-    else:
-        print(f"Failed to download, status: {response2.status_code}")
-
-    DATABASE_URL2 = "sqlite:///rheinwerk.db"
-    engine2 = sqlalchemy.create_engine(DATABASE_URL2)
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-    ## Make - Aufgabe 1
-    - In dieser Aufgabe schreiben Sie SQL Abfragen um neue Zeilen einzufügen.
-
-        - Nehmen Sie weitere Qualifikationen in die Tabelle _qualifikationen_ auf. Die neue Zeile soll mit einer expliziten Spaltenangabe in die Tabelle eingefügt werden. In die Spaltenliste soll Folgendes aufgenommen werden: _qid_, _bezeichnung_, _kuerzel_ und _kategorie_. Wir möchten die Qualifikation _SQL_ eintragen, die mit dem Kürzel _ITE_ in die Kategorie _Informatik_ aufgenommen werden soll. 
-
-        - In jedem größeren Unternehmen gibt es Administratoren. Diese Qualifikation werden wir als Nächstes in die Tabelle eintragen. Geben Sie als Bezeichnung _Administrator_, als Kürzel _ADA_ und als Kategorie _Support_ ein.
-    """
+@app.cell
+def _(bundesliga, mo):
+    _df = mo.sql(
+        f"""
+        SELECT Mannschaft, Punkte, Tordifferenz
+        FROM bundesliga
+        ORDER BY Punkte DESC, Tordifferenz DESC
+        """
     )
     return
 
@@ -470,15 +213,23 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-    ## Make - Aufgabe 2
-    - In dieser Aufgabe schreiben Sie SQL Abfragen um bestehende Zeilen zu verändern.
+        ### Aufgabe 2.4: Top 5 mit LIMIT
 
-        - Die Zeile mit dem Schlüsselwert 2 der Spalte _qid_ der Tabelle _qualglobal_ identifiziert einen Datensatz in dem der Spalte _bezeichnung_ der Wert _Second Level Support_ zugeordnet ist. Ändern Sie die Bezeichnung zu dem Wert _Second Level Helpdesk_.
+        Zeigen Sie nur die Top 5 Teams:
+        """
+    )
+    return
 
-        - Jetzt soll die Bezeichnung des Datensatzes mit Schlüsselwert 3 geändert werden. Ändern Sie die _bezeichnung_ zu _First Level Helpdesk_ und das _kuerzel_ zu _FLH_.
 
-        - Das Unternehmen beabsichtigt auf eine freie Office-Suite umzusteigen. Daher soll den Werten der Spalte _kategorie_, die derzeit dem Wert _Office_ entsprechen, ein _NULL_-Wert zugeordnet werden.
-    """
+@app.cell
+def _(bundesliga, mo):
+    _df = mo.sql(
+        f"""
+        SELECT Mannschaft, Punkte
+        FROM bundesliga
+        ORDER BY Punkte DESC
+        LIMIT 5
+        """
     )
     return
 
@@ -487,15 +238,26 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-    ## Make - Aufgabe 3 - Zeilen löschen
-    - In dieser Aufgabe schreiben Sie SQL Abfragen um bestehende Zeilen zu löschen.
+        ---
 
-        - Als Erstes soll die Zeile mit dem Schlüsselwert 2 aus der Tabelle _qualglobalarchiv_ gelöscht werden.
+        ## Phase 4: DISTINCT und LIKE
 
-        - Nun sollen die Eintrage mit der _qid_ 5, 6 und 7 gelöscht werden.
+        ### Aufgabe 4.1: Eindeutige Werte mit DISTINCT
 
-        - Löschen Sie alle verbleibenden Einträge der Tabelle _qualglobalarchiv_.
-    """
+        Welche verschiedenen Spielstände (Anzahl Spiele) gibt es?
+        """
+    )
+    return
+
+
+@app.cell
+def _(bundesliga, mo):
+    _df = mo.sql(
+        f"""
+        SELECT DISTINCT Spiele
+        FROM bundesliga
+        ORDER BY Spiele
+        """
     )
     return
 
@@ -504,15 +266,21 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-    ## Make - Aufgabe 4 - Spaltenwerte gruppieren
-    - In dieser Aufgabe schreiben Sie SQL Abfragen um Aggregate über Gruppen zu berechnen.
+        ### Aufgabe 4.2: DISTINCT mit Spielerdaten
 
-        - In der Tabelle _kreditinstitut_auszug_ sind sämtliche Kreditinstitute und deren Bankleitzahlen erfasst. Jeder Bankleitzahl können mehrere Kreditinstitute zugeordnet sein. Ermittelen Sie wieviele Kreditinstitute den jeweiligen Bankleitzahlen zugeordnet sind.
+        Welche verschiedenen Positionen gibt es bei den Spielern?
+        """
+    )
+    return
 
-        - Ermitteln Sie, basierend auf der Tabelle _bonus_, die Summe der Auszahlungen für Bonuszahlungen, die jeweils an einem Tag ausgeschüttet werden.
 
-        - Ermitteln Sie, basierend auf der Tabelle _bonus_, den durchschnittlichen Bonus den die Mitarbeiter jeweils erhalten haben.
-    """
+@app.cell
+def _(mo, spieler):
+    _df = mo.sql(
+        f"""
+        SELECT DISTINCT Position
+        FROM spieler
+        """
     )
     return
 
@@ -521,13 +289,234 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-    ## Make - Aufgabe 5 - Nach aggregierten Werten einer Gruppierung filtern
-    - In dieser Aufgabe schreiben Sie SQL Abfragen um Aggregate über Gruppen zu berechnen und basierend auf diesen Aggregaten zu filtern.
+        ### Aufgabe 4.3: Mustersuche mit LIKE
 
-        - Ermitteln Sie in der Tabelle _kreditinstitut_auszug_ alle Bankleitzahlen, denen mehr als ein Kreditinstitut zugeordnet ist.
+        Finden Sie alle Teams, deren Name mit 'B' beginnt:
+        """
+    )
+    return
 
-        - In der Tabelle _arbeitszeit_auszug_ sind die Arbeitszeiten eines jeden Mitarbeiters pro Tag hinterlegt. Erstellen Sie einen Bericht, der auswertet, wie viele Stunden jeder Mitarbeiter pro Monat gearbeitet hat. Diese Auswertung bezieht sich immer auf das jeweilige Jahr. Geben Sie nur Mitarbeiter aus die mindestens 100 Stunden gearbeitet haben.
-    """
+
+@app.cell
+def _(bundesliga, mo):
+    _df = mo.sql(
+        f"""
+        SELECT Mannschaft
+        FROM bundesliga
+        WHERE Mannschaft LIKE 'B%'
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### Aufgabe 4.4: Komplexere Muster
+
+        Finden Sie alle Spieler, deren Nachname auf 'er' endet:
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, spieler):
+    _df = mo.sql(
+        f"""
+        SELECT Name, Vorname
+        FROM spieler
+        WHERE Name LIKE '%er'
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## Phase 6: Umgang mit NULL-Werten
+
+        ### Aufgabe 6.1: NULL-Werte finden
+
+        Welche Spieler haben keinen Verein eingetragen (NULL)?
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, spieler):
+    _df = mo.sql(
+        f"""
+        SELECT Name, Vorname, Verein
+        FROM spieler
+        WHERE Verein IS NULL
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### Aufgabe 6.2: NOT NULL
+
+        Welche Spieler haben Tore eingetragen (nicht NULL)?
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, spieler):
+    _df = mo.sql(
+        f"""
+        SELECT Name, Tore
+        FROM spieler
+        WHERE Tore IS NOT NULL
+        ORDER BY Tore DESC
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### Aufgabe 6.3: COALESCE - NULL ersetzen
+
+        Zeigen Sie alle Spieler mit Toren, ersetzen Sie NULL durch 0:
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, spieler):
+    _df = mo.sql(
+        f"""
+        SELECT
+            Name,
+            Tore AS Tore_Original,
+            COALESCE(Tore, 0) AS Tore_Bereinigt
+        FROM spieler
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### Aufgabe 6.4: COALESCE mit mehreren Fallbacks
+
+        Erstellen Sie einen Anzeigenamen: Spitzname > Vorname > Name
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, spieler):
+    _df = mo.sql(
+        f"""
+        SELECT
+            Name,
+            Spitzname,
+            Vorname,
+            COALESCE(Spitzname, Vorname, Name) AS Anzeigename
+        FROM spieler
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### Aufgabe 6.5: Kombination
+
+        Zeigen Sie Spieler mit Toren und Vorlagen, ersetzen Sie NULLs, berechnen Sie die Summe:
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, spieler):
+    _df = mo.sql(
+        f"""
+        SELECT
+            Name,
+            COALESCE(Tore, 0) AS Tore,
+            COALESCE(Vorlagen, 0) AS Vorlagen,
+            COALESCE(Tore, 0) + COALESCE(Vorlagen, 0) AS Scorerpunkte
+        FROM spieler
+        ORDER BY Scorerpunkte DESC
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## Freie Exploration
+
+        Probieren Sie eigene Abfragen! Ideen:
+
+        - Top 3 Torjäger
+        - Spieler ohne Spitznamen, sortiert nach Position
+        - Teams mit "burg" im Namen
+        - Die 3 Teams mit den wenigsten Niederlagen
+        """
+    )
+    return
+
+
+@app.cell
+def _(bundesliga, mo, spieler):
+    # Ihre eigene Abfrage hier:
+    _df = mo.sql(
+        f"""
+        SELECT *
+        FROM spieler
+        ORDER BY Name
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## Zusammenfassung
+
+        | Konzept | Syntax | Beispiel |
+        |---------|--------|----------|
+        | Sortieren | `ORDER BY spalte [ASC\|DESC]` | `ORDER BY Punkte DESC` |
+        | Begrenzen | `LIMIT n` | `LIMIT 5` |
+        | Eindeutige Werte | `SELECT DISTINCT` | `SELECT DISTINCT Position` |
+        | NULL prüfen | `IS NULL` / `IS NOT NULL` | `WHERE Tore IS NULL` |
+        | NULL ersetzen | `COALESCE(wert, ersatz)` | `COALESCE(Tore, 0)` |
+
+        **Nächste Session:** Aggregation & Gruppierung (COUNT, SUM, AVG, GROUP BY)
+        """
     )
     return
 

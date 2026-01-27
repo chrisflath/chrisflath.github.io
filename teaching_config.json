@@ -24,10 +24,14 @@
           "file": "notebooks/dma-sql-1.py",
           "title": "Session 1: SQL-Grundlagen",
           "topics": ["SELECT", "WHERE", "AND/OR/NOT", "BETWEEN", "IN", "LIKE"]
+        },
+        {
+          "file": "notebooks/dma-sql-2.py",
+          "title": "Session 2: SQL für Datenexploration",
+          "topics": ["ORDER BY", "DISTINCT", "NULL", "COALESCE", "LIMIT"]
         }
       ],
       "notebooks_planned": [
-        {"session": 2, "title": "SQL für Datenexploration", "topics": ["ORDER BY", "DISTINCT", "NULL", "COALESCE"]},
         {"session": 3, "title": "Aggregation & Gruppierung", "topics": ["COUNT", "SUM", "AVG", "GROUP BY", "HAVING"]},
         {"session": 4, "title": "Datenanalyseprozesse", "topics": ["CRISP-DM", "Shipman Case Study"]},
         {"session": 5, "title": "Motivation Datenmodellierung", "topics": ["Redundanz", "Anomalien"]},
@@ -43,7 +47,6 @@
       ],
       "legacy_notebooks": [
         "notebooks/datenanalyse.py",
-        "notebooks/dma-sql-2.py",
         "notebooks/dma-sql-2-loesung.py",
         "notebooks/Zeitreihenanalyse.py",
         "notebooks/Zeitreihenanalyse-GPUs.py"
