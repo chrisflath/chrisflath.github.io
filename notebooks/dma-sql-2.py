@@ -60,7 +60,7 @@ def _(mo):
 
     # Works both locally and in WASM/browser mode
     csv_path = mo.notebook_location() / "public" / "bundesliga.csv"
-    bundesliga = pd.read_csv(str(csv_path))
+    bundesliga = pd.read_csv(str(csv_path), compression=None)
     daten_quelle = "Beispieldaten Bundesliga Saison 2024/25"
     return bundesliga, daten_quelle, pd
 
@@ -69,7 +69,7 @@ def _(mo):
 def _(mo, pd):
     # Load player data from CSV (with intentional NULL values for exercises)
     csv_path = mo.notebook_location() / "public" / "spieler.csv"
-    spieler = pd.read_csv(str(csv_path))
+    spieler = pd.read_csv(str(csv_path), compression=None)
     # Convert to nullable integer types (pandas reads empty cells as NaN)
     spieler["Tore"] = spieler["Tore"].astype("Int64")
     spieler["Vorlagen"] = spieler["Vorlagen"].astype("Int64")

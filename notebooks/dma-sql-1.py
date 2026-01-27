@@ -57,7 +57,7 @@ def _(mo):
 
     # Works both locally and in WASM/browser mode
     csv_path = mo.notebook_location() / "public" / "bundesliga.csv"
-    bundesliga = pd.read_csv(str(csv_path))
+    bundesliga = pd.read_csv(str(csv_path), compression=None)
     daten_quelle = "Beispieldaten Bundesliga Saison 2024/25"
     return bundesliga, daten_quelle, pd
 
