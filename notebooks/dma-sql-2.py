@@ -57,17 +57,23 @@ def _(mo):
 @app.cell(hide_code=True)
 def _():
     import pandas as pd
+    import sys
 
-    # Load data from CSV (works in both local and WASM/browser mode)
-    bundesliga = pd.read_csv("public/bundesliga.csv")
+    # In WASM/browser mode, use URL; locally use file path
+    IS_WASM = 'pyodide' in sys.modules
+    BASE_URL = "https://chrisflath.github.io/notebooks/"
+
+    csv_path = f"{BASE_URL}public/bundesliga.csv" if IS_WASM else "public/bundesliga.csv"
+    bundesliga = pd.read_csv(csv_path)
     daten_quelle = "Beispieldaten Bundesliga Saison 2024/25"
-    return bundesliga, daten_quelle, pd
+    return BASE_URL, IS_WASM, bundesliga, daten_quelle, pd
 
 
 @app.cell(hide_code=True)
-def _(pd):
+def _(BASE_URL, IS_WASM, pd):
     # Load player data from CSV (with intentional NULL values for exercises)
-    spieler = pd.read_csv("public/spieler.csv")
+    csv_path = f"{BASE_URL}public/spieler.csv" if IS_WASM else "public/spieler.csv"
+    spieler = pd.read_csv(csv_path)
     # Convert to nullable integer types (pandas reads empty cells as NaN)
     spieler["Tore"] = spieler["Tore"].astype("Int64")
     spieler["Vorlagen"] = spieler["Vorlagen"].astype("Int64")
