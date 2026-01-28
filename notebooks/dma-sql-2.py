@@ -26,6 +26,7 @@ def _(mo):
         - **Eindeutige Werte** finden mit `DISTINCT`
         - **Mustersuche** mit `LIKE`
         - Mit **NULL-Werten** umgehen
+        - Ergebnisse **visualisieren** mit Plotly
 
         **Aufgabentypen:**
         - 🟢 **Geführt**: Beispiel zum Nachvollziehen
@@ -70,7 +71,11 @@ def _(mo, pl):
     # Load player data from CSV (with intentional NULL values for exercises)
     csv_path = mo.notebook_location() / "public" / "spieler.csv"
     spieler = pl.read_csv(str(csv_path))
-    return (spieler,)
+
+    # Also load spieltage data for temporal analysis
+    spieltage_path = mo.notebook_location() / "public" / "bundesliga_spieltage.csv"
+    bundesliga_spieltage = pl.read_csv(str(spieltage_path))
+    return bundesliga_spieltage, spieler
 
 
 @app.cell(hide_code=True)
@@ -79,13 +84,46 @@ def _(daten_quelle, mo):
         f"""
         **Datenquelle Bundesliga:** {daten_quelle}
 
-        **Verfügbare Spalten Bundesliga:** Mannschaft, Spiele, Siege, Unentschieden, Niederlagen, ToreGeschossen, ToreKassiert, Tordifferenz, Punkte
-
-        **Verfügbare Spalten Spieler:** Name, Vorname, Position, Verein, Tore, Vorlagen, Spitzname
+        **Datensätze:**
+        - `bundesliga` – Finale Tabelle (18 Teams, 1 Zeitpunkt)
+        - `bundesliga_spieltage` – Verlauf (18 Teams × 34 Spieltage)
+        - `spieler` – Spielerdaten (mit NULL-Werten)
 
         ---
 
-        ## Phase 2: Daten sortieren mit ORDER BY (25 Minuten)
+        ## Recap: Von Zeitreihe zu Querschnitt
+
+        Die finale Tabelle ist nur ein **WHERE-Filter** auf die Spieltage!
+        """
+    )
+    return
+
+
+@app.cell
+def _(bundesliga_spieltage, mo):
+    # Die finale Tabelle: Spieltag 34
+    _df = mo.sql(
+        f"""
+        SELECT Mannschaft, Punkte_Kumuliert AS Punkte
+        FROM bundesliga_spieltage
+        WHERE Spieltag = 34
+        ORDER BY Punkte DESC
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        **Erkenntnis:** Die "Tabelle" die wir letzte Woche verwendet haben, ist einfach der letzte Spieltag!
+
+        Wir könnten auch die Winterpausen-Tabelle sehen: `WHERE Spieltag = 17`
+
+        ---
+
+        ## Phase 2: Daten sortieren mit ORDER BY
 
         ### 🟢 Aufgabe 2.1: Einfache Sortierung (geführt)
 
@@ -880,6 +918,160 @@ def _(mo):
         r"""
         ---
 
+        ## Phase 7: Datenvisualisierung 📊
+
+        SQL liefert Daten – Visualisierung macht Muster sichtbar!
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🟢 7.1 Geführt: Balkendiagramm erstellen
+
+        Wir visualisieren die Punkte der Top 10 Teams:
+        """
+    )
+    return
+
+
+@app.cell
+def _(bundesliga, mo):
+    import plotly.express as px
+
+    # Schritt 1: Daten mit SQL abfragen
+    top10 = mo.sql(
+        f"""
+        SELECT Mannschaft, Punkte
+        FROM bundesliga
+        ORDER BY Punkte DESC
+        LIMIT 10
+        """
+    )
+    return px, top10
+
+
+@app.cell
+def _(px, top10):
+    # Schritt 2: Balkendiagramm erstellen
+    fig = px.bar(
+        top10.to_pandas(),
+        x="Mannschaft",
+        y="Punkte",
+        title="Top 10 Bundesliga Teams nach Punkten",
+        color="Punkte",
+        color_continuous_scale="Blues"
+    )
+    fig
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🟢 7.2 Geführt: Streudiagramm – Zusammenhänge erkennen
+
+        Gibt es einen Zusammenhang zwischen geschossenen Toren und Punkten?
+        """
+    )
+    return
+
+
+@app.cell
+def _(bundesliga, mo, px):
+    # SQL für alle Teams
+    alle_teams = mo.sql(
+        f"""
+        SELECT Mannschaft, ToreGeschossen, Punkte
+        FROM bundesliga
+        """
+    )
+
+    # Streudiagramm
+    fig2 = px.scatter(
+        alle_teams.to_pandas(),
+        x="ToreGeschossen",
+        y="Punkte",
+        hover_name="Mannschaft",
+        title="Tore vs. Punkte",
+        trendline="ols"  # Trendlinie hinzufügen
+    )
+    fig2
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🟡 7.3 Scaffolded: Histogramm der Tordifferenz
+
+        Erstelle ein Histogramm, das die Verteilung der Tordifferenz zeigt:
+        """
+    )
+    return
+
+
+@app.cell
+def _(bundesliga, mo, px):
+    # Ergänze die fehlenden Parameter
+    tordiff = mo.sql(
+        f"""
+        SELECT Tordifferenz
+        FROM bundesliga
+        """
+    )
+
+    fig3 = px.histogram(
+        tordiff.to_pandas(),
+        x="Tordifferenz",
+        nbins=12,
+        title="Verteilung der Tordifferenz"
+    )
+    fig3
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔵 7.4 Selbstständig: Siege vs. Niederlagen
+
+        Erstelle ein Streudiagramm, das Siege (x-Achse) gegen Niederlagen (y-Achse) zeigt.
+        Füge den Teamnamen als hover_name hinzu.
+        """
+    )
+    return
+
+
+@app.cell
+def _(bundesliga, mo, px):
+    # Deine Lösung hier:
+    siege_niederlagen = mo.sql(
+        f"""
+        SELECT Mannschaft, Siege, Niederlagen
+        FROM bundesliga
+        """
+    )
+
+    fig4 = px.scatter(
+        siege_niederlagen.to_pandas(),
+        x="Siege",
+        y="Niederlagen",
+        hover_name="Mannschaft",
+        title="Siege vs. Niederlagen"
+    )
+    fig4
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
         ## Freie Exploration
 
         Probieren Sie eigene Abfragen! Ideen:
@@ -933,6 +1125,7 @@ def _(mo):
 
         ## Zusammenfassung
 
+        ### SQL-Konzepte
         | Konzept | Syntax | Beispiel |
         |---------|--------|----------|
         | Aufsteigend sortieren | `ORDER BY spalte ASC` | `ORDER BY Punkte ASC` |
@@ -945,11 +1138,20 @@ def _(mo):
         | NULL prüfen | `IS NULL` / `IS NOT NULL` | `WHERE Tore IS NULL` |
         | NULL ersetzen | `COALESCE(wert, ersatz)` | `COALESCE(Tore, 0)` |
 
+        ### Visualisierung mit Plotly
+        | Chart-Typ | Funktion | Verwendung |
+        |-----------|----------|------------|
+        | Balkendiagramm | `px.bar()` | Werte vergleichen |
+        | Streudiagramm | `px.scatter()` | Zusammenhänge zeigen |
+        | Histogramm | `px.histogram()` | Verteilungen darstellen |
+        | Liniendiagramm | `px.line()` | Trends über Zeit |
+
         ### Häufige Fehler vermeiden:
         - ✅ `IS NULL` statt `= NULL`
         - ✅ Reihenfolge: SELECT → FROM → WHERE → ORDER BY → LIMIT
         - ✅ Bei Berechnungen: COALESCE verwenden, um NULL zu ersetzen
         - ✅ ASC ist Standard, DESC muss explizit angegeben werden
+        - ✅ Bei Plotly: `.to_pandas()` für die Konvertierung von SQL-Ergebnissen
 
         **Nächste Session:** Aggregation & Gruppierung (COUNT, SUM, AVG, GROUP BY)
         """

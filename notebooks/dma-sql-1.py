@@ -58,8 +58,13 @@ def _(mo):
     # Works both locally and in WASM/browser mode
     csv_path = mo.notebook_location() / "public" / "bundesliga.csv"
     bundesliga = pl.read_csv(str(csv_path))
+
+    # Also load spieltage data for temporal analysis
+    spieltage_path = mo.notebook_location() / "public" / "bundesliga_spieltage.csv"
+    bundesliga_spieltage = pl.read_csv(str(spieltage_path))
+
     daten_quelle = "Beispieldaten Bundesliga Saison 2024/25"
-    return bundesliga, daten_quelle, pl
+    return bundesliga, bundesliga_spieltage, daten_quelle, pl
 
 
 @app.cell(hide_code=True)
@@ -966,6 +971,149 @@ def _(mo):
         r"""
         ---
 
+        ## Phase 7: Erste Visualisierungen 📊
+
+        **Der Workflow:**
+        ```
+        Datenbank → SQL → Abfrageergebnis → plotly → Grafik
+        ```
+
+        SQL liefert Daten – Diagramme machen Muster sichtbar!
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### Zwei Datenstrukturen
+
+        | Typ | Beschreibung | Chart |
+        |-----|--------------|-------|
+        | **Querschnitt** | 18 Teams, 1 Zeitpunkt | Balkendiagramm |
+        | **Zeitreihe** | 1 Team, 34 Spieltage | Liniendiagramm |
+
+        Wir haben beide: `bundesliga` (Endstand) und `bundesliga_spieltage` (Verlauf)
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🟢 7.1 Geführt: Balkendiagramm (Querschnitt)
+
+        Welche Teams haben die meisten Punkte?
+        """
+    )
+    return
+
+
+@app.cell
+def _(bundesliga, mo):
+    import plotly.express as px
+
+    # SQL liefert die Daten
+    top_teams = mo.sql(
+        f"""
+        SELECT Mannschaft, Punkte
+        FROM bundesliga
+        WHERE Punkte > 50
+        """
+    )
+    return px, top_teams
+
+
+@app.cell
+def _(px, top_teams):
+    # Visualisierung: Balkendiagramm
+    fig_bar = px.bar(
+        top_teams.to_pandas(),
+        x="Mannschaft",
+        y="Punkte",
+        title="Top Teams nach Punkten",
+        color="Punkte",
+        color_continuous_scale="Blues"
+    )
+    fig_bar
+    return (fig_bar,)
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🟢 7.2 Geführt: Liniendiagramm (Zeitreihe)
+
+        Wie entwickelte sich Bayern über die Saison?
+        """
+    )
+    return
+
+
+@app.cell
+def _(bundesliga_spieltage, mo, px):
+    # SQL: Ein Team über alle Spieltage
+    bayern_verlauf = mo.sql(
+        f"""
+        SELECT Spieltag, Punkte_Kumuliert
+        FROM bundesliga_spieltage
+        WHERE Mannschaft = 'Bayern München'
+        """
+    )
+
+    # Visualisierung: Liniendiagramm
+    fig_line = px.line(
+        bayern_verlauf.to_pandas(),
+        x="Spieltag",
+        y="Punkte_Kumuliert",
+        title="Bayern München: Punkteverlauf",
+        markers=True
+    )
+    fig_line
+    return bayern_verlauf, fig_line
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔵 7.3 Selbstständig: Eigene Visualisierung
+
+        Erstelle ein Diagramm deiner Wahl:
+        - Balkendiagramm: Welche Teams kassieren die meisten Gegentore? (`WHERE ToreKassiert > 60`)
+        - Liniendiagramm: Wie entwickelte sich Dortmund über die Saison?
+        """
+    )
+    return
+
+
+@app.cell
+def _(bundesliga, bundesliga_spieltage, mo, px):
+    # Deine Lösung hier:
+    meine_daten = mo.sql(
+        f"""
+        SELECT Mannschaft, ToreKassiert
+        FROM bundesliga
+        WHERE ToreKassiert > 60
+        """
+    )
+
+    fig_own = px.bar(meine_daten.to_pandas(), x="Mannschaft", y="ToreKassiert")
+    fig_own
+    return fig_own, meine_daten
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
         ## Zusammenfassung
 
         | Konzept | Syntax | Beispiel |
@@ -980,13 +1128,19 @@ def _(mo):
         | Werteliste | `IN` | `WHERE Mannschaft IN ('A', 'B', 'C')` |
         | Mustersuche | `LIKE` | `WHERE Mannschaft LIKE 'B%'` |
 
+        ### Visualisierung
+        | Charttyp | Funktion | Verwendung |
+        |----------|----------|------------|
+        | Balkendiagramm | `px.bar()` | Querschnitt (Kategorien vergleichen) |
+        | Liniendiagramm | `px.line()` | Zeitreihe (Entwicklung zeigen) |
+
         ### Häufige Fehler vermeiden:
         - ✅ Komma zwischen Spalten: `SELECT a, b`
         - ✅ Text in Anführungszeichen: `WHERE name = 'Text'`
         - ✅ Klammern bei komplexen Bedingungen: `WHERE (a OR b) AND c`
         - ✅ Richtige Operatoren: `>=` für "mindestens", `<=` für "höchstens"
 
-        **Nächste Session:** Sortieren, DISTINCT, NULL-Werte
+        **Nächste Session:** Sortieren, DISTINCT, NULL-Werte, mehr Visualisierung
         """
     )
     return

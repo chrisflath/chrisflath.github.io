@@ -1,0 +1,646 @@
+import marimo
+
+__generated_with = "0.13.0"
+app = marimo.App(
+    width="medium",
+    app_title="DMA Session 4: CRISP-DM & Fallstudien",
+)
+
+
+@app.cell(hide_code=True)
+def _():
+    import marimo as mo
+    return (mo,)
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        # Session 4: CRISP-DM & Fallstudien
+
+        In dieser Session lernen Sie:
+
+        - Den **CRISP-DM** Prozess für strukturierte Datenanalyse
+        - **Fallstudie Shipman**: Anomalieerkennung bei Mortalitätsdaten
+        - **Fallstudie Benford**: Betrugserkennung durch Ziffernanalyse
+        - SQL für **forensische Datenanalyse**
+
+        **Aufgabentypen:**
+        - 🟢 **Geführt**: Beispiel zum Nachvollziehen
+        - 🟡 **Scaffolded**: Teillösung zum Ergänzen
+        - 🔵 **Selbstständig**: Eigene Lösung schreiben
+        - 🔴 **Debugging**: Fehler finden und beheben
+        - 🟣 **Vorhersage**: Was wird das Ergebnis sein?
+
+        ---
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ## CRISP-DM: Der Analyseprozess
+
+        ```
+        Business Understanding → Data Understanding → Data Preparation
+                ↑                                              ↓
+           Deployment ← Evaluation ← Modeling
+        ```
+
+        1. **Business Understanding**: Was ist das Problem?
+        2. **Data Understanding**: Welche Daten haben wir?
+        3. **Data Preparation**: Daten bereinigen und transformieren
+        4. **Modeling**: Analyse durchführen
+        5. **Evaluation**: Ergebnisse prüfen
+        6. **Deployment**: Lösung einsetzen
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## Fallstudie I: Dr. Harold Shipman
+
+        **Hintergrund:**
+        - Britischer Hausarzt (1946-2004)
+        - Mindestens 215 Patienten ermordet
+        - Erst 1998 durch Testamentsfälschung entdeckt
+        - Statistische Anomalien waren jahrelang sichtbar!
+
+        **Analysefragen:**
+        - Wie viele Todesfälle pro Arzt?
+        - Zu welchen Uhrzeiten sterben Patienten?
+        - Welche Alters-/Geschlechtsverteilung?
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### Beispieldaten: Todesfälle
+
+        Wir simulieren vereinfachte Mortalitätsdaten:
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    import polars as pl
+
+    # Simulierte Todesfälle für Shipman-Analyse
+    deaths_data = {
+        "death_id": list(range(1, 51)),
+        "doctor": (["Dr. Shipman"] * 30) + (["Dr. Smith"] * 10) + (["Dr. Jones"] * 10),
+        "death_hour": [14, 15, 10, 11, 14, 15, 16, 10, 14, 15,  # Shipman: viele Praxiszeiten
+                       11, 14, 15, 10, 14, 16, 15, 14, 10, 11,
+                       14, 15, 16, 10, 14, 15, 11, 14, 15, 16,
+                       3, 22, 8, 19, 2, 21, 7, 23, 4, 20,  # Smith: verteilt
+                       5, 18, 1, 20, 6, 22, 3, 19, 8, 21],  # Jones: verteilt
+        "patient_age": [78, 82, 71, 85, 79, 88, 76, 81, 84, 77,
+                        80, 75, 83, 72, 86, 79, 82, 74, 81, 85,
+                        77, 83, 80, 76, 84, 78, 81, 75, 82, 79,
+                        65, 89, 72, 78, 81, 68, 91, 74, 85, 69,
+                        77, 83, 66, 88, 73, 79, 84, 71, 86, 75],
+        "patient_gender": (["F"] * 24 + ["M"] * 6) +  # Shipman: 80% weiblich
+                          (["F"] * 5 + ["M"] * 5) +   # Smith: 50/50
+                          (["F"] * 5 + ["M"] * 5),    # Jones: 50/50
+    }
+    deaths = pl.DataFrame(deaths_data)
+    return deaths, pl
+
+
+@app.cell
+def _(deaths, mo):
+    mo.md("**Rohdaten anzeigen:**")
+    deaths
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🟢 1.1 Geführt: Todesfälle pro Arzt
+
+        Die einfachste Anomalie: Wer hat die meisten Todesfälle?
+        """
+    )
+    return
+
+
+@app.cell
+def _(deaths, mo):
+    _df = mo.sql(
+        f"""
+        SELECT
+            doctor AS Arzt,
+            COUNT(*) AS Todesfaelle
+        FROM deaths
+        GROUP BY doctor
+        ORDER BY Todesfaelle DESC
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        **Beobachtung:** Shipman hat 3x so viele Todesfälle wie seine Kollegen!
+
+        ---
+
+        ### 🟢 1.2 Geführt: Todesfälle nach Tageszeit
+
+        Natürliche Todesfälle verteilen sich über den Tag. Mordopfer sterben oft während der "Arbeitszeit" des Täters.
+        """
+    )
+    return
+
+
+@app.cell
+def _(deaths, mo):
+    _df = mo.sql(
+        f"""
+        SELECT
+            doctor AS Arzt,
+            CASE
+                WHEN death_hour BETWEEN 9 AND 17 THEN 'Praxiszeit (9-17)'
+                ELSE 'Außerhalb'
+            END AS Zeitraum,
+            COUNT(*) AS Anzahl
+        FROM deaths
+        GROUP BY doctor, Zeitraum
+        ORDER BY doctor, Zeitraum
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        **Beobachtung:** Bei Shipman sterben fast alle Patienten während der Praxiszeit!
+
+        ---
+
+        ### 🟡 1.3 Scaffolded: Geschlechterverteilung
+
+        Ergänze die Abfrage, um die Geschlechterverteilung pro Arzt zu zeigen:
+        """
+    )
+    return
+
+
+@app.cell
+def _(deaths, mo):
+    # Ergänze die GROUP BY Klausel
+    _df = mo.sql(
+        f"""
+        SELECT
+            doctor AS Arzt,
+            patient_gender AS Geschlecht,
+            COUNT(*) AS Anzahl
+        FROM deaths
+        GROUP BY ???
+        ORDER BY Arzt, Geschlecht
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔵 1.4 Selbstständig: Durchschnittsalter
+
+        Berechne das Durchschnittsalter der verstorbenen Patienten pro Arzt:
+        """
+    )
+    return
+
+
+@app.cell
+def _(deaths, mo):
+    # Deine Lösung hier:
+    _df = mo.sql(
+        f"""
+        SELECT
+            doctor AS Arzt,
+            ROUND(AVG(patient_age), 1) AS Durchschnittsalter,
+            MIN(patient_age) AS Juengster,
+            MAX(patient_age) AS Aeltester
+        FROM deaths
+        GROUP BY doctor
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## Visualisierung der Shipman-Anomalien
+        """
+    )
+    return
+
+
+@app.cell
+def _(deaths, mo):
+    import plotly.express as px
+
+    # Todesfälle nach Stunde und Arzt
+    hourly = mo.sql(
+        f"""
+        SELECT doctor, death_hour, COUNT(*) as count
+        FROM deaths
+        GROUP BY doctor, death_hour
+        """
+    )
+
+    fig_hourly = px.bar(
+        hourly.to_pandas(),
+        x="death_hour",
+        y="count",
+        color="doctor",
+        barmode="group",
+        title="Todesfälle nach Tageszeit",
+        labels={"death_hour": "Stunde", "count": "Anzahl", "doctor": "Arzt"}
+    )
+    fig_hourly
+    return fig_hourly, hourly, px
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## Fallstudie II: Benford's Law
+
+        **Das Gesetz der ersten Ziffer:**
+
+        In natürlichen Datensätzen beginnen Zahlen überraschend häufig mit kleinen Ziffern:
+
+        | Ziffer | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
+        |--------|---|---|---|---|---|---|---|---|---|
+        | Erwartet (%) | 30.1 | 17.6 | 12.5 | 9.7 | 7.9 | 6.7 | 5.8 | 5.1 | 4.6 |
+
+        **Anwendung:** Wenn Zahlen manipuliert/erfunden werden, weichen sie oft von dieser Verteilung ab!
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### Beispieldaten: Rechnungsbeträge
+
+        Wir haben zwei Datensätze:
+        - **Echte Rechnungen** (sollten Benford folgen)
+        - **Verdächtige Rechnungen** (gleichmäßiger verteilt)
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(pl):
+    import random
+    random.seed(42)
+
+    # Echte Rechnungen: Folgen Benford (exponentiell verteilt)
+    import math
+    echte_betraege = [round(10 ** (random.uniform(1, 4)), 2) for _ in range(200)]
+
+    # Verdächtige Rechnungen: Gleichmäßiger verteilt (wie von Menschen "erfunden")
+    verdaechtige_betraege = [random.randint(10, 999) + random.random() for _ in range(200)]
+
+    rechnungen_echt = pl.DataFrame({
+        "rechnung_id": list(range(1, 201)),
+        "betrag": echte_betraege,
+        "kategorie": ["echt"] * 200
+    })
+
+    rechnungen_verdaechtig = pl.DataFrame({
+        "rechnung_id": list(range(201, 401)),
+        "betrag": verdaechtige_betraege,
+        "kategorie": ["verdaechtig"] * 200
+    })
+
+    # Kombiniert
+    rechnungen = pl.concat([rechnungen_echt, rechnungen_verdaechtig])
+    return math, rechnungen, rechnungen_echt, rechnungen_verdaechtig, random
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🟢 2.1 Geführt: Erste Ziffer extrahieren
+
+        Um Benford anzuwenden, müssen wir die erste Ziffer jeder Zahl extrahieren:
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, rechnungen):
+    _df = mo.sql(
+        f"""
+        SELECT
+            betrag,
+            CAST(SUBSTR(CAST(CAST(betrag AS INT) AS TEXT), 1, 1) AS INT)
+                AS erste_ziffer
+        FROM rechnungen
+        WHERE betrag >= 10
+        LIMIT 20
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🟢 2.2 Geführt: Benford-Verteilung berechnen
+
+        Jetzt zählen wir, wie oft jede Ziffer vorkommt:
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, rechnungen):
+    benford_analyse = mo.sql(
+        f"""
+        SELECT
+            kategorie,
+            CAST(SUBSTR(CAST(CAST(betrag AS INT) AS TEXT), 1, 1) AS INT)
+                AS erste_ziffer,
+            COUNT(*) AS anzahl
+        FROM rechnungen
+        WHERE betrag >= 10
+        GROUP BY kategorie, erste_ziffer
+        ORDER BY kategorie, erste_ziffer
+        """
+    )
+    return (benford_analyse,)
+
+
+@app.cell
+def _(benford_analyse, px):
+    # Visualisierung der Benford-Verteilung
+    fig_benford = px.bar(
+        benford_analyse.to_pandas(),
+        x="erste_ziffer",
+        y="anzahl",
+        color="kategorie",
+        barmode="group",
+        title="Benford-Analyse: Echte vs. Verdächtige Rechnungen",
+        labels={"erste_ziffer": "Erste Ziffer", "anzahl": "Anzahl", "kategorie": "Kategorie"}
+    )
+
+    # Erwartete Benford-Linie hinzufügen wäre hier möglich
+    fig_benford
+    return (fig_benford,)
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        **Beobachtung:**
+        - Echte Rechnungen: Mehr 1er und 2er (wie Benford vorhersagt)
+        - Verdächtige Rechnungen: Gleichmäßiger verteilt (Warnsignal!)
+
+        ---
+
+        ### 🟡 2.3 Scaffolded: Prozentuale Verteilung
+
+        Ergänze die Abfrage, um den Prozentanteil jeder Ziffer zu berechnen:
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, rechnungen_echt):
+    # Ergänze die Berechnung des Prozentanteils
+    _df = mo.sql(
+        f"""
+        SELECT
+            CAST(SUBSTR(CAST(CAST(betrag AS INT) AS TEXT), 1, 1) AS INT)
+                AS erste_ziffer,
+            COUNT(*) AS anzahl,
+            ROUND(COUNT(*) * 100.0 / ???, 1) AS prozent
+        FROM rechnungen_echt
+        WHERE betrag >= 10
+        GROUP BY erste_ziffer
+        ORDER BY erste_ziffer
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔵 2.4 Selbstständig: Abweichung von Benford
+
+        Berechne für die verdächtigen Rechnungen:
+        1. Die erste Ziffer
+        2. Den Prozentanteil
+        3. Die erwartete Benford-Verteilung (30.1%, 17.6%, 12.5%, ...)
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, rechnungen_verdaechtig):
+    # Deine Lösung hier:
+    _df = mo.sql(
+        f"""
+        SELECT
+            CAST(SUBSTR(CAST(CAST(betrag AS INT) AS TEXT), 1, 1) AS INT)
+                AS erste_ziffer,
+            COUNT(*) AS anzahl,
+            ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM rechnungen_verdaechtig WHERE betrag >= 10), 1) AS prozent
+        FROM rechnungen_verdaechtig
+        WHERE betrag >= 10
+        GROUP BY erste_ziffer
+        ORDER BY erste_ziffer
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ### 🔴 2.5 Debugging: Fehlerhafte Benford-Analyse
+
+        Diese Abfrage hat mehrere Probleme. Finde und erkläre sie:
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, rechnungen):
+    # Was ist hier falsch?
+    _df = mo.sql(
+        f"""
+        SELECT
+            SUBSTR(betrag, 1, 1) AS erste_ziffer,
+            COUNT(*)
+        FROM rechnungen
+        GROUP BY erste_ziffer
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        **Probleme:**
+        1. `betrag` ist numerisch, muss zu TEXT konvertiert werden
+        2. Negative/kleine Zahlen werden nicht behandelt
+        3. Dezimalzahlen < 10 haben keine führende Ziffer
+        4. COUNT(*) braucht einen Alias
+
+        ---
+
+        ### 🟣 2.6 Vorhersage: Welche Daten folgen Benford?
+
+        Schätze, welche dieser Datensätze Benford's Law folgen würden:
+
+        1. Aktienkurse aller DAX-Unternehmen
+        2. Hausnummern in einer Stadt
+        3. Körpergrößen von Studierenden
+        4. Instagram-Followerzahlen von Influencern
+        5. Lottozahlen der letzten 10 Jahre
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        **Antworten:**
+        1. ✅ Ja (wachsen multiplikativ)
+        2. ❌ Nein (zugewiesen, nicht natürlich gewachsen)
+        3. ❌ Nein (enger Wertebereich, normalverteilt)
+        4. ✅ Ja (exponentielles Wachstum)
+        5. ❌ Nein (Zufallszahlen in festem Bereich)
+
+        ---
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ## Freie Exploration
+
+        Probiere eigene Analysen:
+
+        ### Shipman-Daten:
+        - Berechne den Prozentsatz weiblicher Opfer pro Arzt
+        - Finde heraus, ob bestimmte Uhrzeiten besonders auffällig sind
+        - Erstelle eine Altersverteilung als Histogramm
+
+        ### Benford-Daten:
+        - Vergleiche die zweite Ziffer (auch die hat eine erwartete Verteilung!)
+        - Berechne den Chi-Quadrat-Abstand zur erwarteten Verteilung
+        - Visualisiere die Abweichung
+        """
+    )
+    return
+
+
+@app.cell
+def _(deaths, mo, rechnungen):
+    # Eigene Analyse hier:
+    _df = mo.sql(
+        f"""
+        SELECT * FROM deaths LIMIT 5
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## Zusammenfassung
+
+        ### CRISP-DM
+        | Phase | Beschreibung |
+        |-------|--------------|
+        | Business Understanding | Problem definieren |
+        | Data Understanding | Daten erkunden |
+        | Data Preparation | Daten bereinigen |
+        | Modeling | Analyse durchführen |
+        | Evaluation | Ergebnisse prüfen |
+        | Deployment | Lösung einsetzen |
+
+        ### Anomalieerkennung (Shipman)
+        - Vergleiche Kennzahlen zwischen Gruppen
+        - Achte auf zeitliche Muster
+        - Demografische Verteilungen prüfen
+
+        ### Benford's Law
+        - Erste Ziffer mit `SUBSTR(CAST(... AS TEXT), 1, 1)`
+        - Erwartung: 30% beginnen mit 1
+        - Abweichungen deuten auf Manipulation hin
+
+        **Nächste Session:** JOINs – Mehrere Tabellen verknüpfen
+        """
+    )
+    return
+
+
+if __name__ == "__main__":
+    app.run()
