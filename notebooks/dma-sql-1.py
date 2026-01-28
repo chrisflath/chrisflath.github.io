@@ -1032,12 +1032,10 @@ def _(bundesliga, mo):
 def _(px, top_teams):
     # Visualisierung: Balkendiagramm
     fig_bar = px.bar(
-        top_teams.to_pandas(),
+        top_teams,
         x="Mannschaft",
         y="Punkte",
-        title="Top Teams nach Punkten",
-        color="Punkte",
-        color_continuous_scale="Blues"
+        title="Top Teams nach Punkten"
     )
     fig_bar
     return (fig_bar,)
@@ -1068,11 +1066,10 @@ def _(bundesliga_spieltage, mo, px):
 
     # Visualisierung: Liniendiagramm
     fig_line = px.line(
-        bayern_verlauf.to_pandas(),
+        bayern_verlauf,
         x="Spieltag",
         y="Punkte_Kumuliert",
-        title="Bayern München: Punkteverlauf",
-        markers=True
+        title="Bayern München: Punkteverlauf"
     )
     fig_line
     return bayern_verlauf, fig_line
@@ -1103,7 +1100,7 @@ def _(bundesliga, bundesliga_spieltage, mo, px):
         """
     )
 
-    fig_own = px.bar(meine_daten.to_pandas(), x="Mannschaft", y="ToreKassiert")
+    fig_own = px.bar(meine_daten, x="Mannschaft", y="ToreKassiert")
     fig_own
     return fig_own, meine_daten
 

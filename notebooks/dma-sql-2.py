@@ -958,12 +958,10 @@ def _(bundesliga, mo):
 def _(px, top10):
     # Schritt 2: Balkendiagramm erstellen
     fig = px.bar(
-        top10.to_pandas(),
+        top10,
         x="Mannschaft",
         y="Punkte",
-        title="Top 10 Bundesliga Teams nach Punkten",
-        color="Punkte",
-        color_continuous_scale="Blues"
+        title="Top 10 Bundesliga Teams nach Punkten"
     )
     fig
 
@@ -992,12 +990,11 @@ def _(bundesliga, mo, px):
 
     # Streudiagramm
     fig2 = px.scatter(
-        alle_teams.to_pandas(),
+        alle_teams,
         x="ToreGeschossen",
         y="Punkte",
         hover_name="Mannschaft",
-        title="Tore vs. Punkte",
-        trendline="ols"  # Trendlinie hinzufügen
+        title="Tore vs. Punkte"
     )
     fig2
 
@@ -1025,7 +1022,7 @@ def _(bundesliga, mo, px):
     )
 
     fig3 = px.histogram(
-        tordiff.to_pandas(),
+        tordiff,
         x="Tordifferenz",
         nbins=12,
         title="Verteilung der Tordifferenz"
@@ -1057,7 +1054,7 @@ def _(bundesliga, mo, px):
     )
 
     fig4 = px.scatter(
-        siege_niederlagen.to_pandas(),
+        siege_niederlagen,
         x="Siege",
         y="Niederlagen",
         hover_name="Mannschaft",
@@ -1151,7 +1148,6 @@ def _(mo):
         - ✅ Reihenfolge: SELECT → FROM → WHERE → ORDER BY → LIMIT
         - ✅ Bei Berechnungen: COALESCE verwenden, um NULL zu ersetzen
         - ✅ ASC ist Standard, DESC muss explizit angegeben werden
-        - ✅ Bei Plotly: `.to_pandas()` für die Konvertierung von SQL-Ergebnissen
 
         **Nächste Session:** Aggregation & Gruppierung (COUNT, SUM, AVG, GROUP BY)
         """

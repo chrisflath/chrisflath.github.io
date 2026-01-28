@@ -279,7 +279,7 @@ def _(deaths, mo):
     )
 
     fig_hourly = px.bar(
-        hourly.to_pandas(),
+        hourly,
         x="death_hour",
         y="count",
         color="doctor",
@@ -418,7 +418,7 @@ def _(mo, rechnungen):
 def _(benford_analyse, px):
     # Visualisierung der Benford-Verteilung
     fig_benford = px.bar(
-        benford_analyse.to_pandas(),
+        benford_analyse,
         x="erste_ziffer",
         y="anzahl",
         color="kategorie",
