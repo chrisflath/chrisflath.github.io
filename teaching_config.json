@@ -44,11 +44,14 @@
           "file": "notebooks/dma-sql-5.py",
           "title": "Session 5: Warum mehrere Tabellen?",
           "topics": ["Redundanz", "Anomalien", "Primärschlüssel", "Fremdschlüssel"]
+        },
+        {
+          "file": "notebooks/dma-sql-6.py",
+          "title": "Session 6: ER-Modellierung",
+          "topics": ["Entitäten", "Attribute", "Beziehungen", "Kardinalitäten", "Chen-Notation"]
         }
       ],
       "notebooks_planned": [
-        {"session": 6, "title": "ER-Modellierung", "topics": ["Entitäten", "Beziehungen", "Kardinalitäten"]},
-        {"session": 7, "title": "Relationales Modell", "topics": ["Transformation", "Schlüssel", "CREATE TABLE"]},
         {"session": 8, "title": "Normalisierung", "topics": ["1NF", "2NF", "3NF", "BCNF"]},
         {"session": 9, "title": "Joins", "topics": ["INNER JOIN", "LEFT JOIN", "Self-Joins"]},
         {"session": 10, "title": "Subqueries & Transaktionen", "topics": ["CTEs", "Views", "ACID"]},
