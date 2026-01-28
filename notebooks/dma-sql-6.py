@@ -78,6 +78,27 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.md(r"""
+## Crow's Foot Notation (Kardinalitäten)
+
+In ER-Diagrammen verwenden wir oft die **Crow's Foot Notation**:
+
+| Symbol | Bedeutung |
+|--------|-----------|
+| `\|\|` (Strich) | Genau eins |
+| `o\|` (Kreis + Strich) | Null oder eins |
+| `\|{` (Strich + Gabel) | Eins oder mehr |
+| `o{` (Kreis + Gabel) | Null oder mehr |
+
+**Beispiel:** `VEREIN \|\|--\|{ SPIELER` bedeutet: Ein Verein hat *eins oder mehr* Spieler.
+
+---
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
         ## Quiz: Kardinalitäten bestimmen
@@ -284,10 +305,127 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.md(r"""
+### ER-Diagramm: Fußball-Liga (Mermaid)
+
+Das folgende Diagramm zeigt die Lösung in der **Crow's Foot Notation**:
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.mermaid(
+        """
+        erDiagram
+            VEREIN ||--|{ SPIELER : hat
+            VEREIN ||--|{ SPIEL : "spielt (Heim)"
+            VEREIN ||--|{ SPIEL : "spielt (Gast)"
+
+            VEREIN {
+                int ID PK
+                string Name
+                string Ort
+                int Gruendungsjahr
+            }
+
+            SPIELER {
+                int ID PK
+                string Name
+                string Position
+                date Geburtsdatum
+                int Verein_ID FK
+            }
+
+            SPIEL {
+                int ID PK
+                date Datum
+                int Tore_Heim
+                int Tore_Gast
+                int Heim_ID FK
+                int Gast_ID FK
+            }
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+---
+
+## Beispiel: Online-Shop (M:N-Beziehung)
+
+Ein Online-Shop mit Kunden, Bestellungen und Produkten:
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.mermaid(
+        """
+        erDiagram
+            KUNDE ||--o{ BESTELLUNG : "gibt auf"
+            BESTELLUNG ||--|{ BESTELLPOSITION : enthaelt
+            PRODUKT ||--o{ BESTELLPOSITION : "ist in"
+            KATEGORIE ||--o{ PRODUKT : beinhaltet
+
+            KUNDE {
+                int ID PK
+                string Name
+                string Email UK
+            }
+
+            BESTELLUNG {
+                int ID PK
+                date Datum
+                int Kunde_ID FK
+            }
+
+            BESTELLPOSITION {
+                int Bestellung_ID PK,FK
+                int Produkt_ID PK,FK
+                int Menge
+            }
+
+            PRODUKT {
+                int ID PK
+                string Name
+                decimal Preis
+                int Kategorie_ID FK
+            }
+
+            KATEGORIE {
+                int ID PK
+                string Name
+            }
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+**Beobachtungen:**
+
+- **1:N:** Kunde → Bestellung, Kategorie → Produkt
+- **M:N:** Bestellung ↔ Produkt (aufgelöst durch Bestellposition)
+- Die **Bestellposition** ist eine Beziehungstabelle mit zusammengesetztem Primärschlüssel
+
+*In Session 7 werden wir dieses Modell in SQL CREATE TABLE umsetzen!*
+
+---
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
-        ---
-
         ## (Min,Max)-Notation
 
         Genauere Kardinalitätsangabe:

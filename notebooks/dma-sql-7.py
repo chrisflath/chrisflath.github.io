@@ -74,18 +74,41 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
-        ## Aufgabe 7.1: 1:N-Beziehung → SQL
+    mo.md(r"""
+## Aufgabe 7.1: 1:N-Beziehung → SQL
 
-        **Gegeben:**
-        - Verein (1) ← hat → Spieler (N)
-        - Verein: ID, Name, Ort
-        - Spieler: ID, Name, Position
+**Gegeben:** Verein (1) ← hat → Spieler (N)
+    """)
+    return
 
-        **Aufgabe:** Ergänzen Sie das CREATE TABLE für Spieler mit dem Fremdschlüssel.
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.mermaid(
+        """
+        erDiagram
+            VEREIN ||--|{ SPIELER : hat
+            VEREIN {
+                int ID PK
+                string Name
+                string Ort
+            }
+            SPIELER {
+                int ID PK
+                string Name
+                string Position
+                int Verein_ID FK
+            }
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+**Aufgabe:** Ergänzen Sie das CREATE TABLE für Spieler mit dem Fremdschlüssel.
+    """)
     return
 
 
@@ -141,19 +164,49 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
-        ---
+    mo.md(r"""
+---
 
-        ## Aufgabe 7.2: M:N-Beziehung → SQL
+## Aufgabe 7.2: M:N-Beziehung → SQL
 
-        **Gegeben:**
-        - Student (M) ← besucht → Kurs (N)
-        - Beziehungsattribut: Note
+**Gegeben:** Student (M) ← besucht → Kurs (N) mit Beziehungsattribut **Note**
+    """)
+    return
 
-        **Aufgabe:** Erstellen Sie die Beziehungstabelle `Student_Kurs`.
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.mermaid(
+        """
+        erDiagram
+            STUDENT ||--o{ STUDENT_KURS : besucht
+            KURS ||--o{ STUDENT_KURS : "wird besucht"
+
+            STUDENT {
+                int ID PK
+                string Name
+            }
+
+            KURS {
+                int ID PK
+                string Titel
+            }
+
+            STUDENT_KURS {
+                int Student_ID PK,FK
+                int Kurs_ID PK,FK
+                decimal Note
+            }
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+**Aufgabe:** Erstellen Sie die Beziehungstabelle `Student_Kurs`.
+    """)
     return
 
 
@@ -242,20 +295,65 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
-        ---
+    mo.md(r"""
+---
 
-        ## Aufgabe 7.3: Online-Shop
+## Aufgabe 7.3: Online-Shop
 
-        **ER-Modell:**
-        - Kunde (1) → Bestellung (N)
-        - Bestellung (M) ↔ Produkt (N) [mit Menge]
-        - Produkt (N) → Kategorie (1)
+Komplettes ER-Modell mit 1:N und M:N Beziehungen:
+    """)
+    return
 
-        **Aufgabe:** Erstellen Sie alle CREATE TABLE-Statements.
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.mermaid(
+        """
+        erDiagram
+            KUNDE ||--o{ BESTELLUNG : "gibt auf"
+            BESTELLUNG ||--|{ BESTELLPOSITION : enthaelt
+            PRODUKT ||--o{ BESTELLPOSITION : "ist in"
+            KATEGORIE ||--o{ PRODUKT : beinhaltet
+
+            KUNDE {
+                int ID PK
+                string Name
+                string Email UK
+            }
+
+            BESTELLUNG {
+                int ID PK
+                date Datum
+                int Kunde_ID FK
+            }
+
+            BESTELLPOSITION {
+                int Bestellung_ID PK,FK
+                int Produkt_ID PK,FK
+                int Menge
+            }
+
+            PRODUKT {
+                int ID PK
+                string Name
+                decimal Preis
+                int Kategorie_ID FK
+            }
+
+            KATEGORIE {
+                int ID PK
+                string Name
+            }
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+**Aufgabe:** Erstellen Sie alle CREATE TABLE-Statements in der richtigen Reihenfolge!
+    """)
     return
 
 
