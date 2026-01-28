@@ -474,7 +474,7 @@ def _(mo):
         Experimentieren Sie selbst:
 
         - Fügen Sie einen neuen Verein hinzu (ohne Spieler)
-        - Aendern Sie einen Vereinsort
+        - Ändern Sie einen Vereinsort
         - Löschen Sie einen Spieler
 
         Beobachten Sie, wie das verbesserte Design diese Operationen vereinfacht.
