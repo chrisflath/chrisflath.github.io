@@ -34,11 +34,19 @@
           "file": "notebooks/dma-sql-3.py",
           "title": "Session 3: Aggregation & Gruppierung",
           "topics": ["COUNT", "SUM", "AVG", "MIN", "MAX", "GROUP BY", "HAVING"]
+        },
+        {
+          "file": "notebooks/dma-sql-4.py",
+          "title": "Session 4: CRISP-DM & Fallstudien",
+          "topics": ["CRISP-DM", "Shipman Case Study", "Benford's Law"]
+        },
+        {
+          "file": "notebooks/dma-sql-5.py",
+          "title": "Session 5: Warum mehrere Tabellen?",
+          "topics": ["Redundanz", "Anomalien", "Primärschlüssel", "Fremdschlüssel"]
         }
       ],
       "notebooks_planned": [
-        {"session": 4, "title": "Datenanalyseprozesse", "topics": ["CRISP-DM", "Shipman Case Study"]},
-        {"session": 5, "title": "Motivation Datenmodellierung", "topics": ["Redundanz", "Anomalien"]},
         {"session": 6, "title": "ER-Modellierung", "topics": ["Entitäten", "Beziehungen", "Kardinalitäten"]},
         {"session": 7, "title": "Relationales Modell", "topics": ["Transformation", "Schlüssel", "CREATE TABLE"]},
         {"session": 8, "title": "Normalisierung", "topics": ["1NF", "2NF", "3NF", "BCNF"]},
