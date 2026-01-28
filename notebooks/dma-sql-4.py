@@ -442,6 +442,78 @@ def _(mo):
 
         ---
 
+        ### Streudiagramm: Erwartet vs. Beobachtet
+
+        Eine alternative Visualisierung: Punkte auf der Diagonale = folgt Benford
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, rechnungen_echt, rechnungen_verdaechtig):
+    # Benford-Erwartungswerte
+    benford_expected = [30.1, 17.6, 12.5, 9.7, 7.9, 6.7, 5.8, 5.1, 4.6]
+
+    # Berechne Prozentanteile für echte Rechnungen
+    benford_vergleich = mo.sql(
+        f"""
+        WITH ziffern AS (
+            SELECT
+                CAST(SUBSTR(CAST(CAST(betrag AS INT) AS TEXT), 1, 1) AS INT) AS ziffer,
+                COUNT(*) AS anzahl
+            FROM rechnungen_echt
+            WHERE betrag >= 10
+            GROUP BY ziffer
+        ),
+        total AS (SELECT SUM(anzahl) AS n FROM ziffern)
+        SELECT
+            ziffer,
+            ROUND(anzahl * 100.0 / (SELECT n FROM total), 1) AS beobachtet_pct,
+            'Echt' AS kategorie
+        FROM ziffern
+        ORDER BY ziffer
+        """
+    )
+    return benford_expected, benford_vergleich
+
+
+@app.cell
+def _(benford_expected, benford_vergleich, px):
+    # Scatter Plot: Erwartet vs Beobachtet
+    import pandas as pd
+
+    df = benford_vergleich.to_pandas()
+    df["erwartet_pct"] = benford_expected[:len(df)]
+
+    fig_scatter = px.scatter(
+        df,
+        x="erwartet_pct",
+        y="beobachtet_pct",
+        text="ziffer",
+        title="Benford-Check: Erwartet vs. Beobachtet"
+    )
+
+    # Diagonale hinzufügen (perfekte Übereinstimmung)
+    fig_scatter.add_shape(
+        type="line", x0=0, y0=0, x1=35, y1=35,
+        line=dict(dash="dash", color="gray")
+    )
+
+    fig_scatter.update_traces(textposition="top center")
+    fig_scatter.update_layout(xaxis_title="Erwartet (%)", yaxis_title="Beobachtet (%)")
+    fig_scatter
+    return df, fig_scatter, pd
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        **Interpretation:** Punkte nahe der Diagonale = Daten folgen Benford's Law.
+
+        ---
+
         ### 🟡 2.3 Scaffolded: Prozentuale Verteilung
 
         Ergänze die Abfrage, um den Prozentanteil jeder Ziffer zu berechnen:
