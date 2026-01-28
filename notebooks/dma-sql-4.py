@@ -89,44 +89,28 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-        ### Beispieldaten: Todesfälle
+        ### Daten: Todesfälle
 
-        Wir simulieren vereinfachte Mortalitätsdaten:
+        Wir laden echte (anonymisierte) Mortalitätsdaten aus der Shipman-Untersuchung:
         """
     )
     return
 
 
 @app.cell(hide_code=True)
-def _(mo):
+def _():
     import polars as pl
 
-    # Simulierte Todesfälle für Shipman-Analyse
-    deaths_data = {
-        "death_id": list(range(1, 51)),
-        "doctor": (["Dr. Shipman"] * 30) + (["Dr. Smith"] * 10) + (["Dr. Jones"] * 10),
-        "death_hour": [14, 15, 10, 11, 14, 15, 16, 10, 14, 15,  # Shipman: viele Praxiszeiten
-                       11, 14, 15, 10, 14, 16, 15, 14, 10, 11,
-                       14, 15, 16, 10, 14, 15, 11, 14, 15, 16,
-                       3, 22, 8, 19, 2, 21, 7, 23, 4, 20,  # Smith: verteilt
-                       5, 18, 1, 20, 6, 22, 3, 19, 8, 21],  # Jones: verteilt
-        "patient_age": [78, 82, 71, 85, 79, 88, 76, 81, 84, 77,
-                        80, 75, 83, 72, 86, 79, 82, 74, 81, 85,
-                        77, 83, 80, 76, 84, 78, 81, 75, 82, 79,
-                        65, 89, 72, 78, 81, 68, 91, 74, 85, 69,
-                        77, 83, 66, 88, 73, 79, 84, 71, 86, 75],
-        "patient_gender": (["F"] * 24 + ["M"] * 6) +  # Shipman: 80% weiblich
-                          (["F"] * 5 + ["M"] * 5) +   # Smith: 50/50
-                          (["F"] * 5 + ["M"] * 5),    # Jones: 50/50
-    }
-    deaths = pl.DataFrame(deaths_data)
-    return deaths, pl
+    # Echte Shipman-Daten von der Website laden
+    url = "https://chrisflath.github.io/notebooks/public/todesfaelle.csv"
+    todesfaelle = pl.read_csv(url)
+    return pl, todesfaelle
 
 
 @app.cell
-def _(deaths, mo):
-    mo.md("**Rohdaten anzeigen:**")
-    deaths
+def _(mo, todesfaelle):
+    mo.md(f"**{len(todesfaelle)} Todesfälle aus der Shipman-Untersuchung:**")
+    todesfaelle
 
 
 @app.cell(hide_code=True)
@@ -142,15 +126,15 @@ def _(mo):
 
 
 @app.cell
-def _(deaths, mo):
+def _(mo, todesfaelle):
     _df = mo.sql(
         f"""
         SELECT
-            doctor AS Arzt,
-            COUNT(*) AS Todesfaelle
-        FROM deaths
-        GROUP BY doctor
-        ORDER BY Todesfaelle DESC
+            Arzt,
+            COUNT(*) AS Anzahl
+        FROM todesfaelle
+        GROUP BY Arzt
+        ORDER BY Anzahl DESC
         """
     )
     return
@@ -173,19 +157,19 @@ def _(mo):
 
 
 @app.cell
-def _(deaths, mo):
+def _(mo, todesfaelle):
     _df = mo.sql(
         f"""
         SELECT
-            doctor AS Arzt,
+            Arzt,
             CASE
-                WHEN death_hour BETWEEN 9 AND 17 THEN 'Praxiszeit (9-17)'
+                WHEN Todesstunde BETWEEN 9 AND 17 THEN 'Praxiszeit (9-17)'
                 ELSE 'Außerhalb'
             END AS Zeitraum,
             COUNT(*) AS Anzahl
-        FROM deaths
-        GROUP BY doctor, Zeitraum
-        ORDER BY doctor, Zeitraum
+        FROM todesfaelle
+        GROUP BY Arzt, Zeitraum
+        ORDER BY Arzt, Zeitraum
         """
     )
     return
@@ -208,15 +192,15 @@ def _(mo):
 
 
 @app.cell
-def _(deaths, mo):
+def _(mo, todesfaelle):
     # Ergänze die GROUP BY Klausel
     _df = mo.sql(
         f"""
         SELECT
-            doctor AS Arzt,
-            patient_gender AS Geschlecht,
+            Arzt,
+            Geschlecht,
             COUNT(*) AS Anzahl
-        FROM deaths
+        FROM todesfaelle
         GROUP BY ???
         ORDER BY Arzt, Geschlecht
         """
@@ -237,17 +221,17 @@ def _(mo):
 
 
 @app.cell
-def _(deaths, mo):
+def _(mo, todesfaelle):
     # Deine Lösung hier:
     _df = mo.sql(
         f"""
         SELECT
-            doctor AS Arzt,
-            ROUND(AVG(patient_age), 1) AS Durchschnittsalter,
-            MIN(patient_age) AS Juengster,
-            MAX(patient_age) AS Aeltester
-        FROM deaths
-        GROUP BY doctor
+            Arzt,
+            ROUND(AVG(Alter), 1) AS Durchschnittsalter,
+            MIN(Alter) AS Jüngster,
+            MAX(Alter) AS Ältester
+        FROM todesfaelle
+        GROUP BY Arzt
         """
     )
     return
@@ -266,26 +250,26 @@ def _(mo):
 
 
 @app.cell
-def _(deaths, mo):
+def _(mo, todesfaelle):
     import plotly.express as px
 
     # Todesfälle nach Stunde und Arzt
     hourly = mo.sql(
         f"""
-        SELECT doctor, death_hour, COUNT(*) as count
-        FROM deaths
-        GROUP BY doctor, death_hour
+        SELECT Arzt, Todesstunde, COUNT(*) as Anzahl
+        FROM todesfaelle
+        GROUP BY Arzt, Todesstunde
         """
     )
 
     fig_hourly = px.bar(
-        hourly,
-        x="death_hour",
-        y="count",
-        color="doctor",
+        hourly.to_pandas(),
+        x="Todesstunde",
+        y="Anzahl",
+        color="Arzt",
         barmode="group",
         title="Todesfälle nach Tageszeit",
-        labels={"death_hour": "Stunde", "count": "Anzahl", "doctor": "Arzt"}
+        labels={"Todesstunde": "Stunde", "Anzahl": "Anzahl", "Arzt": "Arzt"}
     )
     fig_hourly
     return fig_hourly, hourly, px
@@ -337,7 +321,7 @@ def _(pl):
     echte_betraege = [round(10 ** (random.uniform(1, 4)), 2) for _ in range(200)]
 
     # Verdächtige Rechnungen: Gleichmäßiger verteilt (wie von Menschen "erfunden")
-    verdaechtige_betraege = [random.randint(10, 999) + random.random() for _ in range(200)]
+    verdächtige_betraege = [random.randint(10, 999) + random.random() for _ in range(200)]
 
     rechnungen_echt = pl.DataFrame({
         "rechnung_id": list(range(1, 201)),
@@ -345,15 +329,15 @@ def _(pl):
         "kategorie": ["echt"] * 200
     })
 
-    rechnungen_verdaechtig = pl.DataFrame({
+    rechnungen_verdächtig = pl.DataFrame({
         "rechnung_id": list(range(201, 401)),
-        "betrag": verdaechtige_betraege,
-        "kategorie": ["verdaechtig"] * 200
+        "betrag": verdächtige_betraege,
+        "kategorie": ["verdächtig"] * 200
     })
 
     # Kombiniert
-    rechnungen = pl.concat([rechnungen_echt, rechnungen_verdaechtig])
-    return math, rechnungen, rechnungen_echt, rechnungen_verdaechtig, random
+    rechnungen = pl.concat([rechnungen_echt, rechnungen_verdächtig])
+    return math, rechnungen, rechnungen_echt, rechnungen_verdächtig, random
 
 
 @app.cell(hide_code=True)
@@ -418,7 +402,7 @@ def _(mo, rechnungen):
 def _(benford_analyse, px):
     # Visualisierung der Benford-Verteilung
     fig_benford = px.bar(
-        benford_analyse,
+        benford_analyse.to_pandas(),
         x="erste_ziffer",
         y="anzahl",
         color="kategorie",
@@ -439,78 +423,6 @@ def _(mo):
         **Beobachtung:**
         - Echte Rechnungen: Mehr 1er und 2er (wie Benford vorhersagt)
         - Verdächtige Rechnungen: Gleichmäßiger verteilt (Warnsignal!)
-
-        ---
-
-        ### Streudiagramm: Erwartet vs. Beobachtet
-
-        Eine alternative Visualisierung: Punkte auf der Diagonale = folgt Benford
-        """
-    )
-    return
-
-
-@app.cell
-def _(mo, rechnungen_echt, rechnungen_verdaechtig):
-    # Benford-Erwartungswerte
-    benford_expected = [30.1, 17.6, 12.5, 9.7, 7.9, 6.7, 5.8, 5.1, 4.6]
-
-    # Berechne Prozentanteile für echte Rechnungen
-    benford_vergleich = mo.sql(
-        f"""
-        WITH ziffern AS (
-            SELECT
-                CAST(SUBSTR(CAST(CAST(betrag AS INT) AS TEXT), 1, 1) AS INT) AS ziffer,
-                COUNT(*) AS anzahl
-            FROM rechnungen_echt
-            WHERE betrag >= 10
-            GROUP BY ziffer
-        ),
-        total AS (SELECT SUM(anzahl) AS n FROM ziffern)
-        SELECT
-            ziffer,
-            ROUND(anzahl * 100.0 / (SELECT n FROM total), 1) AS beobachtet_pct,
-            'Echt' AS kategorie
-        FROM ziffern
-        ORDER BY ziffer
-        """
-    )
-    return benford_expected, benford_vergleich
-
-
-@app.cell
-def _(benford_expected, benford_vergleich, px):
-    # Scatter Plot: Erwartet vs Beobachtet
-    import pandas as pd
-
-    df = benford_vergleich.to_pandas()
-    df["erwartet_pct"] = benford_expected[:len(df)]
-
-    fig_scatter = px.scatter(
-        df,
-        x="erwartet_pct",
-        y="beobachtet_pct",
-        text="ziffer",
-        title="Benford-Check: Erwartet vs. Beobachtet"
-    )
-
-    # Diagonale hinzufügen (perfekte Übereinstimmung)
-    fig_scatter.add_shape(
-        type="line", x0=0, y0=0, x1=35, y1=35,
-        line=dict(dash="dash", color="gray")
-    )
-
-    fig_scatter.update_traces(textposition="top center")
-    fig_scatter.update_layout(xaxis_title="Erwartet (%)", yaxis_title="Beobachtet (%)")
-    fig_scatter
-    return df, fig_scatter, pd
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        **Interpretation:** Punkte nahe der Diagonale = Daten folgen Benford's Law.
 
         ---
 
@@ -557,7 +469,7 @@ def _(mo):
 
 
 @app.cell
-def _(mo, rechnungen_verdaechtig):
+def _(mo, rechnungen_verdächtig):
     # Deine Lösung hier:
     _df = mo.sql(
         f"""
@@ -565,8 +477,8 @@ def _(mo, rechnungen_verdaechtig):
             CAST(SUBSTR(CAST(CAST(betrag AS INT) AS TEXT), 1, 1) AS INT)
                 AS erste_ziffer,
             COUNT(*) AS anzahl,
-            ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM rechnungen_verdaechtig WHERE betrag >= 10), 1) AS prozent
-        FROM rechnungen_verdaechtig
+            ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM rechnungen_verdächtig WHERE betrag >= 10), 1) AS prozent
+        FROM rechnungen_verdächtig
         WHERE betrag >= 10
         GROUP BY erste_ziffer
         ORDER BY erste_ziffer
