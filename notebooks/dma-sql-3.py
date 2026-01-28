@@ -549,6 +549,71 @@ def _(mo):
         r"""
         ---
 
+        ## Visualisierung: Aggregierte Daten
+
+        GROUP BY-Ergebnisse lassen sich direkt als Balkendiagramm darstellen.
+        Mit einer Referenzlinie (z.B. Durchschnitt) werden Vergleiche einfacher.
+        """
+    )
+    return
+
+
+@app.cell
+def _():
+    import plotly.express as px
+    return (px,)
+
+
+@app.cell
+def _(bundesliga, mo):
+    # Punkte pro Team für Visualisierung
+    team_punkte = mo.sql(
+        f"""
+        SELECT Mannschaft, Punkte
+        FROM bundesliga
+        ORDER BY Punkte DESC
+        """
+    )
+
+    # Durchschnitt berechnen
+    avg_punkte = mo.sql(
+        f"""
+        SELECT AVG(Punkte) AS avg FROM bundesliga
+        """
+    )
+    return avg_punkte, team_punkte
+
+
+@app.cell
+def _(avg_punkte, px, team_punkte):
+    # Bar chart mit Durchschnittslinie
+    fig = px.bar(
+        team_punkte,
+        x="Mannschaft",
+        y="Punkte",
+        title="Punkte pro Team mit Durchschnittslinie"
+    )
+
+    # Durchschnittslinie hinzufügen
+    avg_val = float(avg_punkte.to_pandas()["avg"].iloc[0])
+    fig.add_hline(
+        y=avg_val,
+        line_dash="dash",
+        line_color="orange",
+        annotation_text=f"Avg: {avg_val:.1f}"
+    )
+    fig
+    return avg_val, fig
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        **Interpretation:** Teams über der Linie = überdurchschnittlich
+
+        ---
+
         ## Zusammenfassung
 
         | Konzept | Syntax | Beispiel |
