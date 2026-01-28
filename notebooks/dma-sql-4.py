@@ -244,16 +244,75 @@ def _(mo):
         ---
 
         ## Visualisierung der Shipman-Anomalien
+
+        ### Referenzverteilung: Todesfälle nach Tageszeit
+
+        Die folgende Grafik zeigt die prozentuale Verteilung der Todesfälle nach Tageszeit.
+        Die **Referenzverteilung** stammt aus dem Buch *Art of Statistics* (David Spiegelhalter)
+        und zeigt das typische Muster anderer Ärzte im Vergleich zu Shipman.
         """
     )
     return
 
 
 @app.cell
-def _(mo, todesfaelle):
+def _(pl):
     import plotly.express as px
 
-    # Todesfälle nach Stunde und Arzt
+    # Referenzdaten: Art of Statistics (Spiegelhalter), Figure 0.2
+    # Prozentuale Verteilung der Todesfälle nach Stunde
+    referenz = pl.DataFrame({
+        "Stunde": list(range(24)),
+        "Shipman": [2.6, 1.0, 2.6, 3.0, 0.3, 1.2, 2.9, 1.8, 3.6, 2.6,
+                    4.6, 5.8, 2.0, 9.0, 14.1, 13.0, 9.0, 5.8, 3.8, 2.9,
+                    3.6, 0.8, 3.6, 2.0],
+        "Vergleichsgruppe": [1.1, 3.0, 3.1, 3.8, 4.0, 4.3, 4.2, 4.1, 3.4, 5.6,
+                             5.5, 5.8, 4.0, 3.8, 2.0, 3.4, 6.6, 5.2, 3.3, 5.0,
+                             4.1, 3.8, 2.9, 4.1]
+    })
+
+    # Daten in Long-Format für Plotly
+    ref_long = referenz.unpivot(
+        index="Stunde",
+        on=["Shipman", "Vergleichsgruppe"],
+        variable_name="Gruppe",
+        value_name="Prozent"
+    )
+
+    fig_ref = px.line(
+        ref_long.to_pandas(),
+        x="Stunde",
+        y="Prozent",
+        color="Gruppe",
+        title="Verteilung der Todesfälle nach Tageszeit (%, Referenzdaten)",
+        labels={"Stunde": "Todesstunde", "Prozent": "Anteil (%)", "Gruppe": ""},
+        color_discrete_map={"Shipman": "#d62728", "Vergleichsgruppe": "#1f77b4"},
+        markers=True
+    )
+    fig_ref.update_layout(xaxis=dict(dtick=1))
+    fig_ref
+    return fig_ref, px, referenz
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        **Beobachtung:** Die Vergleichsgruppe zeigt eine relativ gleichmäßige Verteilung
+        über den Tag. Shipmans Todesfälle konzentrieren sich dagegen stark auf die
+        Nachmittagsstunden (13-16 Uhr) -- genau seine typische Hausbesuchszeit.
+
+        ---
+
+        ### Unsere Daten: Todesfälle nach Tageszeit
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, px, todesfaelle):
+    # Todesfälle nach Stunde und Arzt aus unseren Daten
     hourly = mo.sql(
         f"""
         SELECT Arzt, Todesstunde, COUNT(*) as Anzahl
@@ -268,11 +327,11 @@ def _(mo, todesfaelle):
         y="Anzahl",
         color="Arzt",
         barmode="group",
-        title="Todesfälle nach Tageszeit",
+        title="Todesfälle nach Tageszeit (unsere Daten)",
         labels={"Todesstunde": "Stunde", "Anzahl": "Anzahl", "Arzt": "Arzt"}
     )
     fig_hourly
-    return fig_hourly, hourly, px
+    return fig_hourly, hourly
 
 
 @app.cell(hide_code=True)
