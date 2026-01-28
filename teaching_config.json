@@ -49,6 +49,11 @@
           "file": "notebooks/dma-sql-6.py",
           "title": "Session 6: ER-Modellierung",
           "topics": ["Entitäten", "Attribute", "Beziehungen", "Kardinalitäten", "Chen-Notation"]
+        },
+        {
+          "file": "notebooks/dma-sql-7.py",
+          "title": "Session 7: Relationales Modell & Transformation",
+          "topics": ["Relationen", "Primärschlüssel", "Fremdschlüssel", "CREATE TABLE", "ER zu SQL"]
         }
       ],
       "notebooks_planned": [
