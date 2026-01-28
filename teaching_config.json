@@ -54,10 +54,14 @@
           "file": "notebooks/dma-sql-7.py",
           "title": "Session 7: Relationales Modell & Transformation",
           "topics": ["Relationen", "Primärschlüssel", "Fremdschlüssel", "CREATE TABLE", "ER zu SQL"]
+        },
+        {
+          "file": "notebooks/dma-sql-8.py",
+          "title": "Session 8: Normalisierung",
+          "topics": ["Funktionale Abhängigkeiten", "1NF", "2NF", "3NF", "BCNF", "Denormalisierung"]
         }
       ],
       "notebooks_planned": [
-        {"session": 8, "title": "Normalisierung", "topics": ["1NF", "2NF", "3NF", "BCNF"]},
         {"session": 9, "title": "Joins", "topics": ["INNER JOIN", "LEFT JOIN", "Self-Joins"]},
         {"session": 10, "title": "Subqueries & Transaktionen", "topics": ["CTEs", "Views", "ACID"]},
         {"session": 11, "title": "Explorative Datenanalyse", "topics": ["EDA", "Visualisierung"]},
