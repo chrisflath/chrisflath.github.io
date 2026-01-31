@@ -86,9 +86,9 @@ def _():
                 if "Tore" in df.columns:
                     df[["ToreGeschossen", "ToreKassiert"]] = df["Tore"].str.split(":", expand=True).astype(int)
 
-            gewuenschte_spalten = ["Mannschaft", "Spiele", "Siege", "Unentschieden", "Niederlagen",
+            gewünschte_spalten = ["Mannschaft", "Spiele", "Siege", "Unentschieden", "Niederlagen",
                                    "ToreGeschossen", "ToreKassiert", "Tordifferenz", "Punkte"]
-            df = df[[c for c in gewuenschte_spalten if c in df.columns]]
+            df = df[[c for c in gewünschte_spalten if c in df.columns]]
             quelle = f"Live von fussballdaten.de (Saison {saison})"
 
         except Exception as e:
@@ -117,6 +117,12 @@ def _():
 
 
 @app.cell
+def _():
+    import plotly.express as px
+    return (px,)
+
+
+@app.cell
 def _(pd):
     # Erweiterte Spieler-Daten für Aggregationsübungen
     spieler = pd.DataFrame({
@@ -136,7 +142,7 @@ def _(pd):
         "Tore": [8, 0, 3, 5, 12, 4, 9, 11, 6, 1, 2, 0, 7, 2, 0, 0],
         "Vorlagen": [4, 0, 8, 3, 7, 2, 5, 9, 2, 0, 1, 0, 4, 3, 0, 0],
         "Alter": [35, 38, 29, 28, 21, 33, 25, 21, 31, 24, 31, 28, 28, 29, 32, 34],
-        "Laenderspiele": [131, 118, 91, 67, 35, 82, 47, 28, 20, 12, 70, 32, 42, 57, 40, 5]
+        "Länderspiele": [131, 118, 91, 67, 35, 82, 47, 28, 20, 12, 70, 32, 42, 57, 40, 5]
     })
     spieler
     return (spieler,)
@@ -293,7 +299,7 @@ def _(mo):
 
 @app.cell
 def _(mo, spieler):
-    _df = mo.sql(
+    tore_by_position = mo.sql(
         f"""
         SELECT
             Position,
@@ -305,7 +311,31 @@ def _(mo, spieler):
         ORDER BY Schnitt_Tore DESC
         """
     )
+    return (tore_by_position,)
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### Visualisierung: Aggregierte Daten als Balkendiagramm
+
+        Mit `GROUP BY` berechnete Werte lassen sich hervorragend als Balkendiagramm darstellen:
+        """
+    )
     return
+
+
+@app.cell
+def _(px, tore_by_position):
+    px.bar(
+        tore_by_position.to_pandas(),
+        x="Position",
+        y="Schnitt_Tore",
+        title="Durchschnittliche Tore nach Position",
+        labels={"Position": "Position", "Schnitt_Tore": "Ø Tore"},
+        color="Position"
+    )
 
 
 @app.cell(hide_code=True)
@@ -328,7 +358,7 @@ def _(mo, spieler):
             Verein,
             COUNT(*) AS Nationalspieler,
             SUM(Tore) AS Tore_Gesamt,
-            AVG(Alter) AS Durchschnittsalter
+            AVG("Alter") AS Durchschnittsalter
         FROM spieler
         GROUP BY Verein
         ORDER BY Nationalspieler DESC
@@ -422,6 +452,30 @@ def _(mo, spieler):
 
 @app.cell(hide_code=True)
 def _(mo):
+    quiz_where_having = mo.ui.radio(
+        options={
+            "correct": "WHERE filtert Zeilen vor GROUP BY, HAVING filtert Gruppen danach",
+            "reversed": "HAVING filtert Zeilen vor GROUP BY, WHERE filtert Gruppen danach",
+            "same": "WHERE und HAVING sind austauschbar — beide filtern Gruppen",
+            "dtype": "WHERE ist für Zahlen, HAVING ist für Text",
+        },
+        label="**Quiz:** Was ist der Unterschied zwischen WHERE und HAVING?"
+    )
+    quiz_where_having
+    return (quiz_where_having,)
+
+
+@app.cell(hide_code=True)
+def _(quiz_where_having, mo):
+    if quiz_where_having.value == "correct":
+        mo.output.replace(mo.md("Richtig! WHERE filtert *einzelne Zeilen* bevor sie gruppiert werden. HAVING filtert *ganze Gruppen* nach der Aggregation. Deshalb kann HAVING Aggregatfunktionen wie COUNT(*) oder AVG() verwenden."))
+    elif quiz_where_having.value:
+        mo.output.replace(mo.md("Nicht ganz. Denken Sie an die Reihenfolge: Erst werden Zeilen gefiltert (WHERE), dann gruppiert (GROUP BY), dann werden Gruppen gefiltert (HAVING)."))
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
         ### Aufgabe 6.3: WHERE und HAVING kombinieren
@@ -438,7 +492,7 @@ def _(mo, spieler):
         f"""
         SELECT Verein, COUNT(*) AS Junge_Spieler
         FROM spieler
-        WHERE Alter < 30
+        WHERE "Alter" < 30
         GROUP BY Verein
         HAVING COUNT(*) >= 2
         ORDER BY Junge_Spieler DESC
@@ -516,6 +570,63 @@ def _(mo):
         r"""
         ---
 
+        ## Visualisierung: Referenzlinien
+
+        Ein häufiges Muster: Balkendiagramm mit **Durchschnittslinie** als Referenz.
+        So sieht man sofort, welche Werte über/unter dem Durchschnitt liegen.
+        """
+    )
+    return
+
+
+@app.cell
+def _(bundesliga, mo):
+    team_punkte = mo.sql(
+        f"""
+        SELECT Mannschaft, Punkte
+        FROM bundesliga
+        ORDER BY Punkte DESC
+        """
+    )
+    return (team_punkte,)
+
+
+@app.cell
+def _(bundesliga, mo, px, team_punkte):
+    # Durchschnitt berechnen
+    avg_result = mo.sql(f"SELECT AVG(Punkte) AS avg FROM bundesliga")
+    avg_punkte = avg_result.to_pandas().iloc[0, 0]
+
+    # Balkendiagramm mit Referenzlinie
+    fig = px.bar(
+        team_punkte.to_pandas(),
+        x="Mannschaft",
+        y="Punkte",
+        title="Bundesliga: Punkte pro Team mit Liga-Durchschnitt",
+        labels={"Mannschaft": "Team", "Punkte": "Punkte"}
+    )
+
+    # Durchschnittslinie hinzufügen
+    fig.add_hline(
+        y=avg_punkte,
+        line_dash="dash",
+        line_color="red",
+        annotation_text=f"Ø {avg_punkte:.1f}",
+        annotation_position="right"
+    )
+
+    fig.update_layout(xaxis_tickangle=-45)
+    fig
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        **Interpretation:** Teams über der roten Linie performen überdurchschnittlich.
+
+        ---
+
         ## Freie Exploration
 
         Probieren Sie eigene Abfragen! Ideen:
@@ -534,7 +645,7 @@ def _(bundesliga, mo, spieler):
     # Ihre eigene Abfrage hier:
     _df = mo.sql(
         f"""
-        SELECT Position, AVG(Alter) AS Durchschnittsalter
+        SELECT Position, AVG("Alter") AS Durchschnittsalter
         FROM spieler
         GROUP BY Position
         ORDER BY Durchschnittsalter
@@ -547,71 +658,6 @@ def _(bundesliga, mo, spieler):
 def _(mo):
     mo.md(
         r"""
-        ---
-
-        ## Visualisierung: Aggregierte Daten
-
-        GROUP BY-Ergebnisse lassen sich direkt als Balkendiagramm darstellen.
-        Mit einer Referenzlinie (z.B. Durchschnitt) werden Vergleiche einfacher.
-        """
-    )
-    return
-
-
-@app.cell
-def _():
-    import plotly.express as px
-    return (px,)
-
-
-@app.cell
-def _(bundesliga, mo):
-    # Punkte pro Team für Visualisierung
-    team_punkte = mo.sql(
-        f"""
-        SELECT Mannschaft, Punkte
-        FROM bundesliga
-        ORDER BY Punkte DESC
-        """
-    )
-
-    # Durchschnitt berechnen
-    avg_punkte = mo.sql(
-        f"""
-        SELECT AVG(Punkte) AS avg FROM bundesliga
-        """
-    )
-    return avg_punkte, team_punkte
-
-
-@app.cell
-def _(avg_punkte, px, team_punkte):
-    # Bar chart mit Durchschnittslinie
-    fig = px.bar(
-        team_punkte,
-        x="Mannschaft",
-        y="Punkte",
-        title="Punkte pro Team mit Durchschnittslinie"
-    )
-
-    # Durchschnittslinie hinzufügen
-    avg_val = float(avg_punkte.to_pandas()["avg"].iloc[0])
-    fig.add_hline(
-        y=avg_val,
-        line_dash="dash",
-        line_color="orange",
-        annotation_text=f"Avg: {avg_val:.1f}"
-    )
-    fig
-    return avg_val, fig
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        **Interpretation:** Teams über der Linie = überdurchschnittlich
-
         ---
 
         ## Zusammenfassung

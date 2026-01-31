@@ -43,17 +43,29 @@ def _():
 @app.cell(hide_code=True)
 def _(mo, pl):
     # Retail Sales Daten laden
-    csv_path = mo.notebook_location() / "public" / "us_retail_sales.csv"
-    retail_sales = pl.read_csv(str(csv_path))
+    try:
+        csv_path = mo.notebook_location() / "public" / "us_retail_sales.csv"
+        retail_sales = pl.read_csv(str(csv_path))
 
-    # Datentypen anpassen
-    retail_sales = retail_sales.with_columns([
-        pl.col("sales_month").str.to_date("%Y-%m-%d"),
-        pl.col("sales").cast(pl.Float64)
-    ])
-
-    daten_quelle = "U.S. Census Bureau - Monthly Retail Trade Survey (1992-2020)"
-    return csv_path, daten_quelle, retail_sales
+        # Datentypen anpassen
+        retail_sales = retail_sales.with_columns([
+            pl.col("sales_month").str.to_date("%Y-%m-%d"),
+            pl.col("sales").cast(pl.Float64)
+        ])
+        daten_quelle = "U.S. Census Bureau - Monthly Retail Trade Survey (1992-2020)"
+    except Exception:
+        from datetime import date
+        retail_sales = pl.DataFrame({
+            "sales_month": [date(2019, m, 1) for m in range(1, 13)] + [date(2020, m, 1) for m in range(1, 13)],
+            "kind_of_business": ["Jewelry stores"] * 12 + ["Book stores"] * 12,
+            "sales": [2500.0, 2200.0, 2800.0, 2600.0, 2900.0, 3100.0,
+                      2700.0, 2500.0, 2800.0, 3000.0, 3500.0, 5200.0,
+                      1100.0, 1000.0, 1050.0, 1100.0, 1150.0, 900.0,
+                      850.0, 1200.0, 1300.0, 1100.0, 1050.0, 1400.0],
+        })
+        daten_quelle = "Offline-Daten (Fallback)"
+        mo.callout(mo.md("**Hinweis:** CSV konnte nicht geladen werden. Es werden Beispieldaten verwendet."), kind="warn")
+    return daten_quelle, retail_sales
 
 
 @app.cell(hide_code=True)
@@ -296,16 +308,11 @@ def _(mo, retail_sales):
     # Ihre Lösung hier:
     mo.sql(
         f"""
-        SELECT
-            sales_month,
-            sales,
-            LAG(sales, 1) OVER (ORDER BY sales_month) AS prev_month,
-            ROUND((sales * 1.0 / LAG(sales, 1) OVER (ORDER BY sales_month) - 1) * 100, 1)
-                AS pct_change
-        FROM retail_sales
-        WHERE kind_of_business = 'Sporting goods stores'
-        ORDER BY sales_month
-        LIMIT 24
+        -- Ihre Lösung hier
+        -- Tipp: Verwenden Sie LAG(sales, 1) OVER (ORDER BY sales_month)
+        -- Filter: WHERE kind_of_business = 'Sporting goods stores'
+        -- Erwartete Spalten: sales_month, sales, prev_month, pct_change
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
 
@@ -387,17 +394,11 @@ def _(mo, retail_sales):
     # Ihre Lösung hier:
     mo.sql(
         f"""
-        SELECT
-            sales_month,
-            sales,
-            ROUND(AVG(sales) OVER (
-                ORDER BY sales_month
-                ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING
-            ), 0) AS ma_3_centered
-        FROM retail_sales
-        WHERE kind_of_business = 'Book stores'
-        ORDER BY sales_month
-        LIMIT 24
+        -- Ihre Lösung hier
+        -- Tipp: AVG(sales) OVER (ORDER BY sales_month ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING)
+        -- Filter: WHERE kind_of_business = 'Book stores'
+        -- Erwartete Spalten: sales_month, sales, ma_3_centered
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
 
@@ -459,6 +460,30 @@ def _(px, yoy):
     )
     fig_yoy.add_hline(y=0, line_dash="dash", line_color="gray")
     fig_yoy
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    quiz_lag = mo.ui.radio(
+        options={
+            "correct": "LAG(12) vergleicht mit dem gleichen Monat im Vorjahr — das eliminiert Saisonalität",
+            "same": "LAG(12) und LAG(1) geben das gleiche Ergebnis, LAG(12) ist nur schneller",
+            "avg": "LAG(12) berechnet einen 12-Monats-Durchschnitt, LAG(1) einen 1-Monats-Durchschnitt",
+            "usage": "LAG kann nur mit Zeitreihen verwendet werden, nicht mit normalem GROUP BY",
+        },
+        label="**Quiz:** Oktober-Umsatz ist sehr hoch. Ist das ungewöhnlich, oder ist Oktober immer stark? Welche LAG-Verschiebung hilft?"
+    )
+    quiz_lag
+    return (quiz_lag,)
+
+
+@app.cell(hide_code=True)
+def _(quiz_lag, mo):
+    if quiz_lag.value == "correct":
+        mo.output.replace(mo.md("Richtig! LAG(12) vergleicht Oktober 2020 mit Oktober 2019 — so sehen wir, ob der Wert *für diesen Monat* ungewöhnlich ist. LAG(1) würde nur mit September vergleichen, was bei saisonalen Daten irreführend wäre."))
+    elif quiz_lag.value:
+        mo.output.replace(mo.md("Nicht ganz. LAG(n) greift auf den Wert *n Zeilen vorher* zu — bei monatlichen Daten bedeutet LAG(12) den *gleichen Monat im Vorjahr*. So eliminieren wir saisonale Effekte."))
+    return
 
 
 @app.cell(hide_code=True)
@@ -610,17 +635,11 @@ def _(mo, retail_sales):
     # Ihre Lösung hier:
     mo.sql(
         f"""
-        SELECT
-            EXTRACT(YEAR FROM sales_month) AS year,
-            SUM(sales) AS annual_sales,
-            LAG(SUM(sales), 1) OVER (ORDER BY EXTRACT(YEAR FROM sales_month)) AS prev_year,
-            ROUND((SUM(sales) * 1.0 /
-                   LAG(SUM(sales), 1) OVER (ORDER BY EXTRACT(YEAR FROM sales_month)) - 1) * 100, 1)
-                AS yoy_growth
-        FROM retail_sales
-        WHERE kind_of_business = 'Book stores'
-        GROUP BY EXTRACT(YEAR FROM sales_month)
-        ORDER BY year
+        -- Ihre Lösung hier
+        -- Tipp: GROUP BY Jahr, dann LAG(..., 1) OVER (ORDER BY year) für Vorjahresvergleich
+        -- Filter: WHERE kind_of_business = 'Book stores'
+        -- Erwartete Spalten: year, annual_sales, prev_year, yoy_growth
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
 
@@ -644,16 +663,11 @@ def _(mo, retail_sales):
     # Ihre Lösung hier:
     mo.sql(
         f"""
-        SELECT
-            sales_month,
-            kind_of_business,
-            sales,
-            SUM(sales) OVER (PARTITION BY sales_month) AS total_sales,
-            ROUND(sales * 100.0 / SUM(sales) OVER (PARTITION BY sales_month), 2) AS pct_of_total
-        FROM retail_sales
-        WHERE kind_of_business IN ('Jewelry stores', 'Retail and food services sales, total')
-          AND sales_month >= '2018-01-01'
-        ORDER BY sales_month, kind_of_business
+        -- Ihre Lösung hier
+        -- Tipp: SUM(sales) OVER (PARTITION BY sales_month) für den Gesamtumsatz pro Monat
+        -- Dann: sales * 100.0 / SUM(sales) OVER (...) für den Anteil
+        -- Erwartete Spalten: sales_month, kind_of_business, sales, total_sales, pct_of_total
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
 

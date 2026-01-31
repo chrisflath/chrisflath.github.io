@@ -282,6 +282,30 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
+    join_quiz1 = mo.ui.radio(
+        options={
+            "inner": "INNER JOIN",
+            "left": "LEFT JOIN",
+            "right": "RIGHT JOIN",
+            "self": "Self-Join"
+        },
+        label="**Quiz:** Welcher JOIN zeigt auch Spieler, die keinem Verein zugeordnet sind?"
+    )
+    join_quiz1
+    return (join_quiz1,)
+
+
+@app.cell(hide_code=True)
+def _(join_quiz1, mo):
+    if join_quiz1.value == "left":
+        mo.output.replace(mo.md("✅ **Richtig!** LEFT JOIN behaelt alle Zeilen der linken Tabelle (Spieler), auch wenn kein passender Verein existiert. Die Vereinsspalten werden dann mit NULL gefuellt."))
+    elif join_quiz1.value:
+        mo.output.replace(mo.md("❌ Nicht ganz. Wir brauchen einen JOIN, der *alle* Spieler behaelt -- auch die ohne Verein."))
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
         ## RIGHT JOIN: Alle aus der rechten Tabelle
@@ -433,6 +457,30 @@ def _(mo):
         ---
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    join_quiz2 = mo.ui.radio(
+        options={
+            "inner": "INNER JOIN",
+            "left": "LEFT JOIN",
+            "right": "RIGHT JOIN",
+            "self": "Self-Join"
+        },
+        label="**Quiz:** Welchen JOIN-Typ brauchen Sie, um Rueckspiele zu finden (gleiche Tabelle, verschiedene Zeilen)?"
+    )
+    join_quiz2
+    return (join_quiz2,)
+
+
+@app.cell(hide_code=True)
+def _(join_quiz2, mo):
+    if join_quiz2.value == "self":
+        mo.output.replace(mo.md("✅ **Richtig!** Ein Self-Join verknuepft eine Tabelle mit sich selbst. Wir geben der Tabelle zwei verschiedene Aliase (s1 und s2), um Hin- und Rueckspiel zu vergleichen."))
+    elif join_quiz2.value:
+        mo.output.replace(mo.md("❌ Nicht ganz. Wir suchen innerhalb *derselben* Tabelle nach zueinander passenden Zeilen."))
     return
 
 

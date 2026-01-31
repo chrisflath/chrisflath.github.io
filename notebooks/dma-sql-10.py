@@ -33,14 +33,31 @@ def _(mo):
 def _():
     import marimo as mo
     import polars as pl
-    return mo, pl
+    import plotly.express as px
+    return mo, pl, px
 
 
 @app.cell(hide_code=True)
 def _(mo, pl):
     # Bundesliga-Daten laden
-    csv_path = mo.notebook_location() / "public" / "bundesliga.csv"
-    bundesliga = pl.read_csv(str(csv_path))
+    try:
+        csv_path = mo.notebook_location() / "public" / "bundesliga.csv"
+        bundesliga = pl.read_csv(str(csv_path))
+        daten_quelle = "Bundesliga Saison 2024/25"
+    except Exception:
+        bundesliga = pl.DataFrame({
+            "Mannschaft": ["Bayern München", "Bayer Leverkusen", "VfB Stuttgart", "Borussia Dortmund", "RB Leipzig"],
+            "Spiele": [30, 30, 30, 30, 30],
+            "Siege": [22, 20, 16, 15, 14],
+            "Unentschieden": [4, 6, 5, 6, 7],
+            "Niederlagen": [4, 4, 9, 9, 9],
+            "ToreGeschossen": [75, 65, 55, 58, 52],
+            "ToreKassiert": [28, 25, 40, 38, 35],
+            "Tordifferenz": [47, 40, 15, 20, 17],
+            "Punkte": [70, 66, 53, 51, 49],
+        })
+        daten_quelle = "Offline-Daten (Fallback)"
+        mo.callout(mo.md("**Hinweis:** CSV konnte nicht geladen werden. Es werden Beispieldaten verwendet."), kind="warn")
 
     # Zusätzliche Tabellen für Übungen erstellen
     # Pokal-Halbfinalisten (fiktiv)
@@ -55,7 +72,6 @@ def _(mo, pl):
         "saldo": [1000.0, 500.0, 750.0]
     })
 
-    daten_quelle = "Bundesliga Saison 2024/25"
     return bundesliga, daten_quelle, konten, pokal_halbfinale
 
 
@@ -168,10 +184,10 @@ def _(bundesliga, mo):
     # Deine Lösung hier:
     mo.sql(
         f"""
-        SELECT Mannschaft, Punkte
-        FROM bundesliga
-        WHERE Punkte > (SELECT AVG(Punkte) FROM bundesliga)
-        ORDER BY Punkte DESC
+        -- Ihre Lösung hier
+        -- Tipp: Scalar Subquery in WHERE: WHERE Punkte > (SELECT AVG(...) FROM ...)
+        -- Erwartete Spalten: Mannschaft, Punkte
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
 
@@ -281,6 +297,33 @@ def _(bundesliga, mo):
     )
 
 
+@app.cell
+def _(bundesliga, mo, px):
+    _top = mo.sql(
+        f"""
+        WITH mit_quote AS (
+            SELECT
+                Mannschaft,
+                Punkte,
+                ROUND(CAST(Siege AS FLOAT) / Spiele * 100, 1) AS Siegquote
+            FROM bundesliga
+            WHERE Punkte > 30
+        )
+        SELECT * FROM mit_quote ORDER BY Siegquote DESC
+        """
+    )
+    px.bar(
+        _top.to_pandas(),
+        x="Mannschaft",
+        y="Siegquote",
+        color="Punkte",
+        title="Siegquote der Top-Teams (berechnet via CTE)",
+        labels={"Siegquote": "Siegquote (%)", "Mannschaft": ""},
+        color_continuous_scale="Blues",
+    )
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
@@ -360,11 +403,11 @@ def _(bundesliga, mo):
     # Deine Lösung hier:
     mo.sql(
         f"""
-        CREATE OR REPLACE VIEW abstiegskandidaten AS
-        SELECT Mannschaft, Punkte, Tordifferenz
-        FROM bundesliga
-        ORDER BY Punkte ASC, Tordifferenz ASC
-        LIMIT 6
+        -- Ihre Lösung hier
+        -- Tipp: CREATE OR REPLACE VIEW name AS SELECT ...
+        -- Sortieren nach Punkte ASC und LIMIT 6
+        -- Erwartete Spalten im View: Mannschaft, Punkte, Tordifferenz
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
 
@@ -407,6 +450,30 @@ def _(mo):
         | **D**urability | Bestätigte Änderungen sind permanent |
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    acid_quiz = mo.ui.radio(
+        options={
+            "atomic": "Alles oder nichts — entweder alle Operationen oder keine",
+            "isolation": "Gleichzeitiger Zugriff ist möglich",
+            "durability": "Daten werden dauerhaft gespeichert",
+            "consistency": "Daten bleiben konsistent"
+        },
+        label="**Quiz:** Was garantiert die **Atomarität** (Atomicity) einer Transaktion?"
+    )
+    acid_quiz
+    return (acid_quiz,)
+
+
+@app.cell(hide_code=True)
+def _(acid_quiz, mo):
+    if acid_quiz.value == "atomic":
+        mo.output.replace(mo.md("✅ **Richtig!** Atomarität bedeutet: Eine Transaktion wird entweder *komplett* oder *gar nicht* ausgeführt. Wenn ein Schritt fehlschlägt, werden alle bisherigen Änderungen rückgängig gemacht (ROLLBACK)."))
+    elif acid_quiz.value:
+        mo.output.replace(mo.md("❌ Nicht ganz. Das beschreibt eine andere ACID-Eigenschaft. Atomarität kommt von 'unteilbar' — denken Sie an alles oder nichts."))
     return
 
 

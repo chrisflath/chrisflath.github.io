@@ -49,11 +49,54 @@ def _():
 @app.cell(hide_code=True)
 def _(mo, pl):
     # --- Alle drei Datensätze laden ---
-    base = mo.notebook_location() / "public"
+    _warn = ""
+    try:
+        base = mo.notebook_location() / "public"
+        produktbewertungen = pl.read_csv(str(base / "produktbewertungen.csv"))
+        mcdonalds_reviews = pl.read_csv(str(base / "mcdonalds_reviews.csv"))
+        ufo_sightings = pl.read_csv(str(base / "ufo_sightings.csv"))
+    except Exception:
+        produktbewertungen = pl.DataFrame({
+            "id": [1, 2, 3, 4, 5],
+            "kategorie": ["Elektronik", "Elektronik", "Küche", "Küche", "Sport"],
+            "sterne": [5, 2, 4, 1, 3],
+            "bewertung_text": [
+                "Tolles Produkt, super Qualität!",
+                "Leider  kaputt nach 2 Wochen.",
+                " Sehr gutes Messer, hochwertig ",
+                "Totaler Schrott!!",
+                "Ganz okay für den Preis."
+            ],
+        })
+        mcdonalds_reviews = pl.DataFrame({
+            "review_id": [1, 2, 3, 4, 5],
+            "rating": [1, 5, 2, 4, 3],
+            "store_name": ["Drive-Thru", "Airport", "Drive-Thru", "City", "City"],
+            "review_text": [
+                "Terrible food, cold fries and rude staff",
+                "Great burger, fast and friendly service!",
+                "Slow service, had to wait 20 minutes",
+                "Clean restaurant, good value for the price",
+                "Average food, nothing special"
+            ],
+        })
+        ufo_sightings = pl.DataFrame({
+            "datetime": ["2019-06-15", "2020-07-04", "2018-03-22", "2019-12-01", "2020-07-04"],
+            "state": ["CA", "TX", "NY", "FL", "AZ"],
+            "shape": ["light", "fireball", "triangle", "circle", "light"],
+            "duration_text": ["5 minutes", "about 30 seconds", "2 hours", "~10 min", "3 minutes"],
+            "description": [
+                "Bright white light hovering in the sky then disappeared",
+                "Orange fireball moving fast across the sky on July 4th",
+                "Large red triangle shaped object flying in zigzag pattern",
+                "Green circle stationary for 2 hours then vanished",
+                "Two blue lights moving erratic changed direction suddenly"
+            ],
+        })
+        _warn = "warn"
 
-    produktbewertungen = pl.read_csv(str(base / "produktbewertungen.csv"))
-    mcdonalds_reviews = pl.read_csv(str(base / "mcdonalds_reviews.csv"))
-    ufo_sightings = pl.read_csv(str(base / "ufo_sightings.csv"))
+    if _warn:
+        mo.callout(mo.md("**Hinweis:** CSVs konnten nicht geladen werden. Es werden Beispieldaten verwendet."), kind="warn")
 
     mo.md(
         f"""
@@ -62,7 +105,7 @@ def _(mo, pl):
         {len(ufo_sightings)} UFO Sightings
         """
     )
-    return base, mcdonalds_reviews, produktbewertungen, ufo_sightings
+    return mcdonalds_reviews, produktbewertungen, ufo_sightings
 
 
 # =============================================================================
@@ -272,6 +315,30 @@ def _(mo, produktbewertungen):
            OR LOWER(bewertung_text) LIKE '%hochwertig%'
         """
     )
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    quiz_like_regex = mo.ui.radio(
+        options={
+            "correct": "LIKE eignet sich für 1-2 Muster; bei vielen Alternativen ist REGEXP sauberer",
+            "equivalent": "LIKE und REGEXP geben immer das gleiche Ergebnis — persönliche Vorliebe",
+            "always_regex": "REGEXP sollte immer verwendet werden, LIKE ist veraltet",
+            "language": "LIKE funktioniert nur auf Englisch, Deutsch braucht REGEXP",
+        },
+        label="**Quiz:** Wann ist `regexp_matches(text, 'food|burger|fries')` besser als viele `LIKE`-Bedingungen?"
+    )
+    quiz_like_regex
+    return (quiz_like_regex,)
+
+
+@app.cell(hide_code=True)
+def _(quiz_like_regex, mo):
+    if quiz_like_regex.value == "correct":
+        mo.output.replace(mo.md("Richtig! Bei 1-2 Mustern ist LIKE schneller zu lesen. Ab 3+ Alternativen wird REGEXP mit `|` (Oder) deutlich kompakter und weniger fehleranfällig als viele `OR LIKE`-Klauseln."))
+    elif quiz_like_regex.value:
+        mo.output.replace(mo.md("Nicht ganz. LIKE ist einfacher für einzelne Muster (`%food%`), aber bei vielen Alternativen braucht man viele OR-Klauseln. REGEXP kann mit `food|burger|fries` alle in einem Ausdruck prüfen."))
+    return
 
 
 # =============================================================================
@@ -599,7 +666,18 @@ def _(mo, ufo_sightings):
     # Ihre Lösung: Wörter ohne Stoppwörter, Top 30
     mo.sql(
         f"""
-        SELECT 'Filtern Sie die Stoppwörter heraus — was sind die häufigsten inhaltlichen Wörter?' AS hinweis
+        -- Stoppwörter sind bereits definiert:
+        WITH stoppwoerter AS (
+            SELECT UNNEST(['the','a','an','and','or','to','in','of','it','is',
+                           'was','for','on','that','with','as','at','by','from',
+                           'this','i','we','no','me','so','very','about','had',
+                           'were','but','not','then','be']) AS wort
+        )
+        -- Ihre Aufgabe: Tokenisieren + Filtern
+        -- Tipp: UNNEST(regexp_split_to_array(LOWER(TRIM(description)), '\s+')) AS word
+        --       WHERE word NOT IN (SELECT wort FROM stoppwoerter)
+        --       GROUP BY word ORDER BY COUNT(*) DESC LIMIT 30
+        SELECT 'Ergänzen Sie die Abfrage oben' AS hinweis
         """
     )
 
@@ -725,7 +803,19 @@ def _(mcdonalds_reviews, mo):
     # Ihre Lösung: Wörter nach Rating
     mo.sql(
         f"""
-        SELECT 'Vergleichen Sie positive vs. negative Wörter' AS hinweis
+        -- Schritt 1 (gegeben): Rating-Tiers bilden
+        WITH bewertungen_mit_tier AS (
+            SELECT *,
+                CASE WHEN rating >= 4 THEN 'positiv'
+                     WHEN rating <= 2 THEN 'negativ'
+                     ELSE 'neutral' END AS tier
+            FROM mcdonalds_reviews
+        )
+        -- Schritt 2 (Ihre Aufgabe): Tokenisieren und Wörter pro Tier zählen
+        -- Tipp: UNNEST(regexp_split_to_array(LOWER(review_text), '\s+')) AS word
+        --       GROUP BY tier, word
+        --       Dann: Vergleichen Sie die häufigsten Wörter pro Tier
+        SELECT 'Ergänzen Sie: UNNEST + GROUP BY tier, word' AS hinweis
         """
     )
 
@@ -753,7 +843,21 @@ def _(mcdonalds_reviews, mo):
     # Ihre Lösung: Sentiment-Score
     mo.sql(
         f"""
-        SELECT 'Berechnen Sie den Sentiment-Score und vergleichen Sie mit dem Rating' AS hinweis
+        -- Wortlisten für einfache Sentiment-Analyse:
+        WITH sentiment_woerter AS (
+            SELECT 'positiv' AS typ,
+                   UNNEST(['great','good','excellent','best','love',
+                           'clean','fast','friendly','fresh','amazing']) AS wort
+            UNION ALL
+            SELECT 'negativ' AS typ,
+                   UNNEST(['bad','worst','terrible','slow','rude',
+                           'dirty','cold','wrong','horrible','disgusting']) AS wort
+        )
+        -- Ihre Aufgabe: Zählen Sie positive und negative Wörter pro Review
+        -- Tipp: JOIN über LIKE ('%' || wort || '%') oder einzelne CASE WHEN Spalten
+        --       Dann: SUM(positive) - SUM(negative) AS sentiment_score
+        --       Vergleichen Sie mit dem tatsächlichen Rating
+        SELECT 'Ergänzen Sie: JOIN + GROUP BY + SUM(CASE WHEN ...)' AS hinweis
         """
     )
 

@@ -98,12 +98,22 @@ def _(mo):
 
 
 @app.cell(hide_code=True)
-def _():
+def _(mo):
     import polars as pl
 
-    # Echte Shipman-Daten von der Website laden
-    url = "https://chrisflath.github.io/notebooks/public/todesfaelle.csv"
-    todesfaelle = pl.read_csv(url)
+    try:
+        # Echte Shipman-Daten von der Website laden
+        url = "https://chrisflath.github.io/notebooks/public/todesfaelle.csv"
+        todesfaelle = pl.read_csv(url)
+    except Exception:
+        todesfaelle = pl.DataFrame({
+            "Arzt": ["Shipman", "Shipman", "Shipman", "Referenz", "Referenz"],
+            "Geschlecht": ["W", "W", "M", "W", "M"],
+            "Alter": [76, 82, 71, 85, 79],
+            "Todesstunde": [14, 15, 13, 3, 22],
+        })
+        mo.callout(mo.md("**Hinweis:** Todesfälle-Daten konnten nicht geladen werden. Es werden Beispieldaten verwendet."), kind="warn")
+
     return pl, todesfaelle
 
 
@@ -225,13 +235,10 @@ def _(mo, todesfaelle):
     # Deine Lösung hier:
     _df = mo.sql(
         f"""
-        SELECT
-            Arzt,
-            ROUND(AVG("Alter"), 1) AS Durchschnittsalter,
-            MIN("Alter") AS Jüngster,
-            MAX("Alter") AS Ältester
-        FROM todesfaelle
-        GROUP BY Arzt
+        -- Ihre Lösung hier
+        -- Tipp: AVG(), MIN(), MAX() mit GROUP BY Arzt
+        -- Erwartete Spalten: Arzt, Durchschnittsalter, Jüngster, Ältester
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
     return
@@ -565,15 +572,12 @@ def _(mo, rechnungen_verdächtig):
     # Deine Lösung hier:
     _df = mo.sql(
         f"""
-        SELECT
-            CAST(SUBSTR(CAST(CAST(betrag AS INT) AS TEXT), 1, 1) AS INT)
-                AS erste_ziffer,
-            COUNT(*) AS anzahl,
-            ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM rechnungen_verdächtig WHERE betrag >= 10), 1) AS prozent
-        FROM rechnungen_verdächtig
-        WHERE betrag >= 10
-        GROUP BY erste_ziffer
-        ORDER BY erste_ziffer
+        -- Ihre Lösung hier
+        -- Tipp: Wie in 2.3, aber für rechnungen_verdächtig
+        -- 1. Erste Ziffer: CAST(SUBSTR(CAST(CAST(betrag AS INT) AS TEXT), 1, 1) AS INT)
+        -- 2. Prozentanteil: COUNT(*) * 100.0 / (SELECT COUNT(*) ...)
+        -- Erwartete Spalten: erste_ziffer, anzahl, prozent
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
     return
@@ -674,11 +678,11 @@ def _(mo):
 
 
 @app.cell
-def _(deaths, mo, rechnungen):
+def _(mo, rechnungen, todesfaelle):
     # Eigene Analyse hier:
     _df = mo.sql(
         f"""
-        SELECT * FROM deaths LIMIT 5
+        SELECT * FROM todesfaelle LIMIT 5
         """
     )
     return

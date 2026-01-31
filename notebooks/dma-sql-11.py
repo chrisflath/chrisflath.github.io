@@ -312,22 +312,12 @@ def _(gehaltsdaten, mo):
     # Ihre Lösung hier:
     alter_ausreisser = mo.sql(
         f"""
-        WITH quartile AS (
-            SELECT
-                PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY alter) AS q1,
-                PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY alter) AS q3
-            FROM gehaltsdaten
-        ),
-        grenzen AS (
-            SELECT
-                q1 - 1.5 * (q3 - q1) AS untere_grenze,
-                q3 + 1.5 * (q3 - q1) AS obere_grenze
-            FROM quartile
-        )
-        SELECT g.mitarbeiter_id, g.name, g.alter, gr.obere_grenze
-        FROM gehaltsdaten g, grenzen gr
-        WHERE g.alter < gr.untere_grenze
-           OR g.alter > gr.obere_grenze
+        -- Ihre Lösung hier
+        -- Tipp: Gleiche CTE-Struktur wie bei Aufgabe 11.5 (Gehalt), aber für 'alter'
+        -- 1. WITH quartile AS (SELECT Q1, Q3 FROM gehaltsdaten)
+        -- 2. grenzen AS (SELECT q1 - 1.5*IQR, q3 + 1.5*IQR)
+        -- 3. SELECT WHERE alter < untere_grenze OR alter > obere_grenze
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
     return (alter_ausreisser,)
@@ -466,6 +456,30 @@ def _(clean_data, px):
 
 @app.cell(hide_code=True)
 def _(mo):
+    quiz_window = mo.ui.radio(
+        options={
+            "correct": "GROUP BY reduziert Zeilen (eine pro Gruppe), Window Functions behalten alle Zeilen",
+            "reversed": "Window Functions reduzieren Zeilen, GROUP BY behält alle Zeilen",
+            "speed": "GROUP BY ist schneller, Window Functions sind langsamer — sonst gleich",
+            "syntax": "GROUP BY braucht SELECT, Window Functions brauchen nur OVER()",
+        },
+        label="**Quiz:** Was ist der Hauptunterschied zwischen GROUP BY und Window Functions?"
+    )
+    quiz_window
+    return (quiz_window,)
+
+
+@app.cell(hide_code=True)
+def _(quiz_window, mo):
+    if quiz_window.value == "correct":
+        mo.output.replace(mo.md("Richtig! GROUP BY fasst viele Zeilen zu einer zusammen (z.B. eine Zeile pro Mannschaft). Window Functions berechnen Aggregate, aber **jede Originalzeile bleibt erhalten** — Sie bekommen die Aggregation *neben* den Originaldaten."))
+    elif quiz_window.value:
+        mo.output.replace(mo.md("Nicht ganz. Der entscheidende Unterschied: GROUP BY *komprimiert* Zeilen (viele → eine pro Gruppe). Window Functions mit OVER() berechnen dasselbe, aber **behalten alle Originalzeilen** bei."))
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
         ---
@@ -519,20 +533,12 @@ def _(gehaltsdaten, mo):
     # Ihre Lösung hier:
     mo.sql(
         f"""
-        SELECT
-            CASE
-                WHEN alter < 30 THEN '1: unter 30'
-                WHEN alter < 40 THEN '2: 30-39'
-                WHEN alter < 50 THEN '3: 40-49'
-                ELSE '4: 50+'
-            END AS altersgruppe,
-            COUNT(*) AS anzahl,
-            ROUND(AVG(gehalt), 0) AS durchschnitt_gehalt
-        FROM gehaltsdaten
-        WHERE alter < 100  -- Ausreißer ausschließen
-          AND gehalt < 200000  -- CEO ausschließen
-        GROUP BY altersgruppe
-        ORDER BY altersgruppe
+        -- Ihre Lösung hier
+        -- Tipp: CASE WHEN alter < 30 THEN '1: unter 30' ... END AS altersgruppe
+        -- GROUP BY altersgruppe, dann AVG(gehalt) berechnen
+        -- Ausreißer ausschließen: WHERE alter < 100 AND gehalt < 200000
+        -- Erwartete Spalten: altersgruppe, anzahl, durchschnitt_gehalt
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
 

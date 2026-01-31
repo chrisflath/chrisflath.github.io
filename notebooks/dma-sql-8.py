@@ -14,6 +14,13 @@ def _():
 
 
 @app.cell(hide_code=True)
+def _():
+    import pandas as pd
+    import plotly.express as px
+    return pd, px
+
+
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
@@ -452,6 +459,43 @@ def _(mo):
         | Best_Position_2NF | Bestellpositionen | (Best_Nr, Produkt) |
 
         **Keine Redundanz mehr!** Jede Information steht genau einmal.
+
+        Wie viel Redundanz haben wir bei jedem Schritt eliminiert?
+        """
+    )
+    return
+
+
+@app.cell
+def _(pd, px):
+    # Berechnung: Redundante Datenzellen pro Normalform-Schritt
+    # Unnormalisiert: 6 Zeilen × 6 Spalten = 36 Zellen, davon viele redundant
+    # 2NF: Bestellung(4×3=12) + Produkt(3×2=6) + Position(6×3=18) = 36 Zellen
+    # 3NF: Kunde(3×2=6) + Bestellung(4×2=8) + Produkt(3×2=6) + Position(6×3=18) = 38 Zellen
+    # Aber: Redundanz sinkt! Redundante Fakten = Gesamteinträge - eindeutige Fakten
+    _schritte = pd.DataFrame({
+        "Normalform": ["Unnormalisiert", "2NF (3 Tabellen)", "3NF (4 Tabellen)"],
+        "Redundante_Einträge": [12, 3, 0],  # Redundante Wiederholungen von Fakten
+        "Eindeutige_Fakten": [24, 33, 38],  # Tatsächlich verschiedene Informationen
+    })
+    px.bar(
+        _schritte,
+        x="Normalform",
+        y="Redundante_Einträge",
+        title="Redundanz-Reduktion durch Normalisierung",
+        labels={"Redundante_Einträge": "Redundante Wiederholungen", "Normalform": ""},
+        color_discrete_sequence=["#E87722"],
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        In der unnormalisierten Tabelle werden Kundenname/-stadt (3 Kunden × je 2 Einträge
+        redundant) und Produktname/-preis (3 Produkte × je 1-2 Einträge redundant) mehrfach
+        gespeichert. Schritt für Schritt verschwinden diese Wiederholungen.
         """
     )
     return
@@ -543,8 +587,78 @@ def _(mo, quiz2):
 
 @app.cell(hide_code=True)
 def _(mo):
+    quiz3 = mo.ui.radio(
+        options={
+            "1nf": "Verletzt 1NF (nicht atomare Werte)",
+            "2nf": "Verletzt 2NF (partielle Abhängigkeit)",
+            "3nf": "Verletzt 3NF (transitive Abhängigkeit)",
+            "ok": "Ist in 3NF (keine Verletzung)"
+        },
+        label="**Frage 3:** Kurs(KursNr, Titel, DozentName, DozentBüro) mit KursNr → Titel, KursNr → DozentName, DozentName → DozentBüro"
+    )
+    quiz3
+    return (quiz3,)
+
+
+@app.cell(hide_code=True)
+def _(mo, quiz3):
+    if quiz3.value == "3nf":
+        mo.output.replace(mo.md("✅ **Richtig!** KursNr → DozentName → DozentBüro ist eine transitive Abhängigkeit. DozentBüro hängt über DozentName indirekt vom Schlüssel ab. Lösung: Dozent in eigene Tabelle auslagern."))
+    elif quiz3.value:
+        mo.output.replace(mo.md("❌ Nicht ganz. Schauen Sie auf die Kette: KursNr → DozentName → DozentBüro. Das DozentBüro hängt nicht direkt vom Schlüssel ab."))
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
+        ---
+
+        ## Aufgabe 8.5: Verlustfreie Zerlegung überprüfen
+
+        Eine wichtige Eigenschaft der Normalisierung: Die Zerlegung muss **verlustfrei**
+        sein -- der JOIN aller Teiltabellen muss exakt die Originaldaten reproduzieren.
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo):
+    _df = mo.sql(
+        f"""
+        -- Original-Daten
+        SELECT COUNT(*) AS Original_Zeilen FROM Bestellung_Unnorm
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo):
+    _df = mo.sql(
+        f"""
+        -- Rekonstruktion durch JOIN der 3NF-Tabellen
+        SELECT COUNT(*) AS Rekonstruierte_Zeilen
+        FROM Bestellung_3NF b
+        JOIN Kunde_3NF k ON b.Kunde = k.Kunde
+        JOIN Best_Position_2NF bp ON b.Best_Nr = bp.Best_Nr
+        JOIN Produkt_2NF p ON bp.Produkt = p.Produkt
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        **Beide Zählungen sind identisch!** Das beweist: Unsere Normalisierung war
+        **verlustfrei** -- keine Information ging beim Aufteilen verloren.
+
+        Das ist die Grundregel: Normalisierung darf niemals Daten verlieren.
+
         ---
 
         ## Freie Exploration
@@ -565,8 +679,8 @@ def _(mo):
     # Ihre Abfrage hier:
     _df = mo.sql(
         f"""
-        -- Beispiel: Zeige alle Tabellen
-        SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;
+        -- Beispiel: Zeige alle Tabellen (DuckDB)
+        SHOW TABLES;
         """
     )
     return

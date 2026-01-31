@@ -48,6 +48,7 @@ def _(mo):
 @app.cell
 def _():
     import pandas as pd
+    import plotly.express as px
 
     # Die "schlechte" Mega-Tabelle mit Redundanzen
     spieler_schlecht = pd.DataFrame({
@@ -73,7 +74,7 @@ def _():
                           1895, 1895]
     })
     spieler_schlecht
-    return pd, spieler_schlecht
+    return pd, px, spieler_schlecht
 
 
 @app.cell(hide_code=True)
@@ -105,6 +106,39 @@ def _(mo, spieler_schlecht):
         GROUP BY Verein, Vereinsort, Stadion
         ORDER BY Anzahl_Wiederholungen DESC
         """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        **Sichtbar gemacht:** Das folgende Diagramm zeigt, wie oft jede Vereinsinformation
+        in der Mega-Tabelle wiederholt wird. Jede Wiederholung über 1 ist reine Redundanz.
+        """
+    )
+    return
+
+
+@app.cell
+def _(pd, px, spieler_schlecht):
+    _redundanz = (
+        spieler_schlecht
+        .groupby("Verein")
+        .size()
+        .reset_index(name="Anzahl_Einträge")
+        .sort_values("Anzahl_Einträge", ascending=True)
+    )
+    px.bar(
+        _redundanz,
+        x="Anzahl_Einträge",
+        y="Verein",
+        color="Verein",
+        orientation="h",
+        title="Wie oft wird jeder Verein in der Mega-Tabelle gespeichert?",
+        labels={"Anzahl_Einträge": "Anzahl Wiederholungen", "Verein": ""},
+        color_discrete_sequence=["#003560", "#E87722", "#5B9BD5"],
     )
     return
 
@@ -268,7 +302,39 @@ def _(mo):
         r"""
         **Löschanomalie:** Beim Löschen von Daten gehen ungewollt
         **andere Informationen** verloren, die wir eigentlich behalten wollten.
+        """
+    )
+    return
 
+
+@app.cell(hide_code=True)
+def _(mo):
+    quiz_anomalie = mo.ui.radio(
+        options={
+            "correct": "Löschanomalie — Vereinsinformationen gingen verloren",
+            "aenderung": "Änderungsanomalie — ein Verein ist nicht kohärent aktualisiert",
+            "einfuege": "Einfügeanomalie — wir konnten nicht alle Infos auf einmal speichern",
+            "normal": "Normalisierungsanomalie — die Tabelle ist nicht in 3NF",
+        },
+        label="**Quiz:** Wir haben alle Leverkusen-Spieler gelöscht. Jetzt wissen wir nicht mehr, wo Leverkusen liegt oder wie das Stadion heißt. Welche Anomalie ist das?"
+    )
+    quiz_anomalie
+    return (quiz_anomalie,)
+
+
+@app.cell(hide_code=True)
+def _(quiz_anomalie, mo):
+    if quiz_anomalie.value == "correct":
+        mo.output.replace(mo.md("Richtig! Das ist die **Löschanomalie**: Beim Löschen von Spielerdaten gehen ungewollt auch die Vereinsinformationen verloren, weil beides in derselben Tabelle gespeichert ist."))
+    elif quiz_anomalie.value:
+        mo.output.replace(mo.md("Nicht ganz. Beim **Löschen** von Daten gehen *andere* Informationen verloren — das ist die Löschanomalie. Tipp: Der Name der Anomalie beschreibt die Aktion, die das Problem verursacht."))
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
         ---
 
         ## Pause: Zeit für Reflexion
@@ -369,6 +435,44 @@ def _(mo):
     mo.md(
         r"""
         **Perfekt!** Keine Redundanz mehr -- jeder Verein existiert genau einmal.
+
+        Vergleichen wir die beiden Designs quantitativ:
+        """
+    )
+    return
+
+
+@app.cell
+def _(pd, px):
+    _vergleich = pd.DataFrame({
+        "Design": ["Mega-Tabelle", "Mega-Tabelle", "Normalisiert", "Normalisiert"],
+        "Kategorie": ["Gespeicherte Zeilen", "Eindeutige Fakten",
+                       "Gespeicherte Zeilen", "Eindeutige Fakten"],
+        "Anzahl": [10, 3, 13, 13]  # Mega: 10 Zeilen, 3 Vereine; Normal: 3+10=13, alle eindeutig
+    })
+    px.bar(
+        _vergleich,
+        x="Design",
+        y="Anzahl",
+        color="Kategorie",
+        barmode="group",
+        title="Mega-Tabelle vs. normalisiertes Design",
+        labels={"Anzahl": "Anzahl", "Design": ""},
+        color_discrete_map={
+            "Gespeicherte Zeilen": "#003560",
+            "Eindeutige Fakten": "#E87722"
+        },
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        In der Mega-Tabelle werden 10 Zeilen gespeichert, aber nur 3 Vereins-Fakten sind
+        tatsächlich verschieden. Im normalisierten Design entspricht jede Zeile einem
+        eindeutigen Fakt -- keine verschwendete Redundanz.
 
         ---
 

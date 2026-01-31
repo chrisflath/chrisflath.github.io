@@ -14,6 +14,13 @@ def _():
 
 
 @app.cell(hide_code=True)
+def _():
+    import pandas as pd
+    import plotly.express as px
+    return pd, px
+
+
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
@@ -136,10 +143,10 @@ def _(mo):
 
 @app.cell
 def _(mo):
-    # Aufgabe: Ergänzen Sie den Fremdschlüssel!
+    # Aufgabe: Fremdschlüssel verstehen
     _df = mo.sql(
         f"""
-        -- TODO: Ergänzen Sie Verein_ID als Fremdschlüssel
+        -- Spieler-Tabelle mit Fremdschlüssel zu Verein
         CREATE TABLE IF NOT EXISTS Spieler (
             ID INTEGER PRIMARY KEY,
             Name VARCHAR(100) NOT NULL,
@@ -159,6 +166,30 @@ def _(mo):
         JOIN Verein v ON s.Verein_ID = v.ID;
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    quiz_fk = mo.ui.radio(
+        options={
+            "correct": "Auf der N-Seite (Spieler) — jeder Spieler verweist auf seinen Verein",
+            "parent": "Auf der 1-Seite (Verein) — der Verein verweist auf seine Spieler",
+            "both": "In beiden Tabellen — eine Referenz in jede Richtung",
+            "join": "In einer separaten Join-Tabelle",
+        },
+        label="**Quiz:** Bei einer 1:N-Beziehung (Verein → Spieler) — auf welcher Seite steht der Fremdschlüssel?"
+    )
+    quiz_fk
+    return (quiz_fk,)
+
+
+@app.cell(hide_code=True)
+def _(quiz_fk, mo):
+    if quiz_fk.value == "correct":
+        mo.output.replace(mo.md("Richtig! Der Fremdschlüssel steht immer auf der **N-Seite**. Jeder Spieler gehört zu *einem* Verein, also speichert die Spieler-Tabelle die `Verein_ID`. Der Verein selbst muss nicht wissen, welche Spieler er hat — das ergibt sich durch den JOIN."))
+    elif quiz_fk.value:
+        mo.output.replace(mo.md("Nicht ganz. Überlegen Sie: Kann ein Verein auf *alle* seine Spieler verweisen? Das wäre eine variable Anzahl! Stattdessen verweist jeder **einzelne Spieler** auf seinen (einen) Verein — der FK steht auf der N-Seite."))
     return
 
 
@@ -489,6 +520,51 @@ def _(mo):
         r"""
         ---
 
+        ### Analyse: Umsatz pro Kategorie
+
+        Jetzt sehen wir den Vorteil der normalisierten Struktur: Analysen über
+        mehrere Tabellen hinweg.
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, px):
+    _umsatz = mo.sql(
+        f"""
+        SELECT
+            k.Name AS Kategorie,
+            SUM(p.Preis * bp.Menge) AS Umsatz
+        FROM Bestellposition bp
+        JOIN Produkt p ON bp.Produkt_ID = p.ID
+        JOIN Kategorie k ON p.Kategorie_ID = k.ID
+        GROUP BY k.Name
+        ORDER BY Umsatz DESC
+        """
+    )
+    px.bar(
+        _umsatz.to_pandas(),
+        x="Kategorie",
+        y="Umsatz",
+        color="Kategorie",
+        title="Umsatz pro Produktkategorie",
+        labels={"Umsatz": "Umsatz (€)", "Kategorie": ""},
+        color_discrete_sequence=["#003560", "#E87722", "#5B9BD5"],
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        Diese Analyse wäre mit einer einzigen flachen Tabelle *möglich* gewesen --
+        aber anfällig für Inkonsistenzen. Das normalisierte Schema garantiert, dass
+        jeder Preis und jede Kategorie genau einmal definiert ist.
+
+        ---
+
         ## Aufgabe 7.4: Referentielle Integrität
 
         Was passiert, wenn wir versuchen, einen referenzierten Datensatz zu löschen?
@@ -505,7 +581,7 @@ def _(mo):
         -- Versuch: Kategorie löschen, die noch Produkte hat
         -- Dies würde normalerweise einen Fehler verursachen!
 
-        -- In SQLite: PRAGMA foreign_keys = ON; aktiviert FK-Prüfung
+        -- DuckDB prüft Foreign Keys automatisch
 
         -- Zeige Produkte in Kategorie 'Elektronik':
         SELECT p.Name, k.Name AS Kategorie
@@ -539,6 +615,45 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
+        ---
+
+        ## Aufgabe 7.5: Fremdschlüssel als Schutzwall
+
+        Versuchen Sie, einen Spieler mit einem nicht existierenden Verein einzufügen.
+        Was passiert?
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo):
+    _df = mo.sql(
+        f"""
+        -- Versuch: Spieler mit Verein_ID 999 einfügen (existiert nicht!)
+        -- In einer Datenbank mit erzwungenen FK-Constraints würde das scheitern:
+        --   INSERT INTO Spieler VALUES (99, 'Test', 'Sturm', 999);
+        --   → ERROR: Foreign key constraint violated
+
+        -- Zeigen wir die existierenden Vereine:
+        SELECT ID, Name FROM Verein;
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        **Erkenntnis:** Der Fremdschlüssel-Constraint verhindert, dass wir auf
+        nicht existierende Datensätze verweisen. Das schützt die **referentielle
+        Integrität** -- jeder Verweis zeigt auf einen echten Datensatz.
+
+        Ohne diesen Schutz könnten Spieler zu "Geistervereinen" gehören!
+
+        ---
+
         ## Freie Exploration
 
         Probieren Sie eigene Abfragen auf den erstellten Tabellen!
@@ -546,8 +661,33 @@ def _(mo):
         **Ideen:**
         - Welcher Kunde hat die meisten Bestellungen?
         - Welches Produkt wurde am häufigsten bestellt?
-        - Wie viel Umsatz pro Kategorie?
+        - Wie hoch ist der Gesamtumsatz?
         """
+    )
+    return
+
+
+@app.cell
+def _(mo, px):
+    _bestellungen_pro_kunde = mo.sql(
+        f"""
+        SELECT
+            k.Name AS Kunde,
+            COUNT(b.ID) AS Bestellungen
+        FROM Kunde k
+        LEFT JOIN Bestellung b ON k.ID = b.Kunde_ID
+        GROUP BY k.Name
+        ORDER BY Bestellungen DESC
+        """
+    )
+    px.bar(
+        _bestellungen_pro_kunde.to_pandas(),
+        x="Kunde",
+        y="Bestellungen",
+        color="Kunde",
+        title="Bestellungen pro Kunde (LEFT JOIN zeigt auch Kunden ohne Bestellung)",
+        labels={"Bestellungen": "Anzahl Bestellungen", "Kunde": ""},
+        color_discrete_sequence=["#003560", "#E87722"],
     )
     return
 
@@ -557,15 +697,14 @@ def _(mo):
     # Ihre Abfrage hier:
     _df = mo.sql(
         f"""
-        -- Beispiel: Umsatz pro Kategorie
+        -- Beispiel: Welches Produkt wurde am häufigsten bestellt?
         SELECT
-            k.Name AS Kategorie,
-            SUM(p.Preis * bp.Menge) AS Umsatz
+            p.Name AS Produkt,
+            SUM(bp.Menge) AS Gesamtmenge
         FROM Bestellposition bp
         JOIN Produkt p ON bp.Produkt_ID = p.ID
-        JOIN Kategorie k ON p.Kategorie_ID = k.ID
-        GROUP BY k.Name
-        ORDER BY Umsatz DESC;
+        GROUP BY p.Name
+        ORDER BY Gesamtmenge DESC;
         """
     )
     return

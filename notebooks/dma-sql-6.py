@@ -231,6 +231,57 @@ def _(mo, quiz5):
 
 @app.cell(hide_code=True)
 def _(mo):
+    # Quiz 6
+    quiz6 = mo.ui.radio(
+        options={
+            "attribut": "Attribut (Eigenschaft einer Entität)",
+            "entitaet": "Entität (eigenständiges Objekt)",
+            "beziehung": "Beziehung (Verbindung zwischen Entitäten)"
+        },
+        label="**Frage 6:** Ist 'Raumnummer' in einem Universitätssystem ein Attribut oder eine Entität?"
+    )
+    quiz6
+    return (quiz6,)
+
+
+@app.cell(hide_code=True)
+def _(mo, quiz6):
+    if quiz6.value == "attribut":
+        mo.output.replace(mo.md("✅ **Richtig!** Raumnummer ist typischerweise ein Attribut von z.B. einer Veranstaltung. *Aber:* Wenn Räume eigene Eigenschaften haben (Kapazität, Gebäude, Beamer), könnte 'Raum' auch eine eigene Entität sein!"))
+    elif quiz6.value == "entitaet":
+        mo.output.replace(mo.md("⚠️ **Möglich!** Wenn Räume eigene Eigenschaften haben (Kapazität, Ausstattung), kann 'Raum' eine Entität sein. Die einfache 'Raumnummer' allein ist aber eher ein Attribut."))
+    elif quiz6.value:
+        mo.output.replace(mo.md("❌ Nicht ganz. Eine Raumnummer ist eine Eigenschaft, keine Verbindung zwischen Objekten."))
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    # Quiz 7
+    quiz7 = mo.ui.radio(
+        options={
+            "weak": "Schwache Entität (existiert nicht ohne Buch)",
+            "strong": "Starke Entität (existiert unabhängig)",
+            "beziehung": "Beziehung (Verbindung zwischen Buch und Regal)",
+            "attribut": "Attribut von Buch"
+        },
+        label="**Frage 7:** Ein Bibliotheks-Exemplar hat nur zusammen mit dem Buchtitel eine eindeutige ID (Buch-ISBN + Exemplar-Nr). Was ist es?"
+    )
+    quiz7
+    return (quiz7,)
+
+
+@app.cell(hide_code=True)
+def _(mo, quiz7):
+    if quiz7.value == "weak":
+        mo.output.replace(mo.md("✅ **Richtig!** Ein Exemplar kann ohne das zugehörige Buch nicht existieren und hat keinen eigenständigen Schlüssel. Das ist eine **schwache Entität** mit einer **identifizierenden Beziehung** zum Buch."))
+    elif quiz7.value:
+        mo.output.replace(mo.md("❌ Nicht ganz. Das Exemplar braucht den Schlüssel des Buches, um eindeutig identifiziert zu werden. Es ist existenzabhängig vom Buch."))
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
         ---
@@ -416,6 +467,143 @@ def _(mo):
 - Die **Bestellposition** ist eine Beziehungstabelle mit zusammengesetztem Primärschlüssel
 
 *In Session 7 werden wir dieses Modell in SQL CREATE TABLE umsetzen!*
+
+---
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## Übung: Bibliotheks-Szenario
+
+        Identifizieren Sie die Entitäten, Beziehungen und Kardinalitäten:
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### Szenario: Universitätsbibliothek
+
+        *„Eine Bibliothek verwaltet Bücher und deren Exemplare. Jedes Buch hat eine ISBN,
+        einen Titel und ein Erscheinungsjahr. Ein Buch kann mehrere Autoren haben, und
+        Autoren können mehrere Bücher geschrieben haben. Jedes Buch gehört zu genau einem
+        Verlag (Name, Ort). Von jedem Buch existieren ein oder mehrere physische Exemplare,
+        die durch eine Exemplar-Nummer (innerhalb des Buches) unterschieden werden.
+        Studierende können Exemplare ausleihen, wobei Ausleihdatum und Rückgabedatum
+        gespeichert werden."*
+
+        ---
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({
+        "Lösung anzeigen": mo.md(r"""
+**Entitäten:**
+- **Buch** (ISBN, Titel, Erscheinungsjahr)
+- **Autor** (AutorID, Name)
+- **Verlag** (VerlagID, Name, Ort)
+- **Exemplar** (ExemplarNr) — *schwache Entität*, abhängig von Buch
+- **Student** (MatrikelNr, Name)
+
+**Beziehungen:**
+1. Autor **schreibt** Buch → **M:N** (Co-Autoren, Vielschreiber)
+2. Verlag **veröffentlicht** Buch → **1:N** (ein Verlag, viele Bücher)
+3. Buch **hat** Exemplar → **1:N** (identifizierende Beziehung, schwache Entität)
+4. Student **leiht aus** Exemplar → **M:N** mit Attributen (Ausleihdatum, Rückgabedatum)
+
+**Besonderheiten:**
+- Exemplar ist eine **schwache Entität**: ExemplarNr allein ist nicht eindeutig, erst ISBN + ExemplarNr
+- Die Ausleihe ist eine M:N-Beziehung mit **Beziehungsattributen** (Datum)
+        """)
+    })
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+### ER-Diagramm: Bibliothek (Mermaid)
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.mermaid(
+        """
+        erDiagram
+            VERLAG ||--o{ BUCH : veroeffentlicht
+            BUCH ||--|{ EXEMPLAR : hat
+            AUTOR }|--|{ BUCH : schreibt
+            STUDENT }|--o{ AUSLEIHE : leiht
+            EXEMPLAR ||--o{ AUSLEIHE : "wird ausgeliehen"
+
+            VERLAG {
+                int ID PK
+                string Name
+                string Ort
+            }
+
+            BUCH {
+                string ISBN PK
+                string Titel
+                int Erscheinungsjahr
+                int Verlag_ID FK
+            }
+
+            AUTOR {
+                int ID PK
+                string Name
+            }
+
+            EXEMPLAR {
+                string ISBN PK,FK
+                int ExemplarNr PK
+                string Standort
+            }
+
+            STUDENT {
+                int MatrikelNr PK
+                string Name
+            }
+
+            AUSLEIHE {
+                int ID PK
+                string ISBN FK
+                int ExemplarNr FK
+                int MatrikelNr FK
+                date Ausleihdatum
+                date Rueckgabedatum
+            }
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+**Beobachtungen:**
+
+- **Schwache Entität:** Exemplar hat einen zusammengesetzten Schlüssel (ISBN + ExemplarNr)
+- **M:N mit Attributen:** Die Ausleihe speichert neben den Verweisen auch Datumsangaben
+- **1:N:** Verlag → Buch (jedes Buch hat genau einen Verlag)
+- **M:N:** Autor ↔ Buch (aufgelöst durch implizite Beziehungstabelle)
+
+*Dieses Szenario kombiniert alle Beziehungstypen, die wir kennengelernt haben!*
 
 ---
     """)

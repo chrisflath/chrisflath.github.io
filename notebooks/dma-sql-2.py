@@ -59,22 +59,58 @@ def _(mo):
 def _(mo):
     import polars as pl
 
-    # Works both locally and in WASM/browser mode
-    csv_path = mo.notebook_location() / "public" / "bundesliga.csv"
-    bundesliga = pl.read_csv(str(csv_path))
-    daten_quelle = "Beispieldaten Bundesliga Saison 2024/25"
+    try:
+        # Works both locally and in WASM/browser mode
+        csv_path = mo.notebook_location() / "public" / "bundesliga.csv"
+        bundesliga = pl.read_csv(str(csv_path))
+        daten_quelle = "Beispieldaten Bundesliga Saison 2024/25"
+    except Exception:
+        bundesliga = pl.DataFrame({
+            "Mannschaft": ["Bayern München", "Bayer Leverkusen", "VfB Stuttgart", "Borussia Dortmund", "RB Leipzig"],
+            "Spiele": [34, 34, 34, 34, 34],
+            "Siege": [23, 21, 17, 16, 15],
+            "Unentschieden": [5, 7, 6, 7, 8],
+            "Niederlagen": [6, 6, 11, 11, 11],
+            "ToreGeschossen": [82, 68, 58, 62, 55],
+            "ToreKassiert": [32, 29, 44, 42, 38],
+            "Tordifferenz": [50, 39, 14, 20, 17],
+            "Punkte": [74, 70, 57, 55, 53],
+        })
+        daten_quelle = "Offline-Daten (Fallback)"
+        mo.callout(mo.md("**Hinweis:** CSV konnte nicht geladen werden. Es werden Beispieldaten verwendet."), kind="warn")
+
     return bundesliga, daten_quelle, pl
 
 
 @app.cell(hide_code=True)
 def _(mo, pl):
-    # Load player data from CSV (with intentional NULL values for exercises)
-    spieler_path = mo.notebook_location() / "public" / "spieler.csv"
-    spieler = pl.read_csv(str(spieler_path))
+    try:
+        # Load player data from CSV (with intentional NULL values for exercises)
+        spieler_path = mo.notebook_location() / "public" / "spieler.csv"
+        spieler = pl.read_csv(str(spieler_path))
 
-    # Also load spieltage data for temporal analysis
-    spieltage_path = mo.notebook_location() / "public" / "bundesliga_spieltage.csv"
-    bundesliga_spieltage = pl.read_csv(str(spieltage_path))
+        # Also load spieltage data for temporal analysis
+        spieltage_path = mo.notebook_location() / "public" / "bundesliga_spieltage.csv"
+        bundesliga_spieltage = pl.read_csv(str(spieltage_path))
+    except Exception:
+        spieler = pl.DataFrame({
+            "Name": ["Müller", "Neuer", "Kimmich", "Wirtz", "Musiala"],
+            "Vorname": ["Thomas", "Manuel", "Joshua", "Florian", "Jamal"],
+            "Position": ["Sturm", "Tor", "Mittelfeld", "Mittelfeld", "Mittelfeld"],
+            "Verein": ["Bayern München", "Bayern München", "Bayern München", "Bayer Leverkusen", None],
+            "Tore": [8, 0, 3, 11, None],
+            "Vorlagen": [4, 0, 8, 9, 7],
+            "Alter": [35, 38, 29, 21, 21],
+            "Länderspiele": [131, 118, 91, 28, 35],
+            "Spitzname": [None, None, None, None, "Bambi"],
+        })
+        bundesliga_spieltage = pl.DataFrame({
+            "Mannschaft": ["Bayern München"] * 5,
+            "Spieltag": [1, 2, 3, 4, 5],
+            "Punkte_Kumuliert": [3, 6, 9, 10, 13],
+        })
+        mo.callout(mo.md("**Hinweis:** CSVs konnten nicht geladen werden. Es werden Beispieldaten verwendet."), kind="warn")
+
     return bundesliga_spieltage, spieler
 
 
@@ -249,10 +285,10 @@ def _(bundesliga, mo):
     # Ihre Lösung hier:
     _df = mo.sql(
         f"""
-        SELECT Mannschaft, Punkte
-        FROM bundesliga
-        ORDER BY Punkte ASC
-        LIMIT 3
+        -- Ihre Lösung hier
+        -- Tipp: ORDER BY ... ASC für aufsteigende Sortierung, LIMIT für Begrenzung
+        -- Erwartete Spalten: Mannschaft, Punkte
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
     return
@@ -277,10 +313,10 @@ def _(bundesliga, mo):
     # Ihre Lösung hier:
     _df = mo.sql(
         f"""
-        SELECT Mannschaft, Punkte
-        FROM bundesliga
-        ORDER BY Punkte DESC
-        LIMIT 5 OFFSET 5
+        -- Ihre Lösung hier
+        -- Tipp: LIMIT und OFFSET kombinieren — OFFSET überspringt die ersten N Zeilen
+        -- Erwartete Spalten: Mannschaft, Punkte
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
     return
@@ -500,9 +536,10 @@ def _(mo, spieler):
     # Ihre Lösung hier:
     _df = mo.sql(
         f"""
-        SELECT Name, Vorname
-        FROM spieler
-        WHERE Name LIKE '%er'
+        -- Ihre Lösung hier
+        -- Tipp: LIKE mit '%' vor dem Suchbegriff für "endet mit"
+        -- Erwartete Spalten: Name, Vorname
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
     return
@@ -525,9 +562,10 @@ def _(bundesliga, mo):
     # Ihre Lösung hier:
     _df = mo.sql(
         f"""
-        SELECT Mannschaft
-        FROM bundesliga
-        WHERE Mannschaft LIKE '%FC%'
+        -- Ihre Lösung hier
+        -- Tipp: LIKE mit '%' vor UND nach dem Suchbegriff für "enthält"
+        -- Erwartete Spalten: Mannschaft
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
     return
@@ -754,9 +792,10 @@ def _(mo, spieler):
     # Ihre Lösung hier:
     _df = mo.sql(
         f"""
-        SELECT Name, Vorname, Spitzname
-        FROM spieler
-        WHERE Spitzname IS NULL
+        -- Ihre Lösung hier
+        -- Tipp: IS NULL prüft auf fehlende Werte
+        -- Erwartete Spalten: Name, Vorname, Spitzname
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
     return
@@ -779,9 +818,10 @@ def _(mo, spieler):
     # Ihre Lösung hier:
     _df = mo.sql(
         f"""
-        SELECT Name, Tore, Vorlagen
-        FROM spieler
-        WHERE Tore IS NOT NULL AND Vorlagen IS NOT NULL
+        -- Ihre Lösung hier
+        -- Tipp: IS NOT NULL mit AND kombinieren
+        -- Erwartete Spalten: Name, Tore, Vorlagen
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
     return
@@ -867,14 +907,11 @@ def _(mo, spieler):
     # Ihre Lösung hier:
     _df = mo.sql(
         f"""
-        SELECT
-            Name,
-            COALESCE(Tore, 0) AS Tore,
-            COALESCE(Vorlagen, 0) AS Vorlagen,
-            COALESCE(Tore, 0) + COALESCE(Vorlagen, 0) AS Scorerpunkte
-        FROM spieler
-        ORDER BY Scorerpunkte DESC
-        LIMIT 5
+        -- Ihre Lösung hier
+        -- Tipp: COALESCE(Tore, 0) + COALESCE(Vorlagen, 0) AS Scorerpunkte
+        -- Dann ORDER BY Scorerpunkte DESC und LIMIT 5
+        -- Erwartete Spalten: Name, Tore, Vorlagen, Scorerpunkte
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
     return
@@ -899,14 +936,10 @@ def _(mo, spieler):
     # Ihre Lösung hier:
     _df = mo.sql(
         f"""
-        SELECT
-            Name,
-            Position,
-            COALESCE(Tore, 0) + COALESCE(Vorlagen, 0) AS Scorerpunkte
-        FROM spieler
-        WHERE Position = 'Mittelfeld'
-          AND COALESCE(Tore, 0) + COALESCE(Vorlagen, 0) >= 5
-        ORDER BY Scorerpunkte DESC
+        -- Ihre Lösung hier
+        -- Tipp: WHERE für Position + COALESCE für NULL-Behandlung + HAVING/WHERE für Minimum
+        -- Erwartete Spalten: Name, Position, Scorerpunkte
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
     return
