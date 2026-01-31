@@ -227,9 +227,9 @@ def _(mo, todesfaelle):
         f"""
         SELECT
             Arzt,
-            ROUND(AVG(Alter), 1) AS Durchschnittsalter,
-            MIN(Alter) AS Jüngster,
-            MAX(Alter) AS Ältester
+            ROUND(AVG("Alter"), 1) AS Durchschnittsalter,
+            MIN("Alter") AS Jüngster,
+            MAX("Alter") AS Ältester
         FROM todesfaelle
         GROUP BY Arzt
         """
@@ -403,6 +403,39 @@ def _(pl):
 def _(mo):
     mo.md(
         r"""
+        ### 🟢 2.0 Geführt: Verteilung der Rechnungsbeträge
+
+        Bevor wir die Ziffern analysieren — wie sehen die Beträge insgesamt aus?
+        Ein **Histogramm** zeigt die Verteilung auf einen Blick:
+        """
+    )
+    return
+
+
+@app.cell
+def _(px, rechnungen):
+    fig_hist = px.histogram(
+        rechnungen.to_pandas(),
+        x="betrag",
+        color="kategorie",
+        barmode="overlay",
+        opacity=0.6,
+        nbins=40,
+        title="Verteilung der Rechnungsbeträge",
+        labels={"betrag": "Betrag (€)", "kategorie": "Kategorie"}
+    )
+    fig_hist
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        **Beobachtung:** Echte Rechnungen sind rechtsschief verteilt (viele kleine, wenige große Beträge).
+        Verdächtige Rechnungen sind gleichmäßiger verteilt — ein erstes Warnsignal!
+
+        ---
+
         ### 🟢 2.1 Geführt: Erste Ziffer extrahieren
 
         Um Benford anzuwenden, müssen wir die erste Ziffer jeder Zahl extrahieren:

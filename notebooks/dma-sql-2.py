@@ -69,8 +69,8 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo, pl):
     # Load player data from CSV (with intentional NULL values for exercises)
-    csv_path = mo.notebook_location() / "public" / "spieler.csv"
-    spieler = pl.read_csv(str(csv_path))
+    spieler_path = mo.notebook_location() / "public" / "spieler.csv"
+    spieler = pl.read_csv(str(spieler_path))
 
     # Also load spieltage data for temporal analysis
     spieltage_path = mo.notebook_location() / "public" / "bundesliga_spieltage.csv"
@@ -939,10 +939,27 @@ def _(mo):
 
 
 @app.cell
-def _(bundesliga, mo):
+def _():
     import plotly.express as px
+    return (px,)
 
+
+@app.cell
+def _(bundesliga, mo):
     # Schritt 1: Daten mit SQL abfragen
+    mo.sql(
+        f"""
+        SELECT Mannschaft, Punkte
+        FROM bundesliga
+        ORDER BY Punkte DESC
+        LIMIT 10
+        """
+    )
+
+
+@app.cell
+def _(bundesliga, mo, px):
+    # Schritt 2: Balkendiagramm erstellen
     top10 = mo.sql(
         f"""
         SELECT Mannschaft, Punkte
@@ -951,17 +968,14 @@ def _(bundesliga, mo):
         LIMIT 10
         """
     )
-    return px, top10
 
-
-@app.cell
-def _(px, top10):
-    # Schritt 2: Balkendiagramm erstellen
     fig = px.bar(
-        top10,
+        top10.to_pandas(),
         x="Mannschaft",
         y="Punkte",
-        title="Top 10 Bundesliga Teams nach Punkten"
+        title="Top 10 Bundesliga Teams nach Punkten",
+        color="Punkte",
+        color_continuous_scale="Blues"
     )
     fig
 
@@ -979,8 +993,19 @@ def _(mo):
 
 
 @app.cell
-def _(bundesliga, mo, px):
+def _(bundesliga, mo):
     # SQL für alle Teams
+    mo.sql(
+        f"""
+        SELECT Mannschaft, ToreGeschossen, Punkte
+        FROM bundesliga
+        """
+    )
+
+
+@app.cell
+def _(bundesliga, mo, px):
+    # Streudiagramm
     alle_teams = mo.sql(
         f"""
         SELECT Mannschaft, ToreGeschossen, Punkte
@@ -988,13 +1013,13 @@ def _(bundesliga, mo, px):
         """
     )
 
-    # Streudiagramm
     fig2 = px.scatter(
-        alle_teams,
+        alle_teams.to_pandas(),
         x="ToreGeschossen",
         y="Punkte",
         hover_name="Mannschaft",
-        title="Tore vs. Punkte"
+        title="Tore vs. Punkte",
+        trendline="ols"  # Trendlinie hinzufügen
     )
     fig2
 
@@ -1003,29 +1028,43 @@ def _(bundesliga, mo, px):
 def _(mo):
     mo.md(
         r"""
-        ### 🟡 7.3 Scaffolded: Histogramm der Tordifferenz
+        ### 🟡 7.3 Scaffolded: Streudiagramm mit Farbdimension
 
-        Erstelle ein Histogramm, das die Verteilung der Tordifferenz zeigt:
+        Erstelle ein Streudiagramm: ToreGeschossen (x) vs. ToreKassiert (y),
+        mit Tordifferenz als **Farbdimension** (`color=`).
         """
     )
     return
 
 
 @app.cell
-def _(bundesliga, mo, px):
-    # Ergänze die fehlenden Parameter
-    tordiff = mo.sql(
+def _(bundesliga, mo):
+    # SQL-Abfrage
+    mo.sql(
         f"""
-        SELECT Tordifferenz
+        SELECT Mannschaft, ToreGeschossen, ToreKassiert, Tordifferenz
         FROM bundesliga
         """
     )
 
-    fig3 = px.histogram(
-        tordiff,
-        x="Tordifferenz",
-        nbins=12,
-        title="Verteilung der Tordifferenz"
+
+@app.cell
+def _(bundesliga, mo, px):
+    # Streudiagramm mit Farbdimension
+    offensiv_defensiv = mo.sql(
+        f"""
+        SELECT Mannschaft, ToreGeschossen, ToreKassiert, Tordifferenz
+        FROM bundesliga
+        """
+    )
+
+    fig3 = px.scatter(
+        offensiv_defensiv.to_pandas(),
+        x="ToreGeschossen",
+        y="ToreKassiert",
+        color="Tordifferenz",
+        hover_name="Mannschaft",
+        title="Offensiv- vs. Defensivstärke (Farbe = Tordifferenz)"
     )
     fig3
 
@@ -1044,8 +1083,19 @@ def _(mo):
 
 
 @app.cell
+def _(bundesliga, mo):
+    # Deine SQL-Abfrage hier:
+    mo.sql(
+        f"""
+        SELECT Mannschaft, Siege, Niederlagen
+        FROM bundesliga
+        """
+    )
+
+
+@app.cell
 def _(bundesliga, mo, px):
-    # Deine Lösung hier:
+    # Visualisierung:
     siege_niederlagen = mo.sql(
         f"""
         SELECT Mannschaft, Siege, Niederlagen
@@ -1054,7 +1104,7 @@ def _(bundesliga, mo, px):
     )
 
     fig4 = px.scatter(
-        siege_niederlagen,
+        siege_niederlagen.to_pandas(),
         x="Siege",
         y="Niederlagen",
         hover_name="Mannschaft",
@@ -1140,14 +1190,14 @@ def _(mo):
         |-----------|----------|------------|
         | Balkendiagramm | `px.bar()` | Werte vergleichen |
         | Streudiagramm | `px.scatter()` | Zusammenhänge zeigen |
-        | Histogramm | `px.histogram()` | Verteilungen darstellen |
-        | Liniendiagramm | `px.line()` | Trends über Zeit |
+        | Farbe als Dimension | `color=` | Dritte Variable kodieren |
 
         ### Häufige Fehler vermeiden:
         - ✅ `IS NULL` statt `= NULL`
         - ✅ Reihenfolge: SELECT → FROM → WHERE → ORDER BY → LIMIT
         - ✅ Bei Berechnungen: COALESCE verwenden, um NULL zu ersetzen
         - ✅ ASC ist Standard, DESC muss explizit angegeben werden
+        - ✅ Bei Plotly: `.to_pandas()` für die Konvertierung von SQL-Ergebnissen
 
         **Nächste Session:** Aggregation & Gruppierung (COUNT, SUM, AVG, GROUP BY)
         """
