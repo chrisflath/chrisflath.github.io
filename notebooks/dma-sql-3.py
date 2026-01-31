@@ -342,9 +342,41 @@ def _(px, tore_by_position):
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 4.3: Gruppierung nach Verein
+        ### Aufgabe 4.3: Scaffolded — Gruppierung vervollständigen
 
-        Wie viele Nationalspieler hat jeder Verein?
+        Welcher Verein hat die meisten Nationalspieler?
+        Ergänzen Sie die `GROUP BY`-Spalte und die Sortierung:
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, spieler):
+    _df = mo.sql(
+        f"""
+        SELECT
+            Verein,
+            COUNT(*) AS Nationalspieler
+        FROM spieler
+        -- Ergänzen Sie: Nach welcher Spalte gruppieren?
+        GROUP BY ???
+        -- Ergänzen Sie: Absteigend nach Anzahl sortieren
+        ORDER BY ???
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### Aufgabe 4.4: Scaffolded — Mehrere Aggregatfunktionen
+
+        Erweitern Sie die Abfrage: Zeigen Sie pro Verein die Anzahl Spieler,
+        die Gesamttore und das Durchschnittsalter.
+        Ergänzen Sie die fehlenden Aggregatfunktionen:
         """
     )
     return
@@ -357,11 +389,12 @@ def _(mo, spieler):
         SELECT
             Verein,
             COUNT(*) AS Nationalspieler,
-            SUM(Tore) AS Tore_Gesamt,
-            AVG("Alter") AS Durchschnittsalter
+            ???(Tore) AS Tore_Gesamt,
+            ???("Alter") AS Durchschnittsalter
         FROM spieler
         GROUP BY Verein
         ORDER BY Nationalspieler DESC
+        -- Tipp: SUM für Gesamttore, AVG für Durchschnitt
         """
     )
     return
@@ -371,7 +404,7 @@ def _(mo, spieler):
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 4.4: Bundesliga nach Spielanzahl gruppieren
+        ### Aufgabe 4.5: Bundesliga nach Spielanzahl gruppieren
 
         Welche Teams haben wie viele Spiele absolviert?
         """

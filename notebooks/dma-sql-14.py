@@ -651,11 +651,63 @@ def _(mo):
 
         ---
 
+        ### Aufgabe 14.11b: Geführtes Beispiel — Stoppwörter filtern (Produktbewertungen)
+
+        Bevor wir mit den UFO-Daten weitermachen, hier das Muster für
+        **Tokenisierung + Stoppwort-Filterung** am bekannten Datensatz:
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, produktbewertungen):
+    # Geführtes Beispiel: Stoppwörter filtern
+    _stopword_demo = mo.sql(
+        f"""
+        -- Schritt 1: Stoppwörter definieren
+        WITH stoppwoerter AS (
+            SELECT UNNEST(['der','die','das','und','ist','ein','eine','für',
+                           'mit','nicht','auf','den','von','zu','im','ich',
+                           'es','sich','auch','an','war','sehr','aber']) AS wort
+        ),
+        -- Schritt 2: Tokenisieren
+        woerter AS (
+            SELECT
+                UNNEST(regexp_split_to_array(
+                    LOWER(TRIM(bewertung)), '\s+')) AS word
+            FROM produktbewertungen
+        )
+        -- Schritt 3: Filtern + Zählen
+        SELECT word, COUNT(*) AS frequency
+        FROM woerter
+        WHERE LENGTH(word) > 1
+          AND word NOT IN (SELECT wort FROM stoppwoerter)
+        GROUP BY word
+        ORDER BY frequency DESC
+        LIMIT 15
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        **Das Muster:** `WITH stoppwoerter → Tokenisieren → WHERE NOT IN → GROUP BY`
+
+        Dieses Muster verwenden Sie jetzt auf die UFO- und McDonald's-Daten.
+
+        ---
+
         ### Aufgabe 14.12: Stoppwort-Filterung (UFO)
 
         Die häufigsten Wörter sind "the", "a", "was" — wenig informativ. Filtern Sie Stoppwörter heraus.
 
         *Hinweis: `WHERE word NOT IN ('the', 'a', 'an', 'i', 'in', 'of', 'and', 'to', 'was', 'it', 'is', 'that', 'at', 'my', 'for', 'on', 'with', 'had', 'as', 'were', 'from', 'by', 'or', 'be', 'but', 'not', 'this', 'then', 'we', 'no', 'me', 'so', 'very', 'about')`*
+
+        *Erwartete Ausgabe: 30 Zeilen, Spalten `word`, `frequency`, sortiert nach `frequency DESC`*
         """
     )
     return
@@ -694,6 +746,8 @@ def _(mo):
         *Hinweis: `EXTRACT(MONTH FROM CAST(datetime AS DATE))`, `EXTRACT(DAY FROM ...)`*
 
         *Bonus: Vergleichen Sie die gemeldeten Shapes am 4. Juli vs. Rest des Jahres — sind es eher "fireball" und "light"?*
+
+        *Erwartete Ausgabe (Basis): 12 Zeilen (Monate), Spalten `monat`, `anzahl_sichtungen`, sortiert nach `monat`*
         """
     )
     return
@@ -729,6 +783,8 @@ def _(mo):
         *Alternativ: `CASE WHEN + LIKE` für eine einzelne Hauptfarbe pro Bericht.*
 
         *Bonus: Korreliert die Farbe mit der Form (shape)?*
+
+        *Erwartete Ausgabe: ~6 Zeilen (eine pro Farbe), Spalten `farbe`, `anzahl`, sortiert nach `anzahl DESC`*
         """
     )
     return
@@ -757,6 +813,8 @@ def _(mo):
         - **Vanishing**: "disappeared", "vanished"
 
         Welches Bewegungsmuster ist am häufigsten? Gibt es Unterschiede nach Shape?
+
+        *Erwartete Ausgabe: 4–5 Zeilen, Spalten `bewegung`, `anzahl`, sortiert nach `anzahl DESC`*
 
         *Hinweis: `regexp_matches` mit `|` (Oder) ist eleganter als viele `LIKE`s:*
 
@@ -793,6 +851,8 @@ def _(mo):
         Welche Wörter kommen häufiger in positiven (4–5★) vs. negativen (1–2★) Reviews vor?
 
         *Hinweis: Tokenisieren + `COUNT(*) FILTER (WHERE rating >= 4)` vs. `FILTER (WHERE rating <= 2)`*
+
+        *Erwartete Ausgabe: ~20 Zeilen, Spalten `word`, `count_positiv`, `count_negativ`, sortiert nach `count_positiv DESC`*
         """
     )
     return
@@ -833,6 +893,8 @@ def _(mo):
         Korreliert der Score mit dem tatsächlichen Rating?
 
         *Hinweis: `CASE WHEN LOWER(review_text) LIKE '%great%' THEN 1 ELSE 0 END` für jedes Wort, dann summieren.*
+
+        *Erwartete Ausgabe: Eine Zeile pro Review (oder gruppiert nach Rating), Spalten `rating`, `avg_sentiment_score`, sortiert nach `rating`*
         """
     )
     return

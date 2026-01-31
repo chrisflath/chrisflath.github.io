@@ -533,11 +533,24 @@ def _(mo):
 def _(ab_test, mo):
     mo.sql(
         f"""
-        -- Ihre Lösung hier
-        -- Tipp: p = AVG(konvertiert), n = COUNT(*)
-        -- CI: p ± 1.96 * SQRT(p * (1-p) / n)
-        -- Erwartete Spalten: gruppe, n, conv_rate_pct, ci_lower_pct, ci_upper_pct
-        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        -- Ergänzen Sie die fehlenden Berechnungen (???)
+        SELECT
+            gruppe,
+            COUNT(*) AS n,
+            ROUND(AVG(konvertiert) * 100, 1) AS conv_rate_pct,
+            -- CI-Untergrenze: (p - 1.96 * sqrt(p*(1-p)/n)) * 100
+            ROUND(
+                (AVG(konvertiert) - 1.96 * SQRT(??? * (1 - ???) / COUNT(*))) * 100,
+            1) AS ci_lower_pct,
+            -- CI-Obergrenze: (p + 1.96 * sqrt(p*(1-p)/n)) * 100
+            ROUND(
+                (AVG(konvertiert) + 1.96 * SQRT(??? * (1 - ???) / COUNT(*))) * 100,
+            1) AS ci_upper_pct
+        FROM ab_test
+        GROUP BY gruppe
+        ORDER BY gruppe
+        -- Tipp: Ersetzen Sie jedes ??? durch AVG(konvertiert)
+        -- Erwartete Ausgabe: 2 Zeilen (control, treatment), 5 Spalten
         """
     )
     return
