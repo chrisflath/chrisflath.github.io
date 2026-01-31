@@ -57,6 +57,7 @@ def _(mo):
 @app.cell
 def _():
     import pandas as pd
+    import plotly.express as px
 
     # Vereine
     vereine = pd.DataFrame({
@@ -67,7 +68,7 @@ def _():
     })
 
     vereine
-    return pd, vereine
+    return pd, px, vereine
 
 
 @app.cell
@@ -555,6 +556,111 @@ def _(mo):
         - Routenplanung: Verbindungen zwischen Staedten
         - Empfehlungssysteme: "Kunden kauften auch..."
         - Organisationshierarchien: Mitarbeiter → Manager → Director
+
+        ---
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## Visualisierung: JOINs öffnen neue Dimensionen
+
+        Nach einem JOIN stehen Spalten aus **mehreren Tabellen** zur Verfügung.
+        Das ermöglicht reichere Visualisierungen mit `color=` und `facet_col=`.
+
+        ---
+
+        ### Aufgabe 9.6: Spieler pro Verein als Balkendiagramm
+
+        Visualisieren Sie die Anzahl Spieler pro Verein als Balkendiagramm.
+        Nutzen Sie dazu einen JOIN + GROUP BY + `px.bar()`.
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, px, spieler, vereine):
+    _joined = mo.sql(
+        f"""
+        SELECT
+            v.Name AS Verein,
+            COUNT(s.Spieler_ID) AS Anzahl_Spieler
+        FROM vereine v
+        LEFT JOIN spieler s ON v.Verein_ID = s.Verein_ID
+        GROUP BY v.Name
+        ORDER BY Anzahl_Spieler DESC
+        """
+    )
+    px.bar(
+        _joined.to_pandas(),
+        x="Verein",
+        y="Anzahl_Spieler",
+        color="Verein",
+        title="Anzahl Spieler pro Verein",
+        labels={"Anzahl_Spieler": "Anzahl Spieler"},
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ### Aufgabe 9.7: Streudiagramm mit JOIN-Dimensionen
+
+        Erstellen Sie ein Streudiagramm, das Spieler nach Position und Verein zeigt.
+        Hier simulieren wir zusätzliche Metriken (Tore, Assists) um die Visualisierung
+        interessanter zu machen.
+        """
+    )
+    return
+
+
+@app.cell
+def _(pd, px, vereine):
+    # Erweiterte Spielerdaten mit Toren und Assists fuer die Visualisierung
+    spieler_stats = pd.DataFrame({
+        "Spieler_ID": [1, 2, 3, 4, 5, 6, 7, 8],
+        "Name": ["Mueller", "Neuer", "Wirtz", "Xhaka", "Hummels", "Sabitzer", "Reus", "Goetze"],
+        "Tore": [12, 0, 15, 3, 1, 7, 8, 5],
+        "Assists": [6, 1, 10, 8, 2, 4, 9, 6],
+        "Verein_ID": [1, 1, 2, 2, 3, None, None, None]
+    })
+
+    # JOIN: Spieler mit Vereinsnamen (nur Spieler mit Verein)
+    merged = spieler_stats.merge(
+        vereine, on="Verein_ID", how="inner", suffixes=("", "_verein")
+    )
+
+    px.scatter(
+        merged,
+        x="Tore",
+        y="Assists",
+        color="Name_verein",
+        text="Name",
+        title="Tore vs. Assists nach Verein (INNER JOIN)",
+        labels={"Name_verein": "Verein"},
+        size_max=15,
+    ).update_traces(textposition="top center")
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        **Beobachtung:** Durch den JOIN koennen wir `color="Verein"` nutzen --
+        eine Dimension, die in der Spieler-Tabelle allein nicht als lesbarer Name existiert.
+        Das ist die Staerke von JOINs fuer die Visualisierung!
 
         ---
         """
