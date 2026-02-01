@@ -19,6 +19,8 @@ def _(mo):
         r"""
         # Session 3: Aggregation & Gruppierung
 
+        **Kursfahrplan:** **▸ I: SQL-Grundlagen (S1–4)** · II: Datenmodellierung (S5–8) · III: Fortgeschrittenes SQL (S9–10) · IV: Datenanalyse (S11–14)
+
         In dieser Session lernen Sie:
 
         - **Aggregatfunktionen**: COUNT, SUM, AVG, MIN, MAX
@@ -263,6 +265,8 @@ def _(mo):
         ---
 
         ## Phase 4: GROUP BY - Daten gruppieren
+
+        > **Vorhersage:** Die Spieler-Tabelle hat 16 Einträge mit den Positionen Sturm, Tor, Mittelfeld und Abwehr. Wenn wir `GROUP BY Position` verwenden — wie viele Zeilen hat das Ergebnis? Überlegen Sie kurz, bevor Sie weiterscrollen.
 
         ### Aufgabe 4.1: Einfache Gruppierung
 

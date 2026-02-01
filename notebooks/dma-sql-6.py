@@ -638,6 +638,24 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
+        ## Selbstständig: Eigenes ER-Modell entwerfen
+
+        **Szenario:** Eine Universitätsbibliothek möchte ihre Ausleihe digitalisieren.
+
+        - Es gibt **Bücher** (ISBN, Titel, Erscheinungsjahr) und **Autoren** (Name, Nationalität)
+        - **Studierende** (Matrikelnummer, Name, Studiengang) können Bücher **ausleihen** (Datum, Rückgabedatum)
+        - Ein Buch kann von mehreren Autoren geschrieben sein
+        - Ein Studierender kann mehrere Bücher gleichzeitig ausleihen
+
+        **Aufgabe:** Zeichnen Sie ein ER-Diagramm auf Papier oder in [draw.io](https://draw.io):
+
+        1. Welche **Entitäten** gibt es? (Tipp: 3 Stück)
+        2. Welche **Attribute** hat jede Entität? Was ist der Primärschlüssel?
+        3. Welche **Beziehungen** bestehen? (Tipp: 2 Stück)
+        4. Was sind die **Kardinalitäten**? (1:1, 1:N, oder M:N?)
+
+        ---
+
         ## Zusammenfassung
 
         | Schritt | Frage |

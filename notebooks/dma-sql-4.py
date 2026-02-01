@@ -19,6 +19,10 @@ def _(mo):
         r"""
         # Session 4: CRISP-DM & Fallstudien
 
+        **Kursfahrplan:** **▸ I: SQL-Grundlagen (S1–4)** · II: Datenmodellierung (S5–8) · III: Fortgeschrittenes SQL (S9–10) · IV: Datenanalyse (S11–14)
+
+        Die gleichen SQL-Werkzeuge (GROUP BY, COUNT, AVG), die wir in Sessions 1–3 für Bundesliga-Daten kennengelernt haben, funktionieren genauso für forensische Datenanalyse. SQL ist domänenunabhängig — das macht es so mächtig.
+
         In dieser Session lernen Sie:
 
         - Den **CRISP-DM** Prozess für strukturierte Datenanalyse
@@ -107,10 +111,16 @@ def _(mo):
         todesfaelle = pl.read_csv(url)
     except Exception:
         todesfaelle = pl.DataFrame({
-            "Arzt": ["Shipman", "Shipman", "Shipman", "Referenz", "Referenz"],
-            "Geschlecht": ["W", "W", "M", "W", "M"],
-            "Alter": [76, 82, 71, 85, 79],
-            "Todesstunde": [14, 15, 13, 3, 22],
+            "Arzt": (["Shipman"] * 15 + ["Referenz"] * 10),
+            "Geschlecht": ["W", "W", "M", "W", "W", "M", "W", "W", "M", "W",
+                           "W", "M", "W", "W", "W",
+                           "W", "M", "W", "M", "W", "W", "M", "W", "M", "W"],
+            "Alter": [76, 82, 71, 79, 84, 68, 91, 77, 73, 88,
+                      80, 65, 85, 74, 81,
+                      85, 79, 72, 66, 90, 78, 81, 87, 69, 83],
+            "Todesstunde": [14, 15, 13, 14, 16, 15, 14, 13, 15, 14,
+                            16, 14, 15, 13, 14,
+                            3, 22, 8, 17, 1, 11, 19, 6, 14, 23],
         })
         mo.callout(mo.md("**Hinweis:** Todesfälle-Daten konnten nicht geladen werden. Es werden Beispieldaten verwendet."), kind="warn")
 

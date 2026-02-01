@@ -20,6 +20,10 @@ def _(mo):
         r"""
         # Vorlesung 12: Statistische Inferenz & A/B-Tests
 
+        **Kursfahrplan:** I: SQL-Grundlagen (S1–4) · II: Datenmodellierung (S5–8) · III: Fortgeschrittenes SQL (S9–10) · **▸ IV: Datenanalyse (S11–14)**
+
+        In Session 11 haben wir Daten explorativ untersucht — Verteilungen, Ausreißer, Korrelationen. Heute gehen wir einen Schritt weiter: Wie können wir aus Stichproben auf die Grundgesamtheit schließen?
+
         **Lernziele:**
         - Hypothesentests durchführen und A/B-Test-Ergebnisse interpretieren
         - p-Wert und Signifikanzniveau verstehen
@@ -88,6 +92,8 @@ def _(daten_quelle, mo):
 def _(mo):
     mo.md(
         r"""
+        > **Vorhersage:** Der A/B-Test hat 4.000 Nutzer, gleichmäßig auf Control und Treatment verteilt. Typische Checkout-Conversion-Rates liegen bei 3–5%. Wenn Treatment besser ist — um wie viel Prozentpunkte erwarten Sie den Unterschied?
+
         ### Aufgabe 12.1: Datenüberblick
 
         Wie viele Nutzer sind in jeder Gruppe? Wie viele haben konvertiert?

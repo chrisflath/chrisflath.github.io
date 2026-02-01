@@ -20,6 +20,10 @@ def _(mo):
         r"""
         # Vorlesung 11: Explorative Datenanalyse (EDA)
 
+        **Kursfahrplan:** I: SQL-Grundlagen (S1–4) · II: Datenmodellierung (S5–8) · III: Fortgeschrittenes SQL (S9–10) · **▸ IV: Datenanalyse (S11–14)**
+
+        In den Sessions 1–10 haben wir gelernt, Daten zu speichern, zu modellieren und abzufragen. Jetzt beginnt Teil IV: Wir nutzen SQL als **Analysewerkzeug** — angefangen mit der systematischen Erkundung von Daten.
+
         **Lernziele:**
         - EDA systematisch durchführen und dokumentieren
         - Univariate Analyse: Verteilungen, Ausreißer erkennen

@@ -19,6 +19,8 @@ def _(mo):
         r"""
         # Session 9: JOINs - Tabellen verknuepfen
 
+        **Kursfahrplan:** I: SQL-Grundlagen (S1–4) · II: Datenmodellierung (S5–8) · **▸ III: Fortgeschrittenes SQL (S9–10)** · IV: Datenanalyse (S11–14)
+
         In dieser Session lernen Sie:
 
         - **INNER JOIN**: Nur passende Zeilen aus beiden Tabellen
@@ -30,7 +32,7 @@ def _(mo):
         ---
 
         Nach der Normalisierung (Session 8) sind unsere Daten auf mehrere Tabellen verteilt.
-        JOINs bringen sie wieder zusammen - ohne die Nachteile der Redundanz!
+        JOINs bringen sie wieder zusammen — ohne die Nachteile der Redundanz!
         """
     )
     return
@@ -135,6 +137,8 @@ def _(mo):
 
         Ergebnis: Nur 1 und 3 (die Schnittmenge)
         ```
+
+        > **Vorhersage:** Unsere Spieler-Tabelle hat 8 Einträge, davon 3 ohne Verein (Verein_ID = NULL). Wie viele Zeilen liefert ein INNER JOIN zwischen Spieler und Vereine?
 
         ---
 

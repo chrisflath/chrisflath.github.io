@@ -20,6 +20,10 @@ def _(mo):
         r"""
         # Vorlesung 13: Zeitreihenanalyse
 
+        **Kursfahrplan:** I: SQL-Grundlagen (S1–4) · II: Datenmodellierung (S5–8) · III: Fortgeschrittenes SQL (S9–10) · **▸ IV: Datenanalyse (S11–14)**
+
+        Session 11 hat Querschnittsdaten analysiert, Session 12 hat statistische Signifikanz getestet. Jetzt kommt die Zeitdimension dazu: Wie verändern sich Daten über die Zeit?
+
         **Lernziele:**
         - Zeitreihendaten analysieren und Trends/Saisonalität erkennen
         - Window Functions: LAG, LEAD, ROW_NUMBER, RANK
