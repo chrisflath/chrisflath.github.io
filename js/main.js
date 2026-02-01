@@ -307,14 +307,23 @@ function renderBibsonomyPublications(container, data) {
             const url = item.url || '';
             const doi = item.doi || '';
             const venue = item.journal || item.booktitle || '';
-            const scholarSearch = `https://scholar.google.com/scholar?q=${encodeURIComponent(title)}`;
+            
+            // Prioritize DOI, then URL, fall back to Google Scholar search
+            let titleLink;
+            if (doi) {
+                titleLink = doi.startsWith('http') ? doi : `https://doi.org/${doi}`;
+            } else if (url) {
+                titleLink = url;
+            } else {
+                titleLink = `https://scholar.google.com/scholar?q=${encodeURIComponent(title)}`;
+            }
 
             const type = getPublicationType(entrytype);
 
             html += `
                 <div class="publication-item" data-type="${type}">
                     <span class="publication-year">${escapeHtml(String(itemYear))}</span>
-                    <h4 class="publication-title"><a href="${scholarSearch}" target="_blank">${escapeHtml(title)}</a></h4>
+                    <h4 class="publication-title"><a href="${titleLink}" target="_blank">${escapeHtml(title)}</a></h4>
                     <p class="publication-authors">${escapeHtml(author)}</p>
                     <p class="publication-venue">${escapeHtml(venue)}</p>
                 </div>
