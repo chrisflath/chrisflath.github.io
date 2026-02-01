@@ -28,7 +28,7 @@ def _(mo):
         r"""
         # Session 4: CRISP-DM & Fallstudien
 
-        **Kursfahrplan:** **▸ I: SQL-Grundlagen (S1–4)** · II: Datenmodellierung (S5–8) · III: Fortgeschrittenes SQL (S9–10) · IV: Datenanalyse (S11–14)
+        **Kursfahrplan:** **▸ I: SQL-Grundlagen (S1–4)** · II: Datenmodellierung (S5–7) · III: Fortgeschrittenes SQL (S8–9) · IV: Datenanalyse (S10–13)
 
         Die gleichen SQL-Werkzeuge (GROUP BY, COUNT, AVG), die wir in Sessions 1–3 für Bundesliga-Daten kennengelernt haben, funktionieren genauso für forensische Datenanalyse. SQL ist domänenunabhängig — das macht es so mächtig.
 
@@ -986,7 +986,7 @@ def _(mo):
         - Erwartung: 30% beginnen mit 1
         - Abweichungen deuten auf Manipulation hin
 
-        **Nächste Session:** JOINs – Mehrere Tabellen verknüpfen
+        **Nächste Session:** Datenmodellierung – Von Anomalien zum ER-Modell
         """
     )
     return

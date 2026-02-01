@@ -12,7 +12,7 @@ import marimo
 __generated_with = "0.13.0"
 app = marimo.App(
     width="medium",
-    app_title="DMA Session 7: ER → SQL",
+    app_title="DMA Session 7: Normalisierung",
 )
 
 
@@ -33,16 +33,17 @@ def _():
 def _(mo):
     mo.md(
         r"""
-        # Session 7: Relationales Modell & Transformation
+        # Session 7: Normalisierung
 
-        **Kursfahrplan:** I: SQL-Grundlagen (S1–4) · **▸ II: Datenmodellierung (S5–8)** · III: Fortgeschrittenes SQL (S9–10) · IV: Datenanalyse (S11–14)
+        **Kursfahrplan:** I: SQL-Grundlagen (S1–4) · **▸ II: Datenmodellierung (S5–7)** · III: Fortgeschrittenes SQL (S8–9) · IV: Datenanalyse (S10–13)
 
         In dieser Session lernen Sie:
 
-        - Das **relationale Modell** (Tabellen, Zeilen, Spalten)
-        - **Primärschlüssel** und **Fremdschlüssel**
-        - **Transformationsregeln**: ER → Relationales Schema
-        - **CREATE TABLE** in SQL
+        - **Funktionale Abhängigkeiten** erkennen
+        - **1NF**: Atomare Werte
+        - **2NF**: Volle funktionale Abhängigkeit
+        - **3NF**: Keine transitiven Abhängigkeiten
+        - Tabellen **normalisieren**
 
         ---
         """
@@ -54,14 +55,19 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-        ## Das Relationale Modell
+        ## Rückblick: Warum Normalisierung?
 
-        | Begriff | Bedeutung | SQL-Äquivalent |
-        |---------|-----------|----------------|
-        | **Relation** | Tabelle | TABLE |
-        | **Tupel** | Zeile/Datensatz | ROW |
-        | **Attribut** | Spalte | COLUMN |
-        | **Domäne** | Wertebereich | Datentyp (INT, VARCHAR, ...) |
+        In Session 5 haben wir **Anomalien** gesehen:
+
+        | Anomalie | Problem |
+        |----------|---------|
+        | **Änderung** | Inkonsistenz bei Updates |
+        | **Einfügung** | Kann Daten nicht einfügen |
+        | **Löschung** | Verliert ungewollt Daten |
+
+        **Ursache:** Redundanz durch schlechtes Tabellendesign
+
+        **Lösung:** Systematische **Normalisierung** nach definierten Regeln
 
         ---
         """
@@ -73,16 +79,18 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-        ## Transformationsregeln: Übersicht
+        ## Funktionale Abhängigkeit (FD)
 
-        | ER-Element | → Relationales Modell |
-        |------------|----------------------|
-        | Entität | Tabelle |
-        | Attribut | Spalte |
-        | Schlüsselattribut | PRIMARY KEY |
-        | **1:N-Beziehung** | Fremdschlüssel auf N-Seite |
-        | **M:N-Beziehung** | Beziehungstabelle mit 2 FKs |
-        | **1:1-Beziehung** | Zusammenlegen oder FK |
+        **Definition:** A → B bedeutet: "Wenn ich A kenne, kenne ich auch B"
+
+        **Beispiele:**
+
+        | FD | Gültig? | Erklärung |
+        |----|---------|-----------|
+        | Matrikelnr → Name | ✅ | Jede Matrikelnr gehört zu genau einem Namen |
+        | PLZ → Ort | ✅ | Jede PLZ gehört zu einem Ort (in DE) |
+        | Ort → PLZ | ❌ | München hat viele PLZs |
+        | ISBN → Titel | ✅ | Jede ISBN identifiziert ein Buch |
 
         ---
         """
@@ -92,33 +100,19 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""
-## Aufgabe 7.1: 1:N-Beziehung → SQL
+    mo.md(
+        r"""
+        ## Armstrong-Axiome: FDs ableiten
 
-> **Vorhersage:** Bei einer 1:N-Beziehung (ein Verein hat viele Spieler) — auf welcher Seite wird der Fremdschlüssel stehen? Beim Verein oder beim Spieler? Überlegen Sie, bevor Sie weiterscrollen.
+        Mit drei Grundregeln lassen sich aus bekannten FDs **neue** ableiten:
 
-**Gegeben:** Verein (1) ← hat → Spieler (N)
-    """)
-    return
+        | Axiom | Regel | Beispiel |
+        |-------|-------|----------|
+        | **Reflexivität** | Wenn B ⊆ A, dann A → B | {Vorname, Nachname} → Nachname |
+        | **Verstärkung** | Wenn A → B, dann A,C → B,C | Matrikelnr → Name ⟹ Matrikelnr,Fach → Name,Fach |
+        | **Transitivität** | Wenn A → B und B → C, dann A → C | Best_Nr → Kunde, Kunde → Stadt ⟹ Best_Nr → Stadt |
 
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.mermaid(
-        """
-        erDiagram
-            VEREIN ||--|{ SPIELER : hat
-            VEREIN {
-                int ID PK
-                string Name
-                string Ort
-            }
-            SPIELER {
-                int ID PK
-                string Name
-                string Position
-                int Verein_ID FK
-            }
+        ---
         """
     )
     return
@@ -126,131 +120,61 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""
-**Aufgabe:** Ergänzen Sie das CREATE TABLE für Spieler mit dem Fremdschlüssel.
-    """)
-    return
-
-
-@app.cell
-def _(mo):
-    _df = mo.sql(
-        f"""
-        -- Zuerst: Verein-Tabelle (bereits vollständig)
-        CREATE TABLE IF NOT EXISTS Verein (
-            ID INTEGER PRIMARY KEY,
-            Name VARCHAR(100) NOT NULL,
-            Ort VARCHAR(50)
-        );
-
-        -- Beispieldaten
-        INSERT OR IGNORE INTO Verein VALUES (1, 'Bayern München', 'München');
-        INSERT OR IGNORE INTO Verein VALUES (2, 'Bayer Leverkusen', 'Leverkusen');
-        INSERT OR IGNORE INTO Verein VALUES (3, 'Borussia Dortmund', 'Dortmund');
-
-        SELECT * FROM Verein;
-        """
-    )
-    return
-
-
-@app.cell
-def _(mo):
-    # Aufgabe: Fremdschlüssel verstehen
-    _df = mo.sql(
-        f"""
-        -- Spieler-Tabelle mit Fremdschlüssel zu Verein
-        CREATE TABLE IF NOT EXISTS Spieler (
-            ID INTEGER PRIMARY KEY,
-            Name VARCHAR(100) NOT NULL,
-            Position VARCHAR(50),
-            Verein_ID INTEGER,
-            FOREIGN KEY (Verein_ID) REFERENCES Verein(ID)
-        );
-
-        -- Beispieldaten
-        INSERT OR IGNORE INTO Spieler VALUES (1, 'Müller', 'Sturm', 1);
-        INSERT OR IGNORE INTO Spieler VALUES (2, 'Neuer', 'Tor', 1);
-        INSERT OR IGNORE INTO Spieler VALUES (3, 'Wirtz', 'Mittelfeld', 2);
-        INSERT OR IGNORE INTO Spieler VALUES (4, 'Bellingham', 'Mittelfeld', 3);
-
-        SELECT s.Name, s.Position, v.Name AS Verein
-        FROM Spieler s
-        JOIN Verein v ON s.Verein_ID = v.ID;
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    quiz_fk = mo.ui.radio(
+    armstrong_quiz = mo.ui.radio(
         options={
-            "correct": "Auf der N-Seite (Spieler) — jeder Spieler verweist auf seinen Verein",
-            "parent": "Auf der 1-Seite (Verein) — der Verein verweist auf seine Spieler",
-            "both": "In beiden Tabellen — eine Referenz in jede Richtung",
-            "join": "In einer separaten Join-Tabelle",
+            "a_stadt": "Matrikelnr → Stadt",
+            "stadt_name": "Stadt → Name",
+            "name_matrikel": "Name → Matrikelnr",
+            "stadt_matrikel": "Stadt → Matrikelnr"
         },
-        label="**Quiz:** Bei einer 1:N-Beziehung (Verein → Spieler) — auf welcher Seite steht der Fremdschlüssel?"
+        label="**Quiz:** Gegeben: Matrikelnr → Student, Student → Stadt. Welche FD lässt sich per **Transitivität** ableiten?"
     )
-    quiz_fk
-    return (quiz_fk,)
+    armstrong_quiz
+    return (armstrong_quiz,)
 
 
 @app.cell(hide_code=True)
-def _(quiz_fk, mo):
-    if quiz_fk.value == "correct":
-        mo.output.replace(mo.md("Richtig! Der Fremdschlüssel steht immer auf der **N-Seite**. Jeder Spieler gehört zu *einem* Verein, also speichert die Spieler-Tabelle die `Verein_ID`. Der Verein selbst muss nicht wissen, welche Spieler er hat — das ergibt sich durch den JOIN."))
-    elif quiz_fk.value:
-        mo.output.replace(mo.md("Nicht ganz. Überlegen Sie: Kann ein Verein auf *alle* seine Spieler verweisen? Das wäre eine variable Anzahl! Stattdessen verweist jeder **einzelne Spieler** auf seinen (einen) Verein — der FK steht auf der N-Seite."))
+def _(armstrong_quiz, mo):
+    if armstrong_quiz.value == "a_stadt":
+        mo.output.replace(mo.md("✅ **Richtig!** Transitivität: Matrikelnr → Student und Student → Stadt ergibt Matrikelnr → Stadt."))
+    elif armstrong_quiz.value:
+        mo.output.replace(mo.md("❌ Nicht ganz. Bei der Transitivität gilt: Wenn A → B und B → C, dann A → C. Hier: Matrikelnr → Student → Stadt, also Matrikelnr → Stadt."))
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""
----
+    aug_quiz = mo.ui.radio(
+        options={
+            "correct": "ISBN, Verlag → Titel, Verlag",
+            "wrong1": "Verlag → Titel",
+            "wrong2": "Titel → ISBN, Verlag",
+            "wrong3": "ISBN, Titel → Verlag"
+        },
+        label="**Quiz:** Gegeben: ISBN → Titel. Welche FD folgt per **Verstärkung** (Augmentation) mit Verlag?"
+    )
+    aug_quiz
+    return (aug_quiz,)
 
-## Aufgabe 7.2: M:N-Beziehung → SQL
 
-**Gegeben:** Student (M) ← besucht → Kurs (N) mit Beziehungsattribut **Note**
-    """)
+@app.cell(hide_code=True)
+def _(aug_quiz, mo):
+    if aug_quiz.value == "correct":
+        mo.output.replace(mo.md("✅ **Richtig!** Verstärkung: Wenn A → B, dann A,C → B,C. Also ISBN,Verlag → Titel,Verlag."))
+    elif aug_quiz.value:
+        mo.output.replace(mo.md("❌ Nicht ganz. Verstärkung fügt auf **beiden Seiten** das gleiche Attribut hinzu: ISBN → Titel wird zu ISBN,Verlag → Titel,Verlag."))
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.mermaid(
-        """
-        erDiagram
-            STUDENT ||--o{ STUDENT_KURS : besucht
-            KURS ||--o{ STUDENT_KURS : "wird besucht"
+    mo.md(
+        r"""
+        ## Aufgabe 7.1: Unnormalisierte Tabelle analysieren
 
-            STUDENT {
-                int ID PK
-                string Name
-            }
-
-            KURS {
-                int ID PK
-                string Titel
-            }
-
-            STUDENT_KURS {
-                int Student_ID PK,FK
-                int Kurs_ID PK,FK
-                decimal Note
-            }
+        Wir erstellen eine unnormalisierte Bestelltabelle und identifizieren die Probleme.
         """
     )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-**Aufgabe:** Erstellen Sie die Beziehungstabelle `Student_Kurs`.
-    """)
     return
 
 
@@ -258,80 +182,26 @@ def _(mo):
 def _(mo):
     _df = mo.sql(
         f"""
-        -- Entitätstabellen
-        CREATE TABLE IF NOT EXISTS Student (
-            ID INTEGER PRIMARY KEY,
-            Name VARCHAR(100) NOT NULL
+        -- Unnormalisierte Bestelltabelle
+        CREATE TABLE IF NOT EXISTS Bestellung_Unnorm (
+            Best_Nr INTEGER,
+            Kunde VARCHAR(50),
+            K_Stadt VARCHAR(50),
+            Produkt VARCHAR(50),
+            P_Preis DECIMAL(10,2),
+            Menge INTEGER,
+            PRIMARY KEY (Best_Nr, Produkt)
         );
 
-        CREATE TABLE IF NOT EXISTS Kurs (
-            ID INTEGER PRIMARY KEY,
-            Titel VARCHAR(200) NOT NULL
-        );
+        -- Beispieldaten mit Redundanz
+        INSERT OR IGNORE INTO Bestellung_Unnorm VALUES (1001, 'Müller', 'München', 'Laptop', 999.00, 1);
+        INSERT OR IGNORE INTO Bestellung_Unnorm VALUES (1001, 'Müller', 'München', 'Maus', 29.00, 2);
+        INSERT OR IGNORE INTO Bestellung_Unnorm VALUES (1002, 'Schmidt', 'Berlin', 'Laptop', 999.00, 1);
+        INSERT OR IGNORE INTO Bestellung_Unnorm VALUES (1003, 'Müller', 'München', 'Tastatur', 79.00, 1);
+        INSERT OR IGNORE INTO Bestellung_Unnorm VALUES (1004, 'Weber', 'Hamburg', 'Maus', 29.00, 3);
+        INSERT OR IGNORE INTO Bestellung_Unnorm VALUES (1004, 'Weber', 'Hamburg', 'Laptop', 999.00, 1);
 
-        -- Beispieldaten
-        INSERT OR IGNORE INTO Student VALUES (1, 'Anna');
-        INSERT OR IGNORE INTO Student VALUES (2, 'Ben');
-        INSERT OR IGNORE INTO Student VALUES (3, 'Clara');
-
-        INSERT OR IGNORE INTO Kurs VALUES (101, 'Datenmanagement');
-        INSERT OR IGNORE INTO Kurs VALUES (102, 'BWL');
-        INSERT OR IGNORE INTO Kurs VALUES (103, 'Statistik');
-
-        SELECT 'Studenten:' AS Info;
-        """
-    )
-    return
-
-
-@app.cell
-def _(mo):
-    _df = mo.sql(
-        f"""
-        SELECT * FROM Student;
-        """
-    )
-    return
-
-
-@app.cell
-def _(mo):
-    _df = mo.sql(
-        f"""
-        SELECT * FROM Kurs;
-        """
-    )
-    return
-
-
-@app.cell
-def _(mo):
-    # Beziehungstabelle für M:N
-    _df = mo.sql(
-        f"""
-        -- Beziehungstabelle: Zusammengesetzter Primärschlüssel!
-        CREATE TABLE IF NOT EXISTS Student_Kurs (
-            Student_ID INTEGER,
-            Kurs_ID INTEGER,
-            Note DECIMAL(2,1),
-            PRIMARY KEY (Student_ID, Kurs_ID),
-            FOREIGN KEY (Student_ID) REFERENCES Student(ID),
-            FOREIGN KEY (Kurs_ID) REFERENCES Kurs(ID)
-        );
-
-        -- Beispieldaten: Wer besucht welchen Kurs?
-        INSERT OR IGNORE INTO Student_Kurs VALUES (1, 101, 1.3);  -- Anna besucht DMA
-        INSERT OR IGNORE INTO Student_Kurs VALUES (1, 102, 2.0);  -- Anna besucht BWL
-        INSERT OR IGNORE INTO Student_Kurs VALUES (2, 101, 1.7);  -- Ben besucht DMA
-        INSERT OR IGNORE INTO Student_Kurs VALUES (3, 101, 1.0);  -- Clara besucht DMA
-        INSERT OR IGNORE INTO Student_Kurs VALUES (3, 103, 1.3);  -- Clara besucht Statistik
-
-        -- Abfrage: Wer besucht welchen Kurs mit welcher Note?
-        SELECT s.Name AS Student, k.Titel AS Kurs, sk.Note
-        FROM Student_Kurs sk
-        JOIN Student s ON sk.Student_ID = s.ID
-        JOIN Kurs k ON sk.Kurs_ID = k.ID
-        ORDER BY s.Name, k.Titel;
+        SELECT * FROM Bestellung_Unnorm ORDER BY Best_Nr, Produkt;
         """
     )
     return
@@ -339,55 +209,39 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""
----
+    mo.md(
+        r"""
+        ### Redundanz identifizieren
 
-## Aufgabe 7.3: Online-Shop
-
-Komplettes ER-Modell mit 1:N und M:N Beziehungen:
-    """)
+        **Frage:** Welche Daten sind redundant gespeichert?
+        """
+    )
     return
 
 
-@app.cell(hide_code=True)
+@app.cell
 def _(mo):
-    mo.mermaid(
+    _df = mo.sql(
+        f"""
+        -- Wie oft kommt jeder Kunde vor?
+        SELECT Kunde, K_Stadt, COUNT(*) AS Anzahl
+        FROM Bestellung_Unnorm
+        GROUP BY Kunde, K_Stadt
+        ORDER BY Anzahl DESC;
         """
-        erDiagram
-            KUNDE ||--o{ BESTELLUNG : "gibt auf"
-            BESTELLUNG ||--|{ BESTELLPOSITION : enthaelt
-            PRODUKT ||--o{ BESTELLPOSITION : "ist in"
-            KATEGORIE ||--o{ PRODUKT : beinhaltet
+    )
+    return
 
-            KUNDE {
-                int ID PK
-                string Name
-                string Email UK
-            }
 
-            BESTELLUNG {
-                int ID PK
-                date Datum
-                int Kunde_ID FK
-            }
-
-            BESTELLPOSITION {
-                int Bestellung_ID PK,FK
-                int Produkt_ID PK,FK
-                int Menge
-            }
-
-            PRODUKT {
-                int ID PK
-                string Name
-                decimal Preis
-                int Kategorie_ID FK
-            }
-
-            KATEGORIE {
-                int ID PK
-                string Name
-            }
+@app.cell
+def _(mo):
+    _df = mo.sql(
+        f"""
+        -- Wie oft kommt jedes Produkt mit Preis vor?
+        SELECT Produkt, P_Preis, COUNT(*) AS Anzahl
+        FROM Bestellung_Unnorm
+        GROUP BY Produkt, P_Preis
+        ORDER BY Anzahl DESC;
         """
     )
     return
@@ -395,27 +249,28 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""
-**Aufgabe:** Erstellen Sie alle CREATE TABLE-Statements in der richtigen Reihenfolge!
-    """)
+    mo.md(
+        r"""
+        **Beobachtung:**
+        - "Müller, München" steht **3x** in der Tabelle
+        - "Laptop, 999" steht **3x** in der Tabelle
+        - "Maus, 29" steht **2x** in der Tabelle
+
+        Das ist **Redundanz** - die Ursache für Anomalien!
+
+        ---
+        """
+    )
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
-    _df = mo.sql(
-        f"""
-        -- 1. Kategorie (keine Abhängigkeiten)
-        CREATE TABLE IF NOT EXISTS Kategorie (
-            ID INTEGER PRIMARY KEY,
-            Name VARCHAR(100) NOT NULL
-        );
+    mo.md(
+        r"""
+        ## Aufgabe 7.2: Erste Normalform (1NF)
 
-        INSERT OR IGNORE INTO Kategorie VALUES (1, 'Elektronik');
-        INSERT OR IGNORE INTO Kategorie VALUES (2, 'Kleidung');
-        INSERT OR IGNORE INTO Kategorie VALUES (3, 'Bücher');
-
-        SELECT * FROM Kategorie;
+        **Regel:** Alle Attributwerte müssen **atomar** sein (keine Listen, keine Wiederholungsgruppen).
         """
     )
     return
@@ -425,23 +280,34 @@ def _(mo):
 def _(mo):
     _df = mo.sql(
         f"""
-        -- 2. Produkt (FK zu Kategorie)
-        CREATE TABLE IF NOT EXISTS Produkt (
-            ID INTEGER PRIMARY KEY,
-            Name VARCHAR(200) NOT NULL,
-            Preis DECIMAL(10,2) NOT NULL,
-            Kategorie_ID INTEGER,
-            FOREIGN KEY (Kategorie_ID) REFERENCES Kategorie(ID)
+        -- NICHT in 1NF: Liste von Kursen in einer Zelle
+        CREATE TABLE IF NOT EXISTS Student_Nicht1NF (
+            Student VARCHAR(50) PRIMARY KEY,
+            Kurse VARCHAR(200)  -- Komma-separierte Liste!
         );
 
-        INSERT OR IGNORE INTO Produkt VALUES (1, 'Laptop', 999.99, 1);
-        INSERT OR IGNORE INTO Produkt VALUES (2, 'T-Shirt', 29.99, 2);
-        INSERT OR IGNORE INTO Produkt VALUES (3, 'SQL-Handbuch', 49.99, 3);
-        INSERT OR IGNORE INTO Produkt VALUES (4, 'Smartphone', 599.99, 1);
+        INSERT OR IGNORE INTO Student_Nicht1NF VALUES ('Anna', 'DMA, BWL, Statistik');
+        INSERT OR IGNORE INTO Student_Nicht1NF VALUES ('Ben', 'DMA');
+        INSERT OR IGNORE INTO Student_Nicht1NF VALUES ('Clara', 'BWL, Statistik');
 
-        SELECT p.Name, p.Preis, k.Name AS Kategorie
-        FROM Produkt p
-        JOIN Kategorie k ON p.Kategorie_ID = k.ID;
+        SELECT * FROM Student_Nicht1NF;
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        **Problem:** Wie finden wir alle Studenten, die "BWL" belegen?
+
+        ```sql
+        -- Das funktioniert NICHT zuverlässig:
+        SELECT * FROM Student_Nicht1NF WHERE Kurse LIKE '%BWL%';
+        ```
+
+        **Lösung:** In 1NF überführen - jeder Kurs in eigener Zeile:
         """
     )
     return
@@ -451,17 +317,21 @@ def _(mo):
 def _(mo):
     _df = mo.sql(
         f"""
-        -- 3. Kunde
-        CREATE TABLE IF NOT EXISTS Kunde (
-            ID INTEGER PRIMARY KEY,
-            Name VARCHAR(100) NOT NULL,
-            Email VARCHAR(200) UNIQUE
+        -- IN 1NF: Jede Zelle enthält genau einen Wert
+        CREATE TABLE IF NOT EXISTS Student_Kurs_1NF (
+            Student VARCHAR(50),
+            Kurs VARCHAR(50),
+            PRIMARY KEY (Student, Kurs)
         );
 
-        INSERT OR IGNORE INTO Kunde VALUES (1, 'Max Mustermann', 'max@example.com');
-        INSERT OR IGNORE INTO Kunde VALUES (2, 'Erika Musterfrau', 'erika@example.com');
+        INSERT OR IGNORE INTO Student_Kurs_1NF VALUES ('Anna', 'DMA');
+        INSERT OR IGNORE INTO Student_Kurs_1NF VALUES ('Anna', 'BWL');
+        INSERT OR IGNORE INTO Student_Kurs_1NF VALUES ('Anna', 'Statistik');
+        INSERT OR IGNORE INTO Student_Kurs_1NF VALUES ('Ben', 'DMA');
+        INSERT OR IGNORE INTO Student_Kurs_1NF VALUES ('Clara', 'BWL');
+        INSERT OR IGNORE INTO Student_Kurs_1NF VALUES ('Clara', 'Statistik');
 
-        SELECT * FROM Kunde;
+        SELECT * FROM Student_Kurs_1NF ORDER BY Student, Kurs;
         """
     )
     return
@@ -471,57 +341,8 @@ def _(mo):
 def _(mo):
     _df = mo.sql(
         f"""
-        -- 4. Bestellung (FK zu Kunde)
-        CREATE TABLE IF NOT EXISTS Bestellung (
-            ID INTEGER PRIMARY KEY,
-            Datum DATE NOT NULL,
-            Kunde_ID INTEGER,
-            FOREIGN KEY (Kunde_ID) REFERENCES Kunde(ID)
-        );
-
-        INSERT OR IGNORE INTO Bestellung VALUES (1, '2026-01-15', 1);
-        INSERT OR IGNORE INTO Bestellung VALUES (2, '2026-01-20', 1);
-        INSERT OR IGNORE INTO Bestellung VALUES (3, '2026-01-22', 2);
-
-        SELECT b.ID AS Bestellung, b.Datum, k.Name AS Kunde
-        FROM Bestellung b
-        JOIN Kunde k ON b.Kunde_ID = k.ID;
-        """
-    )
-    return
-
-
-@app.cell
-def _(mo):
-    _df = mo.sql(
-        f"""
-        -- 5. Bestellposition (M:N zwischen Bestellung und Produkt)
-        CREATE TABLE IF NOT EXISTS Bestellposition (
-            Bestellung_ID INTEGER,
-            Produkt_ID INTEGER,
-            Menge INTEGER NOT NULL DEFAULT 1,
-            PRIMARY KEY (Bestellung_ID, Produkt_ID),
-            FOREIGN KEY (Bestellung_ID) REFERENCES Bestellung(ID),
-            FOREIGN KEY (Produkt_ID) REFERENCES Produkt(ID)
-        );
-
-        INSERT OR IGNORE INTO Bestellposition VALUES (1, 1, 1);  -- Bestellung 1: 1x Laptop
-        INSERT OR IGNORE INTO Bestellposition VALUES (1, 3, 2);  -- Bestellung 1: 2x SQL-Handbuch
-        INSERT OR IGNORE INTO Bestellposition VALUES (2, 4, 1);  -- Bestellung 2: 1x Smartphone
-        INSERT OR IGNORE INTO Bestellposition VALUES (3, 2, 3);  -- Bestellung 3: 3x T-Shirt
-
-        -- Vollständige Bestellübersicht
-        SELECT
-            b.ID AS Bestellung,
-            k.Name AS Kunde,
-            p.Name AS Produkt,
-            bp.Menge,
-            p.Preis * bp.Menge AS Summe
-        FROM Bestellposition bp
-        JOIN Bestellung b ON bp.Bestellung_ID = b.ID
-        JOIN Kunde k ON b.Kunde_ID = k.ID
-        JOIN Produkt p ON bp.Produkt_ID = p.ID
-        ORDER BY b.ID, p.Name;
+        -- Jetzt funktioniert die Abfrage!
+        SELECT Student FROM Student_Kurs_1NF WHERE Kurs = 'BWL';
         """
     )
     return
@@ -533,37 +354,216 @@ def _(mo):
         r"""
         ---
 
-        ### Analyse: Umsatz pro Kategorie
+        ## Aufgabe 7.3: Zweite Normalform (2NF)
 
-        Jetzt sehen wir den Vorteil der normalisierten Struktur: Analysen über
-        mehrere Tabellen hinweg.
+        **Regel:** Jedes Nicht-Schlüsselattribut muss **voll funktional abhängig** vom **gesamten** Primärschlüssel sein.
+
+        **Problem in unserer Bestelltabelle:**
+
+        - Primärschlüssel: (Best_Nr, Produkt)
+        - Aber: `Kunde` hängt nur von `Best_Nr` ab, nicht von `Produkt`!
+        - Und: `P_Preis` hängt nur von `Produkt` ab, nicht von `Best_Nr`!
+
+        Das sind **partielle Abhängigkeiten** → verletzt 2NF
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### Zerlegung in 2NF
+
+        Wir zerlegen die Tabelle so, dass partielle Abhängigkeiten verschwinden:
         """
     )
     return
 
 
 @app.cell
-def _(mo, px):
-    _umsatz = mo.sql(
+def _(mo):
+    _df = mo.sql(
         f"""
-        SELECT
-            k.Name AS Kategorie,
-            SUM(p.Preis * bp.Menge) AS Umsatz
-        FROM Bestellposition bp
-        JOIN Produkt p ON bp.Produkt_ID = p.ID
-        JOIN Kategorie k ON p.Kategorie_ID = k.ID
-        GROUP BY k.Name
-        ORDER BY Umsatz DESC
+        -- Tabelle 1: Bestellungen (Best_Nr → Kunde, K_Stadt)
+        CREATE TABLE IF NOT EXISTS Bestellung_2NF (
+            Best_Nr INTEGER PRIMARY KEY,
+            Kunde VARCHAR(50),
+            K_Stadt VARCHAR(50)
+        );
+
+        INSERT OR IGNORE INTO Bestellung_2NF
+        SELECT DISTINCT Best_Nr, Kunde, K_Stadt
+        FROM Bestellung_Unnorm;
+
+        SELECT * FROM Bestellung_2NF ORDER BY Best_Nr;
         """
     )
+    return
+
+
+@app.cell
+def _(mo):
+    _df = mo.sql(
+        f"""
+        -- Tabelle 2: Produkte (Produkt → P_Preis)
+        CREATE TABLE IF NOT EXISTS Produkt_2NF (
+            Produkt VARCHAR(50) PRIMARY KEY,
+            P_Preis DECIMAL(10,2)
+        );
+
+        INSERT OR IGNORE INTO Produkt_2NF
+        SELECT DISTINCT Produkt, P_Preis
+        FROM Bestellung_Unnorm;
+
+        SELECT * FROM Produkt_2NF ORDER BY Produkt;
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo):
+    _df = mo.sql(
+        f"""
+        -- Tabelle 3: Bestellpositionen (Best_Nr, Produkt → Menge)
+        CREATE TABLE IF NOT EXISTS Best_Position_2NF (
+            Best_Nr INTEGER,
+            Produkt VARCHAR(50),
+            Menge INTEGER,
+            PRIMARY KEY (Best_Nr, Produkt)
+        );
+
+        INSERT OR IGNORE INTO Best_Position_2NF
+        SELECT Best_Nr, Produkt, Menge
+        FROM Bestellung_Unnorm;
+
+        SELECT * FROM Best_Position_2NF ORDER BY Best_Nr, Produkt;
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        **Ergebnis:** 3 Tabellen statt 1, aber **weniger Redundanz**!
+
+        - Laptop-Preis steht nur noch **1x** (in Produkt_2NF)
+        - Aber: Müller/München steht noch **2x** (in Bestellung_2NF)
+
+        → Wir brauchen noch **3NF**!
+
+        ---
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ## Aufgabe 7.4: Dritte Normalform (3NF)
+
+        **Regel:** Keine **transitiven Abhängigkeiten** - kein Nicht-Schlüsselattribut darf von einem anderen Nicht-Schlüsselattribut abhängen.
+
+        **Problem in Bestellung_2NF:**
+
+        - Best_Nr → Kunde (OK)
+        - Kunde → K_Stadt (Kunde bestimmt Stadt)
+        - Also: Best_Nr → Kunde → K_Stadt (**transitiv!**)
+
+        **Lösung:** Kunde in eigene Tabelle auslagern.
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo):
+    _df = mo.sql(
+        f"""
+        -- Tabelle: Kunden (Kunde → K_Stadt)
+        CREATE TABLE IF NOT EXISTS Kunde_3NF (
+            Kunde VARCHAR(50) PRIMARY KEY,
+            K_Stadt VARCHAR(50)
+        );
+
+        INSERT OR IGNORE INTO Kunde_3NF
+        SELECT DISTINCT Kunde, K_Stadt
+        FROM Bestellung_2NF;
+
+        SELECT * FROM Kunde_3NF ORDER BY Kunde;
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo):
+    _df = mo.sql(
+        f"""
+        -- Tabelle: Bestellungen (nur Best_Nr → Kunde als FK)
+        CREATE TABLE IF NOT EXISTS Bestellung_3NF (
+            Best_Nr INTEGER PRIMARY KEY,
+            Kunde VARCHAR(50)
+        );
+
+        INSERT OR IGNORE INTO Bestellung_3NF
+        SELECT Best_Nr, Kunde
+        FROM Bestellung_2NF;
+
+        SELECT * FROM Bestellung_3NF ORDER BY Best_Nr;
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### Finale Struktur in 3NF
+
+        Aus **1 Tabelle** wurden **4 Tabellen**:
+
+        | Tabelle | Inhalt | Primärschlüssel |
+        |---------|--------|-----------------|
+        | Kunde_3NF | Kundenstammdaten | Kunde |
+        | Bestellung_3NF | Bestellkopf | Best_Nr |
+        | Produkt_2NF | Produktstammdaten | Produkt |
+        | Best_Position_2NF | Bestellpositionen | (Best_Nr, Produkt) |
+
+        **Keine Redundanz mehr!** Jede Information steht genau einmal.
+
+        Wie viel Redundanz haben wir bei jedem Schritt eliminiert?
+        """
+    )
+    return
+
+
+@app.cell
+def _(pl, px):
+    # Berechnung: Redundante Datenzellen pro Normalform-Schritt
+    # Unnormalisiert: 6 Zeilen × 6 Spalten = 36 Zellen, davon viele redundant
+    # 2NF: Bestellung(4×3=12) + Produkt(3×2=6) + Position(6×3=18) = 36 Zellen
+    # 3NF: Kunde(3×2=6) + Bestellung(4×2=8) + Produkt(3×2=6) + Position(6×3=18) = 38 Zellen
+    # Aber: Redundanz sinkt! Redundante Fakten = Gesamteinträge - eindeutige Fakten
+    _schritte = pl.DataFrame({
+        "Normalform": ["Unnormalisiert", "2NF (3 Tabellen)", "3NF (4 Tabellen)"],
+        "Redundante_Einträge": [12, 3, 0],  # Redundante Wiederholungen von Fakten
+        "Eindeutige_Fakten": [24, 33, 38],  # Tatsächlich verschiedene Informationen
+    })
     px.bar(
-        _umsatz,
-        x="Kategorie",
-        y="Umsatz",
-        color="Kategorie",
-        title="Umsatz pro Produktkategorie",
-        labels={"Umsatz": "Umsatz (€)", "Kategorie": ""},
-        color_discrete_sequence=["#003560", "#E87722", "#5B9BD5"],
+        _schritte,
+        x="Normalform",
+        y="Redundante_Einträge",
+        title="Redundanz-Reduktion durch Normalisierung",
+        labels={"Redundante_Einträge": "Redundante Wiederholungen", "Normalform": ""},
+        color_discrete_sequence=["#E87722"],
     )
     return
 
@@ -572,118 +572,44 @@ def _(mo, px):
 def _(mo):
     mo.md(
         r"""
-        Diese Analyse wäre mit einer einzigen flachen Tabelle *möglich* gewesen --
-        aber anfällig für Inkonsistenzen. Das normalisierte Schema garantiert, dass
-        jeder Preis und jede Kategorie genau einmal definiert ist.
-
-        ---
-
-        ### Datenverteilung über Tabellen
-        """
-    )
-    return
-
-
-@app.cell
-def _(mo):
-    _zeilen = mo.sql(
-        f"""
-        SELECT 'Kategorie' AS Tabelle, COUNT(*) AS Zeilen FROM Kategorie
-        UNION ALL
-        SELECT 'Produkt', COUNT(*) FROM Produkt
-        UNION ALL
-        SELECT 'Kunde', COUNT(*) FROM Kunde
-        UNION ALL
-        SELECT 'Bestellung', COUNT(*) FROM Bestellung
-        UNION ALL
-        SELECT 'Bestellposition', COUNT(*) FROM Bestellposition
-        ORDER BY Zeilen DESC
-        """
-    )
-    return (_zeilen,)
-
-
-@app.cell
-def _(_zeilen, px):
-    px.bar(
-        _zeilen,
-        x="Tabelle",
-        y="Zeilen",
-        title="Zeilenanzahl pro Tabelle im Online-Shop-Schema",
-        labels={"Zeilen": "Anzahl Zeilen", "Tabelle": ""},
-        color_discrete_sequence=["#003560"],
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        **Erkenntnis:** Entitätstabellen (Kategorie, Kunde) haben typischerweise weniger Zeilen
-        als Beziehungstabellen (Bestellposition) oder Transaktionstabellen (Bestellung).
-        Die M:N-Auflösungstabelle Bestellposition wächst am schnellsten -- das ist normal!
-
-        ---
-
-        ## Aufgabe 7.4: Referentielle Integrität
-
-        Was passiert, wenn wir versuchen, einen referenzierten Datensatz zu löschen?
-        """
-    )
-    return
-
-
-@app.cell
-def _(mo):
-    # Test: Was passiert bei Löschung?
-    _df = mo.sql(
-        f"""
-        -- Versuch: Kategorie löschen, die noch Produkte hat
-        -- Dies würde normalerweise einen Fehler verursachen!
-
-        -- DuckDB prüft Foreign Keys automatisch
-
-        -- Zeige Produkte in Kategorie 'Elektronik':
-        SELECT p.Name, k.Name AS Kategorie
-        FROM Produkt p
-        JOIN Kategorie k ON p.Kategorie_ID = k.ID
-        WHERE k.Name = 'Elektronik';
+        In der unnormalisierten Tabelle werden Kundenname/-stadt (3 Kunden × je 2 Einträge
+        redundant) und Produktname/-preis (3 Produkte × je 1-2 Einträge redundant) mehrfach
+        gespeichert. Schritt für Schritt verschwinden diese Wiederholungen.
         """
     )
     return
 
 
 @app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        **Referentielle Integrität:**
-
-        | Option | SQL | Bedeutung |
-        |--------|-----|-----------|
-        | Verbieten | `RESTRICT` | Löschung wird abgelehnt |
-        | Kaskadieren | `CASCADE` | Abhängige Zeilen werden mitgelöscht |
-        | NULL setzen | `SET NULL` | FK wird auf NULL gesetzt |
-
-        ---
-        """
+def _(pl, px):
+    # Trade-off: Weniger Redundanz, aber mehr Tabellen
+    _tradeoff = pl.DataFrame({
+        "Normalform": ["Unnormalisiert", "2NF", "3NF"],
+        "Tabellen": [1, 3, 4],
+        "Redundante_Einträge": [12, 3, 0],
+    })
+    _fig = px.bar(
+        _tradeoff,
+        x="Normalform",
+        y=["Tabellen", "Redundante_Einträge"],
+        barmode="group",
+        title="Trade-off: Mehr Tabellen, weniger Redundanz",
+        labels={"value": "Anzahl", "variable": "Metrik", "Normalform": ""},
+        color_discrete_map={
+            "Tabellen": "#003560",
+            "Redundante_Einträge": "#E87722",
+        },
     )
+    _fig.update_layout(legend_title_text="")
+    _fig
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
-        ---
-
-        ## Aufgabe 7.5: Fremdschlüssel als Schutzwall
-
-        Versuchen Sie, einen Spieler mit einem nicht existierenden Verein einzufügen.
-        Was passiert?
-        """
-    )
+    mo.md(r"""
+**Trade-off der Normalisierung:** Aus einer Tabelle werden vier -- aber die Redundanz sinkt auf null. In der Praxis ist das ein guter Tausch: Mehr Tabellen kosten kaum Speicher, aber Redundanz kostet Konsistenz.
+    """)
     return
 
 
@@ -691,13 +617,19 @@ def _(mo):
 def _(mo):
     _df = mo.sql(
         f"""
-        -- Versuch: Spieler mit Verein_ID 999 einfügen (existiert nicht!)
-        -- In einer Datenbank mit erzwungenen FK-Constraints würde das scheitern:
-        --   INSERT INTO Spieler VALUES (99, 'Test', 'Sturm', 999);
-        --   → ERROR: Foreign key constraint violated
-
-        -- Zeigen wir die existierenden Vereine:
-        SELECT ID, Name FROM Verein;
+        -- Überprüfung: Alle Daten sind noch da!
+        SELECT
+            b.Best_Nr,
+            k.Kunde,
+            k.K_Stadt,
+            p.Produkt,
+            p.P_Preis,
+            bp.Menge
+        FROM Bestellung_3NF b
+        JOIN Kunde_3NF k ON b.Kunde = k.Kunde
+        JOIN Best_Position_2NF bp ON b.Best_Nr = bp.Best_Nr
+        JOIN Produkt_2NF p ON bp.Produkt = p.Produkt
+        ORDER BY b.Best_Nr, p.Produkt;
         """
     )
     return
@@ -707,48 +639,149 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-        **Erkenntnis:** Der Fremdschlüssel-Constraint verhindert, dass wir auf
-        nicht existierende Datensätze verweisen. Das schützt die **referentielle
-        Integrität** -- jeder Verweis zeigt auf einen echten Datensatz.
+        ---
 
-        Ohne diesen Schutz könnten Spieler zu "Geistervereinen" gehören!
+        ## Quiz: Normalformen bestimmen
+
+        Testen Sie Ihr Verständnis!
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    quiz1 = mo.ui.radio(
+        options={
+            "1nf": "Verletzt 1NF (nicht atomare Werte)",
+            "2nf": "Verletzt 2NF (partielle Abhängigkeit)",
+            "3nf": "Verletzt 3NF (transitive Abhängigkeit)",
+            "ok": "Ist in 3NF (keine Verletzung)"
+        },
+        label="**Frage 1:** Mitarbeiter(\\underline{MitID}, Name, AbtID, AbtName) - was ist das Problem?"
+    )
+    quiz1
+    return (quiz1,)
+
+
+@app.cell(hide_code=True)
+def _(mo, quiz1):
+    if quiz1.value == "3nf":
+        mo.output.replace(mo.md("✅ **Richtig!** MitID → AbtID → AbtName ist eine transitive Abhängigkeit."))
+    elif quiz1.value:
+        mo.output.replace(mo.md("❌ Nicht ganz. Denken Sie an die Kette: MitID → AbtID → AbtName"))
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    quiz2 = mo.ui.radio(
+        options={
+            "1nf": "Verletzt 1NF (nicht atomare Werte)",
+            "2nf": "Verletzt 2NF (partielle Abhängigkeit)",
+            "3nf": "Verletzt 3NF (transitive Abhängigkeit)",
+            "ok": "Ist in 3NF (keine Verletzung)"
+        },
+        label="**Frage 2:** Buch(\\underline{ISBN, AutorID}, Titel, AutorName) - was ist das Problem?"
+    )
+    quiz2
+    return (quiz2,)
+
+
+@app.cell(hide_code=True)
+def _(mo, quiz2):
+    if quiz2.value == "2nf":
+        mo.output.replace(mo.md("✅ **Richtig!** Titel hängt nur von ISBN ab (partiell), AutorName nur von AutorID (partiell)."))
+    elif quiz2.value:
+        mo.output.replace(mo.md("❌ Nicht ganz. Bei zusammengesetztem Schlüssel: Hängen alle Attribute vom *gesamten* Schlüssel ab?"))
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    quiz3 = mo.ui.radio(
+        options={
+            "1nf": "Verletzt 1NF (nicht atomare Werte)",
+            "2nf": "Verletzt 2NF (partielle Abhängigkeit)",
+            "3nf": "Verletzt 3NF (transitive Abhängigkeit)",
+            "ok": "Ist in 3NF (keine Verletzung)"
+        },
+        label="**Frage 3:** Kurs(KursNr, Titel, DozentName, DozentBüro) mit KursNr → Titel, KursNr → DozentName, DozentName → DozentBüro"
+    )
+    quiz3
+    return (quiz3,)
+
+
+@app.cell(hide_code=True)
+def _(mo, quiz3):
+    if quiz3.value == "3nf":
+        mo.output.replace(mo.md("✅ **Richtig!** KursNr → DozentName → DozentBüro ist eine transitive Abhängigkeit. DozentBüro hängt über DozentName indirekt vom Schlüssel ab. Lösung: Dozent in eigene Tabelle auslagern."))
+    elif quiz3.value:
+        mo.output.replace(mo.md("❌ Nicht ganz. Schauen Sie auf die Kette: KursNr → DozentName → DozentBüro. Das DozentBüro hängt nicht direkt vom Schlüssel ab."))
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## Aufgabe 7.5: Verlustfreie Zerlegung überprüfen
+
+        Eine wichtige Eigenschaft der Normalisierung: Die Zerlegung muss **verlustfrei**
+        sein -- der JOIN aller Teiltabellen muss exakt die Originaldaten reproduzieren.
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo):
+    _df = mo.sql(
+        f"""
+        -- Original-Daten
+        SELECT COUNT(*) AS Original_Zeilen FROM Bestellung_Unnorm
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo):
+    _df = mo.sql(
+        f"""
+        -- Rekonstruktion durch JOIN der 3NF-Tabellen
+        SELECT COUNT(*) AS Rekonstruierte_Zeilen
+        FROM Bestellung_3NF b
+        JOIN Kunde_3NF k ON b.Kunde = k.Kunde
+        JOIN Best_Position_2NF bp ON b.Best_Nr = bp.Best_Nr
+        JOIN Produkt_2NF p ON bp.Produkt = p.Produkt
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        **Beide Zählungen sind identisch!** Das beweist: Unsere Normalisierung war
+        **verlustfrei** -- keine Information ging beim Aufteilen verloren.
+
+        Das ist die Grundregel: Normalisierung darf niemals Daten verlieren.
 
         ---
 
         ## Freie Exploration
 
-        Probieren Sie eigene Abfragen auf den erstellten Tabellen!
+        Experimentieren Sie mit eigenen Beispielen!
 
         **Ideen:**
-        - Welcher Kunde hat die meisten Bestellungen?
-        - Welches Produkt wurde am häufigsten bestellt?
-        - Wie hoch ist der Gesamtumsatz?
+        - Erstellen Sie eine unnormalisierte Tabelle
+        - Identifizieren Sie die funktionalen Abhängigkeiten
+        - Normalisieren Sie schrittweise zu 3NF
         """
-    )
-    return
-
-
-@app.cell
-def _(mo, px):
-    _bestellungen_pro_kunde = mo.sql(
-        f"""
-        SELECT
-            k.Name AS Kunde,
-            COUNT(b.ID) AS Bestellungen
-        FROM Kunde k
-        LEFT JOIN Bestellung b ON k.ID = b.Kunde_ID
-        GROUP BY k.Name
-        ORDER BY Bestellungen DESC
-        """
-    )
-    px.bar(
-        _bestellungen_pro_kunde,
-        x="Kunde",
-        y="Bestellungen",
-        color="Kunde",
-        title="Bestellungen pro Kunde (LEFT JOIN zeigt auch Kunden ohne Bestellung)",
-        labels={"Bestellungen": "Anzahl Bestellungen", "Kunde": ""},
-        color_discrete_sequence=["#003560", "#E87722"],
     )
     return
 
@@ -758,29 +791,10 @@ def _(mo):
     # Ihre Abfrage hier:
     _df = mo.sql(
         f"""
-        -- Beispiel: Welches Produkt wurde am häufigsten bestellt?
-        SELECT
-            p.Name AS Produkt,
-            SUM(bp.Menge) AS Gesamtmenge
-        FROM Bestellposition bp
-        JOIN Produkt p ON bp.Produkt_ID = p.ID
-        GROUP BY p.Name
-        ORDER BY Gesamtmenge DESC;
+        -- Beispiel: Zeige alle Tabellen (DuckDB)
+        SHOW TABLES;
         """
     )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.accordion({"🔑 Musterlösung: Gesamtumsatz": mo.md("""
-```sql
-SELECT
-    SUM(p.Preis * bp.Menge) AS Gesamtumsatz
-FROM Bestellposition bp
-JOIN Produkt p ON bp.Produkt_ID = p.ID;
-```
-""")})
     return
 
 
@@ -792,23 +806,15 @@ def _(mo):
 
         ## Zusammenfassung
 
-        | Transformation | Regel |
-        |---------------|-------|
-        | **1:N** | Fremdschlüssel auf der N-Seite |
-        | **M:N** | Beziehungstabelle mit 2 Fremdschlüsseln |
-        | **1:1** | Zusammenlegen oder FK |
+        | Normalform | Regel | Lösung |
+        |------------|-------|--------|
+        | **1NF** | Atomare Werte | Listen auflösen |
+        | **2NF** | Volle Abhängigkeit vom Schlüssel | Partielle Abhängigkeiten auslagern |
+        | **3NF** | Keine transitiven Abhängigkeiten | Transitive Abhängigkeiten auslagern |
 
-        **SQL-Syntax:**
-        ```sql
-        CREATE TABLE Name (
-            ID INTEGER PRIMARY KEY,
-            Attribut DATENTYP [CONSTRAINT],
-            FK_ID INTEGER,
-            FOREIGN KEY (FK_ID) REFERENCES AndereTabelle(ID)
-        );
-        ```
+        **Merksatz:** "Jedes Attribut hängt vom Schlüssel ab, vom ganzen Schlüssel, und von nichts außer dem Schlüssel."
 
-        **Nächste Session:** Normalisierung (1NF, 2NF, 3NF)
+        **Nächste Session:** Joins - die normalisierten Tabellen wieder zusammenführen!
         """
     )
     return

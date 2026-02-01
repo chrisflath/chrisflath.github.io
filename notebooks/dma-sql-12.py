@@ -11,26 +11,26 @@
 import marimo
 
 __generated_with = "0.10.14"
-app = marimo.App(width="medium", app_title="DMA Session 12: Statistische Inferenz & A/B-Tests")
+app = marimo.App(width="medium", app_title="DMA Session 12: Zeitreihenanalyse")
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        # Vorlesung 12: Statistische Inferenz & A/B-Tests
+        # Vorlesung 12: Zeitreihenanalyse
 
-        **Kursfahrplan:** I: SQL-Grundlagen (S1–4) · II: Datenmodellierung (S5–8) · III: Fortgeschrittenes SQL (S9–10) · **▸ IV: Datenanalyse (S11–14)**
+        **Kursfahrplan:** I: SQL-Grundlagen (S1–4) · II: Datenmodellierung (S5–7) · III: Fortgeschrittenes SQL (S8–9) · **▸ IV: Datenanalyse (S10–13)**
 
-        In Session 11 haben wir Daten explorativ untersucht — Verteilungen, Ausreißer, Korrelationen. Heute gehen wir einen Schritt weiter: Wie können wir aus Stichproben auf die Grundgesamtheit schließen?
+        Session 10 hat Querschnittsdaten analysiert, Session 11 hat statistische Signifikanz getestet. Jetzt kommt die Zeitdimension dazu: Wie verändern sich Daten über die Zeit?
 
         **Lernziele:**
-        - Hypothesentests durchführen und A/B-Test-Ergebnisse interpretieren
-        - p-Wert und Signifikanzniveau verstehen
-        - t-Test für Mittelwertvergleiche mit SQL berechnen
-        - Simpson's Paradox erkennen und vermeiden
+        - Zeitreihendaten analysieren und Trends/Saisonalität erkennen
+        - Window Functions: LAG, LEAD, ROW_NUMBER, RANK
+        - Moving Averages mit SQL berechnen
+        - Year-over-Year Vergleiche durchführen
 
-        **Datensatz:** Simulierter A/B-Test eines Online-Checkout-Prozesses (4.000 Nutzer)
+        **Datenquelle:** U.S. Census Bureau - Monthly Retail Trade Survey (1992-2020)
         """
     )
     return
@@ -46,22 +46,30 @@ def _():
 
 @app.cell(hide_code=True)
 def _(mo, pl):
-    # A/B-Test Daten laden
+    # Retail Sales Daten laden
     try:
-        csv_path = mo.notebook_location() / "public" / "ab_test_checkout.csv"
-        ab_test = pl.read_csv(str(csv_path))
-        daten_quelle = "Simulierter A/B-Test: Checkout-Optimierung (4.000 Nutzer)"
+        csv_path = mo.notebook_location() / "public" / "us_retail_sales.csv"
+        retail_sales = pl.read_csv(str(csv_path))
+
+        # Datentypen anpassen
+        retail_sales = retail_sales.with_columns([
+            pl.col("sales_month").str.to_date("%Y-%m-%d"),
+            pl.col("sales").cast(pl.Float64)
+        ])
+        daten_quelle = "U.S. Census Bureau - Monthly Retail Trade Survey (1992-2020)"
     except Exception:
-        ab_test = pl.DataFrame({
-            "user_id": list(range(1, 11)),
-            "gruppe": ["Control"] * 5 + ["Treatment"] * 5,
-            "geraet": ["Desktop", "Mobile", "Desktop", "Mobile", "Desktop"] * 2,
-            "konvertiert": [1, 0, 1, 0, 1, 1, 1, 0, 1, 0],
-            "umsatz": [45.0, 0.0, 62.0, 0.0, 38.0, 55.0, 48.0, 0.0, 71.0, 0.0],
+        from datetime import date
+        retail_sales = pl.DataFrame({
+            "sales_month": [date(2019, m, 1) for m in range(1, 13)] + [date(2020, m, 1) for m in range(1, 13)],
+            "kind_of_business": ["Jewelry stores"] * 12 + ["Book stores"] * 12,
+            "sales": [2500.0, 2200.0, 2800.0, 2600.0, 2900.0, 3100.0,
+                      2700.0, 2500.0, 2800.0, 3000.0, 3500.0, 5200.0,
+                      1100.0, 1000.0, 1050.0, 1100.0, 1150.0, 900.0,
+                      850.0, 1200.0, 1300.0, 1100.0, 1050.0, 1400.0],
         })
         daten_quelle = "Offline-Daten (Fallback)"
         mo.callout(mo.md("**Hinweis:** CSV konnte nicht geladen werden. Es werden Beispieldaten verwendet."), kind="warn")
-    return daten_quelle, ab_test
+    return daten_quelle, retail_sales
 
 
 @app.cell(hide_code=True)
@@ -72,17 +80,9 @@ def _(daten_quelle, mo):
 
         ---
 
-        ## Phase 1: Deskriptive Statistik
+        ## Phase 1: Daten erkunden
 
-        Bevor wir statistische Tests durchführen, müssen wir unsere Daten erst **verstehen**.
-        Unser Datensatz enthält 4.000 Nutzer eines Online-Shops, die zufällig einer von zwei
-        Checkout-Varianten zugewiesen wurden:
-
-        - **Control:** Bestehende Checkout-Seite
-        - **Treatment:** Neue, optimierte Checkout-Seite
-
-        Spalten: `user_id`, `gruppe` (Control/Treatment), `geraet` (Desktop/Mobile),
-        `konvertiert` (0/1), `umsatz` (€, 0 wenn nicht konvertiert)
+        Unser Datensatz enthält monatliche Einzelhandelsumsätze für verschiedene Branchen.
         """
     )
     return
@@ -92,29 +92,91 @@ def _(daten_quelle, mo):
 def _(mo):
     mo.md(
         r"""
-        > **Vorhersage:** Der A/B-Test hat 4.000 Nutzer, gleichmäßig auf Control und Treatment verteilt. Typische Checkout-Conversion-Rates liegen bei 3–5%. Wenn Treatment besser ist — um wie viel Prozentpunkte erwarten Sie den Unterschied?
-
         ### Aufgabe 12.1: Datenüberblick
 
-        Wie viele Nutzer sind in jeder Gruppe? Wie viele haben konvertiert?
-        Berechne die **Conversion Rate** pro Gruppe.
+        Wie viele Datensätze haben wir? Welche Branchen sind enthalten?
         """
     )
     return
 
 
 @app.cell
-def _(ab_test, mo):
+def _(mo, retail_sales):
     mo.sql(
         f"""
         SELECT
-            gruppe,
-            COUNT(*) AS n,
-            SUM(konvertiert) AS conversions,
-            ROUND(AVG(konvertiert) * 100, 1) AS conv_rate_pct
-        FROM ab_test
-        GROUP BY gruppe
-        ORDER BY gruppe
+            COUNT(*) AS anzahl_datensaetze,
+            COUNT(DISTINCT kind_of_business) AS anzahl_branchen,
+            MIN(sales_month) AS erster_monat,
+            MAX(sales_month) AS letzter_monat
+        FROM retail_sales
+        """
+    )
+
+
+@app.cell
+def _(mo, retail_sales):
+    mo.sql(
+        f"""
+        SELECT DISTINCT kind_of_business
+        FROM retail_sales
+        ORDER BY kind_of_business
+        LIMIT 15
+        """
+    )
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### Aufgabe 12.2: Erste Visualisierung
+
+        Wie entwickelt sich der Gesamtumsatz über die Zeit?
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, retail_sales):
+    total_sales = mo.sql(
+        f"""
+        SELECT sales_month, sales
+        FROM retail_sales
+        WHERE kind_of_business = 'Retail and food services sales, total'
+        ORDER BY sales_month
+        """
+    )
+    return (total_sales,)
+
+
+@app.cell
+def _(px, total_sales):
+    fig_total = px.line(
+        total_sales,
+        x="sales_month",
+        y="sales",
+        title="US Retail Sales - Gesamt (1992-2020)",
+        labels={"sales_month": "Monat", "sales": "Umsatz (Mio. USD)"}
+    )
+    fig_total
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        **Beobachtung:** Deutlicher Aufwärtstrend mit starker Saisonalität (Weihnachtsgeschäft).
+
+        > **Vorhersage:** Betrachten Sie die Zeitreihe oben. Um wie viel Prozent schätzen Sie den typischen Dezember-Umsatz höher als den Jahresdurchschnitt? Und was passiert im Jahr 2020?
+
+        ---
+
+        ## Phase 2: Window Functions - Syntax
+
+        Window Functions berechnen Werte über ein "Fenster" von Zeilen,
+        **ohne** die Zeilen zu reduzieren (anders als GROUP BY).
         """
     )
     return
@@ -124,30 +186,68 @@ def _(ab_test, mo):
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 12.2: Statistische Kennzahlen
+        ### Aufgabe 12.3: Laufende Summe
 
-        Berechne für jede Gruppe den **Mittelwert**, die **Standardabweichung**
-        und den **Standardfehler** des Umsatzes (nur für konvertierte Nutzer).
+        Berechnen Sie die kumulierte Summe der Umsätze für Buchläden.
         """
     )
     return
 
 
 @app.cell
-def _(ab_test, mo):
+def _(mo, retail_sales):
     mo.sql(
         f"""
         SELECT
-            gruppe,
-            COUNT(*) AS n,
-            ROUND(AVG(umsatz), 2) AS mittelwert,
-            ROUND(STDDEV(umsatz), 2) AS standardabw,
-            ROUND(STDDEV(umsatz) / SQRT(COUNT(*)), 2) AS standardfehler,
-            ROUND(MIN(umsatz), 2) AS min_umsatz,
-            ROUND(MAX(umsatz), 2) AS max_umsatz
-        FROM ab_test
-        WHERE konvertiert = 1
-        GROUP BY gruppe
+            sales_month,
+            sales,
+            SUM(sales) OVER (ORDER BY sales_month) AS cumulative_sales
+        FROM retail_sales
+        WHERE kind_of_business = 'Book stores'
+        ORDER BY sales_month
+        LIMIT 20
+        """
+    )
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### Aufgabe 12.4: Ranking
+
+        Welche Monate hatten die höchsten Umsätze bei Juwelieren?
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, retail_sales):
+    mo.sql(
+        f"""
+        SELECT
+            sales_month,
+            sales,
+            RANK() OVER (ORDER BY sales DESC) AS rang
+        FROM retail_sales
+        WHERE kind_of_business = 'Jewelry stores'
+        ORDER BY rang
+        LIMIT 10
+        """
+    )
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## Phase 3: LAG und LEAD
+
+        Mit LAG greifen wir auf den Wert einer **vorherigen** Zeile zu,
+        mit LEAD auf den Wert einer **nachfolgenden** Zeile.
         """
     )
     return
@@ -157,39 +257,87 @@ def _(ab_test, mo):
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 12.3: Umsatzverteilung visualisieren
+        ### Aufgabe 12.5: Monatliche Änderung
 
-        Erstelle ein Histogramm der Umsätze, getrennt nach Gruppe (nur konvertierte Nutzer).
+        Berechnen Sie die monatliche Änderung der Umsätze für Juweliergeschäfte.
         """
     )
     return
 
 
 @app.cell
-def _(ab_test, mo):
-    _data = mo.sql(
+def _(mo, retail_sales):
+    monthly_change = mo.sql(
         f"""
-        SELECT gruppe, umsatz
-        FROM ab_test
-        WHERE konvertiert = 1
+        SELECT
+            sales_month,
+            sales,
+            LAG(sales, 1) OVER (ORDER BY sales_month) AS prev_month_sales,
+            sales - LAG(sales, 1) OVER (ORDER BY sales_month) AS abs_change,
+            ROUND((sales * 1.0 / LAG(sales, 1) OVER (ORDER BY sales_month) - 1) * 100, 1)
+                AS pct_change
+        FROM retail_sales
+        WHERE kind_of_business = 'Jewelry stores'
+        ORDER BY sales_month
         """
     )
-    return (_data,)
+    return (monthly_change,)
 
 
 @app.cell
-def _(_data, px):
-    px.histogram(
-        _data,
-        x="umsatz",
-        color="gruppe",
-        barmode="overlay",
-        opacity=0.6,
-        nbins=40,
-        title="Umsatzverteilung nach Gruppe (nur Konverter)",
-        labels={"umsatz": "Umsatz (€)", "gruppe": "Gruppe", "count": "Anzahl"},
-        color_discrete_map={"Control": "#004B8D", "Treatment": "#E87722"},
+def _(monthly_change, px):
+    fig_change = px.bar(
+        monthly_change.drop_nulls(),
+        x="sales_month",
+        y="pct_change",
+        title="Monatliche Umsatzänderung - Juweliere (%)",
+        labels={"sales_month": "Monat", "pct_change": "Änderung (%)"}
     )
+    fig_change.update_traces(marker_color=["green" if x > 0 else "red" for x in monthly_change.drop_nulls().get_column("pct_change")])
+    fig_change
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### Aufgabe 12.6: Selbstständig - Sportgeschäfte analysieren
+
+        Berechnen Sie die monatliche prozentuale Änderung für "Sporting goods stores".
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, retail_sales):
+    # Ihre Lösung hier:
+    mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        -- Tipp: Verwenden Sie LAG(sales, 1) OVER (ORDER BY sales_month)
+        -- Filter: WHERE kind_of_business = 'Sporting goods stores'
+        -- Erwartete Spalten: sales_month, sales, prev_month, pct_change
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    sales_month,
+    sales,
+    LAG(sales, 1) OVER (ORDER BY sales_month) AS prev_month,
+    ROUND((sales * 1.0 / LAG(sales, 1) OVER (ORDER BY sales_month) - 1) * 100, 1)
+        AS pct_change
+FROM retail_sales
+WHERE kind_of_business = 'Sporting goods stores'
+ORDER BY sales_month
+```
+""")})
     return
 
 
@@ -199,19 +347,9 @@ def _(mo):
         r"""
         ---
 
-        ## Phase 2: z-Scores und Ausreißer
+        ## Phase 4: Moving Averages
 
-        Der **z-Score** standardisiert Werte: Wie viele Standardabweichungen liegt ein
-        Wert vom Mittelwert entfernt?
-
-        $$z = \frac{x - \bar{x}}{s}$$
-
-        | |z| | Interpretation |
-        |-----|----------------|
-        | < 1 | Normal (68% der Daten) |
-        | < 2 | Üblich (95% der Daten) |
-        | > 2 | Auffällig |
-        | > 3 | Sehr ungewöhnlich |
+        Gleitende Durchschnitte glätten kurzfristige Schwankungen und machen den Trend sichtbar.
         """
     )
     return
@@ -221,90 +359,314 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 12.4: z-Scores berechnen
+        ### Aufgabe 12.7: 12-Monats Moving Average
 
-        Berechne den z-Score des Umsatzes für jeden konvertierten Nutzer.
-        Finde die **Top 5 Ausreißer** (höchster |z-Score|).
+        Berechnen Sie einen 12-Monats gleitenden Durchschnitt (trailing).
         """
     )
     return
 
 
 @app.cell
-def _(ab_test, mo):
-    mo.sql(
+def _(mo, retail_sales):
+    ma_12 = mo.sql(
         f"""
         SELECT
-            user_id,
-            gruppe,
-            geraet,
-            umsatz,
-            ROUND(
-                (umsatz - AVG(umsatz) OVER())
-                / STDDEV(umsatz) OVER(),
-            2) AS z_score
-        FROM ab_test
-        WHERE konvertiert = 1
-        ORDER BY ABS(
-            (umsatz - AVG(umsatz) OVER())
-            / STDDEV(umsatz) OVER()
-        ) DESC
-        LIMIT 5
+            sales_month,
+            sales,
+            ROUND(AVG(sales) OVER (
+                ORDER BY sales_month
+                ROWS BETWEEN 11 PRECEDING AND CURRENT ROW
+            ), 0) AS ma_12
+        FROM retail_sales
+        WHERE kind_of_business = 'Retail and food services sales, total'
+        ORDER BY sales_month
         """
     )
-    return
+    return (ma_12,)
+
+
+@app.cell
+def _(ma_12, px):
+    ma_df = ma_12
+    fig_ma = px.line(
+        ma_df,
+        x="sales_month",
+        y=["sales", "ma_12"],
+        title="Retail Sales mit 12-Monats Moving Average",
+        labels={"sales_month": "Monat", "value": "Umsatz (Mio. USD)", "variable": "Serie"}
+    )
+    fig_ma
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 12.5: Selbstständig — z-Score-Verteilung
+        ### Aufgabe 12.8: Selbstständig - 3-Monats MA
 
-        Wie viele konvertierte Nutzer haben einen |z-Score| > 2?
-        Zähle pro Gruppe.
+        Berechnen Sie einen zentrierten 3-Monats Moving Average für Buchläden.
 
-        *Hinweis: Wie Aufgabe 12.4, aber mit SUM(CASE WHEN ABS(z_score) > 2 ...) statt ORDER BY*
+        *Hinweis: ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING*
         """
     )
     return
 
 
 @app.cell
-def _(ab_test, mo):
+def _(mo, retail_sales):
+    # Ihre Lösung hier:
     mo.sql(
         f"""
         -- Ihre Lösung hier
-        -- Tipp: CTE mit z_scores wie in 12.4, dann GROUP BY gruppe
-        -- SUM(CASE WHEN ABS(z_score) > 2 THEN 1 ELSE 0 END) AS n_ausreisser
-        -- Erwartete Spalten: gruppe, n_total, n_ausreisser, pct_ausreisser
+        -- Tipp: AVG(sales) OVER (ORDER BY sales_month ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING)
+        -- Filter: WHERE kind_of_business = 'Book stores'
+        -- Erwartete Spalten: sales_month, sales, ma_3_centered
         SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
-    return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.accordion({"🔑 Musterlösung": mo.md("""
 ```sql
-WITH z_scores AS (
+SELECT
+    sales_month,
+    sales,
+    ROUND(AVG(sales) OVER (
+        ORDER BY sales_month
+        ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING
+    ), 0) AS ma_3_centered
+FROM retail_sales
+WHERE kind_of_business = 'Book stores'
+ORDER BY sales_month
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## Phase 5: Year-over-Year Vergleiche
+
+        YoY-Vergleiche eliminieren Saisonalität, indem sie jeden Monat mit dem
+        **gleichen Monat des Vorjahres** vergleichen.
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### Aufgabe 12.9: YoY-Wachstum
+
+        Berechnen Sie das Year-over-Year Wachstum mit LAG(12).
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, retail_sales):
+    yoy = mo.sql(
+        f"""
+        SELECT
+            sales_month,
+            sales,
+            LAG(sales, 12) OVER (ORDER BY sales_month) AS sales_last_year,
+            ROUND((sales * 1.0 / LAG(sales, 12) OVER (ORDER BY sales_month) - 1) * 100, 1)
+                AS yoy_growth
+        FROM retail_sales
+        WHERE kind_of_business = 'Jewelry stores'
+        ORDER BY sales_month
+        """
+    )
+    return (yoy,)
+
+
+@app.cell
+def _(px, yoy):
+    yoy_df = yoy.drop_nulls()
+    fig_yoy = px.line(
+        yoy_df,
+        x="sales_month",
+        y="yoy_growth",
+        title="Year-over-Year Wachstum - Juweliere (%)",
+        labels={"sales_month": "Monat", "yoy_growth": "YoY Wachstum (%)"}
+    )
+    fig_yoy.add_hline(y=0, line_dash="dash", line_color="gray")
+    fig_yoy
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    quiz_lag = mo.ui.radio(
+        options={
+            "correct": "LAG(12) vergleicht mit dem gleichen Monat im Vorjahr — das eliminiert Saisonalität",
+            "same": "LAG(12) und LAG(1) geben das gleiche Ergebnis, LAG(12) ist nur schneller",
+            "avg": "LAG(12) berechnet einen 12-Monats-Durchschnitt, LAG(1) einen 1-Monats-Durchschnitt",
+            "usage": "LAG kann nur mit Zeitreihen verwendet werden, nicht mit normalem GROUP BY",
+        },
+        label="**Quiz:** Oktober-Umsatz ist sehr hoch. Ist das ungewöhnlich, oder ist Oktober immer stark? Welche LAG-Verschiebung hilft?"
+    )
+    quiz_lag
+    return (quiz_lag,)
+
+
+@app.cell(hide_code=True)
+def _(quiz_lag, mo):
+    if quiz_lag.value == "correct":
+        mo.output.replace(mo.md("Richtig! LAG(12) vergleicht Oktober 2020 mit Oktober 2019 — so sehen wir, ob der Wert *für diesen Monat* ungewöhnlich ist. LAG(1) würde nur mit September vergleichen, was bei saisonalen Daten irreführend wäre."))
+    elif quiz_lag.value:
+        mo.output.replace(mo.md("Nicht ganz. LAG(n) greift auf den Wert *n Zeilen vorher* zu — bei monatlichen Daten bedeutet LAG(12) den *gleichen Monat im Vorjahr*. So eliminieren wir saisonale Effekte."))
+    return
+
+
+    # Aufgabe 12.10 (Indexierung) moved to Bonus section at end
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## Phase 6: Praktische Zeitreihenanalyse
+
+        ### Aufgabe 12.11: Branchenvergleich - Herren vs. Damen Bekleidung
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, retail_sales):
+    men_vs_women = mo.sql(
+        f"""
+        SELECT
+            EXTRACT(YEAR FROM sales_month) AS year,
+            SUM(CASE WHEN kind_of_business = 'Women''s clothing stores' THEN sales END) AS womens_sales,
+            SUM(CASE WHEN kind_of_business = 'Men''s clothing stores' THEN sales END) AS mens_sales,
+            ROUND(SUM(CASE WHEN kind_of_business = 'Women''s clothing stores' THEN sales END) * 1.0 /
+                  SUM(CASE WHEN kind_of_business = 'Men''s clothing stores' THEN sales END), 2)
+                AS womens_to_mens_ratio
+        FROM retail_sales
+        WHERE kind_of_business IN ('Women''s clothing stores', 'Men''s clothing stores')
+        GROUP BY EXTRACT(YEAR FROM sales_month)
+        ORDER BY year
+        """
+    )
+    return (men_vs_women,)
+
+
+@app.cell
+def _(men_vs_women, px):
+    fig_ratio = px.line(
+        men_vs_women,
+        x="year",
+        y="womens_to_mens_ratio",
+        title="Verhältnis Damen- zu Herrenbekleidung (jährlich)",
+        labels={"year": "Jahr", "womens_to_mens_ratio": "Verhältnis"}
+    )
+    fig_ratio
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### Aufgabe 12.12: Saisonale Muster erkennen
+
+        Welche Monate sind am stärksten für verschiedene Branchen?
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, retail_sales):
+    seasonal_pattern = mo.sql(
+        f"""
+        SELECT
+            EXTRACT(MONTH FROM sales_month) AS month_num,
+            kind_of_business,
+            ROUND(AVG(sales), 0) AS avg_sales
+        FROM retail_sales
+        WHERE kind_of_business IN ('Jewelry stores', 'Sporting goods stores', 'Book stores')
+        GROUP BY EXTRACT(MONTH FROM sales_month), kind_of_business
+        ORDER BY kind_of_business, month_num
+        """
+    )
+    return (seasonal_pattern,)
+
+
+@app.cell
+def _(px, seasonal_pattern):
+    fig_seasonal = px.line(
+        seasonal_pattern,
+        x="month_num",
+        y="avg_sales",
+        color="kind_of_business",
+        title="Saisonale Muster nach Branche (Durchschnitt 1992-2020)",
+        labels={"month_num": "Monat", "avg_sales": "Ø Umsatz (Mio. USD)", "kind_of_business": "Branche"}
+    )
+    fig_seasonal
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### Aufgabe 12.13: Selbstständig - COVID-Effekt
+
+        Vergleichen Sie das YoY-Wachstum für 2020 mit den Vorjahren für "Book stores".
+        Sehen Sie den COVID-Effekt?
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, retail_sales):
+    # Ihre Lösung hier:
+    mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        -- Tipp: GROUP BY Jahr, dann LAG(..., 1) OVER (ORDER BY year) für Vorjahresvergleich
+        -- Filter: WHERE kind_of_business = 'Book stores'
+        -- Erwartete Spalten: year, annual_sales, prev_year, yoy_growth
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+WITH yearly AS (
     SELECT
-        user_id,
-        gruppe,
-        umsatz,
-        (umsatz - AVG(umsatz) OVER())
-        / STDDEV(umsatz) OVER() AS z_score
-    FROM ab_test
-    WHERE konvertiert = 1
+        EXTRACT(YEAR FROM sales_month) AS year,
+        ROUND(SUM(sales), 0) AS annual_sales
+    FROM retail_sales
+    WHERE kind_of_business = 'Book stores'
+    GROUP BY EXTRACT(YEAR FROM sales_month)
 )
 SELECT
-    gruppe,
-    COUNT(*) AS n_total,
-    SUM(CASE WHEN ABS(z_score) > 2 THEN 1 ELSE 0 END) AS n_ausreisser,
-    ROUND(SUM(CASE WHEN ABS(z_score) > 2 THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 1) AS pct_ausreisser
-FROM z_scores
-GROUP BY gruppe
+    year,
+    annual_sales,
+    LAG(annual_sales, 1) OVER (ORDER BY year) AS prev_year,
+    ROUND((annual_sales * 1.0 / LAG(annual_sales, 1) OVER (ORDER BY year) - 1) * 100, 1)
+        AS yoy_growth
+FROM yearly
+ORDER BY year
 ```
 """)})
     return
@@ -314,375 +676,28 @@ GROUP BY gruppe
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 12.6: z-Score-Visualisierung
+        ### Aufgabe 12.14: Selbstständig - Anteil am Gesamtumsatz
 
-        Erstelle ein Histogramm der z-Scores mit Markierungslinien bei z = -2 und z = +2.
+        Berechnen Sie für jeden Monat den Anteil von "Jewelry stores" am Gesamtumsatz.
+
+        *Hinweis: Verwenden Sie SUM() OVER (PARTITION BY sales_month)*
         """
     )
     return
 
 
 @app.cell
-def _(ab_test, mo):
-    _z_data = mo.sql(
-        f"""
-        SELECT
-            user_id,
-            gruppe,
-            umsatz,
-            ROUND(
-                (umsatz - AVG(umsatz) OVER())
-                / STDDEV(umsatz) OVER(),
-            2) AS z_score
-        FROM ab_test
-        WHERE konvertiert = 1
-        """
-    )
-    return (_z_data,)
-
-
-@app.cell
-def _(_z_data, px):
-    fig = px.histogram(
-        _z_data,
-        x="z_score",
-        color="gruppe",
-        barmode="overlay",
-        opacity=0.6,
-        nbins=40,
-        title="z-Score-Verteilung der Umsätze",
-        labels={"z_score": "z-Score", "gruppe": "Gruppe", "count": "Anzahl"},
-        color_discrete_map={"Control": "#004B8D", "Treatment": "#E87722"},
-    )
-    fig.add_vline(x=-2, line_dash="dash", line_color="red", annotation_text="z = -2")
-    fig.add_vline(x=2, line_dash="dash", line_color="red", annotation_text="z = +2")
-    fig
-    return (fig,)
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ---
-
-        ## Phase 3: Hypothesentests
-
-        Jetzt wenden wir statistische Tests an, um zu prüfen, ob die beobachteten
-        Unterschiede **statistisch signifikant** sind.
-
-        **Hypothesen für den Umsatzvergleich:**
-        - $H_0$: Der mittlere Umsatz ist in beiden Gruppen gleich ($\mu_C = \mu_T$)
-        - $H_1$: Der mittlere Umsatz unterscheidet sich ($\mu_C \neq \mu_T$)
-
-        **t-Test Formel (Welch):**
-
-        $$t = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{\frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}}}$$
-
-        Daumenregel: |t| > 2 → signifikant auf 5%-Niveau (bei großen Stichproben)
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ### Aufgabe 12.7: t-Test für Umsatz (Konverter)
-
-        Berechne die t-Statistik für den Umsatzvergleich zwischen Control und Treatment
-        (nur konvertierte Nutzer). Ist der Unterschied signifikant?
-        """
-    )
-    return
-
-
-@app.cell
-def _(ab_test, mo):
-    mo.sql(
-        f"""
-        WITH stats AS (
-            SELECT
-                gruppe,
-                COUNT(*) AS n,
-                AVG(umsatz) AS mittel,
-                STDDEV(umsatz) AS std
-            FROM ab_test
-            WHERE konvertiert = 1
-            GROUP BY gruppe
-        )
-        SELECT
-            ROUND(c.mittel, 2) AS mittel_control,
-            ROUND(t.mittel, 2) AS mittel_treatment,
-            ROUND(c.mittel - t.mittel, 2) AS differenz,
-            ROUND(SQRT(POWER(c.std, 2) / c.n + POWER(t.std, 2) / t.n), 4) AS standardfehler,
-            ROUND(
-                ABS(c.mittel - t.mittel)
-                / SQRT(POWER(c.std, 2) / c.n + POWER(t.std, 2) / t.n),
-            2) AS t_statistik,
-            CASE
-                WHEN ABS(c.mittel - t.mittel)
-                     / SQRT(POWER(c.std, 2) / c.n + POWER(t.std, 2) / t.n) > 1.96
-                THEN 'Signifikant (p < 0.05)'
-                ELSE 'Nicht signifikant'
-            END AS ergebnis
-        FROM stats c, stats t
-        WHERE c.gruppe = 'Control'
-          AND t.gruppe = 'Treatment'
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    quiz_pvalue = mo.ui.radio(
-        options={
-            "correct": "Statistisch signifikant — wir lehnen H₀ ab, weil p < α",
-            "accept": "Wir akzeptieren H₁ als wahr — der Effekt ist bewiesen",
-            "nonsig": "Nicht signifikant — 0.03 ist zu klein für eine Aussage",
-            "repeat": "Wir müssen den Test wiederholen, da p nicht genau 0.05 ist",
-        },
-        label="**Quiz:** Was bedeutet ein p-Wert von 0.03 bei einem Signifikanzniveau α = 0.05?"
-    )
-    quiz_pvalue
-    return (quiz_pvalue,)
-
-
-@app.cell(hide_code=True)
-def _(quiz_pvalue, mo):
-    if quiz_pvalue.value == "correct":
-        mo.output.replace(mo.md("Richtig! Da p = 0.03 < α = 0.05, lehnen wir die Nullhypothese ab. Das bedeutet: Die beobachteten Daten sind unter H₀ so unwahrscheinlich, dass wir einen echten Effekt annehmen. Achtung: Das *beweist* H₁ nicht — es macht sie nur wahrscheinlicher."))
-    elif quiz_pvalue.value:
-        mo.output.replace(mo.md("Nicht ganz. p = 0.03 bedeutet: *Wenn H₀ wahr wäre*, würden wir so extreme Daten nur in 3% der Fälle sehen. Da 3% < 5% (unser α), lehnen wir H₀ ab und sprechen von einem **statistisch signifikanten** Ergebnis."))
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ### Aufgabe 12.8: Effektgröße (Cohen's d)
-
-        Berechne Cohen's d für den Umsatzunterschied.
-
-        $$d = \frac{\bar{x}_1 - \bar{x}_2}{s_{\text{pooled}}}$$
-
-        wobei $s_{\text{pooled}} = \sqrt{\frac{(n_1-1) \cdot s_1^2 + (n_2-1) \cdot s_2^2}{n_1 + n_2 - 2}}$
-
-        | |d| | Interpretation |
-        |-----|----------------|
-        | < 0.2 | Vernachlässigbar |
-        | 0.2 – 0.5 | Klein |
-        | 0.5 – 0.8 | Mittel |
-        | > 0.8 | Groß |
-        """
-    )
-    return
-
-
-@app.cell
-def _(ab_test, mo):
-    mo.sql(
-        f"""
-        WITH stats AS (
-            SELECT
-                gruppe,
-                COUNT(*) AS n,
-                AVG(umsatz) AS mittel,
-                STDDEV(umsatz) AS std
-            FROM ab_test
-            WHERE konvertiert = 1
-            GROUP BY gruppe
-        )
-        SELECT
-            ROUND(c.mittel - t.mittel, 2) AS differenz,
-            ROUND(
-                SQRT(
-                    ((c.n - 1) * POWER(c.std, 2) + (t.n - 1) * POWER(t.std, 2))
-                    / (c.n + t.n - 2)
-                ), 2
-            ) AS s_pooled,
-            ROUND(
-                ABS(c.mittel - t.mittel)
-                / SQRT(
-                    ((c.n - 1) * POWER(c.std, 2) + (t.n - 1) * POWER(t.std, 2))
-                    / (c.n + t.n - 2)
-                ), 3
-            ) AS cohens_d,
-            CASE
-                WHEN ABS(c.mittel - t.mittel)
-                     / SQRT(((c.n-1)*POWER(c.std,2) + (t.n-1)*POWER(t.std,2)) / (c.n+t.n-2)) < 0.2
-                THEN 'Vernachlässigbar'
-                WHEN ABS(c.mittel - t.mittel)
-                     / SQRT(((c.n-1)*POWER(c.std,2) + (t.n-1)*POWER(t.std,2)) / (c.n+t.n-2)) < 0.5
-                THEN 'Klein'
-                WHEN ABS(c.mittel - t.mittel)
-                     / SQRT(((c.n-1)*POWER(c.std,2) + (t.n-1)*POWER(t.std,2)) / (c.n+t.n-2)) < 0.8
-                THEN 'Mittel'
-                ELSE 'Groß'
-            END AS interpretation
-        FROM stats c, stats t
-        WHERE c.gruppe = 'Control'
-          AND t.gruppe = 'Treatment'
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ---
-
-        ## Phase 4: A/B-Test-Auswertung
-
-        Jetzt analysieren wir den A/B-Test **systematisch** — genau wie in der Praxis.
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ### Aufgabe 12.9: Selbstständig — Conversion Rate mit Konfidenzintervall
-
-        Berechne die Conversion Rate pro Gruppe mit einem **95%-Konfidenzintervall**.
-
-        Für Proportionen: $CI = p \pm 1.96 \cdot \sqrt{\frac{p(1-p)}{n}}$
-
-        *Hinweis: Wenden Sie die Formel direkt in SQL an — AVG(konvertiert) ist p, COUNT(*) ist n*
-        """
-    )
-    return
-
-
-@app.cell
-def _(ab_test, mo):
-    mo.sql(
-        f"""
-        -- Ergänzen Sie die fehlenden Berechnungen (???)
-        SELECT
-            gruppe,
-            COUNT(*) AS n,
-            ROUND(AVG(konvertiert) * 100, 1) AS conv_rate_pct,
-            -- CI-Untergrenze: (p - 1.96 * sqrt(p*(1-p)/n)) * 100
-            ROUND(
-                (AVG(konvertiert) - 1.96 * SQRT(??? * (1 - ???) / COUNT(*))) * 100,
-            1) AS ci_lower_pct,
-            -- CI-Obergrenze: (p + 1.96 * sqrt(p*(1-p)/n)) * 100
-            ROUND(
-                (AVG(konvertiert) + 1.96 * SQRT(??? * (1 - ???) / COUNT(*))) * 100,
-            1) AS ci_upper_pct
-        FROM ab_test
-        GROUP BY gruppe
-        ORDER BY gruppe
-        -- Tipp: Ersetzen Sie jedes ??? durch AVG(konvertiert)
-        -- Erwartete Ausgabe: 2 Zeilen (control, treatment), 5 Spalten
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.accordion({"🔑 Musterlösung": mo.md("""
-```sql
-SELECT
-    gruppe,
-    COUNT(*) AS n,
-    ROUND(AVG(konvertiert) * 100, 1) AS conv_rate_pct,
-    ROUND(
-        (AVG(konvertiert) - 1.96 * SQRT(AVG(konvertiert) * (1 - AVG(konvertiert)) / COUNT(*))) * 100,
-    1) AS ci_lower_pct,
-    ROUND(
-        (AVG(konvertiert) + 1.96 * SQRT(AVG(konvertiert) * (1 - AVG(konvertiert)) / COUNT(*))) * 100,
-    1) AS ci_upper_pct
-FROM ab_test
-GROUP BY gruppe
-ORDER BY gruppe
-```
-""")})
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ### Aufgabe 12.10: Umsatz pro Nutzer (alle Nutzer)
-
-        Vergleiche den **durchschnittlichen Umsatz pro Nutzer** (inkl. Nicht-Konverter mit 0€).
-        Dies ist oft die wichtigere Metrik als die Conversion Rate allein.
-        """
-    )
-    return
-
-
-@app.cell
-def _(ab_test, mo):
-    mo.sql(
-        f"""
-        SELECT
-            gruppe,
-            COUNT(*) AS n,
-            ROUND(AVG(umsatz), 2) AS avg_umsatz_alle,
-            ROUND(STDDEV(umsatz), 2) AS std_umsatz,
-            ROUND(SUM(umsatz), 2) AS total_umsatz
-        FROM ab_test
-        GROUP BY gruppe
-        ORDER BY gruppe
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ---
-
-        ## Phase 5: Simpson's Paradox aufdecken
-
-        Bisher sieht es so aus, als wäre **Control besser**. Aber stimmt das wirklich?
-        Schauen wir uns die Daten **segmentiert** an.
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ### Aufgabe 12.11: Selbstständig — Segmentierung nach Gerät
-
-        Berechne die Conversion Rate **getrennt nach Gerätetyp** (Desktop vs. Mobile).
-        Was fällt auf?
-
-        *Hinweis: GROUP BY geraet, gruppe — gleiche Aggregation wie 12.1, nur feiner segmentiert*
-        """
-    )
-    return
-
-
-@app.cell
-def _(ab_test, mo):
+def _(mo, retail_sales):
+    # Ihre Lösung hier:
     mo.sql(
         f"""
         -- Ihre Lösung hier
-        -- Tipp: GROUP BY geraet, gruppe statt nur GROUP BY gruppe
-        -- Gleiche Aggregation: COUNT(*), SUM(konvertiert), AVG(konvertiert)
-        -- Erwartete Spalten: geraet, gruppe, n, conversions, conv_rate_pct
+        -- Tipp: SUM(sales) OVER (PARTITION BY sales_month) für den Gesamtumsatz pro Monat
+        -- Dann: sales * 100.0 / SUM(sales) OVER (...) für den Anteil
+        -- Erwartete Spalten: sales_month, kind_of_business, sales, total_sales, pct_of_total
         SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
-    return
 
 
 @app.cell(hide_code=True)
@@ -690,135 +705,16 @@ def _(mo):
     mo.accordion({"🔑 Musterlösung": mo.md("""
 ```sql
 SELECT
-    geraet,
-    gruppe,
-    COUNT(*) AS n,
-    SUM(konvertiert) AS conversions,
-    ROUND(AVG(konvertiert) * 100, 1) AS conv_rate_pct
-FROM ab_test
-GROUP BY geraet, gruppe
-ORDER BY geraet, gruppe
+    sales_month,
+    kind_of_business,
+    sales,
+    SUM(sales) OVER (PARTITION BY sales_month) AS total_sales,
+    ROUND(sales * 100.0 / SUM(sales) OVER (PARTITION BY sales_month), 2) AS pct_of_total
+FROM retail_sales
+WHERE kind_of_business = 'Jewelry stores'
+ORDER BY sales_month
 ```
 """)})
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        **Simpson's Paradox!** Treatment ist in **beiden** Segmenten besser,
-        aber im Gesamtergebnis schlechter. Warum?
-
-        Der Grund: Die Gruppen sind **nicht gleich zusammengesetzt**.
-        Treatment hat mehr Mobile-Nutzer, und Mobile-Nutzer konvertieren generell weniger.
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ### Aufgabe 12.12: Gruppenkomposition analysieren
-
-        Zeige die **Geräteverteilung** pro Gruppe. Das erklärt den Paradox.
-        """
-    )
-    return
-
-
-@app.cell
-def _(ab_test, mo):
-    mo.sql(
-        f"""
-        SELECT
-            gruppe,
-            geraet,
-            COUNT(*) AS n,
-            ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER(PARTITION BY gruppe), 1) AS anteil_pct
-        FROM ab_test
-        GROUP BY gruppe, geraet
-        ORDER BY gruppe, geraet
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        Die Treatment-Gruppe hat **60% Mobile-Nutzer** vs. nur **30% bei Control**.
-        Da Mobile-Nutzer generell weniger konvertieren, zieht das den Gesamtdurchschnitt
-        der Treatment-Gruppe nach unten — obwohl Treatment **innerhalb jedes Segments** besser ist.
-        """
-    )
-    return
-
-
-@app.cell
-def _(ab_test, mo):
-    _comp = mo.sql(
-        f"""
-        SELECT
-            gruppe,
-            geraet,
-            COUNT(*) AS n,
-            ROUND(AVG(konvertiert) * 100, 1) AS conv_rate_pct
-        FROM ab_test
-        GROUP BY gruppe, geraet
-        ORDER BY geraet, gruppe
-        """
-    )
-    return (_comp,)
-
-
-@app.cell
-def _(_comp, px):
-    fig = px.bar(
-        _comp,
-        x="geraet",
-        y="conv_rate_pct",
-        color="gruppe",
-        barmode="group",
-        title="Conversion Rate nach Gerät und Gruppe (Simpson's Paradox)",
-        labels={
-            "conv_rate_pct": "Conversion Rate (%)",
-            "geraet": "Gerätetyp",
-            "gruppe": "Gruppe",
-        },
-        color_discrete_map={"Control": "#004B8D", "Treatment": "#E87722"},
-        text="conv_rate_pct",
-    )
-    fig.update_traces(textposition="outside")
-    fig
-    return (fig,)
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ---
-
-        ## Zusammenfassung
-
-        | Konzept | SQL-Werkzeug | Erkenntnis |
-        |---------|-------------|------------|
-        | Deskriptive Statistik | `AVG()`, `STDDEV()` | Gruppen beschreiben |
-        | z-Score | Window Functions | Ausreißer identifizieren |
-        | t-Test | `WITH` + Berechnungen | Signifikanz prüfen |
-        | Cohen's d | Pooled Std | Effektgröße bewerten |
-        | Konfidenzintervall | Proportions-Formel | Unsicherheit quantifizieren |
-        | Simpson's Paradox | `GROUP BY` Segment | **Immer segmentieren!** |
-
-        **Kernbotschaft:** Ein Unterschied ist nur dann aussagekräftig, wenn er
-        **statistisch signifikant** *und* **praktisch relevant** ist — und wir auf
-        **Confounding Variables** geprüft haben.
-        """
-    )
     return
 
 
@@ -830,21 +726,110 @@ def _(mo):
 
         ## Freie Exploration
 
-        Nutze die Zelle unten, um eigene SQL-Abfragen auf dem A/B-Test-Datensatz auszuprobieren.
+        Probieren Sie eigene Zeitreihenanalysen:
+
+        - Vergleichen Sie verschiedene Branchen mit Indexierung
+        - Finden Sie die volatilsten Branchen (höchste Standardabweichung der YoY-Wachstumsraten)
+        - Analysieren Sie Trends vor und nach der Finanzkrise 2008
         """
     )
     return
 
 
 @app.cell
-def _(ab_test, mo):
+def _(mo, retail_sales):
+    # Eigene Analyse hier:
     mo.sql(
         f"""
-        -- Eigene Abfrage hier:
-        SELECT * FROM ab_test LIMIT 5
+        SELECT
+            kind_of_business,
+            ROUND(AVG(yoy_growth), 1) AS avg_yoy_growth,
+            ROUND(STDDEV(yoy_growth), 1) AS stddev_yoy_growth
+        FROM (
+            SELECT
+                kind_of_business,
+                sales_month,
+                (sales * 1.0 / LAG(sales, 12) OVER (PARTITION BY kind_of_business ORDER BY sales_month) - 1) * 100
+                    AS yoy_growth
+            FROM retail_sales
+            WHERE kind_of_business NOT LIKE '%total%'
+        )
+        WHERE yoy_growth IS NOT NULL
+        GROUP BY kind_of_business
+        ORDER BY stddev_yoy_growth DESC
+        LIMIT 10
+        """
+    )
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## Zusammenfassung
+
+        | Konzept | Syntax | Anwendung |
+        |---------|--------|-----------|
+        | **LAG** | `LAG(col, n) OVER (ORDER BY ...)` | Vorheriger Wert |
+        | **LEAD** | `LEAD(col, n) OVER (ORDER BY ...)` | Nächster Wert |
+        | **Moving Avg** | `AVG() OVER (ROWS BETWEEN ...)` | Trend glätten |
+        | **YoY** | `LAG(col, 12) OVER (...)` | Saisonalität eliminieren |
+        | **Indexierung** | `FIRST_VALUE() OVER (...)` | Normalisieren (Bonus) |
+        | **Ranking** | `RANK() OVER (ORDER BY ...)` | Top-N finden |
+
+        **Nächste Session:** Textanalyse mit SQL-String-Funktionen
         """
     )
     return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## Bonus: Indexierung (nicht klausurrelevant)
+
+        ### Aufgabe 12.10: Indexierung zum Basisjahr
+
+        Zeigen Sie alle Werte relativ zum ersten Wert (Januar 1992 = 0%).
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, retail_sales):
+    indexed = mo.sql(
+        f"""
+        SELECT
+            sales_month,
+            sales,
+            FIRST_VALUE(sales) OVER (ORDER BY sales_month) AS base_sales,
+            ROUND((sales * 1.0 / FIRST_VALUE(sales) OVER (ORDER BY sales_month) - 1) * 100, 1)
+                AS pct_from_base
+        FROM retail_sales
+        WHERE kind_of_business = 'Women''s clothing stores'
+        ORDER BY sales_month
+        """
+    )
+    return (indexed,)
+
+
+@app.cell
+def _(indexed, px):
+    fig_indexed = px.line(
+        indexed,
+        x="sales_month",
+        y="pct_from_base",
+        title="Indexierte Verkaufszahlen - Damenbekleidung (Basis: Jan 1992)",
+        labels={"sales_month": "Monat", "pct_from_base": "Änderung vs. Basis (%)"}
+    )
+    fig_indexed.add_hline(y=0, line_dash="dash", line_color="gray", annotation_text="Basiswert")
+    fig_indexed
 
 
 if __name__ == "__main__":

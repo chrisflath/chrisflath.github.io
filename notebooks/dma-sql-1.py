@@ -24,7 +24,7 @@ def _(mo):
     mo.md(r"""
     # Session 1: SQL-Grundlagen
 
-    **Kursfahrplan:** **▸ I: SQL-Grundlagen (S1–4)** · II: Datenmodellierung (S5–8) · III: Fortgeschrittenes SQL (S9–10) · IV: Datenanalyse (S11–14)
+    **Kursfahrplan:** **▸ I: SQL-Grundlagen (S1–4)** · II: Datenmodellierung (S5–7) · III: Fortgeschrittenes SQL (S8–9) · IV: Datenanalyse (S10–13)
 
     Willkommen zur ersten Hands-on-Session! In diesem Notebook lernen Sie:
 

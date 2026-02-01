@@ -42,52 +42,47 @@
         },
         {
           "file": "notebooks/dma-sql-5.py",
-          "title": "Session 5: Warum mehrere Tabellen?",
-          "topics": ["Redundanz", "Anomalien", "Primärschlüssel", "Fremdschlüssel"]
+          "title": "Session 5: Datenmodellierung",
+          "topics": ["Redundanz", "Anomalien", "ER-Modell", "Entitäten", "Attribute", "Beziehungen", "Kardinalitäten"]
         },
         {
           "file": "notebooks/dma-sql-6.py",
-          "title": "Session 6: ER-Modellierung",
-          "topics": ["Entitäten", "Attribute", "Beziehungen", "Kardinalitäten", "Chen-Notation"]
-        },
-        {
-          "file": "notebooks/dma-sql-7.py",
-          "title": "Session 7: Relationales Modell & Transformation",
+          "title": "Session 6: Relationales Modell & Transformation",
           "topics": ["Relationen", "Primärschlüssel", "Fremdschlüssel", "CREATE TABLE", "ER zu SQL"]
         },
         {
-          "file": "notebooks/dma-sql-8.py",
-          "title": "Session 8: Normalisierung",
+          "file": "notebooks/dma-sql-7.py",
+          "title": "Session 7: Normalisierung",
           "topics": ["Funktionale Abhängigkeiten", "1NF", "2NF", "3NF", "BCNF", "Denormalisierung"]
         },
         {
-          "file": "notebooks/dma-sql-9.py",
-          "title": "Session 9: JOINs",
+          "file": "notebooks/dma-sql-8.py",
+          "title": "Session 8: JOINs",
           "topics": ["INNER JOIN", "LEFT JOIN", "RIGHT JOIN", "Self-Join", "Graphen in SQL"]
         },
         {
-          "file": "notebooks/dma-sql-10.py",
-          "title": "Session 10: Subqueries, Views & Transaktionen",
+          "file": "notebooks/dma-sql-9.py",
+          "title": "Session 9: Subqueries, Views & Transaktionen",
           "topics": ["Subqueries", "CTEs", "Views", "ACID", "Transaktionen"]
         },
         {
-          "file": "notebooks/dma-sql-11.py",
-          "title": "Session 11: Explorative Datenanalyse",
+          "file": "notebooks/dma-sql-10.py",
+          "title": "Session 10: Explorative Datenanalyse",
           "topics": ["EDA", "Lagemaße", "Streuung", "Ausreißer", "Korrelation", "Datasaurus Dozen"]
         },
         {
-          "file": "notebooks/dma-sql-12.py",
-          "title": "Session 12: Statistische Inferenz & A/B-Tests",
+          "file": "notebooks/dma-sql-11.py",
+          "title": "Session 11: Statistische Inferenz & A/B-Tests",
           "topics": ["Hypothesentests", "p-Wert", "t-Test", "A/B-Tests", "Simpson's Paradox", "Cohen's d"]
         },
         {
-          "file": "notebooks/dma-sql-13.py",
-          "title": "Session 13: Zeitreihenanalyse",
-          "topics": ["Window Functions", "LAG", "LEAD", "Moving Average", "YoY", "Indexierung"]
+          "file": "notebooks/dma-sql-12.py",
+          "title": "Session 12: Zeitreihenanalyse",
+          "topics": ["Window Functions", "LAG", "LEAD", "Moving Average", "YoY"]
         },
         {
-          "file": "notebooks/dma-sql-14.py",
-          "title": "Session 14: Textanalyse",
+          "file": "notebooks/dma-sql-13.py",
+          "title": "Session 13: Textanalyse",
           "topics": ["String-Funktionen", "LIKE", "Regex", "CASE WHEN", "TF-IDF"]
         }
       ],

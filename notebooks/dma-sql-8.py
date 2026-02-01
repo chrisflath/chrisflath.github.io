@@ -12,7 +12,7 @@ import marimo
 __generated_with = "0.13.0"
 app = marimo.App(
     width="medium",
-    app_title="DMA Session 8: Normalisierung",
+    app_title="DMA Session 8: JOINs - Tabellen verknüpfen",
 )
 
 
@@ -23,29 +23,25 @@ def _():
 
 
 @app.cell(hide_code=True)
-def _():
-    import polars as pl
-    import plotly.express as px
-    return pl, px
-
-
-@app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        # Session 8: Normalisierung
+        # Session 8: JOINs - Tabellen verknüpfen
 
-        **Kursfahrplan:** I: SQL-Grundlagen (S1–4) · **▸ II: Datenmodellierung (S5–8)** · III: Fortgeschrittenes SQL (S9–10) · IV: Datenanalyse (S11–14)
+        **Kursfahrplan:** I: SQL-Grundlagen (S1–4) · II: Datenmodellierung (S5–7) · **▸ III: Fortgeschrittenes SQL (S8–9)** · IV: Datenanalyse (S10–13)
 
         In dieser Session lernen Sie:
 
-        - **Funktionale Abhängigkeiten** erkennen
-        - **1NF**: Atomare Werte
-        - **2NF**: Volle funktionale Abhängigkeit
-        - **3NF**: Keine transitiven Abhängigkeiten
-        - Tabellen **normalisieren**
+        - **INNER JOIN**: Nur passende Zeilen aus beiden Tabellen
+        - **LEFT JOIN**: Alle Zeilen der linken Tabelle + passende rechte
+        - **RIGHT JOIN**: Alle Zeilen der rechten Tabelle + passende linke
+        - **Self-Join**: Eine Tabelle mit sich selbst verknüpfen
+        - **Bonus**: Graphen als Kantenlisten
 
         ---
+
+        Nach der Normalisierung (Session 7) sind unsere Daten auf mehrere Tabellen verteilt.
+        JOINs bringen sie wieder zusammen — ohne die Nachteile der Redundanz!
         """
     )
     return
@@ -55,208 +51,75 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-        ## Rückblick: Warum Normalisierung?
+        ## Datenmodell: Bundesliga-Szenario
 
-        In Session 5 haben wir **Anomalien** gesehen:
+        Wir arbeiten mit drei normalisierten Tabellen:
 
-        | Anomalie | Problem |
-        |----------|---------|
-        | **Änderung** | Inkonsistenz bei Updates |
-        | **Einfügung** | Kann Daten nicht einfügen |
-        | **Löschung** | Verliert ungewollt Daten |
-
-        **Ursache:** Redundanz durch schlechtes Tabellendesign
-
-        **Lösung:** Systematische **Normalisierung** nach definierten Regeln
+        - **Vereine**: Vereinsstammdaten
+        - **Spieler**: Spielerdaten mit Verweis auf Verein (manche ohne Verein!)
+        - **Spiele**: Begegnungen zwischen Vereinen
 
         ---
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ## Funktionale Abhängigkeit (FD)
-
-        **Definition:** A → B bedeutet: "Wenn ich A kenne, kenne ich auch B"
-
-        **Beispiele:**
-
-        | FD | Gültig? | Erklärung |
-        |----|---------|-----------|
-        | Matrikelnr → Name | ✅ | Jede Matrikelnr gehört zu genau einem Namen |
-        | PLZ → Ort | ✅ | Jede PLZ gehört zu einem Ort (in DE) |
-        | Ort → PLZ | ❌ | München hat viele PLZs |
-        | ISBN → Titel | ✅ | Jede ISBN identifiziert ein Buch |
-
-        ---
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ## Armstrong-Axiome: FDs ableiten
-
-        Mit drei Grundregeln lassen sich aus bekannten FDs **neue** ableiten:
-
-        | Axiom | Regel | Beispiel |
-        |-------|-------|----------|
-        | **Reflexivität** | Wenn B ⊆ A, dann A → B | {Vorname, Nachname} → Nachname |
-        | **Verstärkung** | Wenn A → B, dann A,C → B,C | Matrikelnr → Name ⟹ Matrikelnr,Fach → Name,Fach |
-        | **Transitivität** | Wenn A → B und B → C, dann A → C | Best_Nr → Kunde, Kunde → Stadt ⟹ Best_Nr → Stadt |
-
-        ---
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    armstrong_quiz = mo.ui.radio(
-        options={
-            "a_stadt": "Matrikelnr → Stadt",
-            "stadt_name": "Stadt → Name",
-            "name_matrikel": "Name → Matrikelnr",
-            "stadt_matrikel": "Stadt → Matrikelnr"
-        },
-        label="**Quiz:** Gegeben: Matrikelnr → Student, Student → Stadt. Welche FD lässt sich per **Transitivität** ableiten?"
-    )
-    armstrong_quiz
-    return (armstrong_quiz,)
-
-
-@app.cell(hide_code=True)
-def _(armstrong_quiz, mo):
-    if armstrong_quiz.value == "a_stadt":
-        mo.output.replace(mo.md("✅ **Richtig!** Transitivität: Matrikelnr → Student und Student → Stadt ergibt Matrikelnr → Stadt."))
-    elif armstrong_quiz.value:
-        mo.output.replace(mo.md("❌ Nicht ganz. Bei der Transitivität gilt: Wenn A → B und B → C, dann A → C. Hier: Matrikelnr → Student → Stadt, also Matrikelnr → Stadt."))
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    aug_quiz = mo.ui.radio(
-        options={
-            "correct": "ISBN, Verlag → Titel, Verlag",
-            "wrong1": "Verlag → Titel",
-            "wrong2": "Titel → ISBN, Verlag",
-            "wrong3": "ISBN, Titel → Verlag"
-        },
-        label="**Quiz:** Gegeben: ISBN → Titel. Welche FD folgt per **Verstärkung** (Augmentation) mit Verlag?"
-    )
-    aug_quiz
-    return (aug_quiz,)
-
-
-@app.cell(hide_code=True)
-def _(aug_quiz, mo):
-    if aug_quiz.value == "correct":
-        mo.output.replace(mo.md("✅ **Richtig!** Verstärkung: Wenn A → B, dann A,C → B,C. Also ISBN,Verlag → Titel,Verlag."))
-    elif aug_quiz.value:
-        mo.output.replace(mo.md("❌ Nicht ganz. Verstärkung fügt auf **beiden Seiten** das gleiche Attribut hinzu: ISBN → Titel wird zu ISBN,Verlag → Titel,Verlag."))
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ## Aufgabe 8.1: Unnormalisierte Tabelle analysieren
-
-        Wir erstellen eine unnormalisierte Bestelltabelle und identifizieren die Probleme.
         """
     )
     return
 
 
 @app.cell
-def _(mo):
-    _df = mo.sql(
-        f"""
-        -- Unnormalisierte Bestelltabelle
-        CREATE TABLE IF NOT EXISTS Bestellung_Unnorm (
-            Best_Nr INTEGER,
-            Kunde VARCHAR(50),
-            K_Stadt VARCHAR(50),
-            Produkt VARCHAR(50),
-            P_Preis DECIMAL(10,2),
-            Menge INTEGER,
-            PRIMARY KEY (Best_Nr, Produkt)
-        );
+def _():
+    import polars as pl
+    import plotly.express as px
 
-        -- Beispieldaten mit Redundanz
-        INSERT OR IGNORE INTO Bestellung_Unnorm VALUES (1001, 'Müller', 'München', 'Laptop', 999.00, 1);
-        INSERT OR IGNORE INTO Bestellung_Unnorm VALUES (1001, 'Müller', 'München', 'Maus', 29.00, 2);
-        INSERT OR IGNORE INTO Bestellung_Unnorm VALUES (1002, 'Schmidt', 'Berlin', 'Laptop', 999.00, 1);
-        INSERT OR IGNORE INTO Bestellung_Unnorm VALUES (1003, 'Müller', 'München', 'Tastatur', 79.00, 1);
-        INSERT OR IGNORE INTO Bestellung_Unnorm VALUES (1004, 'Weber', 'Hamburg', 'Maus', 29.00, 3);
-        INSERT OR IGNORE INTO Bestellung_Unnorm VALUES (1004, 'Weber', 'Hamburg', 'Laptop', 999.00, 1);
+    # Vereine
+    vereine = pl.DataFrame({
+        "Verein_ID": [1, 2, 3, 4],
+        "Name": ["Bayern Muenchen", "Bayer Leverkusen", "BVB Dortmund", "RB Leipzig"],
+        "Stadt": ["Muenchen", "Leverkusen", "Dortmund", "Leipzig"],
+        "Stadion": ["Allianz Arena", "BayArena", "Signal Iduna Park", "Red Bull Arena"]
+    })
 
-        SELECT * FROM Bestellung_Unnorm ORDER BY Best_Nr, Produkt;
-        """
-    )
-    return
+    vereine
+    return pl, px, vereine
+
+
+@app.cell
+def _(pl):
+    # Spieler - manche ohne Verein (NULL), um LEFT JOIN zu demonstrieren
+    spieler = pl.DataFrame({
+        "Spieler_ID": [1, 2, 3, 4, 5, 6, 7, 8],
+        "Name": ["Mueller", "Neuer", "Wirtz", "Xhaka", "Hummels", "Sabitzer", "Reus", "Goetze"],
+        "Position": ["Sturm", "Tor", "Mittelfeld", "Mittelfeld", "Abwehr", "Mittelfeld", "Mittelfeld", "Mittelfeld"],
+        "Verein_ID": [1, 1, 2, 2, 3, None, None, None]  # Einige Spieler ohne Verein
+    })
+
+    spieler
+    return (spieler,)
+
+
+@app.cell
+def _(pl):
+    # Spiele - Heim vs Gast
+    spiele = pl.DataFrame({
+        "Spiel_ID": [1, 2, 3, 4],
+        "Heim_ID": [1, 2, 3, 1],
+        "Gast_ID": [2, 3, 4, 3],
+        "Datum": ["2024-09-15", "2024-09-22", "2024-09-29", "2024-10-06"],
+        "Heim_Tore": [2, 1, 3, 4],
+        "Gast_Tore": [1, 1, 0, 2]
+    })
+
+    spiele
+    return (spiele,)
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        ### Redundanz identifizieren
-
-        **Frage:** Welche Daten sind redundant gespeichert?
-        """
-    )
-    return
-
-
-@app.cell
-def _(mo):
-    _df = mo.sql(
-        f"""
-        -- Wie oft kommt jeder Kunde vor?
-        SELECT Kunde, K_Stadt, COUNT(*) AS Anzahl
-        FROM Bestellung_Unnorm
-        GROUP BY Kunde, K_Stadt
-        ORDER BY Anzahl DESC;
-        """
-    )
-    return
-
-
-@app.cell
-def _(mo):
-    _df = mo.sql(
-        f"""
-        -- Wie oft kommt jedes Produkt mit Preis vor?
-        SELECT Produkt, P_Preis, COUNT(*) AS Anzahl
-        FROM Bestellung_Unnorm
-        GROUP BY Produkt, P_Preis
-        ORDER BY Anzahl DESC;
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        **Beobachtung:**
-        - "Müller, München" steht **3x** in der Tabelle
-        - "Laptop, 999" steht **3x** in der Tabelle
-        - "Maus, 29" steht **2x** in der Tabelle
-
-        Das ist **Redundanz** - die Ursache für Anomalien!
+        **Beachten Sie:**
+        - Spieler 6-8 (Sabitzer, Reus, Goetze) haben **keine Verein_ID** (vereinslos)
+        - Verein 4 (RB Leipzig) hat **keine Spieler** in unserer Tabelle
+        - Die Spiele-Tabelle hat **zwei Fremdschluessel** (Heim_ID, Gast_ID)
 
         ---
         """
@@ -268,368 +131,47 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-        ## Aufgabe 8.2: Erste Normalform (1NF)
+        ## INNER JOIN: Nur Treffer
 
-        **Regel:** Alle Attributwerte müssen **atomar** sein (keine Listen, keine Wiederholungsgruppen).
-        """
-    )
-    return
+        Der **INNER JOIN** gibt nur Zeilen zurück, bei denen der JOIN-Schluessel
+        in **beiden** Tabellen existiert.
 
+        ```
+        Tabelle A           Tabelle B
+        +-------+           +-------+
+        |   1   |----+  +---|   1   |
+        |   2   |    +--+   |   3   |
+        |   3   |----+  +---|   4   |
+        +-------+    +------+-------+
 
-@app.cell
-def _(mo):
-    _df = mo.sql(
-        f"""
-        -- NICHT in 1NF: Liste von Kursen in einer Zelle
-        CREATE TABLE IF NOT EXISTS Student_Nicht1NF (
-            Student VARCHAR(50) PRIMARY KEY,
-            Kurse VARCHAR(200)  -- Komma-separierte Liste!
-        );
-
-        INSERT OR IGNORE INTO Student_Nicht1NF VALUES ('Anna', 'DMA, BWL, Statistik');
-        INSERT OR IGNORE INTO Student_Nicht1NF VALUES ('Ben', 'DMA');
-        INSERT OR IGNORE INTO Student_Nicht1NF VALUES ('Clara', 'BWL, Statistik');
-
-        SELECT * FROM Student_Nicht1NF;
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        **Problem:** Wie finden wir alle Studenten, die "BWL" belegen?
-
-        ```sql
-        -- Das funktioniert NICHT zuverlässig:
-        SELECT * FROM Student_Nicht1NF WHERE Kurse LIKE '%BWL%';
+        Ergebnis: Nur 1 und 3 (die Schnittmenge)
         ```
 
-        **Lösung:** In 1NF überführen - jeder Kurs in eigener Zeile:
-        """
-    )
-    return
-
-
-@app.cell
-def _(mo):
-    _df = mo.sql(
-        f"""
-        -- IN 1NF: Jede Zelle enthält genau einen Wert
-        CREATE TABLE IF NOT EXISTS Student_Kurs_1NF (
-            Student VARCHAR(50),
-            Kurs VARCHAR(50),
-            PRIMARY KEY (Student, Kurs)
-        );
-
-        INSERT OR IGNORE INTO Student_Kurs_1NF VALUES ('Anna', 'DMA');
-        INSERT OR IGNORE INTO Student_Kurs_1NF VALUES ('Anna', 'BWL');
-        INSERT OR IGNORE INTO Student_Kurs_1NF VALUES ('Anna', 'Statistik');
-        INSERT OR IGNORE INTO Student_Kurs_1NF VALUES ('Ben', 'DMA');
-        INSERT OR IGNORE INTO Student_Kurs_1NF VALUES ('Clara', 'BWL');
-        INSERT OR IGNORE INTO Student_Kurs_1NF VALUES ('Clara', 'Statistik');
-
-        SELECT * FROM Student_Kurs_1NF ORDER BY Student, Kurs;
-        """
-    )
-    return
-
-
-@app.cell
-def _(mo):
-    _df = mo.sql(
-        f"""
-        -- Jetzt funktioniert die Abfrage!
-        SELECT Student FROM Student_Kurs_1NF WHERE Kurs = 'BWL';
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ---
-
-        ## Aufgabe 8.3: Zweite Normalform (2NF)
-
-        **Regel:** Jedes Nicht-Schlüsselattribut muss **voll funktional abhängig** vom **gesamten** Primärschlüssel sein.
-
-        **Problem in unserer Bestelltabelle:**
-
-        - Primärschlüssel: (Best_Nr, Produkt)
-        - Aber: `Kunde` hängt nur von `Best_Nr` ab, nicht von `Produkt`!
-        - Und: `P_Preis` hängt nur von `Produkt` ab, nicht von `Best_Nr`!
-
-        Das sind **partielle Abhängigkeiten** → verletzt 2NF
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ### Zerlegung in 2NF
-
-        Wir zerlegen die Tabelle so, dass partielle Abhängigkeiten verschwinden:
-        """
-    )
-    return
-
-
-@app.cell
-def _(mo):
-    _df = mo.sql(
-        f"""
-        -- Tabelle 1: Bestellungen (Best_Nr → Kunde, K_Stadt)
-        CREATE TABLE IF NOT EXISTS Bestellung_2NF (
-            Best_Nr INTEGER PRIMARY KEY,
-            Kunde VARCHAR(50),
-            K_Stadt VARCHAR(50)
-        );
-
-        INSERT OR IGNORE INTO Bestellung_2NF
-        SELECT DISTINCT Best_Nr, Kunde, K_Stadt
-        FROM Bestellung_Unnorm;
-
-        SELECT * FROM Bestellung_2NF ORDER BY Best_Nr;
-        """
-    )
-    return
-
-
-@app.cell
-def _(mo):
-    _df = mo.sql(
-        f"""
-        -- Tabelle 2: Produkte (Produkt → P_Preis)
-        CREATE TABLE IF NOT EXISTS Produkt_2NF (
-            Produkt VARCHAR(50) PRIMARY KEY,
-            P_Preis DECIMAL(10,2)
-        );
-
-        INSERT OR IGNORE INTO Produkt_2NF
-        SELECT DISTINCT Produkt, P_Preis
-        FROM Bestellung_Unnorm;
-
-        SELECT * FROM Produkt_2NF ORDER BY Produkt;
-        """
-    )
-    return
-
-
-@app.cell
-def _(mo):
-    _df = mo.sql(
-        f"""
-        -- Tabelle 3: Bestellpositionen (Best_Nr, Produkt → Menge)
-        CREATE TABLE IF NOT EXISTS Best_Position_2NF (
-            Best_Nr INTEGER,
-            Produkt VARCHAR(50),
-            Menge INTEGER,
-            PRIMARY KEY (Best_Nr, Produkt)
-        );
-
-        INSERT OR IGNORE INTO Best_Position_2NF
-        SELECT Best_Nr, Produkt, Menge
-        FROM Bestellung_Unnorm;
-
-        SELECT * FROM Best_Position_2NF ORDER BY Best_Nr, Produkt;
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        **Ergebnis:** 3 Tabellen statt 1, aber **weniger Redundanz**!
-
-        - Laptop-Preis steht nur noch **1x** (in Produkt_2NF)
-        - Aber: Müller/München steht noch **2x** (in Bestellung_2NF)
-
-        → Wir brauchen noch **3NF**!
+        > **Vorhersage:** Unsere Spieler-Tabelle hat 8 Einträge, davon 3 ohne Verein (Verein_ID = NULL). Wie viele Zeilen liefert ein INNER JOIN zwischen Spieler und Vereine?
 
         ---
-        """
-    )
-    return
 
+        ### Aufgabe 8.1: Spieler mit Vereinsnamen
 
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ## Aufgabe 8.4: Dritte Normalform (3NF)
-
-        **Regel:** Keine **transitiven Abhängigkeiten** - kein Nicht-Schlüsselattribut darf von einem anderen Nicht-Schlüsselattribut abhängen.
-
-        **Problem in Bestellung_2NF:**
-
-        - Best_Nr → Kunde (OK)
-        - Kunde → K_Stadt (Kunde bestimmt Stadt)
-        - Also: Best_Nr → Kunde → K_Stadt (**transitiv!**)
-
-        **Lösung:** Kunde in eigene Tabelle auslagern.
+        Zeigen Sie alle Spieler mit ihrem Vereinsnamen.
         """
     )
     return
 
 
 @app.cell
-def _(mo):
+def _(mo, spieler, vereine):
     _df = mo.sql(
         f"""
-        -- Tabelle: Kunden (Kunde → K_Stadt)
-        CREATE TABLE IF NOT EXISTS Kunde_3NF (
-            Kunde VARCHAR(50) PRIMARY KEY,
-            K_Stadt VARCHAR(50)
-        );
-
-        INSERT OR IGNORE INTO Kunde_3NF
-        SELECT DISTINCT Kunde, K_Stadt
-        FROM Bestellung_2NF;
-
-        SELECT * FROM Kunde_3NF ORDER BY Kunde;
-        """
-    )
-    return
-
-
-@app.cell
-def _(mo):
-    _df = mo.sql(
-        f"""
-        -- Tabelle: Bestellungen (nur Best_Nr → Kunde als FK)
-        CREATE TABLE IF NOT EXISTS Bestellung_3NF (
-            Best_Nr INTEGER PRIMARY KEY,
-            Kunde VARCHAR(50)
-        );
-
-        INSERT OR IGNORE INTO Bestellung_3NF
-        SELECT Best_Nr, Kunde
-        FROM Bestellung_2NF;
-
-        SELECT * FROM Bestellung_3NF ORDER BY Best_Nr;
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ### Finale Struktur in 3NF
-
-        Aus **1 Tabelle** wurden **4 Tabellen**:
-
-        | Tabelle | Inhalt | Primärschlüssel |
-        |---------|--------|-----------------|
-        | Kunde_3NF | Kundenstammdaten | Kunde |
-        | Bestellung_3NF | Bestellkopf | Best_Nr |
-        | Produkt_2NF | Produktstammdaten | Produkt |
-        | Best_Position_2NF | Bestellpositionen | (Best_Nr, Produkt) |
-
-        **Keine Redundanz mehr!** Jede Information steht genau einmal.
-
-        Wie viel Redundanz haben wir bei jedem Schritt eliminiert?
-        """
-    )
-    return
-
-
-@app.cell
-def _(pl, px):
-    # Berechnung: Redundante Datenzellen pro Normalform-Schritt
-    # Unnormalisiert: 6 Zeilen × 6 Spalten = 36 Zellen, davon viele redundant
-    # 2NF: Bestellung(4×3=12) + Produkt(3×2=6) + Position(6×3=18) = 36 Zellen
-    # 3NF: Kunde(3×2=6) + Bestellung(4×2=8) + Produkt(3×2=6) + Position(6×3=18) = 38 Zellen
-    # Aber: Redundanz sinkt! Redundante Fakten = Gesamteinträge - eindeutige Fakten
-    _schritte = pl.DataFrame({
-        "Normalform": ["Unnormalisiert", "2NF (3 Tabellen)", "3NF (4 Tabellen)"],
-        "Redundante_Einträge": [12, 3, 0],  # Redundante Wiederholungen von Fakten
-        "Eindeutige_Fakten": [24, 33, 38],  # Tatsächlich verschiedene Informationen
-    })
-    px.bar(
-        _schritte,
-        x="Normalform",
-        y="Redundante_Einträge",
-        title="Redundanz-Reduktion durch Normalisierung",
-        labels={"Redundante_Einträge": "Redundante Wiederholungen", "Normalform": ""},
-        color_discrete_sequence=["#E87722"],
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        In der unnormalisierten Tabelle werden Kundenname/-stadt (3 Kunden × je 2 Einträge
-        redundant) und Produktname/-preis (3 Produkte × je 1-2 Einträge redundant) mehrfach
-        gespeichert. Schritt für Schritt verschwinden diese Wiederholungen.
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(pl, px):
-    # Trade-off: Weniger Redundanz, aber mehr Tabellen
-    _tradeoff = pl.DataFrame({
-        "Normalform": ["Unnormalisiert", "2NF", "3NF"],
-        "Tabellen": [1, 3, 4],
-        "Redundante_Einträge": [12, 3, 0],
-    })
-    _fig = px.bar(
-        _tradeoff,
-        x="Normalform",
-        y=["Tabellen", "Redundante_Einträge"],
-        barmode="group",
-        title="Trade-off: Mehr Tabellen, weniger Redundanz",
-        labels={"value": "Anzahl", "variable": "Metrik", "Normalform": ""},
-        color_discrete_map={
-            "Tabellen": "#003560",
-            "Redundante_Einträge": "#E87722",
-        },
-    )
-    _fig.update_layout(legend_title_text="")
-    _fig
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-**Trade-off der Normalisierung:** Aus einer Tabelle werden vier -- aber die Redundanz sinkt auf null. In der Praxis ist das ein guter Tausch: Mehr Tabellen kosten kaum Speicher, aber Redundanz kostet Konsistenz.
-    """)
-    return
-
-
-@app.cell
-def _(mo):
-    _df = mo.sql(
-        f"""
-        -- Überprüfung: Alle Daten sind noch da!
+        -- INNER JOIN: Nur Spieler MIT Verein werden angezeigt
         SELECT
-            b.Best_Nr,
-            k.Kunde,
-            k.K_Stadt,
-            p.Produkt,
-            p.P_Preis,
-            bp.Menge
-        FROM Bestellung_3NF b
-        JOIN Kunde_3NF k ON b.Kunde = k.Kunde
-        JOIN Best_Position_2NF bp ON b.Best_Nr = bp.Best_Nr
-        JOIN Produkt_2NF p ON bp.Produkt = p.Produkt
-        ORDER BY b.Best_Nr, p.Produkt;
+            s.Name AS Spieler,
+            s.Position,
+            v.Name AS Verein,
+            v.Stadt
+        FROM spieler s
+        INNER JOIN vereine v ON s.Verein_ID = v.Verein_ID
+        ORDER BY v.Name, s.Name
         """
     )
     return
@@ -639,11 +181,12 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
+        **Beobachtung:** Nur **5 Spieler** werden angezeigt!
+
+        - Sabitzer, Reus und Goetze fehlen (haben keine Verein_ID)
+        - Der INNER JOIN filtert automatisch NULL-Werte heraus
+
         ---
-
-        ## Quiz: Normalformen bestimmen
-
-        Testen Sie Ihr Verständnis!
         """
     )
     return
@@ -651,112 +194,47 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    quiz1 = mo.ui.radio(
-        options={
-            "1nf": "Verletzt 1NF (nicht atomare Werte)",
-            "2nf": "Verletzt 2NF (partielle Abhängigkeit)",
-            "3nf": "Verletzt 3NF (transitive Abhängigkeit)",
-            "ok": "Ist in 3NF (keine Verletzung)"
-        },
-        label="**Frage 1:** Mitarbeiter(\\underline{MitID}, Name, AbtID, AbtName) - was ist das Problem?"
-    )
-    quiz1
-    return (quiz1,)
-
-
-@app.cell(hide_code=True)
-def _(mo, quiz1):
-    if quiz1.value == "3nf":
-        mo.output.replace(mo.md("✅ **Richtig!** MitID → AbtID → AbtName ist eine transitive Abhängigkeit."))
-    elif quiz1.value:
-        mo.output.replace(mo.md("❌ Nicht ganz. Denken Sie an die Kette: MitID → AbtID → AbtName"))
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    quiz2 = mo.ui.radio(
-        options={
-            "1nf": "Verletzt 1NF (nicht atomare Werte)",
-            "2nf": "Verletzt 2NF (partielle Abhängigkeit)",
-            "3nf": "Verletzt 3NF (transitive Abhängigkeit)",
-            "ok": "Ist in 3NF (keine Verletzung)"
-        },
-        label="**Frage 2:** Buch(\\underline{ISBN, AutorID}, Titel, AutorName) - was ist das Problem?"
-    )
-    quiz2
-    return (quiz2,)
-
-
-@app.cell(hide_code=True)
-def _(mo, quiz2):
-    if quiz2.value == "2nf":
-        mo.output.replace(mo.md("✅ **Richtig!** Titel hängt nur von ISBN ab (partiell), AutorName nur von AutorID (partiell)."))
-    elif quiz2.value:
-        mo.output.replace(mo.md("❌ Nicht ganz. Bei zusammengesetztem Schlüssel: Hängen alle Attribute vom *gesamten* Schlüssel ab?"))
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    quiz3 = mo.ui.radio(
-        options={
-            "1nf": "Verletzt 1NF (nicht atomare Werte)",
-            "2nf": "Verletzt 2NF (partielle Abhängigkeit)",
-            "3nf": "Verletzt 3NF (transitive Abhängigkeit)",
-            "ok": "Ist in 3NF (keine Verletzung)"
-        },
-        label="**Frage 3:** Kurs(KursNr, Titel, DozentName, DozentBüro) mit KursNr → Titel, KursNr → DozentName, DozentName → DozentBüro"
-    )
-    quiz3
-    return (quiz3,)
-
-
-@app.cell(hide_code=True)
-def _(mo, quiz3):
-    if quiz3.value == "3nf":
-        mo.output.replace(mo.md("✅ **Richtig!** KursNr → DozentName → DozentBüro ist eine transitive Abhängigkeit. DozentBüro hängt über DozentName indirekt vom Schlüssel ab. Lösung: Dozent in eigene Tabelle auslagern."))
-    elif quiz3.value:
-        mo.output.replace(mo.md("❌ Nicht ganz. Schauen Sie auf die Kette: KursNr → DozentName → DozentBüro. Das DozentBüro hängt nicht direkt vom Schlüssel ab."))
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
     mo.md(
         r"""
+        ## LEFT JOIN: Alle aus der linken Tabelle
+
+        Der **LEFT JOIN** behaelt alle Zeilen der **linken** Tabelle,
+        auch wenn es keinen passenden Eintrag in der rechten gibt.
+
+        ```
+        Tabelle A           Tabelle B
+        +-------+           +-------+
+        |   1   |-----------|   1   |
+        |   2   |---> NULL  |   3   |
+        |   3   |-----------|   4   |
+        +-------+           +-------+
+
+        Ergebnis: 1, 2 (mit NULL), 3
+        ```
+
         ---
 
-        ## Aufgabe 8.5: Verlustfreie Zerlegung überprüfen
+        ### Aufgabe 8.2: Alle Spieler, auch ohne Verein
 
-        Eine wichtige Eigenschaft der Normalisierung: Die Zerlegung muss **verlustfrei**
-        sein -- der JOIN aller Teiltabellen muss exakt die Originaldaten reproduzieren.
+        Zeigen Sie **alle** Spieler - auch die vereinslosen.
         """
     )
     return
 
 
 @app.cell
-def _(mo):
+def _(mo, spieler, vereine):
     _df = mo.sql(
         f"""
-        -- Original-Daten
-        SELECT COUNT(*) AS Original_Zeilen FROM Bestellung_Unnorm
-        """
-    )
-    return
-
-
-@app.cell
-def _(mo):
-    _df = mo.sql(
-        f"""
-        -- Rekonstruktion durch JOIN der 3NF-Tabellen
-        SELECT COUNT(*) AS Rekonstruierte_Zeilen
-        FROM Bestellung_3NF b
-        JOIN Kunde_3NF k ON b.Kunde = k.Kunde
-        JOIN Best_Position_2NF bp ON b.Best_Nr = bp.Best_Nr
-        JOIN Produkt_2NF p ON bp.Produkt = p.Produkt
+        -- LEFT JOIN: Alle Spieler, egal ob mit oder ohne Verein
+        SELECT
+            s.Name AS Spieler,
+            s.Position,
+            v.Name AS Verein,
+            v.Stadt
+        FROM spieler s
+        LEFT JOIN vereine v ON s.Verein_ID = v.Verein_ID
+        ORDER BY v.Name NULLS LAST, s.Name
         """
     )
     return
@@ -766,33 +244,573 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-        **Beide Zählungen sind identisch!** Das beweist: Unsere Normalisierung war
-        **verlustfrei** -- keine Information ging beim Aufteilen verloren.
+        **Beobachtung:** Jetzt sehen wir alle **8 Spieler**!
 
-        Das ist die Grundregel: Normalisierung darf niemals Daten verlieren.
+        - Sabitzer, Reus und Goetze haben NULL bei Verein und Stadt
+        - Der LEFT JOIN behaelt alle Zeilen aus `spieler` (linke Tabelle)
 
         ---
 
+        ### Aufgabe 8.2b: Nur Spieler ohne Verein finden
+
+        **Wichtige Technik:** Mit `WHERE ... IS NULL` finden wir unverknuepfte Eintraege.
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, spieler, vereine):
+    _df = mo.sql(
+        f"""
+        -- LEFT JOIN + IS NULL: Finde Spieler OHNE Verein
+        SELECT
+            s.Name AS Spieler,
+            s.Position
+        FROM spieler s
+        LEFT JOIN vereine v ON s.Verein_ID = v.Verein_ID
+        WHERE v.Verein_ID IS NULL
+        ORDER BY s.Name
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🟡 Aufgabe 8.2c: Spieler pro Verein zählen (scaffolded)
+
+        Zeige alle Vereine mit der Anzahl ihrer Spieler.
+        Auch Vereine ohne Spieler sollen erscheinen (mit 0).
+        Ergänze die fehlenden Teile:
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, spieler, vereine):
+    # Ergänze: COUNT(s.Spieler_ID), LEFT JOIN, GROUP BY v.Name
+    _df = mo.sql(
+        f"""
+        SELECT
+            v.Name AS Verein,
+            COUNT(???) AS Anzahl_Spieler
+        FROM vereine v
+        ??? JOIN spieler s ON v.Verein_ID = s.Verein_ID
+        GROUP BY ???
+        ORDER BY Anzahl_Spieler DESC
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    v.Name AS Verein,
+    COUNT(s.Spieler_ID) AS Anzahl_Spieler
+FROM vereine v
+LEFT JOIN spieler s ON v.Verein_ID = s.Verein_ID
+GROUP BY v.Name
+ORDER BY Anzahl_Spieler DESC
+```
+
+**Erklärung:**
+- `COUNT(s.Spieler_ID)` zählt nur Nicht-NULL-Werte, also nur tatsächlich vorhandene Spieler
+- `LEFT JOIN` stellt sicher, dass auch Vereine ohne Spieler (z.B. RB Leipzig) erscheinen
+- `GROUP BY v.Name` gruppiert nach Vereinsname
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        **Anwendungsfaelle fuer LEFT JOIN + IS NULL:**
+
+        - Kunden ohne Bestellungen finden
+        - Produkte ohne Verkaeufe identifizieren
+        - Mitarbeiter ohne Projekte auflisten
+        - Datensaetze mit fehlenden Referenzen aufspueren
+
+        ---
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    join_quiz1 = mo.ui.radio(
+        options={
+            "inner": "INNER JOIN",
+            "left": "LEFT JOIN",
+            "right": "RIGHT JOIN",
+            "self": "Self-Join"
+        },
+        label="**Quiz:** Welcher JOIN zeigt auch Spieler, die keinem Verein zugeordnet sind?"
+    )
+    join_quiz1
+    return (join_quiz1,)
+
+
+@app.cell(hide_code=True)
+def _(join_quiz1, mo):
+    if join_quiz1.value == "left":
+        mo.output.replace(mo.md("✅ **Richtig!** LEFT JOIN behaelt alle Zeilen der linken Tabelle (Spieler), auch wenn kein passender Verein existiert. Die Vereinsspalten werden dann mit NULL gefuellt."))
+    elif join_quiz1.value:
+        mo.output.replace(mo.md("❌ Nicht ganz. Wir brauchen einen JOIN, der *alle* Spieler behaelt -- auch die ohne Verein."))
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ## RIGHT JOIN: Alle aus der rechten Tabelle
+
+        Der **RIGHT JOIN** ist das Spiegelbild des LEFT JOIN:
+        Er behaelt alle Zeilen der **rechten** Tabelle.
+
+        ---
+
+        ### Aufgabe 8.3: Alle Vereine, auch ohne Spieler
+
+        Zeigen Sie alle Vereine - auch die ohne Spieler in unserer Tabelle.
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, spieler, vereine):
+    _df = mo.sql(
+        f"""
+        -- RIGHT JOIN: Alle Vereine, auch ohne Spieler
+        SELECT
+            v.Name AS Verein,
+            v.Stadt,
+            s.Name AS Spieler,
+            s.Position
+        FROM spieler s
+        RIGHT JOIN vereine v ON s.Verein_ID = v.Verein_ID
+        ORDER BY v.Name, s.Name NULLS LAST
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        **Beobachtung:** RB Leipzig erscheint mit NULL-Werten fuer Spieler!
+
+        **Praxis-Tipp:** Die meisten SQL-Entwickler bevorzugen LEFT JOIN und
+        ordnen die Tabellen entsprechend an. RIGHT JOIN ist seltener.
+
+        ```sql
+        -- Diese beiden sind aequivalent:
+        FROM spieler s RIGHT JOIN vereine v ON ...
+        FROM vereine v LEFT JOIN spieler s ON ...
+        ```
+
+        ---
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ## Multiple JOINs: Mehrere Tabellen verknüpfen
+
+        ---
+
+        ### Aufgabe 8.3b: Spieler mit Verein und Stadt kombiniert
+
+        Erstellen Sie eine vollstaendige Uebersicht aller Spieler mit Verein.
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, spieler, vereine):
+    _df = mo.sql(
+        f"""
+        -- Kombination: Spieler mit allen Vereinsdetails
+        SELECT
+            s.Name AS Spieler,
+            s.Position,
+            v.Name AS Verein,
+            v.Stadt,
+            v.Stadion
+        FROM spieler s
+        INNER JOIN vereine v ON s.Verein_ID = v.Verein_ID
+        ORDER BY v.Stadt, s.Name
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## Self-Join: Tabelle mit sich selbst verknüpfen
+
+        Ein **Self-Join** verknuepft eine Tabelle mit sich selbst.
+        Das ist nuetzlich fuer hierarchische Daten oder Beziehungen
+        innerhalb einer Tabelle.
+
+        **Beispiel:** Finde Rückspiele (Heim und Gast getauscht)
+
+        ---
+
+        ### Aufgabe 8.4: Rückspiele finden
+
+        Welche Spiele haben ein Rückspiel in unseren Daten?
+        (Heim und Gast sind vertauscht)
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, spiele):
+    _df = mo.sql(
+        f"""
+        -- Self-Join: Finde Hin- und Rückspiele
+        SELECT
+            s1.Spiel_ID AS Hinspiel_ID,
+            s1.Datum AS Hinspiel_Datum,
+            s1.Heim_ID AS Heim,
+            s1.Gast_ID AS Gast,
+            s2.Spiel_ID AS Rueckspiel_ID,
+            s2.Datum AS Rueckspiel_Datum
+        FROM spiele s1
+        INNER JOIN spiele s2
+            ON s1.Heim_ID = s2.Gast_ID
+            AND s1.Gast_ID = s2.Heim_ID
+        WHERE s1.Datum < s2.Datum  -- Nur einmal zeigen (Hinspiel vor Rückspiel)
+        ORDER BY s1.Datum
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        **Erklaerung:**
+        - Wir joinen `spiele` mit sich selbst (Alias s1 und s2)
+        - Bedingung: Heim wird Gast und Gast wird Heim
+        - `WHERE s1.Datum < s2.Datum` verhindert Duplikate
+
+        ---
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    join_quiz2 = mo.ui.radio(
+        options={
+            "inner": "INNER JOIN",
+            "left": "LEFT JOIN",
+            "right": "RIGHT JOIN",
+            "self": "Self-Join"
+        },
+        label="**Quiz:** Welchen JOIN-Typ brauchen Sie, um Rückspiele zu finden (gleiche Tabelle, verschiedene Zeilen)?"
+    )
+    join_quiz2
+    return (join_quiz2,)
+
+
+@app.cell(hide_code=True)
+def _(join_quiz2, mo):
+    if join_quiz2.value == "self":
+        mo.output.replace(mo.md("✅ **Richtig!** Ein Self-Join verknüpft eine Tabelle mit sich selbst. Wir geben der Tabelle zwei verschiedene Aliase (s1 und s2), um Hin- und Rückspiel zu vergleichen."))
+    elif join_quiz2.value:
+        mo.output.replace(mo.md("❌ Nicht ganz. Wir suchen innerhalb *derselben* Tabelle nach zueinander passenden Zeilen."))
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### Spiele mit Vereinsnamen (Multiple JOINs)
+
+        Die Spiele-Tabelle hat zwei Fremdschluessel. Wir brauchen zwei JOINs
+        zur Vereine-Tabelle, um beide Mannschaftsnamen anzuzeigen.
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, spiele, vereine):
+    _df = mo.sql(
+        f"""
+        -- Zwei JOINs auf dieselbe Tabelle mit verschiedenen Aliasen
+        SELECT
+            sp.Datum,
+            vh.Name AS Heimmannschaft,
+            vg.Name AS Gastmannschaft,
+            sp.Heim_Tore,
+            sp.Gast_Tore,
+            CASE
+                WHEN sp.Heim_Tore > sp.Gast_Tore THEN vh.Name
+                WHEN sp.Heim_Tore < sp.Gast_Tore THEN vg.Name
+                ELSE 'Unentschieden'
+            END AS Ergebnis
+        FROM spiele sp
+        INNER JOIN vereine vh ON sp.Heim_ID = vh.Verein_ID
+        INNER JOIN vereine vg ON sp.Gast_ID = vg.Verein_ID
+        ORDER BY sp.Datum
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## Sidebar: Graphen als Kantenlisten
+
+        Soziale Netzwerke, Strassennetze und andere Graphen lassen sich
+        elegant als **Kantenlisten** speichern und mit Self-Joins abfragen.
+
+        ---
+        """
+    )
+    return
+
+
+@app.cell
+def _(pl):
+    # Freundschaftsnetzwerk als Kantenliste
+    friendships = pl.DataFrame({
+        "person_a": ["Alice", "Alice", "Bob", "Carol", "Dave", "Eve"],
+        "person_b": ["Bob", "Carol", "Carol", "Dave", "Eve", "Alice"]
+    })
+
+    friendships
+    return (friendships,)
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        **Graph-Darstellung:**
+        ```
+        Alice --- Bob
+          |  \     |
+          |   \    |
+          |    \   |
+        Eve --- Carol --- Dave
+        ```
+
+        ---
+
+        ### Aufgabe 8.5 (Optional): Freunde von Freunden
+
+        Wer sind die "Freunde von Freunden" von Alice?
+        (Personen, die Alice ueber genau einen Zwischenschritt erreichen kann)
+        """
+    )
+    return
+
+
+@app.cell
+def _(friendships, mo):
+    _df = mo.sql(
+        f"""
+        -- Freunde von Freunden (2 Hops)
+        SELECT DISTINCT
+            f1.person_a AS Person,
+            f1.person_b AS Direkter_Freund,
+            f2.person_b AS Freund_des_Freundes
+        FROM friendships f1
+        INNER JOIN friendships f2 ON f1.person_b = f2.person_a
+        WHERE f1.person_a = 'Alice'
+          AND f2.person_b != f1.person_a  -- Nicht zurück zur Ausgangsperson
+        ORDER BY f1.person_b, f2.person_b
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        **Anwendungen von Graph-Abfragen:**
+
+        - Soziale Netzwerke: "Personen, die du kennen koenntest"
+        - Routenplanung: Verbindungen zwischen Staedten
+        - Empfehlungssysteme: "Kunden kauften auch..."
+        - Organisationshierarchien: Mitarbeiter → Manager → Director
+
+        ---
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## Visualisierung: JOINs öffnen neue Dimensionen
+
+        Nach einem JOIN stehen Spalten aus **mehreren Tabellen** zur Verfügung.
+        Das ermöglicht reichere Visualisierungen mit `color=` und `facet_col=`.
+
+        ---
+
+        ### Aufgabe 8.6: Spieler pro Verein als Balkendiagramm
+
+        Visualisieren Sie die Anzahl Spieler pro Verein als Balkendiagramm.
+        Nutzen Sie dazu einen JOIN + GROUP BY + `px.bar()`.
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, px, spieler, vereine):
+    _joined = mo.sql(
+        f"""
+        SELECT
+            v.Name AS Verein,
+            COUNT(s.Spieler_ID) AS Anzahl_Spieler
+        FROM vereine v
+        LEFT JOIN spieler s ON v.Verein_ID = s.Verein_ID
+        GROUP BY v.Name
+        ORDER BY Anzahl_Spieler DESC
+        """
+    )
+    px.bar(
+        _joined,
+        x="Verein",
+        y="Anzahl_Spieler",
+        color="Verein",
+        title="Anzahl Spieler pro Verein",
+        labels={"Anzahl_Spieler": "Anzahl Spieler"},
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ### Aufgabe 8.7: Streudiagramm mit JOIN-Dimensionen
+
+        Erstellen Sie ein Streudiagramm, das Spieler nach Position und Verein zeigt.
+        Hier simulieren wir zusätzliche Metriken (Tore, Assists) um die Visualisierung
+        interessanter zu machen.
+        """
+    )
+    return
+
+
+@app.cell
+def _(pl, px, vereine):
+    # Erweiterte Spielerdaten mit Toren und Assists fuer die Visualisierung
+    spieler_stats = pl.DataFrame({
+        "Spieler_ID": [1, 2, 3, 4, 5, 6, 7, 8],
+        "Name": ["Mueller", "Neuer", "Wirtz", "Xhaka", "Hummels", "Sabitzer", "Reus", "Goetze"],
+        "Tore": [12, 0, 15, 3, 1, 7, 8, 5],
+        "Assists": [6, 1, 10, 8, 2, 4, 9, 6],
+        "Verein_ID": [1, 1, 2, 2, 3, None, None, None]
+    })
+
+    # JOIN: Spieler mit Vereinsnamen (nur Spieler mit Verein)
+    merged = spieler_stats.join(
+        vereine, on="Verein_ID", how="inner", suffix="_verein"
+    )
+
+    px.scatter(
+        merged,
+        x="Tore",
+        y="Assists",
+        color="Name_verein",
+        text="Name",
+        title="Tore vs. Assists nach Verein (INNER JOIN)",
+        labels={"Name_verein": "Verein"},
+        size_max=15,
+    ).update_traces(textposition="top center")
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        **Beobachtung:** Durch den JOIN koennen wir `color="Verein"` nutzen --
+        eine Dimension, die in der Spieler-Tabelle allein nicht als lesbarer Name existiert.
+        Das ist die Staerke von JOINs fuer die Visualisierung!
+
+        ---
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
         ## Freie Exploration
 
-        Experimentieren Sie mit eigenen Beispielen!
+        Experimentieren Sie mit JOINs!
 
         **Ideen:**
-        - Erstellen Sie eine unnormalisierte Tabelle
-        - Identifizieren Sie die funktionalen Abhängigkeiten
-        - Normalisieren Sie schrittweise zu 3NF
+        - Welcher Verein hat die meisten Spieler?
+        - Welche Spieler haben noch nie gespielt (wenn wir eine Spielereinsatz-Tabelle haetten)?
+        - Wie viele Tore wurden in jedem Stadion geschossen?
         """
     )
     return
 
 
 @app.cell
-def _(mo):
+def _(mo, spieler, spiele, vereine):
     # Ihre Abfrage hier:
     _df = mo.sql(
         f"""
-        -- Beispiel: Zeige alle Tabellen (DuckDB)
-        SHOW TABLES;
+        -- Beispiel: Spieler pro Verein zaehlen
+        SELECT
+            v.Name AS Verein,
+            COUNT(s.Spieler_ID) AS Anzahl_Spieler
+        FROM vereine v
+        LEFT JOIN spieler s ON v.Verein_ID = s.Verein_ID
+        GROUP BY v.Name
+        ORDER BY Anzahl_Spieler DESC
         """
     )
     return
@@ -806,15 +824,19 @@ def _(mo):
 
         ## Zusammenfassung
 
-        | Normalform | Regel | Lösung |
-        |------------|-------|--------|
-        | **1NF** | Atomare Werte | Listen auflösen |
-        | **2NF** | Volle Abhängigkeit vom Schlüssel | Partielle Abhängigkeiten auslagern |
-        | **3NF** | Keine transitiven Abhängigkeiten | Transitive Abhängigkeiten auslagern |
+        | JOIN-Typ | Beschreibung | Typischer Anwendungsfall |
+        |----------|--------------|--------------------------|
+        | **INNER JOIN** | Nur passende Zeilen | Standardfall: Daten zusammenfuehren |
+        | **LEFT JOIN** | Alle links + passende rechts | Fehlende Verknuepfungen finden |
+        | **RIGHT JOIN** | Alle rechts + passende links | Selten, meist LEFT bevorzugt |
+        | **Self-Join** | Tabelle mit sich selbst | Hierarchien, Graphen, Vergleiche |
 
-        **Merksatz:** "Jedes Attribut hängt vom Schlüssel ab, vom ganzen Schlüssel, und von nichts außer dem Schlüssel."
+        **Merksaetze:**
+        - INNER = Schnittmenge
+        - LEFT/RIGHT = Alles von einer Seite, passende von der anderen
+        - Self-Join = Gleiche Tabelle, verschiedene Aliase
 
-        **Nächste Session:** Joins - die normalisierten Tabellen wieder zusammenführen!
+        **Naechste Session:** Subqueries und komplexe Abfragen
         """
     )
     return

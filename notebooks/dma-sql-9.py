@@ -3,175 +3,97 @@
 # dependencies = [
 #     "marimo",
 #     "polars",
+#     "duckdb",
 #     "plotly",
 # ]
 # ///
 
 import marimo
 
-__generated_with = "0.13.0"
-app = marimo.App(
-    width="medium",
-    app_title="DMA Session 9: JOINs - Tabellen verknüpfen",
-)
+__generated_with = "0.10.14"
+app = marimo.App(width="medium", app_title="DMA Session 9: Subqueries, Views & Transaktionen")
 
 
 @app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        # Vorlesung 9: Subqueries, Views & Transaktionen
+
+        **Kursfahrplan:** I: SQL-Grundlagen (S1–4) · II: Datenmodellierung (S5–7) · **▸ III: Fortgeschrittenes SQL (S8–9)** · IV: Datenanalyse (S10–13)
+
+        **Lernziele:**
+        - Komplexe Abfragen mit Subqueries strukturieren
+        - CTEs (WITH) für lesbare Abfragen nutzen
+        - Views als wiederverwendbare Abfragen erstellen
+        - ACID-Eigenschaften und Transaktionen verstehen
+        """
+    )
+    return
+
+
+@app.cell
 def _():
     import marimo as mo
-    return (mo,)
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        # Session 9: JOINs - Tabellen verknüpfen
-
-        **Kursfahrplan:** I: SQL-Grundlagen (S1–4) · II: Datenmodellierung (S5–8) · **▸ III: Fortgeschrittenes SQL (S9–10)** · IV: Datenanalyse (S11–14)
-
-        In dieser Session lernen Sie:
-
-        - **INNER JOIN**: Nur passende Zeilen aus beiden Tabellen
-        - **LEFT JOIN**: Alle Zeilen der linken Tabelle + passende rechte
-        - **RIGHT JOIN**: Alle Zeilen der rechten Tabelle + passende linke
-        - **Self-Join**: Eine Tabelle mit sich selbst verknüpfen
-        - **Bonus**: Graphen als Kantenlisten
-
-        ---
-
-        Nach der Normalisierung (Session 8) sind unsere Daten auf mehrere Tabellen verteilt.
-        JOINs bringen sie wieder zusammen — ohne die Nachteile der Redundanz!
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ## Datenmodell: Bundesliga-Szenario
-
-        Wir arbeiten mit drei normalisierten Tabellen:
-
-        - **Vereine**: Vereinsstammdaten
-        - **Spieler**: Spielerdaten mit Verweis auf Verein (manche ohne Verein!)
-        - **Spiele**: Begegnungen zwischen Vereinen
-
-        ---
-        """
-    )
-    return
-
-
-@app.cell
-def _():
     import polars as pl
     import plotly.express as px
+    return mo, pl, px
 
-    # Vereine
-    vereine = pl.DataFrame({
-        "Verein_ID": [1, 2, 3, 4],
-        "Name": ["Bayern Muenchen", "Bayer Leverkusen", "BVB Dortmund", "RB Leipzig"],
-        "Stadt": ["Muenchen", "Leverkusen", "Dortmund", "Leipzig"],
-        "Stadion": ["Allianz Arena", "BayArena", "Signal Iduna Park", "Red Bull Arena"]
+
+@app.cell(hide_code=True)
+def _(mo, pl):
+    # Bundesliga-Daten laden
+    try:
+        csv_path = mo.notebook_location() / "public" / "bundesliga.csv"
+        bundesliga = pl.read_csv(str(csv_path))
+        daten_quelle = "Bundesliga Saison 2024/25"
+    except Exception:
+        bundesliga = pl.DataFrame({
+            "Mannschaft": ["Bayern München", "Bayer Leverkusen", "VfB Stuttgart", "Borussia Dortmund", "RB Leipzig"],
+            "Spiele": [30, 30, 30, 30, 30],
+            "Siege": [22, 20, 16, 15, 14],
+            "Unentschieden": [4, 6, 5, 6, 7],
+            "Niederlagen": [4, 4, 9, 9, 9],
+            "ToreGeschossen": [75, 65, 55, 58, 52],
+            "ToreKassiert": [28, 25, 40, 38, 35],
+            "Tordifferenz": [47, 40, 15, 20, 17],
+            "Punkte": [70, 66, 53, 51, 49],
+        })
+        daten_quelle = "Offline-Daten (Fallback)"
+        mo.callout(mo.md("**Hinweis:** CSV konnte nicht geladen werden. Es werden Beispieldaten verwendet."), kind="warn")
+
+    # Zusätzliche Tabellen für Übungen erstellen
+    # Pokal-Halbfinalisten (fiktiv)
+    pokal_halbfinale = pl.DataFrame({
+        "team": ["Bayern München", "Bayer Leverkusen", "VfB Stuttgart", "RB Leipzig"]
     })
 
-    vereine
-    return pl, px, vereine
-
-
-@app.cell
-def _(pl):
-    # Spieler - manche ohne Verein (NULL), um LEFT JOIN zu demonstrieren
-    spieler = pl.DataFrame({
-        "Spieler_ID": [1, 2, 3, 4, 5, 6, 7, 8],
-        "Name": ["Mueller", "Neuer", "Wirtz", "Xhaka", "Hummels", "Sabitzer", "Reus", "Goetze"],
-        "Position": ["Sturm", "Tor", "Mittelfeld", "Mittelfeld", "Abwehr", "Mittelfeld", "Mittelfeld", "Mittelfeld"],
-        "Verein_ID": [1, 1, 2, 2, 3, None, None, None]  # Einige Spieler ohne Verein
+    # Konten-Tabelle für Transaktions-Demo
+    konten = pl.DataFrame({
+        "konto_id": ["A", "B", "C"],
+        "inhaber": ["Alice", "Bob", "Charlie"],
+        "saldo": [1000.0, 500.0, 750.0]
     })
 
-    spieler
-    return (spieler,)
-
-
-@app.cell
-def _(pl):
-    # Spiele - Heim vs Gast
-    spiele = pl.DataFrame({
-        "Spiel_ID": [1, 2, 3, 4],
-        "Heim_ID": [1, 2, 3, 1],
-        "Gast_ID": [2, 3, 4, 3],
-        "Datum": ["2024-09-15", "2024-09-22", "2024-09-29", "2024-10-06"],
-        "Heim_Tore": [2, 1, 3, 4],
-        "Gast_Tore": [1, 1, 0, 2]
-    })
-
-    spiele
-    return (spiele,)
+    return bundesliga, daten_quelle, konten, pokal_halbfinale
 
 
 @app.cell(hide_code=True)
-def _(mo):
+def _(daten_quelle, mo):
     mo.md(
-        r"""
-        **Beachten Sie:**
-        - Spieler 6-8 (Sabitzer, Reus, Goetze) haben **keine Verein_ID** (vereinslos)
-        - Verein 4 (RB Leipzig) hat **keine Spieler** in unserer Tabelle
-        - Die Spiele-Tabelle hat **zwei Fremdschluessel** (Heim_ID, Gast_ID)
-
-        ---
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ## INNER JOIN: Nur Treffer
-
-        Der **INNER JOIN** gibt nur Zeilen zurück, bei denen der JOIN-Schluessel
-        in **beiden** Tabellen existiert.
-
-        ```
-        Tabelle A           Tabelle B
-        +-------+           +-------+
-        |   1   |----+  +---|   1   |
-        |   2   |    +--+   |   3   |
-        |   3   |----+  +---|   4   |
-        +-------+    +------+-------+
-
-        Ergebnis: Nur 1 und 3 (die Schnittmenge)
-        ```
-
-        > **Vorhersage:** Unsere Spieler-Tabelle hat 8 Einträge, davon 3 ohne Verein (Verein_ID = NULL). Wie viele Zeilen liefert ein INNER JOIN zwischen Spieler und Vereine?
-
-        ---
-
-        ### Aufgabe 9.1: Spieler mit Vereinsnamen
-
-        Zeigen Sie alle Spieler mit ihrem Vereinsnamen.
-        """
-    )
-    return
-
-
-@app.cell
-def _(mo, spieler, vereine):
-    _df = mo.sql(
         f"""
-        -- INNER JOIN: Nur Spieler MIT Verein werden angezeigt
-        SELECT
-            s.Name AS Spieler,
-            s.Position,
-            v.Name AS Verein,
-            v.Stadt
-        FROM spieler s
-        INNER JOIN vereine v ON s.Verein_ID = v.Verein_ID
-        ORDER BY v.Name, s.Name
+        **Datenquelle:** {daten_quelle}
+
+        **Verfügbare Tabellen:**
+        - `bundesliga` – Aktuelle Tabelle (18 Teams)
+        - `pokal_halbfinale` – Teams im DFB-Pokal Halbfinale
+        - `konten` – Bankkonten für Transaktions-Übungen
+
+        ---
+
+        ## Phase 1: Subqueries – Grundlagen
+
+        Eine **Subquery** ist eine Abfrage innerhalb einer anderen Abfrage.
         """
     )
     return
@@ -181,12 +103,13 @@ def _(mo, spieler, vereine):
 def _(mo):
     mo.md(
         r"""
-        **Beobachtung:** Nur **5 Spieler** werden angezeigt!
+        ### Subquery-Typen
 
-        - Sabitzer, Reus und Goetze fehlen (haben keine Verein_ID)
-        - Der INNER JOIN filtert automatisch NULL-Werte heraus
-
-        ---
+        | Typ | Rückgabe | Beispiel-Kontext |
+        |-----|----------|------------------|
+        | **Scalar** | 1 Wert | `SELECT spalte - (SELECT AVG(...))` |
+        | **Column** | 1 Spalte | `WHERE spalte IN (SELECT ...)` |
+        | **Table** | Tabelle | `FROM (SELECT ...) AS t` |
         """
     )
     return
@@ -196,112 +119,80 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-        ## LEFT JOIN: Alle aus der linken Tabelle
+        ### Aufgabe 9.1: Scalar Subquery
 
-        Der **LEFT JOIN** behaelt alle Zeilen der **linken** Tabelle,
-        auch wenn es keinen passenden Eintrag in der rechten gibt.
-
-        ```
-        Tabelle A           Tabelle B
-        +-------+           +-------+
-        |   1   |-----------|   1   |
-        |   2   |---> NULL  |   3   |
-        |   3   |-----------|   4   |
-        +-------+           +-------+
-
-        Ergebnis: 1, 2 (mit NULL), 3
-        ```
-
-        ---
-
-        ### Aufgabe 9.2: Alle Spieler, auch ohne Verein
-
-        Zeigen Sie **alle** Spieler - auch die vereinslosen.
+        Zeige alle Teams mit ihren Punkten und der **Differenz zum Durchschnitt**.
         """
     )
     return
 
 
 @app.cell
-def _(mo, spieler, vereine):
-    _df = mo.sql(
-        f"""
-        -- LEFT JOIN: Alle Spieler, egal ob mit oder ohne Verein
-        SELECT
-            s.Name AS Spieler,
-            s.Position,
-            v.Name AS Verein,
-            v.Stadt
-        FROM spieler s
-        LEFT JOIN vereine v ON s.Verein_ID = v.Verein_ID
-        ORDER BY v.Name NULLS LAST, s.Name
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        **Beobachtung:** Jetzt sehen wir alle **8 Spieler**!
-
-        - Sabitzer, Reus und Goetze haben NULL bei Verein und Stadt
-        - Der LEFT JOIN behaelt alle Zeilen aus `spieler` (linke Tabelle)
-
-        ---
-
-        ### Aufgabe 9.2b: Nur Spieler ohne Verein finden
-
-        **Wichtige Technik:** Mit `WHERE ... IS NULL` finden wir unverknuepfte Eintraege.
-        """
-    )
-    return
-
-
-@app.cell
-def _(mo, spieler, vereine):
-    _df = mo.sql(
-        f"""
-        -- LEFT JOIN + IS NULL: Finde Spieler OHNE Verein
-        SELECT
-            s.Name AS Spieler,
-            s.Position
-        FROM spieler s
-        LEFT JOIN vereine v ON s.Verein_ID = v.Verein_ID
-        WHERE v.Verein_ID IS NULL
-        ORDER BY s.Name
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ### 🟡 Aufgabe 9.2c: Spieler pro Verein zählen (scaffolded)
-
-        Zeige alle Vereine mit der Anzahl ihrer Spieler.
-        Auch Vereine ohne Spieler sollen erscheinen (mit 0).
-        Ergänze die fehlenden Teile:
-        """
-    )
-    return
-
-
-@app.cell
-def _(mo, spieler, vereine):
-    # Ergänze: COUNT(s.Spieler_ID), LEFT JOIN, GROUP BY v.Name
-    _df = mo.sql(
+def _(bundesliga, mo):
+    mo.sql(
         f"""
         SELECT
-            v.Name AS Verein,
-            COUNT(???) AS Anzahl_Spieler
-        FROM vereine v
-        ??? JOIN spieler s ON v.Verein_ID = s.Verein_ID
-        GROUP BY ???
-        ORDER BY Anzahl_Spieler DESC
+            Mannschaft,
+            Punkte,
+            (SELECT AVG(Punkte) FROM bundesliga) AS Liga_Durchschnitt,
+            Punkte - (SELECT AVG(Punkte) FROM bundesliga) AS Differenz
+        FROM bundesliga
+        ORDER BY Punkte DESC
+        """
+    )
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### Aufgabe 9.2: Column Subquery mit IN
+
+        Zeige nur die Teams, die im **Pokal-Halbfinale** stehen.
+        """
+    )
+    return
+
+
+@app.cell
+def _(bundesliga, mo, pokal_halbfinale):
+    mo.sql(
+        f"""
+        SELECT Mannschaft, Punkte, Tordifferenz
+        FROM bundesliga
+        WHERE Mannschaft IN (
+            SELECT team FROM pokal_halbfinale
+        )
+        ORDER BY Punkte DESC
+        """
+    )
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🟡 Aufgabe 9.2b: Subquery mit Vergleich (scaffolded)
+
+        Finde alle Teams mit mehr Toren als der Liga-Durchschnitt.
+        Ergänze die fehlende Subquery:
+        """
+    )
+    return
+
+
+@app.cell
+def _(bundesliga, mo):
+    # Ergänze: AVG(ToreGeschossen) FROM bundesliga
+    _df = mo.sql(
+        f"""
+        SELECT Mannschaft, ToreGeschossen
+        FROM bundesliga
+        WHERE ToreGeschossen > (
+            SELECT ???(???)
+            FROM ???
+        )
+        ORDER BY ToreGeschossen DESC
         """
     )
     return
@@ -311,19 +202,14 @@ def _(mo, spieler, vereine):
 def _(mo):
     mo.accordion({"🔑 Musterlösung": mo.md("""
 ```sql
-SELECT
-    v.Name AS Verein,
-    COUNT(s.Spieler_ID) AS Anzahl_Spieler
-FROM vereine v
-LEFT JOIN spieler s ON v.Verein_ID = s.Verein_ID
-GROUP BY v.Name
-ORDER BY Anzahl_Spieler DESC
+SELECT Mannschaft, ToreGeschossen
+FROM bundesliga
+WHERE ToreGeschossen > (
+    SELECT AVG(ToreGeschossen)
+    FROM bundesliga
+)
+ORDER BY ToreGeschossen DESC
 ```
-
-**Erklärung:**
-- `COUNT(s.Spieler_ID)` zählt nur Nicht-NULL-Werte, also nur tatsächlich vorhandene Spieler
-- `LEFT JOIN` stellt sicher, dass auch Vereine ohne Spieler (z.B. RB Leipzig) erscheinen
-- `GROUP BY v.Name` gruppiert nach Vereinsname
 """)})
     return
 
@@ -332,75 +218,54 @@ ORDER BY Anzahl_Spieler DESC
 def _(mo):
     mo.md(
         r"""
-        **Anwendungsfaelle fuer LEFT JOIN + IS NULL:**
+        ### Aufgabe 9.3: Selbstständig – Teams über dem Durchschnitt
 
-        - Kunden ohne Bestellungen finden
-        - Produkte ohne Verkaeufe identifizieren
-        - Mitarbeiter ohne Projekte auflisten
-        - Datensaetze mit fehlenden Referenzen aufspueren
+        Finde alle Teams mit **mehr Punkten als der Durchschnitt**.
 
-        ---
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    join_quiz1 = mo.ui.radio(
-        options={
-            "inner": "INNER JOIN",
-            "left": "LEFT JOIN",
-            "right": "RIGHT JOIN",
-            "self": "Self-Join"
-        },
-        label="**Quiz:** Welcher JOIN zeigt auch Spieler, die keinem Verein zugeordnet sind?"
-    )
-    join_quiz1
-    return (join_quiz1,)
-
-
-@app.cell(hide_code=True)
-def _(join_quiz1, mo):
-    if join_quiz1.value == "left":
-        mo.output.replace(mo.md("✅ **Richtig!** LEFT JOIN behaelt alle Zeilen der linken Tabelle (Spieler), auch wenn kein passender Verein existiert. Die Vereinsspalten werden dann mit NULL gefuellt."))
-    elif join_quiz1.value:
-        mo.output.replace(mo.md("❌ Nicht ganz. Wir brauchen einen JOIN, der *alle* Spieler behaelt -- auch die ohne Verein."))
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ## RIGHT JOIN: Alle aus der rechten Tabelle
-
-        Der **RIGHT JOIN** ist das Spiegelbild des LEFT JOIN:
-        Er behaelt alle Zeilen der **rechten** Tabelle.
-
-        ---
-
-        ### Aufgabe 9.3: Alle Vereine, auch ohne Spieler
-
-        Zeigen Sie alle Vereine - auch die ohne Spieler in unserer Tabelle.
+        *Hinweis: Nutze eine Scalar Subquery in der WHERE-Klausel.*
         """
     )
     return
 
 
 @app.cell
-def _(mo, spieler, vereine):
-    _df = mo.sql(
+def _(bundesliga, mo):
+    # Deine Lösung hier:
+    mo.sql(
         f"""
-        -- RIGHT JOIN: Alle Vereine, auch ohne Spieler
-        SELECT
-            v.Name AS Verein,
-            v.Stadt,
-            s.Name AS Spieler,
-            s.Position
-        FROM spieler s
-        RIGHT JOIN vereine v ON s.Verein_ID = v.Verein_ID
-        ORDER BY v.Name, s.Name NULLS LAST
+        -- Ihre Lösung hier
+        -- Tipp: Scalar Subquery in WHERE: WHERE Punkte > (SELECT AVG(...) FROM ...)
+        -- Erwartete Spalten: Mannschaft, Punkte
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT Mannschaft, Punkte
+FROM bundesliga
+WHERE Punkte > (
+    SELECT AVG(Punkte)
+    FROM bundesliga
+)
+ORDER BY Punkte DESC
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## Phase 2: Common Table Expressions (CTEs)
+
+        CTEs machen komplexe Abfragen **lesbar** durch benannte Zwischenergebnisse.
         """
     )
     return
@@ -410,18 +275,14 @@ def _(mo, spieler, vereine):
 def _(mo):
     mo.md(
         r"""
-        **Beobachtung:** RB Leipzig erscheint mit NULL-Werten fuer Spieler!
-
-        **Praxis-Tipp:** Die meisten SQL-Entwickler bevorzugen LEFT JOIN und
-        ordnen die Tabellen entsprechend an. RIGHT JOIN ist seltener.
+        ### CTE Syntax
 
         ```sql
-        -- Diese beiden sind aequivalent:
-        FROM spieler s RIGHT JOIN vereine v ON ...
-        FROM vereine v LEFT JOIN spieler s ON ...
+        WITH cte_name AS (
+            SELECT ...
+        )
+        SELECT ... FROM cte_name ...
         ```
-
-        ---
         """
     )
     return
@@ -431,293 +292,99 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-        ## Multiple JOINs: Mehrere Tabellen verknüpfen
+        ### Aufgabe 9.4: CTE für Durchschnitt
 
-        ---
-
-        ### Aufgabe 9.3b: Spieler mit Verein und Stadt kombiniert
-
-        Erstellen Sie eine vollstaendige Uebersicht aller Spieler mit Verein.
+        Berechne den Durchschnitt einmal und verwende ihn mehrfach.
         """
     )
     return
 
 
 @app.cell
-def _(mo, spieler, vereine):
-    _df = mo.sql(
+def _(bundesliga, mo):
+    mo.sql(
         f"""
-        -- Kombination: Spieler mit allen Vereinsdetails
+        WITH statistiken AS (
+            SELECT
+                AVG(Punkte) AS avg_punkte,
+                AVG(ToreGeschossen) AS avg_tore
+            FROM bundesliga
+        )
         SELECT
-            s.Name AS Spieler,
-            s.Position,
-            v.Name AS Verein,
-            v.Stadt,
-            v.Stadion
-        FROM spieler s
-        INNER JOIN vereine v ON s.Verein_ID = v.Verein_ID
-        ORDER BY v.Stadt, s.Name
+            b.Mannschaft,
+            b.Punkte,
+            ROUND(s.avg_punkte, 1) AS Liga_Schnitt,
+            b.Punkte - s.avg_punkte AS Punkte_Diff,
+            b.ToreGeschossen,
+            ROUND(s.avg_tore, 1) AS Tore_Schnitt,
+            b.ToreGeschossen - s.avg_tore AS Tore_Diff
+        FROM bundesliga b, statistiken s
+        ORDER BY b.Punkte DESC
         """
     )
-    return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        ---
+        ### Aufgabe 9.5: Mehrere CTEs verketten
 
-        ## Self-Join: Tabelle mit sich selbst verknüpfen
-
-        Ein **Self-Join** verknuepft eine Tabelle mit sich selbst.
-        Das ist nuetzlich fuer hierarchische Daten oder Beziehungen
-        innerhalb einer Tabelle.
-
-        **Beispiel:** Finde Rückspiele (Heim und Gast getauscht)
-
-        ---
-
-        ### Aufgabe 9.4: Rückspiele finden
-
-        Welche Spiele haben ein Rückspiel in unseren Daten?
-        (Heim und Gast sind vertauscht)
+        1. Filtere Top-Teams (> 50 Punkte)
+        2. Berechne Siegquote für diese Teams
         """
     )
     return
 
 
 @app.cell
-def _(mo, spiele):
-    _df = mo.sql(
+def _(bundesliga, mo):
+    mo.sql(
         f"""
-        -- Self-Join: Finde Hin- und Rückspiele
-        SELECT
-            s1.Spiel_ID AS Hinspiel_ID,
-            s1.Datum AS Hinspiel_Datum,
-            s1.Heim_ID AS Heim,
-            s1.Gast_ID AS Gast,
-            s2.Spiel_ID AS Rueckspiel_ID,
-            s2.Datum AS Rueckspiel_Datum
-        FROM spiele s1
-        INNER JOIN spiele s2
-            ON s1.Heim_ID = s2.Gast_ID
-            AND s1.Gast_ID = s2.Heim_ID
-        WHERE s1.Datum < s2.Datum  -- Nur einmal zeigen (Hinspiel vor Rückspiel)
-        ORDER BY s1.Datum
+        WITH
+        top_teams AS (
+            SELECT Mannschaft, Punkte, Siege, Spiele
+            FROM bundesliga
+            WHERE Punkte > 50
+        ),
+        mit_quote AS (
+            SELECT
+                Mannschaft,
+                Punkte,
+                Siege,
+                Spiele,
+                ROUND(CAST(Siege AS FLOAT) / Spiele * 100, 1) AS Siegquote
+            FROM top_teams
+        )
+        SELECT * FROM mit_quote
+        ORDER BY Siegquote DESC
         """
     )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        **Erklaerung:**
-        - Wir joinen `spiele` mit sich selbst (Alias s1 und s2)
-        - Bedingung: Heim wird Gast und Gast wird Heim
-        - `WHERE s1.Datum < s2.Datum` verhindert Duplikate
-
-        ---
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    join_quiz2 = mo.ui.radio(
-        options={
-            "inner": "INNER JOIN",
-            "left": "LEFT JOIN",
-            "right": "RIGHT JOIN",
-            "self": "Self-Join"
-        },
-        label="**Quiz:** Welchen JOIN-Typ brauchen Sie, um Rückspiele zu finden (gleiche Tabelle, verschiedene Zeilen)?"
-    )
-    join_quiz2
-    return (join_quiz2,)
-
-
-@app.cell(hide_code=True)
-def _(join_quiz2, mo):
-    if join_quiz2.value == "self":
-        mo.output.replace(mo.md("✅ **Richtig!** Ein Self-Join verknüpft eine Tabelle mit sich selbst. Wir geben der Tabelle zwei verschiedene Aliase (s1 und s2), um Hin- und Rückspiel zu vergleichen."))
-    elif join_quiz2.value:
-        mo.output.replace(mo.md("❌ Nicht ganz. Wir suchen innerhalb *derselben* Tabelle nach zueinander passenden Zeilen."))
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ### Spiele mit Vereinsnamen (Multiple JOINs)
-
-        Die Spiele-Tabelle hat zwei Fremdschluessel. Wir brauchen zwei JOINs
-        zur Vereine-Tabelle, um beide Mannschaftsnamen anzuzeigen.
-        """
-    )
-    return
 
 
 @app.cell
-def _(mo, spiele, vereine):
-    _df = mo.sql(
+def _(bundesliga, mo, px):
+    _top = mo.sql(
         f"""
-        -- Zwei JOINs auf dieselbe Tabelle mit verschiedenen Aliasen
-        SELECT
-            sp.Datum,
-            vh.Name AS Heimmannschaft,
-            vg.Name AS Gastmannschaft,
-            sp.Heim_Tore,
-            sp.Gast_Tore,
-            CASE
-                WHEN sp.Heim_Tore > sp.Gast_Tore THEN vh.Name
-                WHEN sp.Heim_Tore < sp.Gast_Tore THEN vg.Name
-                ELSE 'Unentschieden'
-            END AS Ergebnis
-        FROM spiele sp
-        INNER JOIN vereine vh ON sp.Heim_ID = vh.Verein_ID
-        INNER JOIN vereine vg ON sp.Gast_ID = vg.Verein_ID
-        ORDER BY sp.Datum
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ---
-
-        ## Sidebar: Graphen als Kantenlisten
-
-        Soziale Netzwerke, Strassennetze und andere Graphen lassen sich
-        elegant als **Kantenlisten** speichern und mit Self-Joins abfragen.
-
-        ---
-        """
-    )
-    return
-
-
-@app.cell
-def _(pl):
-    # Freundschaftsnetzwerk als Kantenliste
-    friendships = pl.DataFrame({
-        "person_a": ["Alice", "Alice", "Bob", "Carol", "Dave", "Eve"],
-        "person_b": ["Bob", "Carol", "Carol", "Dave", "Eve", "Alice"]
-    })
-
-    friendships
-    return (friendships,)
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        **Graph-Darstellung:**
-        ```
-        Alice --- Bob
-          |  \     |
-          |   \    |
-          |    \   |
-        Eve --- Carol --- Dave
-        ```
-
-        ---
-
-        ### Aufgabe 9.5 (Optional): Freunde von Freunden
-
-        Wer sind die "Freunde von Freunden" von Alice?
-        (Personen, die Alice ueber genau einen Zwischenschritt erreichen kann)
-        """
-    )
-    return
-
-
-@app.cell
-def _(friendships, mo):
-    _df = mo.sql(
-        f"""
-        -- Freunde von Freunden (2 Hops)
-        SELECT DISTINCT
-            f1.person_a AS Person,
-            f1.person_b AS Direkter_Freund,
-            f2.person_b AS Freund_des_Freundes
-        FROM friendships f1
-        INNER JOIN friendships f2 ON f1.person_b = f2.person_a
-        WHERE f1.person_a = 'Alice'
-          AND f2.person_b != f1.person_a  -- Nicht zurück zur Ausgangsperson
-        ORDER BY f1.person_b, f2.person_b
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        **Anwendungen von Graph-Abfragen:**
-
-        - Soziale Netzwerke: "Personen, die du kennen koenntest"
-        - Routenplanung: Verbindungen zwischen Staedten
-        - Empfehlungssysteme: "Kunden kauften auch..."
-        - Organisationshierarchien: Mitarbeiter → Manager → Director
-
-        ---
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ---
-
-        ## Visualisierung: JOINs öffnen neue Dimensionen
-
-        Nach einem JOIN stehen Spalten aus **mehreren Tabellen** zur Verfügung.
-        Das ermöglicht reichere Visualisierungen mit `color=` und `facet_col=`.
-
-        ---
-
-        ### Aufgabe 9.6: Spieler pro Verein als Balkendiagramm
-
-        Visualisieren Sie die Anzahl Spieler pro Verein als Balkendiagramm.
-        Nutzen Sie dazu einen JOIN + GROUP BY + `px.bar()`.
-        """
-    )
-    return
-
-
-@app.cell
-def _(mo, px, spieler, vereine):
-    _joined = mo.sql(
-        f"""
-        SELECT
-            v.Name AS Verein,
-            COUNT(s.Spieler_ID) AS Anzahl_Spieler
-        FROM vereine v
-        LEFT JOIN spieler s ON v.Verein_ID = s.Verein_ID
-        GROUP BY v.Name
-        ORDER BY Anzahl_Spieler DESC
+        WITH mit_quote AS (
+            SELECT
+                Mannschaft,
+                Punkte,
+                ROUND(CAST(Siege AS FLOAT) / Spiele * 100, 1) AS Siegquote
+            FROM bundesliga
+            WHERE Punkte > 30
+        )
+        SELECT * FROM mit_quote ORDER BY Siegquote DESC
         """
     )
     px.bar(
-        _joined,
-        x="Verein",
-        y="Anzahl_Spieler",
-        color="Verein",
-        title="Anzahl Spieler pro Verein",
-        labels={"Anzahl_Spieler": "Anzahl Spieler"},
+        _top,
+        x="Mannschaft",
+        y="Siegquote",
+        color="Punkte",
+        title="Siegquote der Top-Teams (berechnet via CTE)",
+        labels={"Siegquote": "Siegquote (%)", "Mannschaft": ""},
+        color_continuous_scale="Blues",
     )
     return
 
@@ -728,54 +395,9 @@ def _(mo):
         r"""
         ---
 
-        ### Aufgabe 9.7: Streudiagramm mit JOIN-Dimensionen
+        ## Phase 3: Views – Virtuelle Tabellen
 
-        Erstellen Sie ein Streudiagramm, das Spieler nach Position und Verein zeigt.
-        Hier simulieren wir zusätzliche Metriken (Tore, Assists) um die Visualisierung
-        interessanter zu machen.
-        """
-    )
-    return
-
-
-@app.cell
-def _(pl, px, vereine):
-    # Erweiterte Spielerdaten mit Toren und Assists fuer die Visualisierung
-    spieler_stats = pl.DataFrame({
-        "Spieler_ID": [1, 2, 3, 4, 5, 6, 7, 8],
-        "Name": ["Mueller", "Neuer", "Wirtz", "Xhaka", "Hummels", "Sabitzer", "Reus", "Goetze"],
-        "Tore": [12, 0, 15, 3, 1, 7, 8, 5],
-        "Assists": [6, 1, 10, 8, 2, 4, 9, 6],
-        "Verein_ID": [1, 1, 2, 2, 3, None, None, None]
-    })
-
-    # JOIN: Spieler mit Vereinsnamen (nur Spieler mit Verein)
-    merged = spieler_stats.join(
-        vereine, on="Verein_ID", how="inner", suffix="_verein"
-    )
-
-    px.scatter(
-        merged,
-        x="Tore",
-        y="Assists",
-        color="Name_verein",
-        text="Name",
-        title="Tore vs. Assists nach Verein (INNER JOIN)",
-        labels={"Name_verein": "Verein"},
-        size_max=15,
-    ).update_traces(textposition="top center")
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        **Beobachtung:** Durch den JOIN koennen wir `color="Verein"` nutzen --
-        eine Dimension, die in der Spieler-Tabelle allein nicht als lesbarer Name existiert.
-        Das ist die Staerke von JOINs fuer die Visualisierung!
-
-        ---
+        Ein **View** ist eine gespeicherte Abfrage, die sich wie eine Tabelle verhält.
         """
     )
     return
@@ -785,32 +407,253 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-        ## Freie Exploration
+        ### Aufgabe 9.6: View erstellen
 
-        Experimentieren Sie mit JOINs!
-
-        **Ideen:**
-        - Welcher Verein hat die meisten Spieler?
-        - Welche Spieler haben noch nie gespielt (wenn wir eine Spielereinsatz-Tabelle haetten)?
-        - Wie viele Tore wurden in jedem Stadion geschossen?
+        Erstelle einen View für Team-Statistiken mit berechneten Spalten.
         """
     )
     return
 
 
 @app.cell
-def _(mo, spieler, spiele, vereine):
-    # Ihre Abfrage hier:
+def _(bundesliga, mo):
+    mo.sql(
+        f"""
+        CREATE OR REPLACE VIEW team_statistik AS
+        SELECT
+            Mannschaft,
+            Punkte,
+            Siege,
+            Unentschieden,
+            Niederlagen,
+            ToreGeschossen,
+            ToreKassiert,
+            Tordifferenz,
+            ROUND(CAST(Siege AS FLOAT) / Spiele * 100, 1) AS Siegquote,
+            ROUND(CAST(ToreGeschossen AS FLOAT) / Spiele, 2) AS Tore_pro_Spiel
+        FROM bundesliga
+        """
+    )
+
+
+@app.cell
+def _(mo):
+    # View verwenden wie eine normale Tabelle
+    mo.sql(
+        f"""
+        SELECT Mannschaft, Siegquote, Tore_pro_Spiel
+        FROM team_statistik
+        WHERE Siegquote > 50
+        ORDER BY Siegquote DESC
+        """
+    )
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🟡 Aufgabe 9.6b: View mit Bedingung (scaffolded)
+
+        Erstelle einen View `titelkandidaten` mit den Top-4-Teams nach Punkten.
+        Ergänze die fehlenden Teile:
+        """
+    )
+    return
+
+
+@app.cell
+def _(bundesliga, mo):
+    # Ergänze: ORDER BY Punkte DESC, LIMIT 4
     _df = mo.sql(
         f"""
-        -- Beispiel: Spieler pro Verein zaehlen
-        SELECT
-            v.Name AS Verein,
-            COUNT(s.Spieler_ID) AS Anzahl_Spieler
-        FROM vereine v
-        LEFT JOIN spieler s ON v.Verein_ID = s.Verein_ID
-        GROUP BY v.Name
-        ORDER BY Anzahl_Spieler DESC
+        CREATE OR REPLACE VIEW titelkandidaten AS
+        SELECT Mannschaft, Punkte, Tordifferenz
+        FROM bundesliga
+        ORDER BY ??? DESC
+        LIMIT ???
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+CREATE OR REPLACE VIEW titelkandidaten AS
+SELECT Mannschaft, Punkte, Tordifferenz
+FROM bundesliga
+ORDER BY Punkte DESC
+LIMIT 4
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### Aufgabe 9.7: Selbstständig – View für Kellerkinder
+
+        Erstelle einen View `abstiegskandidaten` mit Teams auf den letzten 6 Plätzen.
+
+        *Hinweis: Sortiere nach Punkten und nutze LIMIT.*
+        """
+    )
+    return
+
+
+@app.cell
+def _(bundesliga, mo):
+    # Deine Lösung hier:
+    mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        -- Tipp: CREATE OR REPLACE VIEW name AS SELECT ...
+        -- Sortieren nach Punkte ASC und LIMIT 6
+        -- Erwartete Spalten im View: Mannschaft, Punkte, Tordifferenz
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+CREATE OR REPLACE VIEW abstiegskandidaten AS
+SELECT Mannschaft, Punkte, Tordifferenz
+FROM bundesliga
+ORDER BY Punkte ASC
+LIMIT 6
+```
+""")})
+    return
+
+
+@app.cell
+def _(mo):
+    # Prüfe deinen View
+    mo.sql(
+        f"""
+        SELECT * FROM abstiegskandidaten
+        """
+    )
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## Phase 4: Transaktionen
+
+        Transaktionen garantieren **ACID-Eigenschaften** bei Datenänderungen.
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### ACID-Eigenschaften
+
+        | Eigenschaft | Bedeutung |
+        |-------------|-----------|
+        | **A**tomicity | Alles oder nichts |
+        | **C**onsistency | Datenbank bleibt konsistent |
+        | **I**solation | Parallele Transaktionen stören sich nicht |
+        | **D**urability | Bestätigte Änderungen sind permanent |
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    acid_quiz = mo.ui.radio(
+        options={
+            "atomic": "Alles oder nichts — entweder alle Operationen oder keine",
+            "isolation": "Gleichzeitiger Zugriff ist möglich",
+            "durability": "Daten werden dauerhaft gespeichert",
+            "consistency": "Daten bleiben konsistent"
+        },
+        label="**Quiz:** Was garantiert die **Atomarität** (Atomicity) einer Transaktion?"
+    )
+    acid_quiz
+    return (acid_quiz,)
+
+
+@app.cell(hide_code=True)
+def _(acid_quiz, mo):
+    if acid_quiz.value == "atomic":
+        mo.output.replace(mo.md("✅ **Richtig!** Atomarität bedeutet: Eine Transaktion wird entweder *komplett* oder *gar nicht* ausgeführt. Wenn ein Schritt fehlschlägt, werden alle bisherigen Änderungen rückgängig gemacht (ROLLBACK)."))
+    elif acid_quiz.value:
+        mo.output.replace(mo.md("❌ Nicht ganz. Das beschreibt eine andere ACID-Eigenschaft. Atomarität kommt von 'unteilbar' — denken Sie an alles oder nichts."))
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### Aufgabe 9.8: Überweisung simulieren
+
+        Simuliere eine Überweisung von Konto A nach Konto B.
+        """
+    )
+    return
+
+
+@app.cell
+def _(konten, mo):
+    # Ausgangszustand
+    mo.sql(
+        f"""
+        SELECT * FROM konten
+        """
+    )
+
+
+@app.cell
+def _(mo):
+    mo.md(
+        r"""
+        **Transaktion: 100€ von Alice (A) nach Bob (B)**
+
+        In einer echten Datenbank würden wir schreiben:
+        ```sql
+        BEGIN TRANSACTION;
+
+        UPDATE konten SET saldo = saldo - 100 WHERE konto_id = 'A';
+        UPDATE konten SET saldo = saldo + 100 WHERE konto_id = 'B';
+
+        COMMIT;
+        ```
+
+        **Wichtig:** Bei Fehler würde ROLLBACK alles rückgängig machen.
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### Concurrency-Probleme
+
+        | Problem | Beschreibung |
+        |---------|--------------|
+        | **Lost Update** | Zwei Transaktionen überschreiben sich |
+        | **Dirty Read** | Lesen von nicht-committeten Daten |
+        | **Non-Repeatable Read** | Gleiche Abfrage, verschiedene Ergebnisse |
+        | **Phantom Read** | Neue Zeilen erscheinen zwischen Abfragen |
         """
     )
     return
@@ -824,19 +667,51 @@ def _(mo):
 
         ## Zusammenfassung
 
-        | JOIN-Typ | Beschreibung | Typischer Anwendungsfall |
-        |----------|--------------|--------------------------|
-        | **INNER JOIN** | Nur passende Zeilen | Standardfall: Daten zusammenfuehren |
-        | **LEFT JOIN** | Alle links + passende rechts | Fehlende Verknuepfungen finden |
-        | **RIGHT JOIN** | Alle rechts + passende links | Selten, meist LEFT bevorzugt |
-        | **Self-Join** | Tabelle mit sich selbst | Hierarchien, Graphen, Vergleiche |
+        | Konzept | Wann nutzen? |
+        |---------|--------------|
+        | **Subquery** | Einfache einmalige Berechnungen |
+        | **CTE (WITH)** | Komplexe Abfragen strukturieren |
+        | **View** | Wiederverwendbare, persistente Abfragen |
+        | **Transaktion** | Zusammengehörige Änderungen absichern |
 
-        **Merksaetze:**
-        - INNER = Schnittmenge
-        - LEFT/RIGHT = Alles von einer Seite, passende von der anderen
-        - Self-Join = Gleiche Tabelle, verschiedene Aliase
+        ### Entscheidungsbaum
 
-        **Naechste Session:** Subqueries und komplexe Abfragen
+        ```
+        Einmalige Abfrage?
+        ├── Ja → Komplex? → Ja: CTE / Nein: Subquery
+        └── Nein → View
+        ```
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## Freie Exploration
+
+        Probieren Sie eigene Abfragen:
+
+        - Erstellen Sie einen View für "Titelkandidaten" (Top 4)
+        - Nutzen Sie CTEs um Teams mit überdurchschnittlichen Heim- UND Auswärtsbilanzen zu finden
+        - Experimentieren Sie mit korrelierten Subqueries
+        """
+    )
+    return
+
+
+@app.cell
+def _(bundesliga, mo):
+    # Ihre eigene Abfrage hier:
+    _df = mo.sql(
+        f"""
+        SELECT Mannschaft, Punkte
+        FROM bundesliga
+        LIMIT 5
         """
     )
     return

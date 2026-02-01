@@ -11,24 +11,26 @@
 import marimo
 
 __generated_with = "0.10.14"
-app = marimo.App(width="medium", app_title="DMA Session 11: Explorative Datenanalyse")
+app = marimo.App(width="medium", app_title="DMA Session 11: Statistische Inferenz & A/B-Tests")
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        # Vorlesung 11: Explorative Datenanalyse (EDA)
+        # Vorlesung 11: Statistische Inferenz & A/B-Tests
 
-        **Kursfahrplan:** I: SQL-Grundlagen (S1–4) · II: Datenmodellierung (S5–8) · III: Fortgeschrittenes SQL (S9–10) · **▸ IV: Datenanalyse (S11–14)**
+        **Kursfahrplan:** I: SQL-Grundlagen (S1–4) · II: Datenmodellierung (S5–7) · III: Fortgeschrittenes SQL (S8–9) · **▸ IV: Datenanalyse (S10–13)**
 
-        In den Sessions 1–10 haben wir gelernt, Daten zu speichern, zu modellieren und abzufragen. Jetzt beginnt Teil IV: Wir nutzen SQL als **Analysewerkzeug** — angefangen mit der systematischen Erkundung von Daten.
+        In Session 10 haben wir Daten explorativ untersucht — Verteilungen, Ausreißer, Korrelationen. Heute gehen wir einen Schritt weiter: Wie können wir aus Stichproben auf die Grundgesamtheit schließen?
 
         **Lernziele:**
-        - EDA systematisch durchführen und dokumentieren
-        - Univariate Analyse: Verteilungen, Ausreißer erkennen
-        - Bivariate Analyse: Korrelationen, Gruppenvergleiche
-        - SQL für EDA: Aggregationen, CASE WHEN, Binning
+        - Hypothesentests durchführen und A/B-Test-Ergebnisse interpretieren
+        - p-Wert und Signifikanzniveau verstehen
+        - t-Test für Mittelwertvergleiche mit SQL berechnen
+        - Simpson's Paradox erkennen und vermeiden
+
+        **Datensatz:** Simulierter A/B-Test eines Online-Checkout-Prozesses (4.000 Nutzer)
         """
     )
     return
@@ -44,68 +46,43 @@ def _():
 
 @app.cell(hide_code=True)
 def _(mo, pl):
-    # Gehaltsdaten für EDA-Übungen
-    gehaltsdaten = pl.DataFrame({
-        "mitarbeiter_id": list(range(1, 101)),
-        "name": [f"Mitarbeiter_{i}" for i in range(1, 101)],
-        "abteilung": (["IT"] * 25 + ["HR"] * 20 + ["Vertrieb"] * 30 + ["Finanzen"] * 15 + ["Marketing"] * 10),
-        "alter": [28, 32, 45, 29, 35, 41, 38, 27, 52, 33,
-                  31, 29, 44, 36, 39, 42, 30, 48, 34, 37,
-                  26, 55, 31, 40, 35, 28, 33, 46, 30, 38,
-                  43, 29, 36, 50, 32, 41, 27, 34, 47, 39,
-                  35, 30, 42, 28, 53, 37, 31, 44, 33, 40,
-                  29, 36, 48, 32, 38, 45, 27, 41, 34, 51,
-                  30, 43, 28, 37, 49, 33, 39, 46, 31, 42,
-                  35, 29, 44, 32, 54, 38, 30, 47, 36, 41,
-                  28, 50, 33, 40, 26, 43, 31, 45, 34, 39,
-                  37, 29, 48, 32, 52, 36, 30, 42, 35, 280],  # Outlier: 280 statt 28
-        "gehalt": [52000, 58000, 75000, 48000, 62000, 71000, 65000, 45000, 88000, 55000,
-                   53000, 47000, 72000, 59000, 66000, 73000, 51000, 82000, 56000, 63000,
-                   44000, 92000, 52000, 68000, 60000, 46000, 54000, 78000, 50000, 64000,
-                   74000, 48000, 61000, 85000, 53000, 69000, 43000, 57000, 80000, 65000,
-                   58000, 49000, 70000, 45000, 89000, 62000, 51000, 76000, 54000, 67000,
-                   47000, 59000, 81000, 52000, 63000, 77000, 44000, 68000, 55000, 86000,
-                   50000, 73000, 46000, 61000, 83000, 53000, 66000, 79000, 51000, 71000,
-                   57000, 48000, 75000, 52000, 91000, 64000, 49000, 80000, 60000, 69000,
-                   45000, 84000, 54000, 67000, 42000, 72000, 50000, 78000, 56000, 65000,
-                   62000, 47000, 82000, 53000, 88000, 59000, 49000, 74000, 58000, 450000],  # Outlier: CEO
-        "erfahrung_jahre": [3, 7, 20, 4, 10, 16, 13, 2, 27, 8,
-                           6, 4, 19, 11, 14, 17, 5, 23, 9, 12,
-                           1, 30, 6, 15, 10, 3, 8, 21, 5, 13,
-                           18, 4, 11, 25, 7, 16, 2, 9, 22, 14,
-                           10, 5, 17, 3, 28, 12, 6, 19, 8, 15,
-                           4, 11, 23, 7, 13, 20, 2, 16, 9, 26,
-                           5, 18, 3, 12, 24, 8, 14, 21, 6, 17,
-                           10, 4, 19, 7, 29, 13, 5, 22, 11, 16,
-                           3, 25, 8, 15, 1, 18, 6, 20, 9, 14,
-                           12, 4, 23, 7, 27, 11, 5, 19, 10, 35],
-        "geschlecht": (["M", "W"] * 50),
-        "standort": (["München"] * 40 + ["Berlin"] * 35 + ["Hamburg"] * 25),
-    })
-
-    # Einige NULL-Werte einfügen
-    gehaltsdaten = gehaltsdaten.with_columns([
-        pl.when(pl.col("mitarbeiter_id").is_in([15, 42, 73, 88]))
-        .then(None)
-        .otherwise(pl.col("erfahrung_jahre"))
-        .alias("erfahrung_jahre")
-    ])
-
-    daten_beschreibung = "Fiktive Gehaltsdaten (100 Mitarbeiter, inkl. Ausreißer und Missing Values)"
-    return daten_beschreibung, gehaltsdaten
+    # A/B-Test Daten laden
+    try:
+        csv_path = mo.notebook_location() / "public" / "ab_test_checkout.csv"
+        ab_test = pl.read_csv(str(csv_path))
+        daten_quelle = "Simulierter A/B-Test: Checkout-Optimierung (4.000 Nutzer)"
+    except Exception:
+        ab_test = pl.DataFrame({
+            "user_id": list(range(1, 11)),
+            "gruppe": ["Control"] * 5 + ["Treatment"] * 5,
+            "geraet": ["Desktop", "Mobile", "Desktop", "Mobile", "Desktop"] * 2,
+            "konvertiert": [1, 0, 1, 0, 1, 1, 1, 0, 1, 0],
+            "umsatz": [45.0, 0.0, 62.0, 0.0, 38.0, 55.0, 48.0, 0.0, 71.0, 0.0],
+        })
+        daten_quelle = "Offline-Daten (Fallback)"
+        mo.callout(mo.md("**Hinweis:** CSV konnte nicht geladen werden. Es werden Beispieldaten verwendet."), kind="warn")
+    return daten_quelle, ab_test
 
 
 @app.cell(hide_code=True)
-def _(daten_beschreibung, mo):
+def _(daten_quelle, mo):
     mo.md(
         f"""
-        **Datensatz:** {daten_beschreibung}
+        **Datenquelle:** {daten_quelle}
 
         ---
 
-        ## Phase 1: Erste Dateninspektion
+        ## Phase 1: Deskriptive Statistik
 
-        Bevor wir analysieren, müssen wir die Daten **kennenlernen**.
+        Bevor wir statistische Tests durchführen, müssen wir unsere Daten erst **verstehen**.
+        Unser Datensatz enthält 4.000 Nutzer eines Online-Shops, die zufällig einer von zwei
+        Checkout-Varianten zugewiesen wurden:
+
+        - **Control:** Bestehende Checkout-Seite
+        - **Treatment:** Neue, optimierte Checkout-Seite
+
+        Spalten: `user_id`, `gruppe` (Control/Treatment), `geraet` (Desktop/Mobile),
+        `konvertiert` (0/1), `umsatz` (€, 0 wenn nicht konvertiert)
         """
     )
     return
@@ -115,241 +92,219 @@ def _(daten_beschreibung, mo):
 def _(mo):
     mo.md(
         r"""
+        > **Vorhersage:** Der A/B-Test hat 4.000 Nutzer, gleichmäßig auf Control und Treatment verteilt. Typische Checkout-Conversion-Rates liegen bei 3–5%. Wenn Treatment besser ist — um wie viel Prozentpunkte erwarten Sie den Unterschied?
+
         ### Aufgabe 11.1: Datenüberblick
 
-        Wie viele Zeilen und Spalten haben unsere Daten? Welche Datentypen?
+        Wie viele Nutzer sind in jeder Gruppe? Wie viele haben konvertiert?
+        Berechne die **Conversion Rate** pro Gruppe.
         """
     )
     return
 
 
 @app.cell
-def _(gehaltsdaten, mo):
+def _(ab_test, mo):
     mo.sql(
         f"""
         SELECT
-            COUNT(*) AS anzahl_zeilen
-        FROM gehaltsdaten
-        """
-    )
-
-
-@app.cell
-def _(gehaltsdaten):
-    # Spalteninfo mit Polars
-    gehaltsdaten.schema
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ### Aufgabe 11.2: Erste Zeilen ansehen
-
-        Schauen Sie sich die ersten Datensätze an, um ein Gefühl für die Daten zu bekommen.
-        """
-    )
-    return
-
-
-@app.cell
-def _(gehaltsdaten, mo):
-    mo.sql(
-        f"""
-        SELECT * FROM gehaltsdaten LIMIT 10
-        """
-    )
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ---
-
-        ## Phase 2: Univariate Analyse
-
-        Jede Variable einzeln betrachten: Verteilung, Zentrum, Streuung.
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ### Aufgabe 11.3: Deskriptive Statistiken für Gehalt
-
-        Berechnen Sie Mittelwert, Median, Min, Max und Standardabweichung.
-        """
-    )
-    return
-
-
-@app.cell
-def _(gehaltsdaten, mo):
-    gehalt_stats = mo.sql(
-        f"""
-        SELECT
+            gruppe,
             COUNT(*) AS n,
-            ROUND(AVG(gehalt), 2) AS mittelwert,
-            PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY gehalt) AS median,
-            MIN(gehalt) AS minimum,
-            MAX(gehalt) AS maximum,
-            ROUND(STDDEV(gehalt), 2) AS std_abweichung
-        FROM gehaltsdaten
+            SUM(konvertiert) AS conversions,
+            ROUND(AVG(konvertiert) * 100, 1) AS conv_rate_pct
+        FROM ab_test
+        GROUP BY gruppe
+        ORDER BY gruppe
         """
     )
-    return (gehalt_stats,)
+    return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        **Beobachtung:** Der Mittelwert ist deutlich höher als der Median!
-        Das deutet auf einen oder mehrere Ausreißer nach oben hin.
+        ### Aufgabe 11.2: Statistische Kennzahlen
 
-        ### Aufgabe 11.4: Quartile und IQR berechnen
+        Berechne für jede Gruppe den **Mittelwert**, die **Standardabweichung**
+        und den **Standardfehler** des Umsatzes (nur für konvertierte Nutzer).
         """
     )
     return
 
 
 @app.cell
-def _(gehaltsdaten, mo):
-    quartile = mo.sql(
+def _(ab_test, mo):
+    mo.sql(
         f"""
         SELECT
-            PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY gehalt) AS q1,
-            PERCENTILE_CONT(0.50) WITHIN GROUP (ORDER BY gehalt) AS median,
-            PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY gehalt) AS q3,
-            PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY gehalt)
-                - PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY gehalt) AS iqr
-        FROM gehaltsdaten
+            gruppe,
+            COUNT(*) AS n,
+            ROUND(AVG(umsatz), 2) AS mittelwert,
+            ROUND(STDDEV(umsatz), 2) AS standardabw,
+            ROUND(STDDEV(umsatz) / SQRT(COUNT(*)), 2) AS standardfehler,
+            ROUND(MIN(umsatz), 2) AS min_umsatz,
+            ROUND(MAX(umsatz), 2) AS max_umsatz
+        FROM ab_test
+        WHERE konvertiert = 1
+        GROUP BY gruppe
         """
     )
-    return (quartile,)
+    return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        ### Visualisierung: Gehaltsverteilung
+        ### Aufgabe 11.3: Umsatzverteilung visualisieren
+
+        Erstelle ein Histogramm der Umsätze, getrennt nach Gruppe (nur konvertierte Nutzer).
         """
     )
     return
 
 
 @app.cell
-def _(gehaltsdaten, px):
-    fig_hist = px.histogram(
-        gehaltsdaten,
-        x="gehalt",
-        nbins=30,
-        title="Verteilung der Gehälter",
-        labels={"gehalt": "Gehalt (EUR)", "count": "Anzahl"}
+def _(ab_test, mo):
+    _data = mo.sql(
+        f"""
+        SELECT gruppe, umsatz
+        FROM ab_test
+        WHERE konvertiert = 1
+        """
     )
-    fig_hist.update_layout(showlegend=False)
-    fig_hist
+    return (_data,)
+
+
+@app.cell
+def _(_data, px):
+    px.histogram(
+        _data,
+        x="umsatz",
+        color="gruppe",
+        barmode="overlay",
+        opacity=0.6,
+        nbins=40,
+        title="Umsatzverteilung nach Gruppe (nur Konverter)",
+        labels={"umsatz": "Umsatz (€)", "gruppe": "Gruppe", "count": "Anzahl"},
+        color_discrete_map={"Control": "#004B8D", "Treatment": "#E87722"},
+    )
+    return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        **Beobachtung:** Ein extremer Ausreißer ist deutlich sichtbar (CEO-Gehalt?).
-
-        > **Vorhersage:** Der Datensatz enthält 100 Mitarbeiter. Wie viele Ausreißer erwarten Sie beim Gehalt, wenn wir die IQR-Regel (1,5 × IQR) anwenden? Und beim Alter?
-
         ---
 
-        ## Phase 3: Ausreißer erkennen
+        ## Phase 2: z-Scores und Ausreißer
 
-        ### Aufgabe 11.5: Ausreißer mit IQR-Regel finden
+        Der **z-Score** standardisiert Werte: Wie viele Standardabweichungen liegt ein
+        Wert vom Mittelwert entfernt?
+
+        $$z = \frac{x - \bar{x}}{s}$$
+
+        | |z| | Interpretation |
+        |-----|----------------|
+        | < 1 | Normal (68% der Daten) |
+        | < 2 | Üblich (95% der Daten) |
+        | > 2 | Auffällig |
+        | > 3 | Sehr ungewöhnlich |
         """
     )
     return
-
-
-@app.cell
-def _(gehaltsdaten, mo):
-    ausreisser = mo.sql(
-        f"""
-        WITH quartile AS (
-            SELECT
-                PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY gehalt) AS q1,
-                PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY gehalt) AS q3
-            FROM gehaltsdaten
-        ),
-        grenzen AS (
-            SELECT
-                q1 - 1.5 * (q3 - q1) AS untere_grenze,
-                q3 + 1.5 * (q3 - q1) AS obere_grenze
-            FROM quartile
-        )
-        SELECT g.*, gr.untere_grenze, gr.obere_grenze
-        FROM gehaltsdaten g, grenzen gr
-        WHERE g.gehalt < gr.untere_grenze
-           OR g.gehalt > gr.obere_grenze
-        ORDER BY g.gehalt DESC
-        """
-    )
-    return (ausreisser,)
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 11.6: Selbstständig - Ausreißer im Alter finden
+        ### Aufgabe 11.4: z-Scores berechnen
 
-        Finden Sie auch die Ausreißer in der Spalte `alter` mit der IQR-Regel.
+        Berechne den z-Score des Umsatzes für jeden konvertierten Nutzer.
+        Finde die **Top 5 Ausreißer** (höchster |z-Score|).
         """
     )
     return
 
 
 @app.cell
-def _(gehaltsdaten, mo):
-    # Ihre Lösung hier:
-    alter_ausreisser = mo.sql(
+def _(ab_test, mo):
+    mo.sql(
+        f"""
+        SELECT
+            user_id,
+            gruppe,
+            geraet,
+            umsatz,
+            ROUND(
+                (umsatz - AVG(umsatz) OVER())
+                / STDDEV(umsatz) OVER(),
+            2) AS z_score
+        FROM ab_test
+        WHERE konvertiert = 1
+        ORDER BY ABS(
+            (umsatz - AVG(umsatz) OVER())
+            / STDDEV(umsatz) OVER()
+        ) DESC
+        LIMIT 5
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### Aufgabe 11.5: Selbstständig — z-Score-Verteilung
+
+        Wie viele konvertierte Nutzer haben einen |z-Score| > 2?
+        Zähle pro Gruppe.
+
+        *Hinweis: Wie Aufgabe 11.4, aber mit SUM(CASE WHEN ABS(z_score) > 2 ...) statt ORDER BY*
+        """
+    )
+    return
+
+
+@app.cell
+def _(ab_test, mo):
+    mo.sql(
         f"""
         -- Ihre Lösung hier
-        -- Tipp: Gleiche CTE-Struktur wie bei Aufgabe 11.5 (Gehalt), aber für 'alter'
-        -- 1. WITH quartile AS (SELECT Q1, Q3 FROM gehaltsdaten)
-        -- 2. grenzen AS (SELECT q1 - 1.5*IQR, q3 + 1.5*IQR)
-        -- 3. SELECT WHERE alter < untere_grenze OR alter > obere_grenze
+        -- Tipp: CTE mit z_scores wie in 11.4, dann GROUP BY gruppe
+        -- SUM(CASE WHEN ABS(z_score) > 2 THEN 1 ELSE 0 END) AS n_ausreisser
+        -- Erwartete Spalten: gruppe, n_total, n_ausreisser, pct_ausreisser
         SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
-    return (alter_ausreisser,)
+    return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.accordion({"🔑 Musterlösung": mo.md("""
 ```sql
-WITH quartile AS (
+WITH z_scores AS (
     SELECT
-        PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY alter) AS q1,
-        PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY alter) AS q3
-    FROM gehaltsdaten
-),
-grenzen AS (
-    SELECT
-        q1 - 1.5 * (q3 - q1) AS untere_grenze,
-        q3 + 1.5 * (q3 - q1) AS obere_grenze
-    FROM quartile
+        user_id,
+        gruppe,
+        umsatz,
+        (umsatz - AVG(umsatz) OVER())
+        / STDDEV(umsatz) OVER() AS z_score
+    FROM ab_test
+    WHERE konvertiert = 1
 )
-SELECT g.*, gr.untere_grenze, gr.obere_grenze
-FROM gehaltsdaten g, grenzen gr
-WHERE g.alter < gr.untere_grenze
-   OR g.alter > gr.obere_grenze
-ORDER BY g.alter DESC
+SELECT
+    gruppe,
+    COUNT(*) AS n_total,
+    SUM(CASE WHEN ABS(z_score) > 2 THEN 1 ELSE 0 END) AS n_ausreisser,
+    ROUND(SUM(CASE WHEN ABS(z_score) > 2 THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 1) AS pct_ausreisser
+FROM z_scores
+GROUP BY gruppe
 ```
 """)})
     return
@@ -359,30 +314,50 @@ ORDER BY g.alter DESC
 def _(mo):
     mo.md(
         r"""
-        **Beobachtung:** Ein Mitarbeiter hat Alter 280 - offensichtlich ein Datenfehler (vermutlich 28 gemeint).
+        ### Aufgabe 11.6: z-Score-Visualisierung
 
-        ---
-
-        ## Phase 4: Missing Values analysieren
-
-        ### Aufgabe 11.7: Fehlende Werte zählen
+        Erstelle ein Histogramm der z-Scores mit Markierungslinien bei z = -2 und z = +2.
         """
     )
     return
 
 
 @app.cell
-def _(gehaltsdaten, mo):
-    mo.sql(
+def _(ab_test, mo):
+    _z_data = mo.sql(
         f"""
         SELECT
-            COUNT(*) AS total,
-            COUNT(erfahrung_jahre) AS vorhanden,
-            COUNT(*) - COUNT(erfahrung_jahre) AS fehlend,
-            ROUND((COUNT(*) - COUNT(erfahrung_jahre)) * 100.0 / COUNT(*), 1) AS prozent_fehlend
-        FROM gehaltsdaten
+            user_id,
+            gruppe,
+            umsatz,
+            ROUND(
+                (umsatz - AVG(umsatz) OVER())
+                / STDDEV(umsatz) OVER(),
+            2) AS z_score
+        FROM ab_test
+        WHERE konvertiert = 1
         """
     )
+    return (_z_data,)
+
+
+@app.cell
+def _(_z_data, px):
+    fig = px.histogram(
+        _z_data,
+        x="z_score",
+        color="gruppe",
+        barmode="overlay",
+        opacity=0.6,
+        nbins=40,
+        title="z-Score-Verteilung der Umsätze",
+        labels={"z_score": "z-Score", "gruppe": "Gruppe", "count": "Anzahl"},
+        color_discrete_map={"Control": "#004B8D", "Treatment": "#E87722"},
+    )
+    fig.add_vline(x=-2, line_dash="dash", line_color="red", annotation_text="z = -2")
+    fig.add_vline(x=2, line_dash="dash", line_color="red", annotation_text="z = +2")
+    fig
+    return (fig,)
 
 
 @app.cell(hide_code=True)
@@ -391,188 +366,226 @@ def _(mo):
         r"""
         ---
 
-        ## Phase 5: Bivariate Analyse
+        ## Phase 3: Hypothesentests
 
-        Zusammenhänge zwischen Variablen untersuchen.
+        Jetzt wenden wir statistische Tests an, um zu prüfen, ob die beobachteten
+        Unterschiede **statistisch signifikant** sind.
 
-        ### Aufgabe 11.8: Korrelation Alter-Gehalt
+        **Hypothesen für den Umsatzvergleich:**
+        - $H_0$: Der mittlere Umsatz ist in beiden Gruppen gleich ($\mu_C = \mu_T$)
+        - $H_1$: Der mittlere Umsatz unterscheidet sich ($\mu_C \neq \mu_T$)
+
+        **t-Test Formel (Welch):**
+
+        $$t = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{\frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}}}$$
+
+        Daumenregel: |t| > 2 → signifikant auf 5%-Niveau (bei großen Stichproben)
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### Aufgabe 11.7: t-Test für Umsatz (Konverter)
+
+        Berechne die t-Statistik für den Umsatzvergleich zwischen Control und Treatment
+        (nur konvertierte Nutzer). Ist der Unterschied signifikant?
         """
     )
     return
 
 
 @app.cell
-def _(gehaltsdaten, mo):
+def _(ab_test, mo):
     mo.sql(
         f"""
+        WITH stats AS (
+            SELECT
+                gruppe,
+                COUNT(*) AS n,
+                AVG(umsatz) AS mittel,
+                STDDEV(umsatz) AS std
+            FROM ab_test
+            WHERE konvertiert = 1
+            GROUP BY gruppe
+        )
         SELECT
-            ROUND(CORR(alter, gehalt), 3) AS korrelation_alter_gehalt,
-            ROUND(CORR(erfahrung_jahre, gehalt), 3) AS korrelation_erfahrung_gehalt
-        FROM gehaltsdaten
-        WHERE alter < 100  -- Ausreißer ausschließen
-        """
-    )
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ### Visualisierung: Scatterplot Erfahrung vs. Gehalt
-        """
-    )
-    return
-
-
-@app.cell
-def _(gehaltsdaten, px):
-    # Daten ohne extreme Ausreißer für bessere Visualisierung
-    clean_data = gehaltsdaten.filter(
-        (gehaltsdaten["gehalt"] < 200000) & (gehaltsdaten["alter"] < 100)
-    )
-
-    fig_scatter = px.scatter(
-        clean_data,
-        x="erfahrung_jahre",
-        y="gehalt",
-        color="abteilung",
-        title="Gehalt vs. Erfahrung (ohne extreme Ausreißer)",
-        labels={"erfahrung_jahre": "Erfahrung (Jahre)", "gehalt": "Gehalt (EUR)"},
-        trendline="ols"
-    )
-    fig_scatter
-    return clean_data, fig_scatter
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ### Aufgabe 11.9: Gruppenvergleich nach Abteilung
-        """
-    )
-    return
-
-
-@app.cell
-def _(gehaltsdaten, mo):
-    abteilung_stats = mo.sql(
-        f"""
-        SELECT
-            abteilung,
-            COUNT(*) AS n,
-            ROUND(AVG(gehalt), 0) AS mittel_gehalt,
-            ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY gehalt), 0) AS median_gehalt,
-            MIN(gehalt) AS min_gehalt,
-            MAX(gehalt) AS max_gehalt
-        FROM gehaltsdaten
-        WHERE gehalt < 200000  -- Ausreißer ausschließen
-        GROUP BY abteilung
-        ORDER BY mittel_gehalt DESC
-        """
-    )
-    return (abteilung_stats,)
-
-
-@app.cell
-def _(clean_data, px):
-    fig_box = px.box(
-        clean_data,
-        x="abteilung",
-        y="gehalt",
-        title="Gehaltsverteilung nach Abteilung",
-        labels={"abteilung": "Abteilung", "gehalt": "Gehalt (EUR)"}
-    )
-    fig_box
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    quiz_window = mo.ui.radio(
-        options={
-            "correct": "GROUP BY reduziert Zeilen (eine pro Gruppe), Window Functions behalten alle Zeilen",
-            "reversed": "Window Functions reduzieren Zeilen, GROUP BY behält alle Zeilen",
-            "speed": "GROUP BY ist schneller, Window Functions sind langsamer — sonst gleich",
-            "syntax": "GROUP BY braucht SELECT, Window Functions brauchen nur OVER()",
-        },
-        label="**Quiz:** Was ist der Hauptunterschied zwischen GROUP BY und Window Functions?"
-    )
-    quiz_window
-    return (quiz_window,)
-
-
-@app.cell(hide_code=True)
-def _(quiz_window, mo):
-    if quiz_window.value == "correct":
-        mo.output.replace(mo.md("Richtig! GROUP BY fasst viele Zeilen zu einer zusammen (z.B. eine Zeile pro Mannschaft). Window Functions berechnen Aggregate, aber **jede Originalzeile bleibt erhalten** — Sie bekommen die Aggregation *neben* den Originaldaten."))
-    elif quiz_window.value:
-        mo.output.replace(mo.md("Nicht ganz. Der entscheidende Unterschied: GROUP BY *komprimiert* Zeilen (viele → eine pro Gruppe). Window Functions mit OVER() berechnen dasselbe, aber **behalten alle Originalzeilen** bei."))
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ---
-
-        ## Phase 6: SQL für EDA - Binning
-
-        ### Aufgabe 11.10: Gehaltsklassen erstellen
-        """
-    )
-    return
-
-
-@app.cell
-def _(gehaltsdaten, mo):
-    mo.sql(
-        f"""
-        SELECT
+            ROUND(c.mittel, 2) AS mittel_control,
+            ROUND(t.mittel, 2) AS mittel_treatment,
+            ROUND(c.mittel - t.mittel, 2) AS differenz,
+            ROUND(SQRT(POWER(c.std, 2) / c.n + POWER(t.std, 2) / t.n), 4) AS standardfehler,
+            ROUND(
+                ABS(c.mittel - t.mittel)
+                / SQRT(POWER(c.std, 2) / c.n + POWER(t.std, 2) / t.n),
+            2) AS t_statistik,
             CASE
-                WHEN gehalt < 50000 THEN '1: unter 50k'
-                WHEN gehalt < 65000 THEN '2: 50-65k'
-                WHEN gehalt < 80000 THEN '3: 65-80k'
-                WHEN gehalt < 100000 THEN '4: 80-100k'
-                ELSE '5: über 100k'
-            END AS gehaltsklasse,
-            COUNT(*) AS anzahl,
-            ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM gehaltsdaten), 1) AS prozent
-        FROM gehaltsdaten
-        GROUP BY gehaltsklasse
-        ORDER BY gehaltsklasse
+                WHEN ABS(c.mittel - t.mittel)
+                     / SQRT(POWER(c.std, 2) / c.n + POWER(t.std, 2) / t.n) > 1.96
+                THEN 'Signifikant (p < 0.05)'
+                ELSE 'Nicht signifikant'
+            END AS ergebnis
+        FROM stats c, stats t
+        WHERE c.gruppe = 'Control'
+          AND t.gruppe = 'Treatment'
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    quiz_pvalue = mo.ui.radio(
+        options={
+            "correct": "Statistisch signifikant — wir lehnen H₀ ab, weil p < α",
+            "accept": "Wir akzeptieren H₁ als wahr — der Effekt ist bewiesen",
+            "nonsig": "Nicht signifikant — 0.03 ist zu klein für eine Aussage",
+            "repeat": "Wir müssen den Test wiederholen, da p nicht genau 0.05 ist",
+        },
+        label="**Quiz:** Was bedeutet ein p-Wert von 0.03 bei einem Signifikanzniveau α = 0.05?"
+    )
+    quiz_pvalue
+    return (quiz_pvalue,)
+
+
+@app.cell(hide_code=True)
+def _(quiz_pvalue, mo):
+    if quiz_pvalue.value == "correct":
+        mo.output.replace(mo.md("Richtig! Da p = 0.03 < α = 0.05, lehnen wir die Nullhypothese ab. Das bedeutet: Die beobachteten Daten sind unter H₀ so unwahrscheinlich, dass wir einen echten Effekt annehmen. Achtung: Das *beweist* H₁ nicht — es macht sie nur wahrscheinlicher."))
+    elif quiz_pvalue.value:
+        mo.output.replace(mo.md("Nicht ganz. p = 0.03 bedeutet: *Wenn H₀ wahr wäre*, würden wir so extreme Daten nur in 3% der Fälle sehen. Da 3% < 5% (unser α), lehnen wir H₀ ab und sprechen von einem **statistisch signifikanten** Ergebnis."))
+    return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 11.11: Selbstständig - Altersgruppen analysieren
+        ### Aufgabe 11.8: Effektgröße (Cohen's d)
 
-        Erstellen Sie Altersgruppen (unter 30, 30-40, 40-50, über 50) und
-        berechnen Sie das Durchschnittsgehalt pro Gruppe.
+        Berechne Cohen's d für den Umsatzunterschied.
 
-        *Hinweis: Schließen Sie den Ausreißer (Alter > 100) aus.*
+        $$d = \frac{\bar{x}_1 - \bar{x}_2}{s_{\text{pooled}}}$$
+
+        wobei $s_{\text{pooled}} = \sqrt{\frac{(n_1-1) \cdot s_1^2 + (n_2-1) \cdot s_2^2}{n_1 + n_2 - 2}}$
+
+        | |d| | Interpretation |
+        |-----|----------------|
+        | < 0.2 | Vernachlässigbar |
+        | 0.2 – 0.5 | Klein |
+        | 0.5 – 0.8 | Mittel |
+        | > 0.8 | Groß |
         """
     )
     return
 
 
 @app.cell
-def _(gehaltsdaten, mo):
-    # Ihre Lösung hier:
+def _(ab_test, mo):
     mo.sql(
         f"""
-        -- Ihre Lösung hier
-        -- Tipp: CASE WHEN alter < 30 THEN '1: unter 30' ... END AS altersgruppe
-        -- GROUP BY altersgruppe, dann AVG(gehalt) berechnen
-        -- Ausreißer ausschließen: WHERE alter < 100 AND gehalt < 200000
-        -- Erwartete Spalten: altersgruppe, anzahl, durchschnitt_gehalt
-        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        WITH stats AS (
+            SELECT
+                gruppe,
+                COUNT(*) AS n,
+                AVG(umsatz) AS mittel,
+                STDDEV(umsatz) AS std
+            FROM ab_test
+            WHERE konvertiert = 1
+            GROUP BY gruppe
+        )
+        SELECT
+            ROUND(c.mittel - t.mittel, 2) AS differenz,
+            ROUND(
+                SQRT(
+                    ((c.n - 1) * POWER(c.std, 2) + (t.n - 1) * POWER(t.std, 2))
+                    / (c.n + t.n - 2)
+                ), 2
+            ) AS s_pooled,
+            ROUND(
+                ABS(c.mittel - t.mittel)
+                / SQRT(
+                    ((c.n - 1) * POWER(c.std, 2) + (t.n - 1) * POWER(t.std, 2))
+                    / (c.n + t.n - 2)
+                ), 3
+            ) AS cohens_d,
+            CASE
+                WHEN ABS(c.mittel - t.mittel)
+                     / SQRT(((c.n-1)*POWER(c.std,2) + (t.n-1)*POWER(t.std,2)) / (c.n+t.n-2)) < 0.2
+                THEN 'Vernachlässigbar'
+                WHEN ABS(c.mittel - t.mittel)
+                     / SQRT(((c.n-1)*POWER(c.std,2) + (t.n-1)*POWER(t.std,2)) / (c.n+t.n-2)) < 0.5
+                THEN 'Klein'
+                WHEN ABS(c.mittel - t.mittel)
+                     / SQRT(((c.n-1)*POWER(c.std,2) + (t.n-1)*POWER(t.std,2)) / (c.n+t.n-2)) < 0.8
+                THEN 'Mittel'
+                ELSE 'Groß'
+            END AS interpretation
+        FROM stats c, stats t
+        WHERE c.gruppe = 'Control'
+          AND t.gruppe = 'Treatment'
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## Phase 4: A/B-Test-Auswertung
+
+        Jetzt analysieren wir den A/B-Test **systematisch** — genau wie in der Praxis.
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### Aufgabe 11.9: Selbstständig — Conversion Rate mit Konfidenzintervall
+
+        Berechne die Conversion Rate pro Gruppe mit einem **95%-Konfidenzintervall**.
+
+        Für Proportionen: $CI = p \pm 1.96 \cdot \sqrt{\frac{p(1-p)}{n}}$
+
+        *Hinweis: Wenden Sie die Formel direkt in SQL an — AVG(konvertiert) ist p, COUNT(*) ist n*
+        """
+    )
+    return
+
+
+@app.cell
+def _(ab_test, mo):
+    mo.sql(
+        f"""
+        -- Ergänzen Sie die fehlenden Berechnungen (???)
+        SELECT
+            gruppe,
+            COUNT(*) AS n,
+            ROUND(AVG(konvertiert) * 100, 1) AS conv_rate_pct,
+            -- CI-Untergrenze: (p - 1.96 * sqrt(p*(1-p)/n)) * 100
+            ROUND(
+                (AVG(konvertiert) - 1.96 * SQRT(??? * (1 - ???) / COUNT(*))) * 100,
+            1) AS ci_lower_pct,
+            -- CI-Obergrenze: (p + 1.96 * sqrt(p*(1-p)/n)) * 100
+            ROUND(
+                (AVG(konvertiert) + 1.96 * SQRT(??? * (1 - ???) / COUNT(*))) * 100,
+            1) AS ci_upper_pct
+        FROM ab_test
+        GROUP BY gruppe
+        ORDER BY gruppe
+        -- Tipp: Ersetzen Sie jedes ??? durch AVG(konvertiert)
+        -- Erwartete Ausgabe: 2 Zeilen (control, treatment), 5 Spalten
+        """
+    )
+    return
 
 
 @app.cell(hide_code=True)
@@ -580,18 +593,18 @@ def _(mo):
     mo.accordion({"🔑 Musterlösung": mo.md("""
 ```sql
 SELECT
-    CASE
-        WHEN alter < 30 THEN '1: unter 30'
-        WHEN alter < 40 THEN '2: 30-40'
-        WHEN alter < 50 THEN '3: 40-50'
-        ELSE '4: über 50'
-    END AS altersgruppe,
-    COUNT(*) AS anzahl,
-    ROUND(AVG(gehalt), 0) AS durchschnitt_gehalt
-FROM gehaltsdaten
-WHERE alter < 100 AND gehalt < 200000
-GROUP BY altersgruppe
-ORDER BY altersgruppe
+    gruppe,
+    COUNT(*) AS n,
+    ROUND(AVG(konvertiert) * 100, 1) AS conv_rate_pct,
+    ROUND(
+        (AVG(konvertiert) - 1.96 * SQRT(AVG(konvertiert) * (1 - AVG(konvertiert)) / COUNT(*))) * 100,
+    1) AS ci_lower_pct,
+    ROUND(
+        (AVG(konvertiert) + 1.96 * SQRT(AVG(konvertiert) * (1 - AVG(konvertiert)) / COUNT(*))) * 100,
+    1) AS ci_upper_pct
+FROM ab_test
+GROUP BY gruppe
+ORDER BY gruppe
 ```
 """)})
     return
@@ -601,119 +614,31 @@ ORDER BY altersgruppe
 def _(mo):
     mo.md(
         r"""
-        ---
+        ### Aufgabe 11.10: Umsatz pro Nutzer (alle Nutzer)
 
-        ## Phase 7: Vollständige EDA - Zusammenfassung
-
-        ### Aufgabe 11.12: EDA-Report erstellen
-
-        Fassen Sie Ihre Erkenntnisse zusammen:
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        **EDA-Erkenntnisse für den Gehaltsdatensatz:**
-
-        1. **Datenqualität:**
-           - 100 Datensätze, 8 Variablen
-           - 4 fehlende Werte bei `erfahrung_jahre` (4%)
-           - 2 Ausreißer identifiziert: CEO-Gehalt (450k), Alter-Fehler (280)
-
-        2. **Univariate Analyse:**
-           - Gehaltsverteilung ist rechtsschief (Mean > Median)
-           - Typisches Gehalt: ca. 55-65k EUR (ohne Ausreißer)
-           - Alter: 26-55 Jahre (ein Datenfehler bei 280)
-
-        3. **Bivariate Analyse:**
-           - Positive Korrelation zwischen Erfahrung und Gehalt
-           - Gehaltsunterschiede zwischen Abteilungen
-           - IT und Finanzen haben höchste Durchschnittsgehälter
-
-        4. **Empfehlungen:**
-           - Alter-Fehler (280) korrigieren zu 28
-           - CEO-Gehalt separat behandeln oder ausschließen
-           - Missing Values bei Erfahrung untersuchen (nur 4 Fälle)
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ---
-
-        ## Datasaurus Dozen: Warum Visualisierung unverzichtbar ist
-
-        **Anscombe's Quartet** (1973) zeigte: 4 Datensätze mit identischen Statistiken,
-        aber völlig verschiedenen Mustern.
-
-        Das **Datasaurus Dozen** (2017) treibt das auf die Spitze:
-        **13 Datensätze** mit nahezu identischen Statistiken — darunter ein Dinosaurier!
-
-        Alle 13 Datensätze haben:
-
-        - Gleichen Mittelwert (x ≈ 54.3, y ≈ 47.8)
-        - Gleiche Standardabweichung (x ≈ 16.8, y ≈ 26.9)
-        - Gleiche Korrelation (r ≈ −0.06)
+        Vergleiche den **durchschnittlichen Umsatz pro Nutzer** (inkl. Nicht-Konverter mit 0€).
+        Dies ist oft die wichtigere Metrik als die Conversion Rate allein.
         """
     )
     return
 
 
 @app.cell
-def _(pl):
-    # Datasaurus Dozen laden
-    try:
-        datasaurus = pl.read_csv(
-            "https://raw.githubusercontent.com/jumpingrivers/datasauRus/main/inst/extdata/DatasaurusDozen-long.csv"
-        )
-        ds_quelle = "Live-Daten (GitHub)"
-    except Exception:
-        # Minimaler Fallback: leerer Hinweis
-        datasaurus = pl.DataFrame({"dataset": ["?"], "x": [0.0], "y": [0.0]})
-        ds_quelle = "Fehler beim Laden — bitte Internetverbindung prüfen"
-
-    return datasaurus, ds_quelle
-
-
-@app.cell
-def _(datasaurus, mo):
+def _(ab_test, mo):
     mo.sql(
         f"""
         SELECT
-            dataset,
-            ROUND(AVG(x), 2) AS mean_x,
-            ROUND(AVG(y), 2) AS mean_y,
-            ROUND(STDDEV(x), 2) AS std_x,
-            ROUND(STDDEV(y), 2) AS std_y,
-            ROUND(CORR(x, y), 3) AS korrelation,
-            COUNT(*) AS n
-        FROM datasaurus
-        GROUP BY dataset
-        ORDER BY dataset
+            gruppe,
+            COUNT(*) AS n,
+            ROUND(AVG(umsatz), 2) AS avg_umsatz_alle,
+            ROUND(STDDEV(umsatz), 2) AS std_umsatz,
+            ROUND(SUM(umsatz), 2) AS total_umsatz
+        FROM ab_test
+        GROUP BY gruppe
+        ORDER BY gruppe
         """
     )
-
-
-@app.cell
-def _(datasaurus, px):
-    px.scatter(
-        datasaurus,
-        x="x",
-        y="y",
-        facet_col="dataset",
-        facet_col_wrap=4,
-        width=900,
-        height=900,
-        title="Datasaurus Dozen — Gleiche Statistiken, völlig verschiedene Muster",
-    )
+    return
 
 
 @app.cell(hide_code=True)
@@ -722,35 +647,154 @@ def _(mo):
         r"""
         ---
 
-        ## Freie Exploration
+        ## Phase 5: Simpson's Paradox aufdecken
 
-        Probieren Sie eigene Analysen:
+        Bisher sieht es so aus, als wäre **Control besser**. Aber stimmt das wirklich?
+        Schauen wir uns die Daten **segmentiert** an.
+        """
+    )
+    return
 
-        - Geschlechterverteilung nach Abteilung
-        - Gehalt nach Standort vergleichen
-        - Korrelationsmatrix erstellen
-        - Weitere Visualisierungen
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### Aufgabe 11.11: Selbstständig — Segmentierung nach Gerät
+
+        Berechne die Conversion Rate **getrennt nach Gerätetyp** (Desktop vs. Mobile).
+        Was fällt auf?
+
+        *Hinweis: GROUP BY geraet, gruppe — gleiche Aggregation wie 11.1, nur feiner segmentiert*
         """
     )
     return
 
 
 @app.cell
-def _(gehaltsdaten, mo):
-    # Eigene Analyse hier:
+def _(ab_test, mo):
+    mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        -- Tipp: GROUP BY geraet, gruppe statt nur GROUP BY gruppe
+        -- Gleiche Aggregation: COUNT(*), SUM(konvertiert), AVG(konvertiert)
+        -- Erwartete Spalten: geraet, gruppe, n, conversions, conv_rate_pct
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    geraet,
+    gruppe,
+    COUNT(*) AS n,
+    SUM(konvertiert) AS conversions,
+    ROUND(AVG(konvertiert) * 100, 1) AS conv_rate_pct
+FROM ab_test
+GROUP BY geraet, gruppe
+ORDER BY geraet, gruppe
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        **Simpson's Paradox!** Treatment ist in **beiden** Segmenten besser,
+        aber im Gesamtergebnis schlechter. Warum?
+
+        Der Grund: Die Gruppen sind **nicht gleich zusammengesetzt**.
+        Treatment hat mehr Mobile-Nutzer, und Mobile-Nutzer konvertieren generell weniger.
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### Aufgabe 11.12: Gruppenkomposition analysieren
+
+        Zeige die **Geräteverteilung** pro Gruppe. Das erklärt den Paradox.
+        """
+    )
+    return
+
+
+@app.cell
+def _(ab_test, mo):
     mo.sql(
         f"""
         SELECT
-            standort,
-            geschlecht,
-            COUNT(*) AS anzahl,
-            ROUND(AVG(gehalt), 0) AS durchschnitt_gehalt
-        FROM gehaltsdaten
-        WHERE gehalt < 200000
-        GROUP BY standort, geschlecht
-        ORDER BY standort, geschlecht
+            gruppe,
+            geraet,
+            COUNT(*) AS n,
+            ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER(PARTITION BY gruppe), 1) AS anteil_pct
+        FROM ab_test
+        GROUP BY gruppe, geraet
+        ORDER BY gruppe, geraet
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        Die Treatment-Gruppe hat **60% Mobile-Nutzer** vs. nur **30% bei Control**.
+        Da Mobile-Nutzer generell weniger konvertieren, zieht das den Gesamtdurchschnitt
+        der Treatment-Gruppe nach unten — obwohl Treatment **innerhalb jedes Segments** besser ist.
+        """
+    )
+    return
+
+
+@app.cell
+def _(ab_test, mo):
+    _comp = mo.sql(
+        f"""
+        SELECT
+            gruppe,
+            geraet,
+            COUNT(*) AS n,
+            ROUND(AVG(konvertiert) * 100, 1) AS conv_rate_pct
+        FROM ab_test
+        GROUP BY gruppe, geraet
+        ORDER BY geraet, gruppe
+        """
+    )
+    return (_comp,)
+
+
+@app.cell
+def _(_comp, px):
+    fig = px.bar(
+        _comp,
+        x="geraet",
+        y="conv_rate_pct",
+        color="gruppe",
+        barmode="group",
+        title="Conversion Rate nach Gerät und Gruppe (Simpson's Paradox)",
+        labels={
+            "conv_rate_pct": "Conversion Rate (%)",
+            "geraet": "Gerätetyp",
+            "gruppe": "Gruppe",
+        },
+        color_discrete_map={"Control": "#004B8D", "Treatment": "#E87722"},
+        text="conv_rate_pct",
+    )
+    fig.update_traces(textposition="outside")
+    fig
+    return (fig,)
 
 
 @app.cell(hide_code=True)
@@ -761,18 +805,43 @@ def _(mo):
 
         ## Zusammenfassung
 
-        | Konzept | Beschreibung | SQL |
-        |---------|--------------|-----|
-        | **Lagemaße** | Zentrum der Daten | `AVG()`, `PERCENTILE_CONT(0.5)` |
-        | **Streuungsmaße** | Variabilität | `STDDEV()`, `MAX()-MIN()` |
-        | **Ausreißer** | IQR-Regel | `Q1 - 1.5*IQR`, `Q3 + 1.5*IQR` |
-        | **Korrelation** | Zusammenhang | `CORR(x, y)` |
-        | **Binning** | Kategorisieren | `CASE WHEN ... THEN ...` |
-        | **Missing Values** | Fehlende Werte | `COUNT(*) - COUNT(spalte)` |
+        | Konzept | SQL-Werkzeug | Erkenntnis |
+        |---------|-------------|------------|
+        | Deskriptive Statistik | `AVG()`, `STDDEV()` | Gruppen beschreiben |
+        | z-Score | Window Functions | Ausreißer identifizieren |
+        | t-Test | `WITH` + Berechnungen | Signifikanz prüfen |
+        | Cohen's d | Pooled Std | Effektgröße bewerten |
+        | Konfidenzintervall | Proportions-Formel | Unsicherheit quantifizieren |
+        | Simpson's Paradox | `GROUP BY` Segment | **Immer segmentieren!** |
 
-        **Goldene Regel:** Immer visualisieren! (Anscombe's Quartet / Datasaurus Dozen)
+        **Kernbotschaft:** Ein Unterschied ist nur dann aussagekräftig, wenn er
+        **statistisch signifikant** *und* **praktisch relevant** ist — und wir auf
+        **Confounding Variables** geprüft haben.
+        """
+    )
+    return
 
-        **Nächste Session:** Statistische Inferenz & A/B-Tests
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## Freie Exploration
+
+        Nutze die Zelle unten, um eigene SQL-Abfragen auf dem A/B-Test-Datensatz auszuprobieren.
+        """
+    )
+    return
+
+
+@app.cell
+def _(ab_test, mo):
+    mo.sql(
+        f"""
+        -- Eigene Abfrage hier:
+        SELECT * FROM ab_test LIMIT 5
         """
     )
     return
