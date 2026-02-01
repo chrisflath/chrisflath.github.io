@@ -1,0 +1,151 @@
+id,produkt,kategorie,bewertung_text,sterne,autor,datum,hilfreich
+1,Bluetooth Kopfhörer,Elektronik,Super Klangqualität und der Preis ist wirklich günstig. Kann ich nur empfehlen!,5,MaxMustermann,2025-01-15,12
+2,Smartphone Hülle,Elektronik,Passt perfekt und schützt das Handy gut. Qualität ist top.,4,AnnaK,2025-01-18,5
+3,USB-C Kabel,Elektronik, Die Lieferung war schnell aber das Kabel ist nach 2 Wochen kaputt gegangen. ,2,TechFan42,2025-01-20,8
+4,Laptop Ständer,Elektronik,Hochwertige Verarbeitung und stabiler Stand. Perfekt fürs Homeoffice.,5,BüroHeld,2025-01-22,15
+5,Wireless Maus,Elektronik,Ganz okay für den Preis. Die Batterie hält leider nicht so lange.,3,PeterP,2025-01-25,3
+6,Tablet Halterung,Elektronik,Enttäuscht! Die Qualität ist schlecht und das Material fühlt sich billig an.,1,KritischerKunde,2025-01-28,20
+7,Powerbank,Elektronik,Tolle Powerbank mit viel Kapazität. Lieferung kam pünktlich.,4,ReiseFan,2025-02-01,7
+8,HDMI Adapter,Elektronik,Funktioniert einwandfrei. Guter Preis für die Qualität.,4,HomeOffice99,2025-02-03,2
+9,Gaming Tastatur,Elektronik,Die Tastatur ist super! Tolles Tippgefühl und schöne Beleuchtung.,5,GamerMax,2025-02-05,11
+10,Webcam HD,Elektronik,Bildqualität könnte besser sein. Für den Preis aber akzeptabel.,3,VideoCall,2025-02-08,4
+11,Smartwatch,Elektronik,Perfekt! Genau was ich gesucht habe. Akku hält 5 Tage.,5,SportyAnna,2025-02-10,18
+12,Kopfhörer Adapter,Elektronik,Verpackung war beschädigt aber das Produkt funktioniert gut.,3,MusikLiebhaber,2025-02-12,1
+13,Monitor Kabel,Elektronik,Schnelle Lieferung und gute Qualität. Empfehlenswert.,4,OfficeWorker,2025-02-15,6
+14,USB Hub,Elektronik,Teuer für das was man bekommt. Es gibt bessere Alternativen.,2,SparFuchs,2025-02-18,9
+15,Bluetooth Lautsprecher,Elektronik, Super Sound und tolles Design. Preis-Leistung stimmt! ,5,PartyMaster,2025-02-20,14
+16,SD Karte,Elektronik,Funktioniert wie  erwartet. Keine Beschwerden.,4,FotoFreund,2025-02-22,0
+17,Kamera Stativ,Elektronik,Die Qualität ist hochwertig und der Versand war blitzschnell.,5,FotoPro,2025-02-25,8
+18,E-Book Reader,Elektronik,Gutes Gerät aber die Lieferung hat viel zu lange gedauert.,3,LeseRatte,2025-02-28,5
+19,Ladegerät,Elektronik,Kaputt nach einem Monat. Sehr enttäuschend für diesen Preis.,1,UnzufriedenMax,2025-03-02,22
+20,Externe Festplatte,Elektronik,Viel Speicherplatz zum günstigen Preis. Schnelle Datenübertragung.,4,DatenSammler,2025-03-05,7
+21,Fitness Tracker,Elektronik,Toll! Misst Schritte genau und die App  ist übersichtlich.,4,FitFan,2025-03-08,3
+22,Noise Cancelling Kopfhörer,Elektronik,Premium Qualität zum fairen Preis. Noise Cancelling funktioniert perfekt.,5,RuheGenießer,2025-03-10,25
+23,Kabellose Ohrhörer,Elektronik,Gut aber nicht perfekt. Manchmal verlieren sie die Verbindung.,3,PendlerPaul,2025-03-12,6
+24,Router,Elektronik, Schnelle Lieferung! WLAN-Reichweite ist okay. Einrichtung war einfach.,4,NetzwerkNerd,2025-03-15,4
+25,Docking Station,Elektronik,Hochwertige Verarbeitung aber sehr teuer. Funktioniert aber einwandfrei.,4,ProfiUser,2025-03-18,10
+26,Druckerpapier,Elektronik,Gute Qualität und günstiger Preis. Lieferung war schnell.,4,DruckProfi,2025-03-20,2
+27,USB Stick,Elektronik,Klein und praktisch. Überträgt Daten schnell. Zufrieden!,4,MobilArbeiter,2025-03-22,1
+28,Webcam Licht,Elektronik,Schlecht! Das Licht flackert ständig. Verpackung war auch  beschädigt.,1,StreamerSusi,2025-03-25,15
+29,Smart Plug,Elektronik,Super praktisch und einfach einzurichten. Preis ist angemessen.,5,SmartHomeFan,2025-03-28,9
+30,Ladestation,Elektronik,Gute Qualität und schickes Design. Lädt alle Geräte gleichzeitig.,4,TechMama,2025-03-30,6
+31,Winter Jacke,Kleidung,Hält super warm und die Qualität ist hervorragend. Passt perfekt!,5,WinterFan,2025-01-10,20
+32,Laufschuhe Sport,Kleidung,Bequem und leicht. Die Größe passt genau wie angegeben.,5,LäuferLisa,2025-01-12,16
+33,Jeans Slim Fit,Kleidung,Die Passform ist gut aber der Stoff könnte besser sein.,3,ModeFan,2025-01-15,4
+34,T-Shirt Basic,Kleidung, Günstiger Preis und angenehmer Stoff. Farbe verblasst aber schnell. ,3,BasicBob,2025-01-18,7
+35,Regen Jacke,Kleidung,Hält trocken und sieht gut aus. Lieferung war sehr schnell.,5,OutdoorAnna,2025-01-20,11
+36,Wollpullover,Kleidung,Hochwertige Wolle und schönes Design. Etwas teuer aber lohnt sich.,4,WolleFan,2025-01-22,8
+37,Sportleggings,Kleidung,Super bequem beim Training. Größe passt perfekt. Material ist toll.,5,YogaYara,2025-01-25,13
+38,Wanderschuhe,Kleidung,Robuste Qualität und guter Halt. Brauchen aber etwas Einlaufzeit.,4,BergWanderer,2025-01-28,9
+39,Hemd Business,Kleidung,Guter Schnitt und angenehmer Stoff. Preis ist fair.,4,BusinessMax,2025-02-01,5
+40,Socken 5er Pack,Kleidung,Günstig und bequem. Qualität ist für den Preis in Ordnung.,4,SockenSammler,2025-02-03,2
+41,Wintermütze,Kleidung,Schön warm und sieht gut aus. Verpackung war leider kaputt.,3,KälteFest,2025-02-05,3
+42,Sweatshirt Oversize,Kleidung,Enttäuscht von der Qualität. Nach dem Waschen eingelaufen. Größe stimmte nicht.,1,ÄrgerlichAnne,2025-02-08,18
+43,Sneaker Classic,Kleidung,Bequem und stylisch. Super Preis-Leistungs-Verhältnis!,5,SchuhFan,2025-02-10,14
+44,Badehose,Kleidung,Material fühlt sich gut an. Trocknet schnell. Passt gut.,4,Schwimmer,2025-02-12,1
+45,Wollschal,Kleidung, Weich und warm. Toll verarbeitet. Perfektes Geschenk! ,5,GeschenkeSusi,2025-02-15,10
+46,Fleece Jacke,Kleidung,Gute Qualität aber die Größe fällt etwas klein aus.,3,OutdoorPeter,2025-02-18,6
+47,Handschuhe Leder,Kleidung,Hochwertig und elegant. Preis ist gerechtfertigt. Lieferung top.,5,EleganzFan,2025-02-20,7
+48,Jogginghose,Kleidung,Bequem für zu Hause. Material könnte  dicker sein.,3,CouchPotato,2025-02-22,2
+49,Skijacke,Kleidung,Hält warm und trocken. Perfekt für die Piste! Tolle Qualität.,5,SkiFahrerMax,2025-02-25,12
+50,Poloshirt,Kleidung,Schlecht! Nähte gehen nach dem zweiten Waschen auf. Nicht empfehlenswert.,1,QualitätCheck,2025-02-28,21
+51,Funktionsunterwäsche,Kleidung,Super für Sport und Outdoor. Trocknet schnell. Größe passt.,4,SportProfi,2025-03-02,5
+52,Regenhose,Kleidung,Hält was sie verspricht. Günstig und funktional.,4,RegenSchirm,2025-03-05,3
+53,Kapuzenpulli,Kleidung,Gemütlich und warm. Farbe ist schön. Versand war schnell.,4,HoodieFan,2025-03-08,4
+54,Leinenhemd,Kleidung,Angenehm auf der Haut. Für Sommer perfekt. Etwas teuer.,4,SommerTyp,2025-03-10,6
+55,Shorts Cargo,Kleidung,Viele Taschen und bequemer Sitz. Preis ist günstig.,4,PraktischPaul,2025-03-12,1
+56,Daunenweste,Kleidung,Kaputt angekommen! Reißverschluss defekt. Verpackung war ein Witz.,1,VerärgerterKunde,2025-03-15,25
+57,Trainingsanzug,Kleidung,Gutes Material und bequemer Schnitt. Versand hat 8 Tage gedauert.,3,TrainingsHeld,2025-03-18,4
+58,Wandersocken,Kleidung,Perfekt für lange Touren. Keine Blasen mehr. Qualität ist super.,5,WanderFreund,2025-03-20,8
+59,Regenjacke Damen,Kleidung,Leicht und wasserdicht. Die Größe fällt passend aus. Empfehlenswert.,4,NassWetter,2025-03-22,3
+60,Staubsauger Roboter,Haushalt,Tolles Gerät! Saugt gründlich und der Preis war günstig.,5,PutzFee,2025-01-11,22
+61,Pfanne Antihaft,Haushalt,Gute Qualität und nichts bleibt kleben. Empfehlung!,4,KochProfi,2025-01-14,8
+62,Wasserkocher,Haushalt,Schnell und leise. Für den Preis unschlagbar. Versand war okay.,4,TeeTrinker,2025-01-17,5
+63,Küchenmesser Set,Haushalt,Scharfe Klingen und hochwertige Verarbeitung. Perfekt zum Kochen.,5,MeisterKoch,2025-01-20,15
+64,Bügeleisen,Haushalt, Dampf ist gut aber das Kabel ist zu kurz. Qualität ist mittelmäßig. ,3,BügelFreund,2025-01-23,6
+65,Toaster,Haushalt,Funktioniert gut und sieht schick aus. Preis ist fair.,4,FrühstücksFan,2025-01-26,4
+66,Kaffeemaschine,Haushalt,Super Kaffee! Einfache Bedienung und tolles Design. Qualität top.,5,KaffeeLiebe,2025-01-29,19
+67,Mikrowelle,Haushalt,Gut für den Preis. Etwas laut aber funktional.,3,SchnellKocher,2025-02-01,2
+68,Handmixer,Haushalt,Enttäuscht! Nach 3 Wochen kaputt gegangen. Schlecht verarbeitet.,1,BackFreundin,2025-02-04,17
+69,Staubsauger Beutellos,Haushalt,Starke Saugkraft und einfach zu reinigen. Lieferung war schnell.,5,SauberFrau,2025-02-07,12
+70,Wäscheständer,Haushalt,Stabil und groß genug. Günstiger Preis. Verpackung war okay.,4,WäscheMeister,2025-02-10,1
+71,Kochtopf Set,Haushalt,Hochwertige Qualität und gleichmäßige Wärmeverteilung. Toll!,5,GourmetAnna,2025-02-13,10
+72,Salatschleuder,Haushalt, Super praktisch und leicht zu bedienen. Preis ist angemessen. ,4,SalatFan,2025-02-16,3
+73,Brotbackautomat,Haushalt,Tolles Gerät! Frisches Brot jeden Morgen. Qualität ist hochwertig.,5,BrotBäcker,2025-02-19,14
+74,Dampfgarer,Haushalt,Gesund kochen leicht gemacht. Lieferung kam schnell. Empfehlenswert.,4,GesundKocher,2025-02-22,7
+75,Mixer Standmixer,Haushalt,Gut für Smoothies aber sehr laut. Preis ist okay.,3,SmoothieFan,2025-02-25,5
+76,Wasserfilter,Haushalt,Verpackung war  beschädigt. Produkt funktioniert aber gut. Preis fair.,3,WasserGuru,2025-02-28,4
+77,Geschirrspültabs,Haushalt,Reinigen gut und sind günstiger als Markenprodukte. Zufrieden.,4,SpülMaschine,2025-03-03,2
+78,Wischmop,Haushalt,Schlecht! Der Stiel ist nach einer Woche abgebrochen. Billige Qualität.,1,PutzTeufel,2025-03-06,16
+79,Luftentfeuchter,Haushalt,Funktioniert super und ist leise. Versand war blitzschnell. Perfekt!,5,KellerKönig,2025-03-09,9
+80,Rauchmelder 3er Set,Haushalt,Einfache Montage und zuverlässig. Guter Preis für 3 Stück.,4,SicherheitsFan,2025-03-12,6
+81,Küchenwaage,Haushalt,Genau und kompakt. Toll für Hobbybäcker. Hochwertige Qualität.,5,BackMeister,2025-03-15,8
+82,Mülleimer Sensor,Haushalt,Sensor funktioniert manchmal nicht. Verarbeitung  ist okay.,2,MüllProfi,2025-03-18,11
+83,Trinkflasche Edelstahl,Haushalt,Hält Getränke warm und kalt. Qualität ist super. Kein Auslaufen.,5,TrinkFlasche,2025-03-21,13
+84,Brotdose Set,Haushalt,Praktisch und gut verarbeitet. Für den Preis sehr gut.,4,LunchBox,2025-03-24,2
+85,Vorratsdosen Glas,Haushalt,Stabil und schick. Lieferung war etwas langsam aber alles gut.,4,VorratsKammer,2025-03-27,3
+86,Geschirrtuch 10er Pack,Haushalt,Gute Saugfähigkeit und günstiger Preis. Empfehlenswert.,4,KüchenHelfer,2025-03-30,1
+87,Yogamatte Premium,Sport,Perfekte Rutschfestigkeit und sehr bequem. Die Qualität ist hochwertig!,5,YogaMeister,2025-01-08,18
+88,Hanteln Set 20kg,Sport,Gute Qualität und fairer Preis. Lieferung war schnell.,4,MuskelMax,2025-01-11,9
+89,Widerstandsbänder,Sport, Toll für zu Hause! Super Preis und gute Qualität. ,5,HomeFitness,2025-01-14,12
+90,Springseil,Sport,Einfach und effektiv. Günstig und gut. Für Anfänger perfekt.,4,CardioFan,2025-01-17,3
+91,Laufband klappbar,Sport,Enttäuscht! Motor ist laut und die Verarbeitung ist schlecht.,2,LäuferFrust,2025-01-20,20
+92,Trinkflasche Sport,Sport,Dicht und leicht. Perfekt fürs Training. Größe passt gut.,4,DurstLöscher,2025-01-23,5
+93,Gymnastikball,Sport,Guter Ball aber die Pumpe ist kaputt angekommen. Verpackung mangelhaft.,2,BallFan,2025-01-26,8
+94,Boxhandschuhe,Sport,Super Passform und gute Polsterung. Preis ist angemessen.,5,BoxHeld,2025-01-29,7
+95,Klimmzugstange,Sport,Stabil und einfach zu montieren. Qualität ist top. Empfehlenswert.,5,KraftSportler,2025-02-01,14
+96,Fitnessmatte,Sport,Okay für den Preis aber rutscht  auf glattem Boden.,3,YogaAnfänger,2025-02-04,4
+97,Kettlebell 16kg,Sport,Hochwertige Verarbeitung und guter Griff. Lieferung war schnell.,5,SwingMeister,2025-02-07,10
+98,Foam Roller,Sport,Toll zur Regeneration! Härte ist genau richtig. Super Qualität.,5,RollerFan,2025-02-10,6
+99,Bauchroller,Sport,Schlecht verarbeitet. Griff wackelt und Rollen quietschen. Nicht empfehlenswert.,1,FitnessKritiker,2025-02-13,15
+100,Schwimmbrille,Sport,Passt gut und beschlägt nicht. Preis ist günstig. Zufrieden.,4,SchwimmStar,2025-02-16,2
+101,Tennisschläger,Sport,Gutes Spielgefühl und leichtes Gewicht. Für den Preis super!,5,TennisFan,2025-02-19,8
+102,Fußball Gr. 5,Sport,Guter Ball für Freizeitkicker. Verpackung war etwas  beschädigt.,3,KickerKönig,2025-02-22,1
+103,Skihelm,Sport,Sicher und bequem. Größe passt perfekt. Versand war schnell.,5,SkiFan,2025-02-25,11
+104,Fahrradschloss,Sport,Stabil und sicher. Preis ist fair für die Qualität.,4,RadFahrer,2025-02-28,5
+105,Wanderstöcke,Sport,Leicht und stabil. Perfekt für Bergtouren. Die Qualität ist hochwertig.,5,BergSteiger,2025-03-03,9
+106,Isomatte,Sport, Bequem und leicht zu transportieren. Günstig und funktional. ,4,CamperCarl,2025-03-06,4
+107,Stirnlampe LED,Sport,Hell und langlebig. Toll für Nachtwanderungen. Preis stimmt.,5,NachtWanderer,2025-03-09,7
+108,Handgelenkbandage,Sport,Guter Halt beim Training. Qualität ist okay. Könnte straffer sitzen.,3,GelenkSchutz,2025-03-12,2
+109,Skistöcke,Sport,Leicht und stabil. Versand hat leider 10 Tage gedauert.,3,PistenFlitzer,2025-03-15,3
+110,Pulsuhr,Sport,Genau und zuverlässig. Tolle Funktionen zum fairen Preis. Perfekt!,5,HerzSchlag,2025-03-18,12
+111,Tischtennisset,Sport,Macht Spaß! Schläger sind gut und die Bälle halten lange.,4,PingPongPro,2025-03-21,5
+112,Kampfsport Gürtel,Sport,Die Qualität ist schlecht. Material fusselt und Farbe geht ab.,1,KampfKünstler,2025-03-24,14
+113,Springseile Profi,Sport,Schnell und leichtgängig. Super für Crossfit. Hochwertige Qualität.,5,CrossfitChris,2025-03-27,8
+114,Resistance Bands Set,Sport,Gut aber eines der Bänder war bei Lieferung gerissen. Verpackung schlecht.,2,BandTrainer,2025-03-30,10
+115,Krimi Bestseller,Bücher,Spannend von der ersten bis zur letzten Seite! Toll geschrieben.,5,KrimiFan,2025-01-09,15
+116,Python Handbuch,Bücher,Super für Anfänger. Verständlich erklärt und guter Preis.,5,CodeLerner,2025-01-12,22
+117,Kochbuch Vegetarisch,Bücher,Tolle Rezepte und schöne Bilder. Die Qualität des Drucks ist hochwertig.,5,VeggieKoch,2025-01-15,11
+118,Roman Bestseller 2024,Bücher,Ganz nett aber nicht so toll wie der Klappentext verspricht.,3,LeserMeinung,2025-01-18,7
+119,Reiseführer Italien,Bücher, Gute Tipps und übersichtlich. Perfekt für die Reiseplanung! ,5,ItalienFan,2025-01-21,9
+120,Kinderbuch Abenteuer,Bücher,Meine Kinder lieben es! Schöne Illustrationen und spannende Geschichte.,5,ElternTipp,2025-01-24,18
+121,Sachbuch Psychologie,Bücher,Interessant aber manchmal zu wissenschaftlich. Für Laien teilweise schwer.,3,PsychoNeugier,2025-01-27,6
+122,Thriller Neuerscheinung,Bücher,Enttäuschend! Die Story ist vorhersehbar und schlecht geschrieben.,2,BuchKritiker,2025-01-30,13
+123,Bildband Natur,Bücher,Wunderschöne Fotos und hochwertiger Druck. Perfektes Geschenk!,5,FotoKunst,2025-02-02,10
+124,Sprachkurs Spanisch,Bücher,Gut strukturiert und praxisnah. Preis ist günstig für den Inhalt.,4,SprachSchüler,2025-02-05,5
+125,Biografie Historisch,Bücher,Fesselnd geschrieben und gut recherchiert. Toll!,5,GeschichteFan,2025-02-08,8
+126,Comic Manga Band 1,Bücher,Super Zeichnungen! Verpackung  war leider etwas zerknittert.,4,MangaMax,2025-02-11,3
+127,Ratgeber Finanzen,Bücher,Nützliche Tipps aber nichts wirklich Neues. Für Anfänger okay.,3,GeldSpar,2025-02-14,4
+128,Gedichtband Modern,Bücher,Schlecht! Langweilig und nichtssagend. Nicht empfehlenswert.,1,LyrikKritiker,2025-02-17,9
+129,Wissenschaftsroman,Bücher,Spannend und lehrreich zugleich. Qualität des Einbands ist hochwertig.,5,WissensFan,2025-02-20,12
+130,Hörbuch Krimi,Bücher,Toller Sprecher und packende Geschichte. Lieferung war schnell.,5,HörBuchFan,2025-02-23,7
+131,Fantasy Roman,Bücher,Gute Welt und interessante Charaktere. Etwas langatmig in der Mitte.,4,FantasyLeser,2025-02-26,6
+132,Kinderbuch Lernen,Bücher,Perfekt für Vorschulkinder. Bunt und lehrreich. Super Qualität!,5,VorschulMama,2025-03-01,14
+133,Krimi Reihe Band 5,Bücher,Nicht so gut wie die vorherigen Bände. Die  Geschichte plätschert vor sich hin.,2,SerienLeser,2025-03-04,8
+134,Sachbuch Ernährung,Bücher,Wissenschaftlich fundiert und verständlich. Preis ist fair.,4,ErnährungsCheck,2025-03-07,5
+135,Atlas Weltkarte,Bücher, Schöne Karten und hochwertige Qualität. Tolles Nachschlagewerk. ,5,GeoFan,2025-03-10,10
+136,Tagebuch Leder,Bücher,Schönes Design und angenehmes Papier. Etwas teuer aber lohnt sich.,4,Tagebuchschreiber,2025-03-13,3
+137,Ratgeber Garten,Bücher,Hilfreiche Tipps für Anfänger. Lieferung war sehr schnell. Empfehlenswert.,4,GartenFan,2025-03-16,6
+138,Horror Roman,Bücher,Gruselig und packend! Nichts für schwache Nerven. Toll geschrieben.,5,HorrorFan,2025-03-19,11
+139,Philosophie Einführung,Bücher,Gut erklärt aber etwas trocken. Für Studenten empfehlenswert.,3,DenkerClub,2025-03-22,4
+140,Kinderbuch Märchen,Bücher,Wunderschön illustriert! Meine Tochter liebt es. Perfekt als Geschenk.,5,MärchenMama,2025-03-25,13
+141,Kochbuch Asia,Bücher,Leckere Rezepte und verständliche Anleitungen. Qualität des Drucks gut.,4,AsiaKoch,2025-03-28,5
+142,Reiseliteratur Südamerika,Bücher,Inspirierend und toll geschrieben. Macht Lust auf Reisen!,5,FernwehFan,2025-03-31,9
+143,Bluetooth Kopfhörer Pro,Elektronik,Noise Cancelling ist perfekt und der Klang ist klar. Etwas teuer.,4,AudioPhil,2025-04-02,8
+144,Wanderhose Damen,Kleidung,Passt perfekt und ist sehr bequem. Schnell trocknend. Top Qualität!,5,WanderSie,2025-04-05,7
+145,Smoothie Maker,Haushalt,Macht tolle Smoothies aber Reinigung ist umständlich. Preis ist okay.,3,MixMeister,2025-04-08,4
+146,Faszienrolle,Sport,Super für nach dem Training! Qualität ist hochwertig und Preis stimmt.,5,RollenFreund,2025-04-11,6
+147,Roman Gesellschaftskritik,Bücher,Provokant und klug. Regt zum Nachdenken an. Empfehlenswert!,5,LiteraturFan,2025-04-14,10
+148,USB-C Hub Premium,Elektronik, Alle Anschlüsse die man braucht. Verarbeitung ist hochwertig. Günstig! ,5,AnschlussFan,2025-04-17,11
+149,Regenmantel Lang,Kleidung,Gute Länge und hält trocken. Größe fällt etwas groß aus.,3,RegenSchützer,2025-04-20,2
+150,Bratpfanne Gusseisen,Haushalt,Schwer aber hervorragende Bratergebnisse. Die Qualität ist unschlagbar!,5,PfannenKönig,2025-04-23,15
