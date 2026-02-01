@@ -753,6 +753,69 @@ def _(mcdonalds_reviews, mo):
     )
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+WITH features AS (
+    SELECT
+        review_id, rating,
+        CASE WHEN LOWER(review_text) LIKE '%food%'
+                  OR LOWER(review_text) LIKE '%burger%'
+                  OR LOWER(review_text) LIKE '%fries%'
+                  OR LOWER(review_text) LIKE '%nuggets%'
+             THEN 1 ELSE 0 END AS food,
+        CASE WHEN LOWER(review_text) LIKE '%service%'
+                  OR LOWER(review_text) LIKE '%staff%'
+                  OR LOWER(review_text) LIKE '%rude%'
+                  OR LOWER(review_text) LIKE '%friendly%'
+             THEN 1 ELSE 0 END AS service,
+        CASE WHEN LOWER(review_text) LIKE '%wait%'
+                  OR LOWER(review_text) LIKE '%slow%'
+                  OR LOWER(review_text) LIKE '%fast%'
+                  OR LOWER(review_text) LIKE '%quick%'
+             THEN 1 ELSE 0 END AS speed,
+        CASE WHEN LOWER(review_text) LIKE '%clean%'
+                  OR LOWER(review_text) LIKE '%dirty%'
+                  OR LOWER(review_text) LIKE '%filthy%'
+             THEN 1 ELSE 0 END AS cleanliness,
+        CASE WHEN LOWER(review_text) LIKE '%price%'
+                  OR LOWER(review_text) LIKE '%expensive%'
+                  OR LOWER(review_text) LIKE '%value%'
+             THEN 1 ELSE 0 END AS price
+    FROM mcdonalds_reviews
+)
+SELECT
+    'Food' AS aspect,
+    SUM(food) FILTER (WHERE rating >= 4) AS positiv,
+    SUM(food) FILTER (WHERE rating <= 2) AS negativ
+FROM features
+UNION ALL
+SELECT 'Service',
+    SUM(service) FILTER (WHERE rating >= 4),
+    SUM(service) FILTER (WHERE rating <= 2)
+FROM features
+UNION ALL
+SELECT 'Speed',
+    SUM(speed) FILTER (WHERE rating >= 4),
+    SUM(speed) FILTER (WHERE rating <= 2)
+FROM features
+UNION ALL
+SELECT 'Cleanliness',
+    SUM(cleanliness) FILTER (WHERE rating >= 4),
+    SUM(cleanliness) FILTER (WHERE rating <= 2)
+FROM features
+UNION ALL
+SELECT 'Price',
+    SUM(price) FILTER (WHERE rating >= 4),
+    SUM(price) FILTER (WHERE rating <= 2)
+FROM features
+ORDER BY positiv DESC
+```
+""")})
+    return
+
+
 # =============================================================================
 # PHASE 5–6: UFO SIGHTINGS (guided intro, then self-service)
 # =============================================================================
@@ -951,6 +1014,34 @@ def _(mo, ufo_sightings):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+WITH stoppwoerter AS (
+    SELECT UNNEST(['the','a','an','and','or','to','in','of','it','is',
+                   'was','for','on','that','with','as','at','by','from',
+                   'this','i','we','no','me','so','very','about','had',
+                   'were','but','not','then','be']) AS wort
+),
+woerter AS (
+    SELECT
+        UNNEST(regexp_split_to_array(
+            LOWER(TRIM(description)), '\s+')) AS word
+    FROM ufo_sightings
+)
+SELECT word, COUNT(*) AS frequency
+FROM woerter
+WHERE LENGTH(word) > 1
+  AND word NOT IN (SELECT wort FROM stoppwoerter)
+GROUP BY word
+ORDER BY frequency DESC
+LIMIT 30
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
         ### Aufgabe 14.13: July 4th Spike — UFOs oder Feuerwerk?
@@ -976,6 +1067,38 @@ def _(mo, ufo_sightings):
         SELECT 'Finden Sie den July 4th Spike — und prüfen Sie ob die Shapes anders sind!' AS hinweis
         """
     )
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+**Basis: Sichtungen pro Monat**
+```sql
+SELECT
+    EXTRACT(MONTH FROM CAST(datetime AS DATE)) AS monat,
+    COUNT(*) AS anzahl_sichtungen
+FROM ufo_sightings
+GROUP BY monat
+ORDER BY monat
+```
+
+**Bonus: Shapes am 4. Juli vs. Rest**
+```sql
+SELECT
+    shape,
+    COUNT(*) FILTER (WHERE EXTRACT(MONTH FROM CAST(datetime AS DATE)) = 7
+                       AND EXTRACT(DAY FROM CAST(datetime AS DATE)) = 4)
+        AS july_4th,
+    COUNT(*) FILTER (WHERE NOT (EXTRACT(MONTH FROM CAST(datetime AS DATE)) = 7
+                            AND EXTRACT(DAY FROM CAST(datetime AS DATE)) = 4))
+        AS rest,
+    COUNT(*) AS gesamt
+FROM ufo_sightings
+GROUP BY shape
+ORDER BY july_4th DESC
+```
+""")})
+    return
 
 
 @app.cell(hide_code=True)
@@ -1013,6 +1136,22 @@ def _(mo, ufo_sightings):
         SELECT 'Welche Farben werden am häufigsten in UFO-Berichten erwähnt?' AS hinweis
         """
     )
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    UNNEST(regexp_extract_all(LOWER(description),
+        '(red|orange|white|green|blue|yellow|silver)')) AS farbe,
+    COUNT(*) AS anzahl
+FROM ufo_sightings
+GROUP BY farbe
+ORDER BY anzahl DESC
+```
+""")})
+    return
 
 
 @app.cell(hide_code=True)
@@ -1059,6 +1198,32 @@ def _(mo, ufo_sightings):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    CASE
+        WHEN regexp_matches(LOWER(description),
+             'hover|stationary') THEN 'Hovering'
+        WHEN regexp_matches(LOWER(description),
+             'zigzag|erratic|changed direction|sharp turn') THEN 'Erratic'
+        WHEN regexp_matches(LOWER(description),
+             'disappear|vanish') THEN 'Vanishing'
+        WHEN regexp_matches(LOWER(description),
+             'moving|moved|flew|flying') THEN 'Moving'
+        ELSE 'Unbekannt'
+    END AS bewegung,
+    COUNT(*) AS anzahl,
+    ROUND(AVG(LENGTH(description)), 0) AS avg_beschreibungslaenge
+FROM ufo_sightings
+GROUP BY bewegung
+ORDER BY anzahl DESC
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
         ### Aufgabe 14.16: Wörter nach Rating-Tier (McDonald's)
@@ -1093,6 +1258,39 @@ def _(mcdonalds_reviews, mo):
         SELECT 'Ergänzen Sie: UNNEST + GROUP BY tier, word' AS hinweis
         """
     )
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+WITH stoppwoerter AS (
+    SELECT UNNEST(['the','a','an','and','or','to','in','of','it','is',
+                   'was','for','on','that','with','as','at','by','from',
+                   'this','i','we','no','me','so','very','about','had',
+                   'were','but','not','then','be']) AS wort
+),
+woerter AS (
+    SELECT
+        rating,
+        UNNEST(regexp_split_to_array(
+            LOWER(TRIM(review_text)), '[^a-z]+')) AS word
+    FROM mcdonalds_reviews
+)
+SELECT
+    word,
+    COUNT(*) FILTER (WHERE rating >= 4) AS count_positiv,
+    COUNT(*) FILTER (WHERE rating <= 2) AS count_negativ
+FROM woerter
+WHERE LENGTH(word) > 1
+  AND word NOT IN (SELECT wort FROM stoppwoerter)
+GROUP BY word
+HAVING COUNT(*) >= 2
+ORDER BY count_positiv DESC
+LIMIT 20
+```
+""")})
+    return
 
 
 @app.cell(hide_code=True)
@@ -1137,6 +1335,43 @@ def _(mcdonalds_reviews, mo):
         SELECT 'Ergänzen Sie: JOIN + GROUP BY + SUM(CASE WHEN ...)' AS hinweis
         """
     )
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    rating,
+    ROUND(AVG(
+        (CASE WHEN LOWER(review_text) LIKE '%great%' THEN 1 ELSE 0 END)
+      + (CASE WHEN LOWER(review_text) LIKE '%good%' THEN 1 ELSE 0 END)
+      + (CASE WHEN LOWER(review_text) LIKE '%excellent%' THEN 1 ELSE 0 END)
+      + (CASE WHEN LOWER(review_text) LIKE '%best%' THEN 1 ELSE 0 END)
+      + (CASE WHEN LOWER(review_text) LIKE '%love%' THEN 1 ELSE 0 END)
+      + (CASE WHEN LOWER(review_text) LIKE '%clean%' THEN 1 ELSE 0 END)
+      + (CASE WHEN LOWER(review_text) LIKE '%fast%' THEN 1 ELSE 0 END)
+      + (CASE WHEN LOWER(review_text) LIKE '%friendly%' THEN 1 ELSE 0 END)
+      + (CASE WHEN LOWER(review_text) LIKE '%fresh%' THEN 1 ELSE 0 END)
+      + (CASE WHEN LOWER(review_text) LIKE '%amazing%' THEN 1 ELSE 0 END)
+      - (CASE WHEN LOWER(review_text) LIKE '%bad%' THEN 1 ELSE 0 END)
+      - (CASE WHEN LOWER(review_text) LIKE '%worst%' THEN 1 ELSE 0 END)
+      - (CASE WHEN LOWER(review_text) LIKE '%terrible%' THEN 1 ELSE 0 END)
+      - (CASE WHEN LOWER(review_text) LIKE '%slow%' THEN 1 ELSE 0 END)
+      - (CASE WHEN LOWER(review_text) LIKE '%rude%' THEN 1 ELSE 0 END)
+      - (CASE WHEN LOWER(review_text) LIKE '%dirty%' THEN 1 ELSE 0 END)
+      - (CASE WHEN LOWER(review_text) LIKE '%cold%' THEN 1 ELSE 0 END)
+      - (CASE WHEN LOWER(review_text) LIKE '%wrong%' THEN 1 ELSE 0 END)
+      - (CASE WHEN LOWER(review_text) LIKE '%horrible%' THEN 1 ELSE 0 END)
+      - (CASE WHEN LOWER(review_text) LIKE '%disgusting%' THEN 1 ELSE 0 END)
+    ), 2) AS avg_sentiment_score,
+    COUNT(*) AS anzahl
+FROM mcdonalds_reviews
+GROUP BY rating
+ORDER BY rating
+```
+""")})
+    return
 
 
 @app.cell(hide_code=True)

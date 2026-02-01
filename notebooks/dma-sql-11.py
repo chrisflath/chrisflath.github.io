@@ -331,6 +331,32 @@ def _(gehaltsdaten, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+WITH quartile AS (
+    SELECT
+        PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY alter) AS q1,
+        PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY alter) AS q3
+    FROM gehaltsdaten
+),
+grenzen AS (
+    SELECT
+        q1 - 1.5 * (q3 - q1) AS untere_grenze,
+        q3 + 1.5 * (q3 - q1) AS obere_grenze
+    FROM quartile
+)
+SELECT g.*, gr.untere_grenze, gr.obere_grenze
+FROM gehaltsdaten g, grenzen gr
+WHERE g.alter < gr.untere_grenze
+   OR g.alter > gr.obere_grenze
+ORDER BY g.alter DESC
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
         **Beobachtung:** Ein Mitarbeiter hat Alter 280 - offensichtlich ein Datenfehler (vermutlich 28 gemeint).
@@ -547,6 +573,28 @@ def _(gehaltsdaten, mo):
         SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    CASE
+        WHEN alter < 30 THEN '1: unter 30'
+        WHEN alter < 40 THEN '2: 30-40'
+        WHEN alter < 50 THEN '3: 40-50'
+        ELSE '4: über 50'
+    END AS altersgruppe,
+    COUNT(*) AS anzahl,
+    ROUND(AVG(gehalt), 0) AS durchschnitt_gehalt
+FROM gehaltsdaten
+WHERE alter < 100 AND gehalt < 200000
+GROUP BY altersgruppe
+ORDER BY altersgruppe
+```
+""")})
+    return
 
 
 @app.cell(hide_code=True)

@@ -244,6 +244,18 @@ def _(bundesliga, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT Mannschaft, Punkte, Tordifferenz
+FROM bundesliga
+ORDER BY Punkte DESC, Tordifferenz DESC
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
         ### 🟣 Aufgabe 2.4: Vorhersage - Top 5
@@ -307,6 +319,19 @@ def _(bundesliga, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT Mannschaft, Punkte
+FROM bundesliga
+ORDER BY Punkte ASC
+LIMIT 3
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
         ### 🔵 Aufgabe 2.6: Selbstständig - Plätze 6-10
@@ -330,6 +355,19 @@ def _(bundesliga, mo):
         SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT Mannschaft, Punkte
+FROM bundesliga
+ORDER BY Punkte DESC
+LIMIT 5 OFFSET 5
+```
+""")})
     return
 
 
@@ -479,6 +517,17 @@ def _(mo, spieler):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT DISTINCT Position, Verein
+FROM spieler
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
         ### 🟣 Aufgabe 4.4: Vorhersage - DISTINCT Ergebnis
@@ -558,6 +607,18 @@ def _(mo, spieler):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT Name, Vorname
+FROM spieler
+WHERE Name LIKE '%er'
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
         ### 🔵 Aufgabe 4.7: Selbstständig - LIKE mit Enthält
@@ -579,6 +640,18 @@ def _(bundesliga, mo):
         SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT Mannschaft
+FROM bundesliga
+WHERE Mannschaft LIKE '%FC%'
+```
+""")})
     return
 
 
@@ -760,6 +833,20 @@ def _(mo, spieler):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    Name,
+    COALESCE(Tore, 0) + COALESCE(Vorlagen, 0) AS Scorerpunkte
+FROM spieler
+ORDER BY Scorerpunkte DESC
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
         ### 🟢 Aufgabe 6.6: COALESCE mit mehreren Fallbacks (geführt)
@@ -814,6 +901,18 @@ def _(mo, spieler):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT Name, Vorname, Spitzname
+FROM spieler
+WHERE Spitzname IS NULL
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
         ### 🔵 Aufgabe 6.8: Selbstständig - Spieler mit vollständigen Daten
@@ -835,6 +934,19 @@ def _(mo, spieler):
         SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT Name, Tore, Vorlagen
+FROM spieler
+WHERE Tore IS NOT NULL
+  AND Vorlagen IS NOT NULL
+```
+""")})
     return
 
 
@@ -930,6 +1042,23 @@ def _(mo, spieler):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    Name,
+    Tore,
+    Vorlagen,
+    COALESCE(Tore, 0) + COALESCE(Vorlagen, 0) AS Scorerpunkte
+FROM spieler
+ORDER BY Scorerpunkte DESC
+LIMIT 5
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
         ### 🔵 Aufgabe 6.12: Kombination aller Konzepte
@@ -953,6 +1082,23 @@ def _(mo, spieler):
         SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    Name,
+    Position,
+    COALESCE(Tore, 0) + COALESCE(Vorlagen, 0) AS Scorerpunkte
+FROM spieler
+WHERE Position = 'Mittelfeld'
+  AND COALESCE(Tore, 0) + COALESCE(Vorlagen, 0) >= 5
+ORDER BY Scorerpunkte DESC
+```
+""")})
     return
 
 

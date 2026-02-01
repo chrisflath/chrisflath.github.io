@@ -773,6 +773,19 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.accordion({"🔑 Musterlösung: Gesamtumsatz": mo.md("""
+```sql
+SELECT
+    SUM(p.Preis * bp.Menge) AS Gesamtumsatz
+FROM Bestellposition bp
+JOIN Produkt p ON bp.Produkt_ID = p.ID;
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
         ---

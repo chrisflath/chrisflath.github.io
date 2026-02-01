@@ -286,6 +286,32 @@ def _(ab_test, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+WITH z_scores AS (
+    SELECT
+        user_id,
+        gruppe,
+        umsatz,
+        (umsatz - AVG(umsatz) OVER())
+        / STDDEV(umsatz) OVER() AS z_score
+    FROM ab_test
+    WHERE konvertiert = 1
+)
+SELECT
+    gruppe,
+    COUNT(*) AS n_total,
+    SUM(CASE WHEN ABS(z_score) > 2 THEN 1 ELSE 0 END) AS n_ausreisser,
+    ROUND(SUM(CASE WHEN ABS(z_score) > 2 THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 1) AS pct_ausreisser
+FROM z_scores
+GROUP BY gruppe
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
         ### Aufgabe 12.6: z-Score-Visualisierung
@@ -564,6 +590,28 @@ def _(ab_test, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    gruppe,
+    COUNT(*) AS n,
+    ROUND(AVG(konvertiert) * 100, 1) AS conv_rate_pct,
+    ROUND(
+        (AVG(konvertiert) - 1.96 * SQRT(AVG(konvertiert) * (1 - AVG(konvertiert)) / COUNT(*))) * 100,
+    1) AS ci_lower_pct,
+    ROUND(
+        (AVG(konvertiert) + 1.96 * SQRT(AVG(konvertiert) * (1 - AVG(konvertiert)) / COUNT(*))) * 100,
+    1) AS ci_upper_pct
+FROM ab_test
+GROUP BY gruppe
+ORDER BY gruppe
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
         ### Aufgabe 12.10: Umsatz pro Nutzer (alle Nutzer)
@@ -634,6 +682,24 @@ def _(ab_test, mo):
         SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    geraet,
+    gruppe,
+    COUNT(*) AS n,
+    SUM(konvertiert) AS conversions,
+    ROUND(AVG(konvertiert) * 100, 1) AS conv_rate_pct
+FROM ab_test
+GROUP BY geraet, gruppe
+ORDER BY geraet, gruppe
+```
+""")})
     return
 
 

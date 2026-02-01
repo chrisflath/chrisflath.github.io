@@ -239,6 +239,22 @@ def _(mo, todesfaelle):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    Arzt,
+    Geschlecht,
+    COUNT(*) AS Anzahl
+FROM todesfaelle
+GROUP BY Arzt, Geschlecht
+ORDER BY Arzt, Geschlecht
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
         ### 🔵 1.4 Selbstständig: Durchschnittsalter
@@ -260,6 +276,23 @@ def _(mo, todesfaelle):
         SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    Arzt,
+    ROUND(AVG(Alter), 1) AS Durchschnittsalter,
+    MIN(Alter) AS Jüngster,
+    MAX(Alter) AS Ältester
+FROM todesfaelle
+GROUP BY Arzt
+ORDER BY Durchschnittsalter DESC
+```
+""")})
     return
 
 
@@ -629,6 +662,24 @@ def _(mo, rechnungen_echt):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    CAST(SUBSTR(CAST(CAST(betrag AS INT) AS TEXT), 1, 1) AS INT)
+        AS erste_ziffer,
+    COUNT(*) AS anzahl,
+    ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM rechnungen_echt WHERE betrag >= 10), 1) AS prozent
+FROM rechnungen_echt
+WHERE betrag >= 10
+GROUP BY erste_ziffer
+ORDER BY erste_ziffer
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
         ### 🟡 Aufgabe 2.3b: Benford-Abweichung berechnen (scaffolded)
@@ -676,6 +727,38 @@ def _(mo, rechnungen_echt):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+WITH beobachtet AS (
+    SELECT
+        CAST(SUBSTR(CAST(CAST(betrag AS INT) AS TEXT), 1, 1) AS INT) AS erste_ziffer,
+        COUNT(*) * 100.0 / (SELECT COUNT(*) FROM rechnungen_echt WHERE betrag >= 10) AS prozent
+    FROM rechnungen_echt
+    WHERE betrag >= 10
+    GROUP BY erste_ziffer
+),
+benford AS (
+    SELECT 1 AS ziffer, 30.1 AS erwartet UNION ALL
+    SELECT 2, 17.6 UNION ALL SELECT 3, 12.5 UNION ALL
+    SELECT 4, 9.7 UNION ALL SELECT 5, 7.9 UNION ALL
+    SELECT 6, 6.7 UNION ALL SELECT 7, 5.8 UNION ALL
+    SELECT 8, 5.1 UNION ALL SELECT 9, 4.6
+)
+SELECT
+    b.erste_ziffer,
+    ROUND(b.prozent, 1) AS beobachtet_pct,
+    e.erwartet AS benford_pct,
+    ROUND(ABS(b.prozent - e.erwartet), 1) AS abweichung
+FROM beobachtet b
+JOIN benford e ON b.erste_ziffer = e.ziffer
+ORDER BY abweichung DESC
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
         ### 🔵 2.4 Selbstständig: Abweichung von Benford
@@ -702,6 +785,24 @@ def _(mo, rechnungen_verdächtig):
         SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    CAST(SUBSTR(CAST(CAST(betrag AS INT) AS TEXT), 1, 1) AS INT)
+        AS erste_ziffer,
+    COUNT(*) AS anzahl,
+    ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM rechnungen_verdächtig WHERE betrag >= 10), 1) AS prozent
+FROM rechnungen_verdächtig
+WHERE betrag >= 10
+GROUP BY erste_ziffer
+ORDER BY erste_ziffer
+```
+""")})
     return
 
 

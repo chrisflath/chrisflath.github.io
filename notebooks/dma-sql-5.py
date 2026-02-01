@@ -220,6 +220,22 @@ def _(mo, spieler_schlecht):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    Verein,
+    COUNT(*) AS Gesamt_Zeilen,
+    COUNT(*) - 1 AS Redundante_Zeilen
+FROM spieler_schlecht
+GROUP BY Verein
+ORDER BY Redundante_Zeilen DESC
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
         > **Vorhersage:** Stellen Sie sich vor, Bayern München benennt sein Stadion um. In wie vielen Zeilen der Mega-Tabelle müssten wir den Namen ändern? Was passiert, wenn wir eine Zeile vergessen?

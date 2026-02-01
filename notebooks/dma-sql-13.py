@@ -325,6 +325,24 @@ def _(mo, retail_sales):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    sales_month,
+    sales,
+    LAG(sales, 1) OVER (ORDER BY sales_month) AS prev_month,
+    ROUND((sales * 1.0 / LAG(sales, 1) OVER (ORDER BY sales_month) - 1) * 100, 1)
+        AS pct_change
+FROM retail_sales
+WHERE kind_of_business = 'Sporting goods stores'
+ORDER BY sales_month
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
         ---
@@ -407,6 +425,25 @@ def _(mo, retail_sales):
         SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    sales_month,
+    sales,
+    ROUND(AVG(sales) OVER (
+        ORDER BY sales_month
+        ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING
+    ), 0) AS ma_3_centered
+FROM retail_sales
+WHERE kind_of_business = 'Book stores'
+ORDER BY sales_month
+```
+""")})
+    return
 
 
 @app.cell(hide_code=True)
@@ -652,6 +689,31 @@ def _(mo, retail_sales):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+WITH yearly AS (
+    SELECT
+        EXTRACT(YEAR FROM sales_month) AS year,
+        ROUND(SUM(sales), 0) AS annual_sales
+    FROM retail_sales
+    WHERE kind_of_business = 'Book stores'
+    GROUP BY EXTRACT(YEAR FROM sales_month)
+)
+SELECT
+    year,
+    annual_sales,
+    LAG(annual_sales, 1) OVER (ORDER BY year) AS prev_year,
+    ROUND((annual_sales * 1.0 / LAG(annual_sales, 1) OVER (ORDER BY year) - 1) * 100, 1)
+        AS yoy_growth
+FROM yearly
+ORDER BY year
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
         ### Aufgabe 13.14: Selbstständig - Anteil am Gesamtumsatz
@@ -676,6 +738,24 @@ def _(mo, retail_sales):
         SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    sales_month,
+    kind_of_business,
+    sales,
+    SUM(sales) OVER (PARTITION BY sales_month) AS total_sales,
+    ROUND(sales * 100.0 / SUM(sales) OVER (PARTITION BY sales_month), 2) AS pct_of_total
+FROM retail_sales
+WHERE kind_of_business = 'Jewelry stores'
+ORDER BY sales_month
+```
+""")})
+    return
 
 
 @app.cell(hide_code=True)

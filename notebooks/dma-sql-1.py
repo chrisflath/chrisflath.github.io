@@ -173,6 +173,17 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT Mannschaft, Siege, Niederlagen
+FROM bundesliga
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(r"""
     ### 🟣 Aufgabe 2.4: Vorhersage
 
@@ -232,6 +243,17 @@ def _(bundesliga, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT Mannschaft, ToreGeschossen, ToreKassiert
+FROM bundesliga
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(r"""
     ### 🔵 Aufgabe 2.6: Selbstständig - Spielstatistik
 
@@ -256,6 +278,17 @@ def _(bundesliga, mo):
         SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT Mannschaft, Spiele, Siege, Unentschieden, Niederlagen
+FROM bundesliga
+```
+""")})
     return
 
 
@@ -434,6 +467,18 @@ def _(bundesliga, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT Mannschaft, Niederlagen
+FROM bundesliga
+WHERE Niederlagen < 5
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(r"""
     ### 🔵 Aufgabe 4.6: Selbstständig - Tore
 
@@ -453,6 +498,18 @@ def _(bundesliga, mo):
         SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT Mannschaft, ToreGeschossen
+FROM bundesliga
+WHERE ToreGeschossen > 35
+```
+""")})
     return
 
 
@@ -732,6 +789,18 @@ def _(bundesliga, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT Mannschaft, ToreGeschossen, ToreKassiert
+FROM bundesliga
+WHERE ToreGeschossen > 30 AND ToreKassiert < 25
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(r"""
     ### 🔵 Aufgabe 6.9: Selbstständig - Abstiegskandidaten
 
@@ -760,6 +829,18 @@ def _(bundesliga, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT Mannschaft, Punkte, Niederlagen
+FROM bundesliga
+WHERE Punkte < 20 OR Niederlagen > 10
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(r"""
     ### 🔵 Aufgabe 6.10: Selbstständig - LIKE
 
@@ -781,6 +862,18 @@ def _(bundesliga, mo):
         SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT Mannschaft, Punkte
+FROM bundesliga
+WHERE Mannschaft LIKE '%Borussia%'
+```
+""")})
     return
 
 

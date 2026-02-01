@@ -735,5 +735,32 @@ def _(mo):
     return
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+**Entitäten:**
+
+1. **Buch** (Primärschlüssel: ISBN)
+   - Attribute: ISBN, Titel, Erscheinungsjahr
+2. **Autor** (Primärschlüssel: AutorID)
+   - Attribute: AutorID, Name, Nationalität
+3. **Studierender** (Primärschlüssel: Matrikelnummer)
+   - Attribute: Matrikelnummer, Name, Studiengang
+
+**Beziehungen:**
+
+1. **Autor** *schreibt* **Buch** → **M:N**
+   - Ein Buch kann mehrere Autoren haben (Co-Autoren)
+   - Ein Autor kann mehrere Bücher schreiben
+   - → Wird als Beziehungstabelle aufgelöst (z.B. `Autor_Buch`)
+2. **Studierender** *leiht aus* **Buch** → **M:N** (mit Beziehungsattributen)
+   - Ein Studierender kann mehrere Bücher ausleihen
+   - Ein Buch kann von verschiedenen Studierenden ausgeliehen werden
+   - Beziehungsattribute: Datum, Rückgabedatum
+   - → Wird als Beziehungstabelle aufgelöst (z.B. `Ausleihe`)
+""")})
+    return
+
+
 if __name__ == "__main__":
     app.run()

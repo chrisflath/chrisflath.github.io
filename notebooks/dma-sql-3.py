@@ -386,6 +386,21 @@ def _(mo, spieler):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    Verein,
+    COUNT(*) AS Nationalspieler
+FROM spieler
+GROUP BY Verein
+ORDER BY Nationalspieler DESC
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
         ### Aufgabe 4.4: Scaffolded — Mehrere Aggregatfunktionen
@@ -413,6 +428,23 @@ def _(mo, spieler):
         -- Tipp: SUM für Gesamttore, AVG für Durchschnitt
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    Verein,
+    COUNT(*) AS Nationalspieler,
+    SUM(Tore) AS Tore_Gesamt,
+    AVG("Alter") AS Durchschnittsalter
+FROM spieler
+GROUP BY Verein
+ORDER BY Nationalspieler DESC
+```
+""")})
     return
 
 

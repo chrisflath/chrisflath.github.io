@@ -200,6 +200,22 @@ def _(bundesliga, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT Mannschaft, ToreGeschossen
+FROM bundesliga
+WHERE ToreGeschossen > (
+    SELECT AVG(ToreGeschossen)
+    FROM bundesliga
+)
+ORDER BY ToreGeschossen DESC
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
         ### Aufgabe 10.3: Selbstständig – Teams über dem Durchschnitt
@@ -223,6 +239,22 @@ def _(bundesliga, mo):
         SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT Mannschaft, Punkte
+FROM bundesliga
+WHERE Punkte > (
+    SELECT AVG(Punkte)
+    FROM bundesliga
+)
+ORDER BY Punkte DESC
+```
+""")})
+    return
 
 
 @app.cell(hide_code=True)
@@ -447,6 +479,20 @@ def _(bundesliga, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+CREATE OR REPLACE VIEW titelkandidaten AS
+SELECT Mannschaft, Punkte, Tordifferenz
+FROM bundesliga
+ORDER BY Punkte DESC
+LIMIT 4
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
         ### Aufgabe 10.7: Selbstständig – View für Kellerkinder
@@ -471,6 +517,20 @@ def _(bundesliga, mo):
         SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+CREATE OR REPLACE VIEW abstiegskandidaten AS
+SELECT Mannschaft, Punkte, Tordifferenz
+FROM bundesliga
+ORDER BY Punkte ASC
+LIMIT 6
+```
+""")})
+    return
 
 
 @app.cell

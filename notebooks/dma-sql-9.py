@@ -309,6 +309,27 @@ def _(mo, spieler, vereine):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    v.Name AS Verein,
+    COUNT(s.Spieler_ID) AS Anzahl_Spieler
+FROM vereine v
+LEFT JOIN spieler s ON v.Verein_ID = s.Verein_ID
+GROUP BY v.Name
+ORDER BY Anzahl_Spieler DESC
+```
+
+**Erklärung:**
+- `COUNT(s.Spieler_ID)` zählt nur Nicht-NULL-Werte, also nur tatsächlich vorhandene Spieler
+- `LEFT JOIN` stellt sicher, dass auch Vereine ohne Spieler (z.B. RB Leipzig) erscheinen
+- `GROUP BY v.Name` gruppiert nach Vereinsname
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
         **Anwendungsfaelle fuer LEFT JOIN + IS NULL:**
