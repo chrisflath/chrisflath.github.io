@@ -1,3 +1,12 @@
+# /// script
+# requires-python = ">=3.11"
+# dependencies = [
+#     "marimo",
+#     "polars",
+#     "plotly",
+# ]
+# ///
+
 import marimo
 
 __generated_with = "0.13.0"
@@ -15,9 +24,9 @@ def _():
 
 @app.cell(hide_code=True)
 def _():
-    import pandas as pd
+    import polars as pl
     import plotly.express as px
-    return pd, px
+    return pl, px
 
 
 @app.cell(hide_code=True)
@@ -25,6 +34,8 @@ def _(mo):
     mo.md(
         r"""
         # Session 8: Normalisierung
+
+        **Kursfahrplan:** I: SQL-Grundlagen (S1–4) · **▸ II: Datenmodellierung (S5–8)** · III: Fortgeschrittenes SQL (S9–10) · IV: Datenanalyse (S11–14)
 
         In dieser Session lernen Sie:
 
@@ -84,6 +95,74 @@ def _(mo):
         ---
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ## Armstrong-Axiome: FDs ableiten
+
+        Mit drei Grundregeln lassen sich aus bekannten FDs **neue** ableiten:
+
+        | Axiom | Regel | Beispiel |
+        |-------|-------|----------|
+        | **Reflexivität** | Wenn B ⊆ A, dann A → B | {Vorname, Nachname} → Nachname |
+        | **Verstärkung** | Wenn A → B, dann A,C → B,C | Matrikelnr → Name ⟹ Matrikelnr,Fach → Name,Fach |
+        | **Transitivität** | Wenn A → B und B → C, dann A → C | Best_Nr → Kunde, Kunde → Stadt ⟹ Best_Nr → Stadt |
+
+        ---
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    armstrong_quiz = mo.ui.radio(
+        options={
+            "a_stadt": "Matrikelnr → Stadt",
+            "stadt_name": "Stadt → Name",
+            "name_matrikel": "Name → Matrikelnr",
+            "stadt_matrikel": "Stadt → Matrikelnr"
+        },
+        label="**Quiz:** Gegeben: Matrikelnr → Student, Student → Stadt. Welche FD lässt sich per **Transitivität** ableiten?"
+    )
+    armstrong_quiz
+    return (armstrong_quiz,)
+
+
+@app.cell(hide_code=True)
+def _(armstrong_quiz, mo):
+    if armstrong_quiz.value == "a_stadt":
+        mo.output.replace(mo.md("✅ **Richtig!** Transitivität: Matrikelnr → Student und Student → Stadt ergibt Matrikelnr → Stadt."))
+    elif armstrong_quiz.value:
+        mo.output.replace(mo.md("❌ Nicht ganz. Bei der Transitivität gilt: Wenn A → B und B → C, dann A → C. Hier: Matrikelnr → Student → Stadt, also Matrikelnr → Stadt."))
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    aug_quiz = mo.ui.radio(
+        options={
+            "correct": "ISBN, Verlag → Titel, Verlag",
+            "wrong1": "Verlag → Titel",
+            "wrong2": "Titel → ISBN, Verlag",
+            "wrong3": "ISBN, Titel → Verlag"
+        },
+        label="**Quiz:** Gegeben: ISBN → Titel. Welche FD folgt per **Verstärkung** (Augmentation) mit Verlag?"
+    )
+    aug_quiz
+    return (aug_quiz,)
+
+
+@app.cell(hide_code=True)
+def _(aug_quiz, mo):
+    if aug_quiz.value == "correct":
+        mo.output.replace(mo.md("✅ **Richtig!** Verstärkung: Wenn A → B, dann A,C → B,C. Also ISBN,Verlag → Titel,Verlag."))
+    elif aug_quiz.value:
+        mo.output.replace(mo.md("❌ Nicht ganz. Verstärkung fügt auf **beiden Seiten** das gleiche Attribut hinzu: ISBN → Titel wird zu ISBN,Verlag → Titel,Verlag."))
     return
 
 
@@ -467,13 +546,13 @@ def _(mo):
 
 
 @app.cell
-def _(pd, px):
+def _(pl, px):
     # Berechnung: Redundante Datenzellen pro Normalform-Schritt
     # Unnormalisiert: 6 Zeilen × 6 Spalten = 36 Zellen, davon viele redundant
     # 2NF: Bestellung(4×3=12) + Produkt(3×2=6) + Position(6×3=18) = 36 Zellen
     # 3NF: Kunde(3×2=6) + Bestellung(4×2=8) + Produkt(3×2=6) + Position(6×3=18) = 38 Zellen
     # Aber: Redundanz sinkt! Redundante Fakten = Gesamteinträge - eindeutige Fakten
-    _schritte = pd.DataFrame({
+    _schritte = pl.DataFrame({
         "Normalform": ["Unnormalisiert", "2NF (3 Tabellen)", "3NF (4 Tabellen)"],
         "Redundante_Einträge": [12, 3, 0],  # Redundante Wiederholungen von Fakten
         "Eindeutige_Fakten": [24, 33, 38],  # Tatsächlich verschiedene Informationen
@@ -498,6 +577,39 @@ def _(mo):
         gespeichert. Schritt für Schritt verschwinden diese Wiederholungen.
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(pl, px):
+    # Trade-off: Weniger Redundanz, aber mehr Tabellen
+    _tradeoff = pl.DataFrame({
+        "Normalform": ["Unnormalisiert", "2NF", "3NF"],
+        "Tabellen": [1, 3, 4],
+        "Redundante_Einträge": [12, 3, 0],
+    })
+    _fig = px.bar(
+        _tradeoff,
+        x="Normalform",
+        y=["Tabellen", "Redundante_Einträge"],
+        barmode="group",
+        title="Trade-off: Mehr Tabellen, weniger Redundanz",
+        labels={"value": "Anzahl", "variable": "Metrik", "Normalform": ""},
+        color_discrete_map={
+            "Tabellen": "#003560",
+            "Redundante_Einträge": "#E87722",
+        },
+    )
+    _fig.update_layout(legend_title_text="")
+    _fig
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+**Trade-off der Normalisierung:** Aus einer Tabelle werden vier -- aber die Redundanz sinkt auf null. In der Praxis ist das ein guter Tausch: Mehr Tabellen kosten kaum Speicher, aber Redundanz kostet Konsistenz.
+    """)
     return
 
 

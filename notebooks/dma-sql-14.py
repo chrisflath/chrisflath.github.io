@@ -37,6 +37,8 @@ def _(mo):
         | Produktbewertungen | Deutsch | 150 | String-Grundfunktionen |
         | McDonald's Reviews | Englisch | 3.000 | Aspekt-Analyse & LIKE |
         | UFO Sightings | Englisch | 5.000 | Regex, Tokenisierung, Mining |
+
+        > **Vorhersage:** Bei 150 deutschen Produktbewertungen — welche Wörter werden am häufigsten in positiven (4-5 Sterne) vs. negativen (1-2 Sterne) Bewertungen vorkommen? Notieren Sie je 3 vermutete Wörter für jede Kategorie.
         """
     )
     return
@@ -710,14 +712,13 @@ def _(mcdonalds_reviews, mo):
 
 
 @app.cell
-def _(aspekt_analyse, px):
-    df_aspekt = aspekt_analyse.to_pandas()
+def _(aspekt_analyse, mcdonalds_reviews, px):
     fig_aspekt = px.bar(
-        df_aspekt,
+        aspekt_analyse,
         x="aspect",
         y="avg_rating",
         text="n",
-        title="Average Rating by Mentioned Aspect (McDonald's, n=3000)",
+        title=f"Average Rating by Mentioned Aspect (McDonald's, n={len(mcdonalds_reviews)})",
         labels={"aspect": "Aspect", "avg_rating": "Avg Rating", "n": "Count"},
         color="avg_rating",
         color_continuous_scale="RdYlGn",
@@ -837,14 +838,13 @@ def _(mo, ufo_sightings):
 
 
 @app.cell
-def _(px, word_freq):
-    df_freq = word_freq.to_pandas()
+def _(px, ufo_sightings, word_freq):
     fig_freq = px.bar(
-        df_freq,
+        word_freq,
         y="word",
         x="frequency",
         orientation="h",
-        title="Top 25 Words in UFO Sighting Descriptions (n=5000)",
+        title=f"Top 25 Words in UFO Sighting Descriptions (n={len(ufo_sightings)})",
         labels={"word": "Word", "frequency": "Frequency"},
         color="frequency",
         color_continuous_scale="Blues",
@@ -890,7 +890,7 @@ def _(mo, produktbewertungen):
         woerter AS (
             SELECT
                 UNNEST(regexp_split_to_array(
-                    LOWER(TRIM(bewertung)), '\s+')) AS word
+                    LOWER(TRIM(bewertung_text)), '\s+')) AS word
             FROM produktbewertungen
         )
         -- Schritt 3: Filtern + Zählen
@@ -1169,14 +1169,13 @@ def _(mcdonalds_reviews, mo):
 
 
 @app.cell
-def _(px, scatter_data):
-    df_scatter = scatter_data.to_pandas()
+def _(mcdonalds_reviews, px, scatter_data):
     fig_scatter = px.scatter(
-        df_scatter,
+        scatter_data,
         x="text_length",
         y="rating",
         color="store_name",
-        title="Review Text Length vs. Rating (McDonald's, n=3000)",
+        title=f"Review Text Length vs. Rating (McDonald's, n={len(mcdonalds_reviews)})",
         labels={
             "text_length": "Text Length (chars)",
             "rating": "Rating",

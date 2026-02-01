@@ -4,13 +4,14 @@
 #     "marimo",
 #     "polars",
 #     "duckdb",
+#     "plotly",
 # ]
 # ///
 
 import marimo
 
 __generated_with = "0.10.14"
-app = marimo.App(width="medium")
+app = marimo.App(width="medium", app_title="DMA Session 10: Subqueries, Views & Transaktionen")
 
 
 @app.cell(hide_code=True)
@@ -18,6 +19,8 @@ def _(mo):
     mo.md(
         r"""
         # Vorlesung 10: Subqueries, Views & Transaktionen
+
+        **Kursfahrplan:** I: SQL-Grundlagen (S1–4) · II: Datenmodellierung (S5–8) · **▸ III: Fortgeschrittenes SQL (S9–10)** · IV: Datenanalyse (S11–14)
 
         **Lernziele:**
         - Komplexe Abfragen mit Subqueries strukturieren
@@ -169,6 +172,36 @@ def _(bundesliga, mo, pokal_halbfinale):
 def _(mo):
     mo.md(
         r"""
+        ### 🟡 Aufgabe 10.2b: Subquery mit Vergleich (scaffolded)
+
+        Finde alle Teams mit mehr Toren als der Liga-Durchschnitt.
+        Ergänze die fehlende Subquery:
+        """
+    )
+    return
+
+
+@app.cell
+def _(bundesliga, mo):
+    # Ergänze: AVG(ToreGeschossen) FROM bundesliga
+    _df = mo.sql(
+        f"""
+        SELECT Mannschaft, ToreGeschossen
+        FROM bundesliga
+        WHERE ToreGeschossen > (
+            SELECT ???(???)
+            FROM ???
+        )
+        ORDER BY ToreGeschossen DESC
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
         ### Aufgabe 10.3: Selbstständig – Teams über dem Durchschnitt
 
         Finde alle Teams mit **mehr Punkten als der Durchschnitt**.
@@ -313,7 +346,7 @@ def _(bundesliga, mo, px):
         """
     )
     px.bar(
-        _top.to_pandas(),
+        _top,
         x="Mannschaft",
         y="Siegquote",
         color="Punkte",
@@ -382,6 +415,34 @@ def _(mo):
         ORDER BY Siegquote DESC
         """
     )
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🟡 Aufgabe 10.6b: View mit Bedingung (scaffolded)
+
+        Erstelle einen View `titelkandidaten` mit den Top-4-Teams nach Punkten.
+        Ergänze die fehlenden Teile:
+        """
+    )
+    return
+
+
+@app.cell
+def _(bundesliga, mo):
+    # Ergänze: ORDER BY Punkte DESC, LIMIT 4
+    _df = mo.sql(
+        f"""
+        CREATE OR REPLACE VIEW titelkandidaten AS
+        SELECT Mannschaft, Punkte, Tordifferenz
+        FROM bundesliga
+        ORDER BY ??? DESC
+        LIMIT ???
+        """
+    )
+    return
 
 
 @app.cell(hide_code=True)

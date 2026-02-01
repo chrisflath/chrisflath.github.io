@@ -1,3 +1,12 @@
+# /// script
+# requires-python = ">=3.11"
+# dependencies = [
+#     "marimo",
+#     "polars",
+#     "plotly",
+# ]
+# ///
+
 import marimo
 
 __generated_with = "0.13.0"
@@ -258,6 +267,62 @@ def _(mo, todesfaelle):
 def _(mo):
     mo.md(
         r"""
+        ### 🟣 Aufgabe 1.5: Vorhersage — Altersverteilung
+
+        **Bevor Sie die Abfrage ausführen:**
+
+        Shipmans Opfer waren typischerweise ältere, alleinstehende Patientinnen.
+
+        Was erwarten Sie?
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    pred_age = mo.ui.radio(
+        options={
+            "correct": "Shipmans Opfer sind im Schnitt deutlich älter",
+            "wrong1": "Alle Ärzte haben ähnliche Altersverteilungen",
+            "wrong2": "Shipmans Opfer sind jünger als bei anderen Ärzten"
+        },
+        label="**Vorhersage:** Wie unterscheidet sich das Durchschnittsalter der Verstorbenen bei Shipman vs. anderen Ärzten?"
+    )
+    pred_age
+    return (pred_age,)
+
+
+@app.cell(hide_code=True)
+def _(mo, pred_age):
+    if pred_age.value == "correct":
+        mo.output.replace(mo.md("✅ **Richtig!** Shipmans Opfer waren überwiegend ältere Patientinnen — das ist eines der Muster, das die Ermittler schließlich auf seine Spur brachte."))
+    elif pred_age.value:
+        mo.output.replace(mo.md("🤔 Nicht ganz. Denken Sie daran: Shipman wählte gezielt ältere, alleinstehende Patientinnen als Opfer aus."))
+    return
+
+
+@app.cell
+def _(mo, todesfaelle):
+    _df = mo.sql(
+        f"""
+        SELECT
+            Arzt,
+            ROUND(AVG(Alter), 1) AS Durchschnittsalter,
+            MIN(Alter) AS Jüngster,
+            MAX(Alter) AS Ältester
+        FROM todesfaelle
+        GROUP BY Arzt
+        ORDER BY Durchschnittsalter DESC
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
         ---
 
         ## Visualisierung der Shipman-Anomalien
@@ -297,7 +362,7 @@ def _(pl):
     )
 
     fig_ref = px.line(
-        ref_long.to_pandas(),
+        ref_long,
         x="Stunde",
         y="Prozent",
         color="Gruppe",
@@ -339,7 +404,7 @@ def _(mo, px, todesfaelle):
     )
 
     fig_hourly = px.bar(
-        hourly.to_pandas(),
+        hourly,
         x="Todesstunde",
         y="Anzahl",
         color="Arzt",
@@ -432,7 +497,7 @@ def _(mo):
 @app.cell
 def _(px, rechnungen):
     fig_hist = px.histogram(
-        rechnungen.to_pandas(),
+        rechnungen,
         x="betrag",
         color="kategorie",
         barmode="overlay",
@@ -511,7 +576,7 @@ def _(mo, rechnungen):
 def _(benford_analyse, px):
     # Visualisierung der Benford-Verteilung
     fig_benford = px.bar(
-        benford_analyse.to_pandas(),
+        benford_analyse,
         x="erste_ziffer",
         y="anzahl",
         color="kategorie",
@@ -566,6 +631,53 @@ def _(mo, rechnungen_echt):
 def _(mo):
     mo.md(
         r"""
+        ### 🟡 Aufgabe 2.3b: Benford-Abweichung berechnen (scaffolded)
+
+        Vergleiche die beobachteten Prozente mit den theoretischen Benford-Werten.
+        Ergänze die fehlende Berechnung der Abweichung:
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, rechnungen_echt):
+    # Ergänze: ABS(b.prozent - e.erwartet) berechnet die Abweichung
+    _df = mo.sql(
+        f"""
+        WITH beobachtet AS (
+            SELECT
+                CAST(SUBSTR(CAST(CAST(betrag AS INT) AS TEXT), 1, 1) AS INT) AS erste_ziffer,
+                COUNT(*) * 100.0 / (SELECT COUNT(*) FROM rechnungen_echt WHERE betrag >= 10) AS prozent
+            FROM rechnungen_echt
+            WHERE betrag >= 10
+            GROUP BY erste_ziffer
+        ),
+        benford AS (
+            SELECT 1 AS ziffer, 30.1 AS erwartet UNION ALL
+            SELECT 2, 17.6 UNION ALL SELECT 3, 12.5 UNION ALL
+            SELECT 4, 9.7 UNION ALL SELECT 5, 7.9 UNION ALL
+            SELECT 6, 6.7 UNION ALL SELECT 7, 5.8 UNION ALL
+            SELECT 8, 5.1 UNION ALL SELECT 9, 4.6
+        )
+        SELECT
+            b.erste_ziffer,
+            ROUND(b.prozent, 1) AS beobachtet_pct,
+            e.erwartet AS benford_pct,
+            ROUND(???, 1) AS abweichung
+        FROM beobachtet b
+        JOIN benford e ON b.erste_ziffer = e.ziffer
+        ORDER BY ???
+        -- Ergänze: ABS(b.prozent - e.erwartet) AS abweichung, ORDER BY abweichung DESC
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
         ### 🔵 2.4 Selbstständig: Abweichung von Benford
 
         Berechne für die verdächtigen Rechnungen:
@@ -602,6 +714,14 @@ def _(mo):
         ### 🔴 2.5 Debugging: Fehlerhafte Benford-Analyse
 
         Diese Abfrage hat mehrere Probleme. Finde und erkläre sie:
+
+        ```sql
+        SELECT
+            SUBSTR(betrag, 1, 1) AS erste_ziffer,
+            COUNT(*)
+        FROM rechnungen
+        GROUP BY erste_ziffer
+        ```
         """
     )
     return
@@ -609,14 +729,19 @@ def _(mo):
 
 @app.cell
 def _(mo, rechnungen):
-    # Was ist hier falsch?
+    # Fehlerhafter Code (siehe Markdown oben):
+    #   SUBSTR(betrag, 1, 1) AS erste_ziffer, COUNT(*)
+    # Korrigierte Version:
     _df = mo.sql(
         f"""
         SELECT
-            SUBSTR(betrag, 1, 1) AS erste_ziffer,
-            COUNT(*)
+            CAST(SUBSTR(CAST(CAST(betrag AS INT) AS TEXT), 1, 1) AS INT)
+                AS erste_ziffer,
+            COUNT(*) AS anzahl
         FROM rechnungen
+        WHERE betrag >= 10
         GROUP BY erste_ziffer
+        ORDER BY erste_ziffer
         """
     )
     return
@@ -662,6 +787,40 @@ def _(mo):
         ---
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    quiz_crisp = mo.ui.radio(
+        options={
+            "correct": "Business Understanding → Data Understanding → Data Preparation → Modeling → Evaluation → Deployment",
+            "wrong1": "Data Understanding → Data Preparation → Business Understanding → Modeling → Evaluation → Deployment",
+            "wrong2": "Business Understanding → Modeling → Data Preparation → Evaluation → Data Understanding → Deployment",
+            "wrong3": "Data Preparation → Data Understanding → Modeling → Business Understanding → Deployment → Evaluation"
+        },
+        label="**Quiz:** In welcher Reihenfolge werden die CRISP-DM Phasen typischerweise durchlaufen?"
+    )
+    quiz_crisp
+    return (quiz_crisp,)
+
+
+@app.cell(hide_code=True)
+def _(quiz_crisp, mo):
+    if quiz_crisp.value == "correct":
+        mo.output.replace(mo.md("✅ **Richtig!** CRISP-DM beginnt immer mit dem **Business Understanding** — erst das Problem verstehen, dann die Daten. In der Praxis ist der Prozess allerdings iterativ: Man springt oft zwischen Phasen zurück."))
+    elif quiz_crisp.value:
+        mo.output.replace(mo.md("❌ Nicht ganz. CRISP-DM beginnt immer mit **Business Understanding** — man muss zuerst das Problem verstehen, bevor man die Daten analysiert."))
     return
 
 

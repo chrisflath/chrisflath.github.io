@@ -180,7 +180,7 @@ def _(ab_test, mo):
 @app.cell
 def _(_data, px):
     px.histogram(
-        _data.to_pandas(),
+        _data,
         x="umsatz",
         color="gruppe",
         barmode="overlay",
@@ -318,7 +318,7 @@ def _(ab_test, mo):
 @app.cell
 def _(_z_data, px):
     fig = px.histogram(
-        _z_data.to_pandas(),
+        _z_data,
         x="z_score",
         color="gruppe",
         barmode="overlay",
@@ -712,7 +712,7 @@ def _(ab_test, mo):
 @app.cell
 def _(_comp, px):
     fig = px.bar(
-        _comp.to_pandas(),
+        _comp,
         x="geraet",
         y="conv_rate_pct",
         color="gruppe",

@@ -1,3 +1,12 @@
+# /// script
+# requires-python = ">=3.11"
+# dependencies = [
+#     "marimo",
+#     "polars",
+#     "plotly",
+# ]
+# ///
+
 import marimo
 
 __generated_with = "0.19.4"
@@ -14,6 +23,8 @@ def _():
 def _(mo):
     mo.md(r"""
     # Session 1: SQL-Grundlagen
+
+    **Kursfahrplan:** **▸ I: SQL-Grundlagen (S1–4)** · II: Datenmodellierung (S5–8) · III: Fortgeschrittenes SQL (S9–10) · IV: Datenanalyse (S11–14)
 
     Willkommen zur ersten Hands-on-Session! In diesem Notebook lernen Sie:
 
@@ -838,6 +849,30 @@ def _(bundesliga, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
+    quiz_operator = mo.ui.radio(
+        options={
+            "and_or": "AND hat Vorrang vor OR (wie Multiplikation vor Addition)",
+            "or_and": "OR hat Vorrang vor AND",
+            "gleich": "Beide haben den gleichen Vorrang (links nach rechts)",
+            "klammern": "Es gibt keinen festen Vorrang, man muss immer Klammern setzen"
+        },
+        label="**Quiz:** Welche Aussage zu AND und OR in SQL ist korrekt?"
+    )
+    quiz_operator
+    return (quiz_operator,)
+
+
+@app.cell(hide_code=True)
+def _(quiz_operator, mo):
+    if quiz_operator.value == "and_or":
+        mo.output.replace(mo.md("✅ **Richtig!** AND bindet stärker als OR, genau wie `*` vor `+` in der Mathematik. Deshalb sind Klammern bei OR wichtig: `WHERE (A OR B) AND C` ist etwas anderes als `WHERE A OR B AND C`."))
+    elif quiz_operator.value:
+        mo.output.replace(mo.md("❌ Nicht ganz. Denken Sie an die Analogie zur Mathematik: AND entspricht der Multiplikation (bindet stärker), OR der Addition."))
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(r"""
     ---
 
@@ -1005,7 +1040,7 @@ def _(bundesliga, mo, px):
 
     # Visualisierung: Balkendiagramm
     fig_bar = px.bar(
-        top_teams.to_pandas(),
+        top_teams,
         x="Mannschaft",
         y="Punkte",
         title="Top Teams nach Punkten",
@@ -1052,7 +1087,7 @@ def _(bundesliga_spieltage, mo, px):
 
     # Visualisierung: Liniendiagramm
     fig_line = px.line(
-        bayern_verlauf.to_pandas(),
+        bayern_verlauf,
         x="Spieltag",
         y="Punkte_Kumuliert",
         title="Bayern München: Punkteverlauf",
@@ -1098,7 +1133,7 @@ def _(bundesliga, mo, px):
         """
     )
 
-    fig_own = px.bar(meine_daten.to_pandas(), x="Mannschaft", y="ToreKassiert")
+    fig_own = px.bar(meine_daten, x="Mannschaft", y="ToreKassiert")
     fig_own
     return
 

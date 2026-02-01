@@ -1,9 +1,18 @@
+# /// script
+# requires-python = ">=3.11"
+# dependencies = [
+#     "marimo",
+#     "polars",
+#     "plotly",
+# ]
+# ///
+
 import marimo
 
 __generated_with = "0.13.0"
 app = marimo.App(
     width="medium",
-    app_title="DMA Session 9: JOINs - Tabellen verknuepfen",
+    app_title="DMA Session 9: JOINs - Tabellen verknüpfen",
 )
 
 
@@ -17,7 +26,7 @@ def _():
 def _(mo):
     mo.md(
         r"""
-        # Session 9: JOINs - Tabellen verknuepfen
+        # Session 9: JOINs - Tabellen verknüpfen
 
         **Kursfahrplan:** I: SQL-Grundlagen (S1–4) · II: Datenmodellierung (S5–8) · **▸ III: Fortgeschrittenes SQL (S9–10)** · IV: Datenanalyse (S11–14)
 
@@ -26,7 +35,7 @@ def _(mo):
         - **INNER JOIN**: Nur passende Zeilen aus beiden Tabellen
         - **LEFT JOIN**: Alle Zeilen der linken Tabelle + passende rechte
         - **RIGHT JOIN**: Alle Zeilen der rechten Tabelle + passende linke
-        - **Self-Join**: Eine Tabelle mit sich selbst verknuepfen
+        - **Self-Join**: Eine Tabelle mit sich selbst verknüpfen
         - **Bonus**: Graphen als Kantenlisten
 
         ---
@@ -58,11 +67,11 @@ def _(mo):
 
 @app.cell
 def _():
-    import pandas as pd
+    import polars as pl
     import plotly.express as px
 
     # Vereine
-    vereine = pd.DataFrame({
+    vereine = pl.DataFrame({
         "Verein_ID": [1, 2, 3, 4],
         "Name": ["Bayern Muenchen", "Bayer Leverkusen", "BVB Dortmund", "RB Leipzig"],
         "Stadt": ["Muenchen", "Leverkusen", "Dortmund", "Leipzig"],
@@ -70,13 +79,13 @@ def _():
     })
 
     vereine
-    return pd, px, vereine
+    return pl, px, vereine
 
 
 @app.cell
-def _(pd):
+def _(pl):
     # Spieler - manche ohne Verein (NULL), um LEFT JOIN zu demonstrieren
-    spieler = pd.DataFrame({
+    spieler = pl.DataFrame({
         "Spieler_ID": [1, 2, 3, 4, 5, 6, 7, 8],
         "Name": ["Mueller", "Neuer", "Wirtz", "Xhaka", "Hummels", "Sabitzer", "Reus", "Goetze"],
         "Position": ["Sturm", "Tor", "Mittelfeld", "Mittelfeld", "Abwehr", "Mittelfeld", "Mittelfeld", "Mittelfeld"],
@@ -88,9 +97,9 @@ def _(pd):
 
 
 @app.cell
-def _(pd):
+def _(pl):
     # Spiele - Heim vs Gast
-    spiele = pd.DataFrame({
+    spiele = pl.DataFrame({
         "Spiel_ID": [1, 2, 3, 4],
         "Heim_ID": [1, 2, 3, 1],
         "Gast_ID": [2, 3, 4, 3],
@@ -124,7 +133,7 @@ def _(mo):
         r"""
         ## INNER JOIN: Nur Treffer
 
-        Der **INNER JOIN** gibt nur Zeilen zurueck, bei denen der JOIN-Schluessel
+        Der **INNER JOIN** gibt nur Zeilen zurück, bei denen der JOIN-Schluessel
         in **beiden** Tabellen existiert.
 
         ```
@@ -271,6 +280,37 @@ def _(mo, spieler, vereine):
 def _(mo):
     mo.md(
         r"""
+        ### 🟡 Aufgabe 9.2c: Spieler pro Verein zählen (scaffolded)
+
+        Zeige alle Vereine mit der Anzahl ihrer Spieler.
+        Auch Vereine ohne Spieler sollen erscheinen (mit 0).
+        Ergänze die fehlenden Teile:
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, spieler, vereine):
+    # Ergänze: COUNT(s.Spieler_ID), LEFT JOIN, GROUP BY v.Name
+    _df = mo.sql(
+        f"""
+        SELECT
+            v.Name AS Verein,
+            COUNT(???) AS Anzahl_Spieler
+        FROM vereine v
+        ??? JOIN spieler s ON v.Verein_ID = s.Verein_ID
+        GROUP BY ???
+        ORDER BY Anzahl_Spieler DESC
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
         **Anwendungsfaelle fuer LEFT JOIN + IS NULL:**
 
         - Kunden ohne Bestellungen finden
@@ -370,7 +410,7 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-        ## Multiple JOINs: Mehrere Tabellen verknuepfen
+        ## Multiple JOINs: Mehrere Tabellen verknüpfen
 
         ---
 
@@ -407,19 +447,19 @@ def _(mo):
         r"""
         ---
 
-        ## Self-Join: Tabelle mit sich selbst verknuepfen
+        ## Self-Join: Tabelle mit sich selbst verknüpfen
 
         Ein **Self-Join** verknuepft eine Tabelle mit sich selbst.
         Das ist nuetzlich fuer hierarchische Daten oder Beziehungen
         innerhalb einer Tabelle.
 
-        **Beispiel:** Finde Rueckspiele (Heim und Gast getauscht)
+        **Beispiel:** Finde Rückspiele (Heim und Gast getauscht)
 
         ---
 
-        ### Aufgabe 9.4: Rueckspiele finden
+        ### Aufgabe 9.4: Rückspiele finden
 
-        Welche Spiele haben ein Rueckspiel in unseren Daten?
+        Welche Spiele haben ein Rückspiel in unseren Daten?
         (Heim und Gast sind vertauscht)
         """
     )
@@ -430,7 +470,7 @@ def _(mo):
 def _(mo, spiele):
     _df = mo.sql(
         f"""
-        -- Self-Join: Finde Hin- und Rueckspiele
+        -- Self-Join: Finde Hin- und Rückspiele
         SELECT
             s1.Spiel_ID AS Hinspiel_ID,
             s1.Datum AS Hinspiel_Datum,
@@ -442,7 +482,7 @@ def _(mo, spiele):
         INNER JOIN spiele s2
             ON s1.Heim_ID = s2.Gast_ID
             AND s1.Gast_ID = s2.Heim_ID
-        WHERE s1.Datum < s2.Datum  -- Nur einmal zeigen (Hinspiel vor Rueckspiel)
+        WHERE s1.Datum < s2.Datum  -- Nur einmal zeigen (Hinspiel vor Rückspiel)
         ORDER BY s1.Datum
         """
     )
@@ -473,7 +513,7 @@ def _(mo):
             "right": "RIGHT JOIN",
             "self": "Self-Join"
         },
-        label="**Quiz:** Welchen JOIN-Typ brauchen Sie, um Rueckspiele zu finden (gleiche Tabelle, verschiedene Zeilen)?"
+        label="**Quiz:** Welchen JOIN-Typ brauchen Sie, um Rückspiele zu finden (gleiche Tabelle, verschiedene Zeilen)?"
     )
     join_quiz2
     return (join_quiz2,)
@@ -482,7 +522,7 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(join_quiz2, mo):
     if join_quiz2.value == "self":
-        mo.output.replace(mo.md("✅ **Richtig!** Ein Self-Join verknuepft eine Tabelle mit sich selbst. Wir geben der Tabelle zwei verschiedene Aliase (s1 und s2), um Hin- und Rueckspiel zu vergleichen."))
+        mo.output.replace(mo.md("✅ **Richtig!** Ein Self-Join verknüpft eine Tabelle mit sich selbst. Wir geben der Tabelle zwei verschiedene Aliase (s1 und s2), um Hin- und Rückspiel zu vergleichen."))
     elif join_quiz2.value:
         mo.output.replace(mo.md("❌ Nicht ganz. Wir suchen innerhalb *derselben* Tabelle nach zueinander passenden Zeilen."))
     return
@@ -544,9 +584,9 @@ def _(mo):
 
 
 @app.cell
-def _(pd):
+def _(pl):
     # Freundschaftsnetzwerk als Kantenliste
-    friendships = pd.DataFrame({
+    friendships = pl.DataFrame({
         "person_a": ["Alice", "Alice", "Bob", "Carol", "Dave", "Eve"],
         "person_b": ["Bob", "Carol", "Carol", "Dave", "Eve", "Alice"]
     })
@@ -591,7 +631,7 @@ def _(friendships, mo):
         FROM friendships f1
         INNER JOIN friendships f2 ON f1.person_b = f2.person_a
         WHERE f1.person_a = 'Alice'
-          AND f2.person_b != f1.person_a  -- Nicht zurueck zur Ausgangsperson
+          AND f2.person_b != f1.person_a  -- Nicht zurück zur Ausgangsperson
         ORDER BY f1.person_b, f2.person_b
         """
     )
@@ -651,7 +691,7 @@ def _(mo, px, spieler, vereine):
         """
     )
     px.bar(
-        _joined.to_pandas(),
+        _joined,
         x="Verein",
         y="Anzahl_Spieler",
         color="Verein",
@@ -678,9 +718,9 @@ def _(mo):
 
 
 @app.cell
-def _(pd, px, vereine):
+def _(pl, px, vereine):
     # Erweiterte Spielerdaten mit Toren und Assists fuer die Visualisierung
-    spieler_stats = pd.DataFrame({
+    spieler_stats = pl.DataFrame({
         "Spieler_ID": [1, 2, 3, 4, 5, 6, 7, 8],
         "Name": ["Mueller", "Neuer", "Wirtz", "Xhaka", "Hummels", "Sabitzer", "Reus", "Goetze"],
         "Tore": [12, 0, 15, 3, 1, 7, 8, 5],
@@ -689,8 +729,8 @@ def _(pd, px, vereine):
     })
 
     # JOIN: Spieler mit Vereinsnamen (nur Spieler mit Verein)
-    merged = spieler_stats.merge(
-        vereine, on="Verein_ID", how="inner", suffixes=("", "_verein")
+    merged = spieler_stats.join(
+        vereine, on="Verein_ID", how="inner", suffix="_verein"
     )
 
     px.scatter(

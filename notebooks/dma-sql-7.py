@@ -1,3 +1,12 @@
+# /// script
+# requires-python = ">=3.11"
+# dependencies = [
+#     "marimo",
+#     "polars",
+#     "plotly",
+# ]
+# ///
+
 import marimo
 
 __generated_with = "0.13.0"
@@ -15,9 +24,9 @@ def _():
 
 @app.cell(hide_code=True)
 def _():
-    import pandas as pd
+    import polars as pl
     import plotly.express as px
-    return pd, px
+    return pl, px
 
 
 @app.cell(hide_code=True)
@@ -25,6 +34,8 @@ def _(mo):
     mo.md(
         r"""
         # Session 7: Relationales Modell & Transformation
+
+        **Kursfahrplan:** I: SQL-Grundlagen (S1–4) · **▸ II: Datenmodellierung (S5–8)** · III: Fortgeschrittenes SQL (S9–10) · IV: Datenanalyse (S11–14)
 
         In dieser Session lernen Sie:
 
@@ -83,6 +94,8 @@ def _(mo):
 def _(mo):
     mo.md(r"""
 ## Aufgabe 7.1: 1:N-Beziehung → SQL
+
+> **Vorhersage:** Bei einer 1:N-Beziehung (ein Verein hat viele Spieler) — auf welcher Seite wird der Fremdschlüssel stehen? Beim Verein oder beim Spieler? Überlegen Sie, bevor Sie weiterscrollen.
 
 **Gegeben:** Verein (1) ← hat → Spieler (N)
     """)
@@ -544,7 +557,7 @@ def _(mo, px):
         """
     )
     px.bar(
-        _umsatz.to_pandas(),
+        _umsatz,
         x="Kategorie",
         y="Umsatz",
         color="Kategorie",
@@ -562,6 +575,54 @@ def _(mo):
         Diese Analyse wäre mit einer einzigen flachen Tabelle *möglich* gewesen --
         aber anfällig für Inkonsistenzen. Das normalisierte Schema garantiert, dass
         jeder Preis und jede Kategorie genau einmal definiert ist.
+
+        ---
+
+        ### Datenverteilung über Tabellen
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo):
+    _zeilen = mo.sql(
+        f"""
+        SELECT 'Kategorie' AS Tabelle, COUNT(*) AS Zeilen FROM Kategorie
+        UNION ALL
+        SELECT 'Produkt', COUNT(*) FROM Produkt
+        UNION ALL
+        SELECT 'Kunde', COUNT(*) FROM Kunde
+        UNION ALL
+        SELECT 'Bestellung', COUNT(*) FROM Bestellung
+        UNION ALL
+        SELECT 'Bestellposition', COUNT(*) FROM Bestellposition
+        ORDER BY Zeilen DESC
+        """
+    )
+    return (_zeilen,)
+
+
+@app.cell
+def _(_zeilen, px):
+    px.bar(
+        _zeilen,
+        x="Tabelle",
+        y="Zeilen",
+        title="Zeilenanzahl pro Tabelle im Online-Shop-Schema",
+        labels={"Zeilen": "Anzahl Zeilen", "Tabelle": ""},
+        color_discrete_sequence=["#003560"],
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        **Erkenntnis:** Entitätstabellen (Kategorie, Kunde) haben typischerweise weniger Zeilen
+        als Beziehungstabellen (Bestellposition) oder Transaktionstabellen (Bestellung).
+        Die M:N-Auflösungstabelle Bestellposition wächst am schnellsten -- das ist normal!
 
         ---
 
@@ -681,7 +742,7 @@ def _(mo, px):
         """
     )
     px.bar(
-        _bestellungen_pro_kunde.to_pandas(),
+        _bestellungen_pro_kunde,
         x="Kunde",
         y="Bestellungen",
         color="Kunde",

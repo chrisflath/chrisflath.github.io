@@ -247,7 +247,7 @@ def _(mo):
 @app.cell
 def _(gehaltsdaten, px):
     fig_hist = px.histogram(
-        gehaltsdaten.to_pandas(),
+        gehaltsdaten,
         x="gehalt",
         nbins=30,
         title="Verteilung der Gehälter",
@@ -262,6 +262,8 @@ def _(mo):
     mo.md(
         r"""
         **Beobachtung:** Ein extremer Ausreißer ist deutlich sichtbar (CEO-Gehalt?).
+
+        > **Vorhersage:** Der Datensatz enthält 100 Mitarbeiter. Wie viele Ausreißer erwarten Sie beim Gehalt, wenn wir die IQR-Regel (1,5 × IQR) anwenden? Und beim Alter?
 
         ---
 
@@ -404,7 +406,7 @@ def _(gehaltsdaten, px):
     )
 
     fig_scatter = px.scatter(
-        clean_data.to_pandas(),
+        clean_data,
         x="erfahrung_jahre",
         y="gehalt",
         color="abteilung",
@@ -449,7 +451,7 @@ def _(gehaltsdaten, mo):
 @app.cell
 def _(clean_data, px):
     fig_box = px.box(
-        clean_data.to_pandas(),
+        clean_data,
         x="abteilung",
         y="gehalt",
         title="Gehaltsverteilung nach Abteilung",
@@ -654,9 +656,8 @@ def _(datasaurus, mo):
 
 @app.cell
 def _(datasaurus, px):
-    _ds_pd = datasaurus.to_pandas()
     px.scatter(
-        _ds_pd,
+        datasaurus,
         x="x",
         y="y",
         facet_col="dataset",

@@ -1,3 +1,12 @@
+# /// script
+# requires-python = ">=3.11"
+# dependencies = [
+#     "marimo",
+#     "polars",
+#     "plotly",
+# ]
+# ///
+
 import marimo
 
 __generated_with = "0.13.0"
@@ -18,6 +27,8 @@ def _(mo):
     mo.md(
         r"""
         # Session 2: SQL für Datenexploration
+
+        **Kursfahrplan:** **▸ I: SQL-Grundlagen (S1–4)** · II: Datenmodellierung (S5–8) · III: Fortgeschrittenes SQL (S9–10) · IV: Datenanalyse (S11–14)
 
         In dieser Session lernen Sie:
 
@@ -950,6 +961,40 @@ def _(mo):
     mo.md(
         r"""
         ---
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    quiz_null = mo.ui.radio(
+        options={
+            "null": "NULL (unbekannt)",
+            "true": "TRUE",
+            "false": "FALSE",
+            "error": "Ein Fehler tritt auf"
+        },
+        label="**Quiz:** Was ergibt der Vergleich `NULL = NULL` in SQL?"
+    )
+    quiz_null
+    return (quiz_null,)
+
+
+@app.cell(hide_code=True)
+def _(quiz_null, mo):
+    if quiz_null.value == "null":
+        mo.output.replace(mo.md("✅ **Richtig!** `NULL = NULL` ergibt NULL (nicht TRUE!), weil NULL 'unbekannt' bedeutet. Zwei unbekannte Werte sind nicht zwingend gleich — deshalb brauchen wir `IS NULL` statt `= NULL`."))
+    elif quiz_null.value:
+        mo.output.replace(mo.md("❌ Nicht ganz. NULL bedeutet 'unbekannt'. Ein Vergleich mit einem unbekannten Wert ergibt immer NULL — deshalb verwenden wir `IS NULL` statt `= NULL`."))
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
 
         ## Phase 7: Datenvisualisierung 📊
 
@@ -1003,7 +1048,7 @@ def _(bundesliga, mo, px):
     )
 
     fig = px.bar(
-        top10.to_pandas(),
+        top10,
         x="Mannschaft",
         y="Punkte",
         title="Top 10 Bundesliga Teams nach Punkten",
@@ -1047,7 +1092,7 @@ def _(bundesliga, mo, px):
     )
 
     fig2 = px.scatter(
-        alle_teams.to_pandas(),
+        alle_teams,
         x="ToreGeschossen",
         y="Punkte",
         hover_name="Mannschaft",
@@ -1092,7 +1137,7 @@ def _(bundesliga, mo, px):
     )
 
     fig3 = px.scatter(
-        offensiv_defensiv.to_pandas(),
+        offensiv_defensiv,
         x="ToreGeschossen",
         y="ToreKassiert",
         color="Tordifferenz",
@@ -1137,7 +1182,7 @@ def _(bundesliga, mo, px):
     )
 
     fig4 = px.scatter(
-        siege_niederlagen.to_pandas(),
+        siege_niederlagen,
         x="Siege",
         y="Niederlagen",
         hover_name="Mannschaft",
@@ -1230,7 +1275,7 @@ def _(mo):
         - ✅ Reihenfolge: SELECT → FROM → WHERE → ORDER BY → LIMIT
         - ✅ Bei Berechnungen: COALESCE verwenden, um NULL zu ersetzen
         - ✅ ASC ist Standard, DESC muss explizit angegeben werden
-        - ✅ Bei Plotly: `.to_pandas()` für die Konvertierung von SQL-Ergebnissen
+        - ✅ Plotly akzeptiert Polars- und marimo-DataFrames direkt (kein `.to_pandas()` nötig)
 
         **Nächste Session:** Aggregation & Gruppierung (COUNT, SUM, AVG, GROUP BY)
         """

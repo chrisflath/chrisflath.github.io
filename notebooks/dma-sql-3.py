@@ -1,3 +1,13 @@
+# /// script
+# requires-python = ">=3.11"
+# dependencies = [
+#     "marimo",
+#     "polars",
+#     "pandas",
+#     "plotly",
+# ]
+# ///
+
 import marimo
 
 __generated_with = "0.13.0"
@@ -50,10 +60,12 @@ def _(mo):
 
 @app.cell
 def _():
-    import pandas as pd
+    import polars as pl
 
-    def lade_bundesliga_tabelle(saison: str = "2026") -> pd.DataFrame:
+    def lade_bundesliga_tabelle(saison: str = "2026"):
         """Lädt die aktuelle Bundesliga-Tabelle von fussballdaten.de."""
+        import pandas as pd
+
         url = f"https://www.fussballdaten.de/bundesliga/{saison}/tabelle/"
 
         try:
@@ -112,10 +124,10 @@ def _():
             })
             quelle = f"Offline-Beispieldaten"
 
-        return df, quelle
+        return pl.from_pandas(df), quelle
 
     bundesliga, daten_quelle = lade_bundesliga_tabelle("2026")
-    return bundesliga, daten_quelle, lade_bundesliga_tabelle, pd
+    return bundesliga, daten_quelle, lade_bundesliga_tabelle, pl
 
 
 @app.cell
@@ -125,9 +137,9 @@ def _():
 
 
 @app.cell
-def _(pd):
+def _(pl):
     # Erweiterte Spieler-Daten für Aggregationsübungen
-    spieler = pd.DataFrame({
+    spieler = pl.DataFrame({
         "Name": ["Müller", "Neuer", "Kimmich", "Sané", "Musiala", "Gündogan",
                  "Havertz", "Wirtz", "Füllkrug", "Schlotterbeck", "Rüdiger", "Tah",
                  "Gnabry", "Goretzka", "ter Stegen", "Baumann"],
@@ -333,7 +345,7 @@ def _(mo):
 @app.cell
 def _(px, tore_by_position):
     px.bar(
-        tore_by_position.to_pandas(),
+        tore_by_position,
         x="Position",
         y="Schnitt_Tore",
         title="Durchschnittliche Tore nach Position",
@@ -632,11 +644,11 @@ def _(bundesliga, mo):
 def _(bundesliga, mo, px, team_punkte):
     # Durchschnitt berechnen
     avg_result = mo.sql(f"SELECT AVG(Punkte) AS avg FROM bundesliga")
-    avg_punkte = avg_result.to_pandas().iloc[0, 0]
+    avg_punkte = avg_result.item(0, 0)
 
     # Balkendiagramm mit Referenzlinie
     fig = px.bar(
-        team_punkte.to_pandas(),
+        team_punkte,
         x="Mannschaft",
         y="Punkte",
         title="Bundesliga: Punkte pro Team mit Liga-Durchschnitt",

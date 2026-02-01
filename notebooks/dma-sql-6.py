@@ -1,3 +1,10 @@
+# /// script
+# requires-python = ">=3.11"
+# dependencies = [
+#     "marimo",
+# ]
+# ///
+
 import marimo
 
 __generated_with = "0.13.0"
@@ -14,10 +21,18 @@ def _():
 
 
 @app.cell(hide_code=True)
+def _():
+    import plotly.express as px
+    return (px,)
+
+
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
         # Session 6: Entity-Relationship-Modellierung
+
+        **Kursfahrplan:** I: SQL-Grundlagen (S1–4) · **▸ II: Datenmodellierung (S5–8)** · III: Fortgeschrittenes SQL (S9–10) · IV: Datenanalyse (S11–14)
 
         In dieser Session lernen Sie:
 
@@ -102,6 +117,8 @@ def _(mo):
     mo.md(
         r"""
         ## Quiz: Kardinalitäten bestimmen
+
+        > **Vorhersage:** Von den 7 Szenarien unten — wie viele sind 1:1, wie viele 1:N und wie viele M:N? Schätzen Sie die Verteilung, bevor Sie die Quizfragen beantworten.
 
         Bestimmen Sie für jedes Beispiel die richtige Kardinalität!
         """
@@ -604,6 +621,50 @@ def _(mo):
 - **M:N:** Autor ↔ Buch (aufgelöst durch implizite Beziehungstabelle)
 
 *Dieses Szenario kombiniert alle Beziehungstypen, die wir kennengelernt haben!*
+
+---
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+### Visualisierung: Attribute pro Entität
+
+Wie komplex sind die einzelnen Entitäten in unserem Bibliotheks-Modell?
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(px):
+    _entitaeten = ["Verlag", "Buch", "Autor", "Exemplar", "Student", "Ausleihe"]
+    _attribute = [3, 4, 2, 3, 2, 5]  # inkl. PK und FK
+    _typen = ["Starke Entität", "Starke Entität", "Starke Entität",
+              "Schwache Entität", "Starke Entität", "Beziehungstabelle"]
+
+    _fig = px.bar(
+        x=_entitaeten,
+        y=_attribute,
+        color=_typen,
+        title="Attribute pro Entität (Bibliotheks-Modell)",
+        labels={"x": "Entität", "y": "Anzahl Attribute", "color": "Typ"},
+        color_discrete_map={
+            "Starke Entität": "#003560",
+            "Schwache Entität": "#E87722",
+            "Beziehungstabelle": "#5B9BD5",
+        },
+    )
+    _fig.update_layout(xaxis_title="", yaxis_title="Anzahl Attribute")
+    _fig
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+**Beobachtung:** Die **Ausleihe** als Beziehungstabelle hat die meisten Attribute (inkl. Fremdschlüssel und Beziehungsattribute). Schwache Entitäten wie **Exemplar** brauchen den Schlüssel der übergeordneten Entität.
 
 ---
     """)

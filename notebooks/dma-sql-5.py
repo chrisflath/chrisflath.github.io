@@ -1,3 +1,12 @@
+# /// script
+# requires-python = ">=3.11"
+# dependencies = [
+#     "marimo",
+#     "polars",
+#     "plotly",
+# ]
+# ///
+
 import marimo
 
 __generated_with = "0.13.0"
@@ -18,6 +27,8 @@ def _(mo):
     mo.md(
         r"""
         # Session 5: Warum mehrere Tabellen?
+
+        **Kursfahrplan:** I: SQL-Grundlagen (S1–4) · **▸ II: Datenmodellierung (S5–8)** · III: Fortgeschrittenes SQL (S9–10) · IV: Datenanalyse (S11–14)
 
         In dieser Session lernen Sie:
 
@@ -47,11 +58,11 @@ def _(mo):
 
 @app.cell
 def _():
-    import pandas as pd
+    import polars as pl
     import plotly.express as px
 
     # Die "schlechte" Mega-Tabelle mit Redundanzen
-    spieler_schlecht = pd.DataFrame({
+    spieler_schlecht = pl.DataFrame({
         "Spieler": ["Müller", "Neuer", "Kimmich", "Sane", "Musiala",
                     "Wirtz", "Tah", "Frimpong",
                     "Füllkrug", "Nmecha"],
@@ -74,7 +85,7 @@ def _():
                           1895, 1895]
     })
     spieler_schlecht
-    return pd, px, spieler_schlecht
+    return pl, px, spieler_schlecht
 
 
 @app.cell(hide_code=True)
@@ -122,13 +133,13 @@ def _(mo):
 
 
 @app.cell
-def _(pd, px, spieler_schlecht):
+def _(pl, px, spieler_schlecht):
     _redundanz = (
         spieler_schlecht
-        .groupby("Verein")
-        .size()
-        .reset_index(name="Anzahl_Einträge")
-        .sort_values("Anzahl_Einträge", ascending=True)
+        .group_by("Verein")
+        .len()
+        .rename({"len": "Anzahl_Einträge"})
+        .sort("Anzahl_Einträge")
     )
     px.bar(
         _redundanz,
@@ -181,6 +192,38 @@ def _(mo, spieler_schlecht):
 def _(mo):
     mo.md(
         r"""
+        ### 🟡 Aufgabe 5.2a: Redundanz pro Verein (scaffolded)
+
+        Wie oft werden die Daten jedes Vereins wiederholt?
+        Ergänze die fehlende Berechnung:
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, spieler_schlecht):
+    # Ergänze: COUNT(*) - 1 berechnet die redundanten Zeilen; GROUP BY Verein
+    _df = mo.sql(
+        f"""
+        SELECT
+            Verein,
+            COUNT(*) AS Gesamt_Zeilen,
+            ??? AS Redundante_Zeilen
+        FROM spieler_schlecht
+        GROUP BY ???
+        ORDER BY Redundante_Zeilen DESC
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        > **Vorhersage:** Stellen Sie sich vor, Bayern München benennt sein Stadion um. In wie vielen Zeilen der Mega-Tabelle müssten wir den Namen ändern? Was passiert, wenn wir eine Zeile vergessen?
+
         ---
 
         ## Phase 3: Anomalien erleben
@@ -196,17 +239,19 @@ def _(mo):
 
 
 @app.cell
-def _(pd, spieler_schlecht):
-    # Kopie erstellen für die Demonstration
-    spieler_nach_update = spieler_schlecht.copy()
-
+def _(pl, spieler_schlecht):
     # "Fehlerhaftes" Update: Wir ändern nur 4 von 5 Bayern-Spielern
-    maske = (spieler_nach_update["Verein"] == "Bayern München") & \
-            (spieler_nach_update["Spieler"] != "Musiala")
-    spieler_nach_update.loc[maske, "Stadion"] = "FC Bayern Arena"
+    spieler_nach_update = spieler_schlecht.with_columns(
+        pl.when(
+            (pl.col("Verein") == "Bayern München") & (pl.col("Spieler") != "Musiala")
+        )
+        .then(pl.lit("FC Bayern Arena"))
+        .otherwise(pl.col("Stadion"))
+        .alias("Stadion")
+    )
 
     spieler_nach_update
-    return maske, spieler_nach_update
+    return (spieler_nach_update,)
 
 
 @app.cell(hide_code=True)
@@ -246,6 +291,56 @@ def _(mo):
 
         ---
 
+        ### Aufgabe 5.2b: Einfügeanomalie erleben
+
+        **Szenario:** Was, wenn wir einen neuen Verein in unsere Datenbank aufnehmen wollen,
+        aber noch keinen Spieler für diesen Verein haben?
+
+        In der Mega-Tabelle geht das nicht -- jede Zeile **muss** einen Spieler enthalten,
+        weil Spieler- und Vereinsdaten in derselben Tabelle stecken.
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, spieler_schlecht):
+    # Versuch: "1. FC Köln" ohne Spieler einfügen
+    _df = mo.sql(
+        f"""
+        SELECT * FROM (
+            SELECT * FROM spieler_schlecht
+            UNION ALL
+            SELECT
+                NULL AS Spieler,
+                NULL AS Position,
+                '1. FC Köln' AS Verein,
+                'Köln' AS Vereinsort,
+                'RheinEnergieStadion' AS Stadion,
+                1948 AS Gründungsjahr
+        )
+        ORDER BY Verein, Spieler
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        **Problem erkannt?** Wir mussten `NULL`-Werte für `Spieler` und `Position` eintragen,
+        weil die Tabelle diese Spalten in jeder Zeile erwartet. Das ist die **Einfügeanomalie**:
+
+        - Wir können **keine Vereinsinformationen** speichern, solange kein Spieler existiert
+        - Die `NULL`-Werte erzeugen unvollständige, schwer auswertbare Datensätze
+        - Bei Abfragen wie `COUNT(Spieler)` oder `WHERE Position = 'Sturm'` führen die `NULL`-Einträge zu unerwartetem Verhalten
+
+        > **Einfügeanomalie:** Neue Informationen können nicht hinzugefügt werden,
+        > ohne gleichzeitig **andere, zusammenhanglose** Daten angeben zu müssen.
+
+        ---
+
         ### Aufgabe 5.4: Löschanomalie erleben
 
         **Szenario:** Wirtz, Tah und Frimpong wechseln alle ins Ausland.
@@ -256,14 +351,14 @@ def _(mo):
 
 
 @app.cell
-def _(pd, spieler_schlecht):
+def _(pl, spieler_schlecht):
     # Zurück zur Original-Tabelle
-    spieler_vor_delete = spieler_schlecht.copy()
+    spieler_vor_delete = spieler_schlecht.clone()
 
     # Alle Leverkusen-Spieler löschen
-    spieler_nach_delete = spieler_vor_delete[
-        spieler_vor_delete["Verein"] != "Bayer Leverkusen"
-    ].copy()
+    spieler_nach_delete = spieler_vor_delete.filter(
+        pl.col("Verein") != "Bayer Leverkusen"
+    )
 
     spieler_nach_delete
     return spieler_nach_delete, spieler_vor_delete
@@ -276,7 +371,7 @@ def _(mo):
         **Was ist passiert?** Wir haben alle Informationen über Bayer Leverkusen verloren!
 
         - Wo ist der Vereinssitz? Weg.
-        - Wie heisst das Stadion? Weg.
+        - Wie heißt das Stadion? Weg.
         - Wann wurde der Verein gegründet? Weg.
 
         Prüfen wir, welche Vereine wir noch kennen:
@@ -368,9 +463,9 @@ def _(mo):
 
 
 @app.cell
-def _(pd):
+def _(pl):
     # Tabelle 1: Vereine (jeder Verein nur EINMAL)
-    vereine = pd.DataFrame({
+    vereine = pl.DataFrame({
         "Verein_ID": [1, 2, 3],
         "Verein": ["Bayern München", "Bayer Leverkusen", "West Ham United"],
         "Vereinsort": ["München", "Leverkusen", "London"],
@@ -382,9 +477,9 @@ def _(pd):
 
 
 @app.cell
-def _(pd):
+def _(pl):
     # Tabelle 2: Spieler (mit Verweis auf Verein)
-    spieler_gut = pd.DataFrame({
+    spieler_gut = pl.DataFrame({
         "Spieler_ID": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
         "Spieler": ["Müller", "Neuer", "Kimmich", "Sane", "Musiala",
                     "Wirtz", "Tah", "Frimpong",
@@ -443,8 +538,8 @@ def _(mo):
 
 
 @app.cell
-def _(pd, px):
-    _vergleich = pd.DataFrame({
+def _(pl, px):
+    _vergleich = pl.DataFrame({
         "Design": ["Mega-Tabelle", "Mega-Tabelle", "Normalisiert", "Normalisiert"],
         "Kategorie": ["Gespeicherte Zeilen", "Eindeutige Fakten",
                        "Gespeicherte Zeilen", "Eindeutige Fakten"],
@@ -485,12 +580,14 @@ def _(mo):
 
 
 @app.cell
-def _(pd, vereine):
-    # Kopie für Update
-    vereine_update = vereine.copy()
-
+def _(pl, vereine):
     # Stadion ändern -- nur EINE Zeile!
-    vereine_update.loc[vereine_update["Verein"] == "Bayern München", "Stadion"] = "FC Bayern Arena"
+    vereine_update = vereine.with_columns(
+        pl.when(pl.col("Verein") == "Bayern München")
+        .then(pl.lit("FC Bayern Arena"))
+        .otherwise(pl.col("Stadion"))
+        .alias("Stadion")
+    )
 
     vereine_update
     return (vereine_update,)
@@ -513,9 +610,9 @@ def _(mo):
 
 
 @app.cell
-def _(spieler_gut):
+def _(pl, spieler_gut):
     # Leverkusen-Spieler löschen (Verein_ID = 2)
-    spieler_nach_delete_gut = spieler_gut[spieler_gut["Verein_ID"] != 2].copy()
+    spieler_nach_delete_gut = spieler_gut.filter(pl.col("Verein_ID") != 2)
     spieler_nach_delete_gut
     return (spieler_nach_delete_gut,)
 

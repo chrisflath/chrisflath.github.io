@@ -154,7 +154,7 @@ def _(mo, retail_sales):
 @app.cell
 def _(px, total_sales):
     fig_total = px.line(
-        total_sales.to_pandas(),
+        total_sales,
         x="sales_month",
         y="sales",
         title="US Retail Sales - Gesamt (1992-2020)",
@@ -168,6 +168,8 @@ def _(mo):
     mo.md(
         r"""
         **Beobachtung:** Deutlicher Aufwärtstrend mit starker Saisonalität (Weihnachtsgeschäft).
+
+        > **Vorhersage:** Betrachten Sie die Zeitreihe oben. Um wie viel Prozent schätzen Sie den typischen Dezember-Umsatz höher als den Jahresdurchschnitt? Und was passiert im Jahr 2020?
 
         ---
 
@@ -285,13 +287,13 @@ def _(mo, retail_sales):
 @app.cell
 def _(monthly_change, px):
     fig_change = px.bar(
-        monthly_change.to_pandas().dropna(),
+        monthly_change.drop_nulls(),
         x="sales_month",
         y="pct_change",
         title="Monatliche Umsatzänderung - Juweliere (%)",
         labels={"sales_month": "Monat", "pct_change": "Änderung (%)"}
     )
-    fig_change.update_traces(marker_color=["green" if x > 0 else "red" for x in monthly_change.to_pandas()["pct_change"].dropna()])
+    fig_change.update_traces(marker_color=["green" if x > 0 else "red" for x in monthly_change.drop_nulls().get_column("pct_change")])
     fig_change
 
 
@@ -368,7 +370,7 @@ def _(mo, retail_sales):
 
 @app.cell
 def _(ma_12, px):
-    ma_df = ma_12.to_pandas()
+    ma_df = ma_12
     fig_ma = px.line(
         ma_df,
         x="sales_month",
@@ -454,7 +456,7 @@ def _(mo, retail_sales):
 
 @app.cell
 def _(px, yoy):
-    yoy_df = yoy.to_pandas().dropna()
+    yoy_df = yoy.drop_nulls()
     fig_yoy = px.line(
         yoy_df,
         x="sales_month",
@@ -523,7 +525,7 @@ def _(mo, retail_sales):
 @app.cell
 def _(indexed, px):
     fig_indexed = px.line(
-        indexed.to_pandas(),
+        indexed,
         x="sales_month",
         y="pct_from_base",
         title="Indexierte Verkaufszahlen - Damenbekleidung (Basis: Jan 1992)",
@@ -570,7 +572,7 @@ def _(mo, retail_sales):
 @app.cell
 def _(men_vs_women, px):
     fig_ratio = px.line(
-        men_vs_women.to_pandas(),
+        men_vs_women,
         x="year",
         y="womens_to_mens_ratio",
         title="Verhältnis Damen- zu Herrenbekleidung (jährlich)",
@@ -611,7 +613,7 @@ def _(mo, retail_sales):
 @app.cell
 def _(px, seasonal_pattern):
     fig_seasonal = px.line(
-        seasonal_pattern.to_pandas(),
+        seasonal_pattern,
         x="month_num",
         y="avg_sales",
         color="kind_of_business",
