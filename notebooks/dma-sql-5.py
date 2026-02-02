@@ -12,7 +12,7 @@ import marimo
 __generated_with = "0.13.0"
 app = marimo.App(
     width="medium",
-    app_title="DMA Session 5: Datenmodellierung",
+    app_title="DMA Session 5: Datenmodellierung \u2014 \u00dcbungen",
 )
 
 
@@ -26,38 +26,17 @@ def _():
 def _(mo):
     mo.md(
         r"""
-        # Session 5: Datenmodellierung -- Von Anomalien zum ER-Modell
+        # Session 5: Datenmodellierung — Übungen
 
-        **Kursfahrplan:** I: SQL-Grundlagen (S1–4) · **▸ II: Datenmodellierung (S5–7)** · III: Fortgeschrittenes SQL (S8–9) · IV: Datenanalyse (S10–13)
+        Theorie und geführte Beispiele → **05-datenmodellierung-guide.py**
 
-        In dieser Session lernen Sie:
-
-        - Probleme der **Redundanz** in Datenbanken
-        - Die drei **Anomalien**: Änderungs-, Einfüge-, Löschanomalie
-        - Warum wir Daten auf **mehrere Tabellen** aufteilen
-        - **Entitäten**, **Attribute** und **Beziehungen** modellieren
-        - **Kardinalitäten** (1:1, 1:N, M:N) bestimmen
-        - Die **Crow's Foot Notation** für ER-Diagramme
+        **Aufgabentypen:**
+        - 🟡 **Scaffolded**: Teillösung zum Ergänzen
+        - 🔵 **Selbstständig**: Eigene Lösung schreiben
+        - 🔴 **Debugging**: Fehler finden und beheben
+        - ⭐ **Exploration**: Offene Herausforderungen
 
         ---
-        """
-    )
-    return
-
-
-# ============================================================
-# Teil 1: Redundanz und Anomalien
-# ============================================================
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ## Die "Mega-Tabelle": Ein problematisches Design
-
-        Stellen wir uns vor, wir verwalten Spieler und ihre Vereine in **einer** Tabelle.
-        Das scheint zunächst praktisch -- alles an einem Ort!
         """
     )
     return
@@ -70,12 +49,10 @@ def _():
 
     # Die "schlechte" Mega-Tabelle mit Redundanzen
     spieler_schlecht = pl.DataFrame({
-        "Spieler": ["Müller", "Neuer", "Kimmich", "Sane", "Musiala",
-                    "Wirtz", "Tah", "Frimpong",
-                    "Füllkrug", "Nmecha"],
+        "Spieler": ["Müller", "Neuer", "Kimmich", "Sané", "Musiala",
+                    "Wirtz", "Tah", "Frimpong", "Füllkrug", "Nmecha"],
         "Position": ["Sturm", "Tor", "Mittelfeld", "Sturm", "Mittelfeld",
-                     "Mittelfeld", "Abwehr", "Abwehr",
-                     "Sturm", "Sturm"],
+                     "Mittelfeld", "Abwehr", "Abwehr", "Sturm", "Sturm"],
         "Verein": ["Bayern München", "Bayern München", "Bayern München",
                    "Bayern München", "Bayern München",
                    "Bayer Leverkusen", "Bayer Leverkusen", "Bayer Leverkusen",
@@ -88,24 +65,57 @@ def _():
                     "BayArena", "BayArena", "BayArena",
                     "London Stadium", "London Stadium"],
         "Gründungsjahr": [1900, 1900, 1900, 1900, 1900,
-                          1904, 1904, 1904,
-                          1895, 1895]
+                          1904, 1904, 1904, 1895, 1895]
     })
+
+    # Normalisierte Tabelle: Vereine (jeder Verein nur EINMAL)
+    vereine = pl.DataFrame({
+        "Verein_ID": [1, 2, 3],
+        "Verein": ["Bayern München", "Bayer Leverkusen", "West Ham United"],
+        "Vereinsort": ["München", "Leverkusen", "London"],
+        "Stadion": ["Allianz Arena", "BayArena", "London Stadium"],
+        "Gründungsjahr": [1900, 1904, 1895]
+    })
+
+    # Normalisierte Tabelle: Spieler (mit Verweis auf Verein)
+    spieler_gut = pl.DataFrame({
+        "Spieler_ID": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        "Spieler": ["Müller", "Neuer", "Kimmich", "Sané", "Musiala",
+                    "Wirtz", "Tah", "Frimpong", "Füllkrug", "Nmecha"],
+        "Position": ["Sturm", "Tor", "Mittelfeld", "Sturm", "Mittelfeld",
+                     "Mittelfeld", "Abwehr", "Abwehr", "Sturm", "Sturm"],
+        "Verein_ID": [1, 1, 1, 1, 1, 2, 2, 2, 3, 3]
+    })
+
     spieler_schlecht
-    return pl, px, spieler_schlecht
+    return pl, px, spieler_gut, spieler_schlecht, vereine
+
+
+# ============================================================
+# Phase 2: Redundanz identifizieren
+# ============================================================
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        ---
-
         ## Phase 2: Redundanz identifizieren
 
-        ### Aufgabe 5.1: Wie oft wird jede Vereinsinformation gespeichert?
+        ---
+        """
+    )
+    return
 
-        Zählen Sie, wie oft jeder Verein in der Tabelle vorkommt.
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🟢 Aufgabe 2.1: Redundanz zählen
+
+        Wie oft wird jede Vereinsinformation in der Mega-Tabelle gespeichert?
+        Führen Sie die Abfrage aus und beobachten Sie die Wiederholungen:
         """
     )
     return
@@ -115,11 +125,7 @@ def _(mo):
 def _(mo, spieler_schlecht):
     _df = mo.sql(
         f"""
-        SELECT
-            Verein,
-            Vereinsort,
-            Stadion,
-            COUNT(*) AS Anzahl_Wiederholungen
+        SELECT Verein, Vereinsort, Stadion, COUNT(*) AS Anzahl_Wiederholungen
         FROM spieler_schlecht
         GROUP BY Verein, Vereinsort, Stadion
         ORDER BY Anzahl_Wiederholungen DESC
@@ -132,50 +138,10 @@ def _(mo, spieler_schlecht):
 def _(mo):
     mo.md(
         r"""
-        **Sichtbar gemacht:** Das folgende Diagramm zeigt, wie oft jede Vereinsinformation
-        in der Mega-Tabelle wiederholt wird. Jede Wiederholung über 1 ist reine Redundanz.
-        """
-    )
-    return
+        ### 🟡 Aufgabe 2.2: Redundanz pro Verein
 
-
-@app.cell
-def _(pl, px, spieler_schlecht):
-    _redundanz = (
-        spieler_schlecht
-        .group_by("Verein")
-        .len()
-        .rename({"len": "Anzahl_Einträge"})
-        .sort("Anzahl_Einträge")
-    )
-    px.bar(
-        _redundanz,
-        x="Anzahl_Einträge",
-        y="Verein",
-        color="Verein",
-        orientation="h",
-        title="Wie oft wird jeder Verein in der Mega-Tabelle gespeichert?",
-        labels={"Anzahl_Einträge": "Anzahl Wiederholungen", "Verein": ""},
-        color_discrete_sequence=["#003560", "#E87722", "#5B9BD5"],
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        **Beobachtung:** Die Vereinsinformationen (Ort, Stadion, Gründungsjahr)
-        werden für jeden Spieler wiederholt -- das ist **Redundanz**!
-
-        Bayern München hat 5 Spieler, also werden "München" und "Allianz Arena"
-        **5 Mal** gespeichert, obwohl es nur **ein** Verein ist.
-
-        ---
-
-        ### Aufgabe 5.2: Wie viel Speicherplatz "verschwenden" wir?
-
-        Berechnen Sie die theoretische Redundanz:
+        Wie viele Zeilen sind pro Verein **redundant**?
+        Ergänzen Sie die fehlenden `???`:
         """
     )
     return
@@ -183,34 +149,6 @@ def _(mo):
 
 @app.cell
 def _(mo, spieler_schlecht):
-    _df = mo.sql(
-        f"""
-        SELECT
-            COUNT(*) AS Gesamtzeilen,
-            COUNT(DISTINCT Verein) AS Verschiedene_Vereine,
-            COUNT(*) - COUNT(DISTINCT Verein) AS Redundante_Vereinseinträge
-        FROM spieler_schlecht
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ### Aufgabe 5.2a: Redundanz pro Verein (scaffolded)
-
-        Wie oft werden die Daten jedes Vereins wiederholt?
-        Ergänze die fehlende Berechnung:
-        """
-    )
-    return
-
-
-@app.cell
-def _(mo, spieler_schlecht):
-    # Ergänze: COUNT(*) - 1 berechnet die redundanten Zeilen; GROUP BY Verein
     _df = mo.sql(
         f"""
         SELECT
@@ -220,6 +158,7 @@ def _(mo, spieler_schlecht):
         FROM spieler_schlecht
         GROUP BY ???
         ORDER BY Redundante_Zeilen DESC
+        -- Tipp: COUNT(*) - 1 berechnet redundante Zeilen, GROUP BY Verein
         """
     )
     return
@@ -227,7 +166,7 @@ def _(mo, spieler_schlecht):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.accordion({"Musterlösung": mo.md("""
+    mo.accordion({"🔑 Musterlösung": mo.md("""
 ```sql
 SELECT
     Verein,
@@ -237,6 +176,8 @@ FROM spieler_schlecht
 GROUP BY Verein
 ORDER BY Redundante_Zeilen DESC
 ```
+
+**Erklärung:** Jeder Verein muss nur **einmal** gespeichert werden. Alle weiteren Zeilen (`COUNT(*) - 1`) sind reine Redundanz. Bayern München hat 5 Spieler, also 4 redundante Vereinseinträge.
 """)})
     return
 
@@ -245,17 +186,112 @@ ORDER BY Redundante_Zeilen DESC
 def _(mo):
     mo.md(
         r"""
-        > **Vorhersage:** Stellen Sie sich vor, Bayern München benennt sein Stadion um. In wie vielen Zeilen der Mega-Tabelle müssten wir den Namen ändern? Was passiert, wenn wir eine Zeile vergessen?
+        ### 🔵 Aufgabe 2.3: Speicherplatz-Berechnung
+
+        Berechnen Sie für die gesamte Mega-Tabelle:
+        - Wie viele **Gesamtzeilen** gibt es?
+        - Wie viele **verschiedene Vereine** existieren?
+        - Wie viele **redundante Vereinseinträge** gibt es (Differenz)?
+
+        **Hinweis:** Verwenden Sie `COUNT(*)`, `COUNT(DISTINCT Verein)` und die Differenz.
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, spieler_schlecht):
+    _df = mo.sql(
+        f"""
+        -- 🔵 Schreiben Sie Ihre Abfrage:
+        SELECT 'Ihre Lösung hier' AS Hinweis;
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    COUNT(*) AS Gesamtzeilen,
+    COUNT(DISTINCT Verein) AS Verschiedene_Vereine,
+    COUNT(*) - COUNT(DISTINCT Verein) AS Redundante_Vereinseinträge
+FROM spieler_schlecht
+```
+
+**Ergebnis:** 10 Gesamtzeilen, 3 verschiedene Vereine, also **7 redundante** Vereinseinträge. Das bedeutet: 70% der Vereinsinformationen sind überflüssig gespeichert!
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔴 Aufgabe 2.4: Fehlende GROUP BY
+
+        Die folgende Abfrage hat einen Fehler. Finden und beheben Sie ihn:
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, spieler_schlecht):
+    _df = mo.sql(
+        f"""
+        -- 🔴 Diese Abfrage hat einen Fehler — finden und beheben Sie ihn!
+        SELECT Verein, COUNT(DISTINCT Vereinsort) AS Verschiedene_Orte
+        FROM spieler_schlecht
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Lösung": mo.md("""
+**Fehler:** Es fehlt `GROUP BY Verein`! Ohne `GROUP BY` weiß SQL nicht, für welchen Verein die Zählung gelten soll.
+
+**Korrektur:**
+```sql
+SELECT Verein, COUNT(DISTINCT Vereinsort) AS Verschiedene_Orte
+FROM spieler_schlecht
+GROUP BY Verein
+```
+
+**Merke:** Sobald Sie eine Aggregatfunktion (`COUNT`, `SUM`, ...) zusammen mit einer normalen Spalte verwenden, brauchen Sie `GROUP BY` für die normale Spalte.
+""")})
+    return
+
+
+# ============================================================
+# Phase 4: Anomalien erleben
+# ============================================================
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ## Phase 4: Anomalien erleben
 
         ---
+        """
+    )
+    return
 
-        ## Phase 3: Anomalien erleben
 
-        ### Aufgabe 5.3: Änderungsanomalie provozieren
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🟢 Aufgabe 4.1: Änderungsanomalie erleben
 
         **Szenario:** Bayern München baut ein neues Stadion namens "FC Bayern Arena".
-
-        Führen wir ein UPDATE durch -- aber "vergessen" wir absichtlich eine Zeile:
+        Wir führen ein Update durch — aber "vergessen" absichtlich einen Spieler (Musiala):
         """
     )
     return
@@ -272,7 +308,6 @@ def _(pl, spieler_schlecht):
         .otherwise(pl.col("Stadion"))
         .alias("Stadion")
     )
-
     spieler_nach_update
     return (spieler_nach_update,)
 
@@ -281,12 +316,10 @@ def _(pl, spieler_schlecht):
 def _(mo):
     mo.md(
         r"""
-        **Problem erkannt?** Musiala spielt noch in der "Allianz Arena",
-        während alle anderen Bayern-Spieler in der "FC Bayern Arena" sind!
+        **Inkonsistenz!** Musiala spielt noch in der "Allianz Arena",
+        alle anderen Bayern-Spieler in der "FC Bayern Arena".
 
-        Das ist eine **Inkonsistenz** -- die Daten widersprechen sich.
-
-        Prüfen wir das mit einer Abfrage:
+        Prüfen Sie die Inkonsistenz mit einer Abfrage:
         """
     )
     return
@@ -308,233 +341,10 @@ def _(mo, spieler_nach_update):
 def _(mo):
     mo.md(
         r"""
-        **Änderungsanomalie:** Bei redundanten Daten müssen Änderungen an
-        **allen** Stellen durchgeführt werden. Vergisst man eine, entstehen
-        Inkonsistenzen.
+        ### 🟡 Aufgabe 4.2: Normalisierte Tabelle prüfen
 
-        ---
-
-        ### Aufgabe 5.4: Einfügeanomalie erleben
-
-        **Szenario:** Was, wenn wir einen neuen Verein in unsere Datenbank aufnehmen wollen,
-        aber noch keinen Spieler für diesen Verein haben?
-
-        In der Mega-Tabelle geht das nicht -- jede Zeile **muss** einen Spieler enthalten,
-        weil Spieler- und Vereinsdaten in derselben Tabelle stecken.
-        """
-    )
-    return
-
-
-@app.cell
-def _(mo, spieler_schlecht):
-    # Versuch: "1. FC Köln" ohne Spieler einfügen
-    _df = mo.sql(
-        f"""
-        SELECT * FROM (
-            SELECT * FROM spieler_schlecht
-            UNION ALL
-            SELECT
-                NULL AS Spieler,
-                NULL AS Position,
-                '1. FC Köln' AS Verein,
-                'Köln' AS Vereinsort,
-                'RheinEnergieStadion' AS Stadion,
-                1948 AS Gründungsjahr
-        )
-        ORDER BY Verein, Spieler
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        **Problem erkannt?** Wir mussten `NULL`-Werte für `Spieler` und `Position` eintragen,
-        weil die Tabelle diese Spalten in jeder Zeile erwartet. Das ist die **Einfügeanomalie**:
-
-        - Wir können **keine Vereinsinformationen** speichern, solange kein Spieler existiert
-        - Die `NULL`-Werte erzeugen unvollständige, schwer auswertbare Datensätze
-        - Bei Abfragen wie `COUNT(Spieler)` oder `WHERE Position = 'Sturm'` führen die `NULL`-Einträge zu unerwartetem Verhalten
-
-        > **Einfügeanomalie:** Neue Informationen können nicht hinzugefügt werden,
-        > ohne gleichzeitig **andere, zusammenhanglose** Daten angeben zu müssen.
-
-        ---
-
-        ### Aufgabe 5.5: Löschanomalie erleben
-
-        **Szenario:** Wirtz, Tah und Frimpong wechseln alle ins Ausland.
-        Wir löschen sie aus unserer Tabelle.
-        """
-    )
-    return
-
-
-@app.cell
-def _(pl, spieler_schlecht):
-    # Zurück zur Original-Tabelle
-    spieler_vor_delete = spieler_schlecht.clone()
-
-    # Alle Leverkusen-Spieler löschen
-    spieler_nach_delete = spieler_vor_delete.filter(
-        pl.col("Verein") != "Bayer Leverkusen"
-    )
-
-    spieler_nach_delete
-    return spieler_nach_delete, spieler_vor_delete
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        **Was ist passiert?** Wir haben alle Informationen über Bayer Leverkusen verloren!
-
-        - Wo ist der Vereinssitz? Weg.
-        - Wie heißt das Stadion? Weg.
-        - Wann wurde der Verein gegründet? Weg.
-
-        Prüfen wir, welche Vereine wir noch kennen:
-        """
-    )
-    return
-
-
-@app.cell
-def _(mo, spieler_nach_delete):
-    _df = mo.sql(
-        f"""
-        SELECT DISTINCT Verein, Vereinsort, Stadion
-        FROM spieler_nach_delete
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        **Löschanomalie:** Beim Löschen von Daten gehen ungewollt
-        **andere Informationen** verloren, die wir eigentlich behalten wollten.
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    quiz_anomalie = mo.ui.radio(
-        options={
-            "correct": "Löschanomalie -- Vereinsinformationen gingen verloren",
-            "aenderung": "Änderungsanomalie -- ein Verein ist nicht kohärent aktualisiert",
-            "einfuege": "Einfügeanomalie -- wir konnten nicht alle Infos auf einmal speichern",
-            "normal": "Normalisierungsanomalie -- die Tabelle ist nicht in 3NF",
-        },
-        label="**Quiz:** Wir haben alle Leverkusen-Spieler gelöscht. Jetzt wissen wir nicht mehr, wo Leverkusen liegt oder wie das Stadion heißt. Welche Anomalie ist das?"
-    )
-    quiz_anomalie
-    return (quiz_anomalie,)
-
-
-@app.cell(hide_code=True)
-def _(quiz_anomalie, mo):
-    if quiz_anomalie.value == "correct":
-        mo.output.replace(mo.md("Richtig! Das ist die **Löschanomalie**: Beim Löschen von Spielerdaten gehen ungewollt auch die Vereinsinformationen verloren, weil beides in derselben Tabelle gespeichert ist."))
-    elif quiz_anomalie.value:
-        mo.output.replace(mo.md("Nicht ganz. Beim **Löschen** von Daten gehen *andere* Informationen verloren -- das ist die Löschanomalie. Tipp: Der Name der Anomalie beschreibt die Aktion, die das Problem verursacht."))
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ---
-
-        ## Pause: Zeit für Reflexion
-
-        Bevor wir zur Lösung kommen, überlegen Sie:
-
-        1. Warum passieren diese Probleme?
-        2. Was haben Spieler und Vereine gemeinsam, das getrennt werden könnte?
-
-        ---
-        """
-    )
-    return
-
-
-# ============================================================
-# Teil 2: Die Lösung -- Daten aufteilen
-# ============================================================
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ## Phase 5: Die Lösung -- Daten aufteilen
-
-        Die Lösung ist einfach: **Jedes "Ding" bekommt seine eigene Tabelle!**
-
-        - Spieler sind ein "Ding" (Entität)
-        - Vereine sind ein anderes "Ding" (Entität)
-
-        Erstellen wir zwei separate Tabellen:
-        """
-    )
-    return
-
-
-@app.cell
-def _(pl):
-    # Tabelle 1: Vereine (jeder Verein nur EINMAL)
-    vereine = pl.DataFrame({
-        "Verein_ID": [1, 2, 3],
-        "Verein": ["Bayern München", "Bayer Leverkusen", "West Ham United"],
-        "Vereinsort": ["München", "Leverkusen", "London"],
-        "Stadion": ["Allianz Arena", "BayArena", "London Stadium"],
-        "Gründungsjahr": [1900, 1904, 1895]
-    })
-    vereine
-    return (vereine,)
-
-
-@app.cell
-def _(pl):
-    # Tabelle 2: Spieler (mit Verweis auf Verein)
-    spieler_gut = pl.DataFrame({
-        "Spieler_ID": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-        "Spieler": ["Müller", "Neuer", "Kimmich", "Sane", "Musiala",
-                    "Wirtz", "Tah", "Frimpong",
-                    "Füllkrug", "Nmecha"],
-        "Position": ["Sturm", "Tor", "Mittelfeld", "Sturm", "Mittelfeld",
-                     "Mittelfeld", "Abwehr", "Abwehr",
-                     "Sturm", "Sturm"],
-        "Verein_ID": [1, 1, 1, 1, 1, 2, 2, 2, 3, 3]  # Verweis auf vereine-Tabelle
-    })
-    spieler_gut
-    return (spieler_gut,)
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        **Beachten Sie:**
-        - Die Vereinsinformationen stehen nur **einmal** in der `vereine`-Tabelle
-        - Die `spieler_gut`-Tabelle hat nur eine `Verein_ID`, die auf die Vereine-Tabelle **verweist**
-        - Diese `Verein_ID` ist ein **Fremdschlüssel**
-
-        ---
-
-        ### Aufgabe 5.6: Redundanz prüfen (verbessertes Design)
-
-        Wie viel Redundanz haben wir jetzt noch?
+        Prüfen Sie: Gibt es in der normalisierten `vereine`-Tabelle noch Redundanz?
+        Ergänzen Sie die `???`:
         """
     )
     return
@@ -544,10 +354,12 @@ def _(mo):
 def _(mo, vereine):
     _df = mo.sql(
         f"""
+        -- Prüfen: Gibt es in der normalisierten Tabelle noch Redundanz?
         SELECT
             COUNT(*) AS Vereine_Gesamt,
-            COUNT(DISTINCT Verein) AS Verschiedene_Vereine
+            COUNT(DISTINCT ???) AS Verschiedene_Vereine
         FROM vereine
+        -- Tipp: Was sollte gleich sein wenn keine Redundanz?
         """
     )
     return
@@ -555,37 +367,16 @@ def _(mo, vereine):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
-        **Perfekt!** Keine Redundanz mehr -- jeder Verein existiert genau einmal.
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    COUNT(*) AS Vereine_Gesamt,
+    COUNT(DISTINCT Verein) AS Verschiedene_Vereine
+FROM vereine
+```
 
-        Vergleichen wir die beiden Designs quantitativ:
-        """
-    )
-    return
-
-
-@app.cell
-def _(pl, px):
-    _vergleich = pl.DataFrame({
-        "Design": ["Mega-Tabelle", "Mega-Tabelle", "Normalisiert", "Normalisiert"],
-        "Kategorie": ["Gespeicherte Zeilen", "Eindeutige Fakten",
-                       "Gespeicherte Zeilen", "Eindeutige Fakten"],
-        "Anzahl": [10, 3, 13, 13]  # Mega: 10 Zeilen, 3 Vereine; Normal: 3+10=13, alle eindeutig
-    })
-    px.bar(
-        _vergleich,
-        x="Design",
-        y="Anzahl",
-        color="Kategorie",
-        barmode="group",
-        title="Mega-Tabelle vs. normalisiertes Design",
-        labels={"Anzahl": "Anzahl", "Design": ""},
-        color_discrete_map={
-            "Gespeicherte Zeilen": "#003560",
-            "Eindeutige Fakten": "#E87722"
-        },
-    )
+**Ergebnis:** Beide Werte sind **3 = 3** — keine Redundanz! Jeder Verein existiert genau einmal in der normalisierten Tabelle.
+""")})
     return
 
 
@@ -593,80 +384,12 @@ def _(pl, px):
 def _(mo):
     mo.md(
         r"""
-        In der Mega-Tabelle werden 10 Zeilen gespeichert, aber nur 3 Vereins-Fakten sind
-        tatsächlich verschieden. Im normalisierten Design entspricht jede Zeile einem
-        eindeutigen Fakt -- keine verschwendete Redundanz.
+        ### 🔵 Aufgabe 4.3: JOIN über normalisierte Tabellen
 
-        ---
+        Kombinieren Sie `spieler_gut` und `vereine` per JOIN, um Spieler mit ihrem
+        Vereinsnamen und Stadion anzuzeigen.
 
-        ### Aufgabe 5.7: Änderung testen (verbessertes Design)
-
-        Jetzt ändern wir das Bayern-Stadion -- diesmal richtig:
-        """
-    )
-    return
-
-
-@app.cell
-def _(pl, vereine):
-    # Stadion ändern -- nur EINE Zeile!
-    vereine_update = vereine.with_columns(
-        pl.when(pl.col("Verein") == "Bayern München")
-        .then(pl.lit("FC Bayern Arena"))
-        .otherwise(pl.col("Stadion"))
-        .alias("Stadion")
-    )
-
-    vereine_update
-    return (vereine_update,)
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        **Eine Zeile, eine Änderung, keine Inkonsistenz möglich!**
-
-        ---
-
-        ### Aufgabe 5.8: Löschung testen (verbessertes Design)
-
-        Was passiert, wenn wir jetzt alle Leverkusen-Spieler löschen?
-        """
-    )
-    return
-
-
-@app.cell
-def _(pl, spieler_gut):
-    # Leverkusen-Spieler löschen (Verein_ID = 2)
-    spieler_nach_delete_gut = spieler_gut.filter(pl.col("Verein_ID") != 2)
-    spieler_nach_delete_gut
-    return (spieler_nach_delete_gut,)
-
-
-@app.cell
-def _(vereine):
-    # Aber die Vereine-Tabelle ist unverändert!
-    vereine
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        **Kein Informationsverlust!** Die Vereinsdaten bleiben erhalten,
-        auch wenn wir keine Spieler mehr haben.
-
-        ---
-
-        ## Phase 6: Daten kombinieren (Vorschau auf JOINs)
-
-        Natürlich wollen wir manchmal alle Informationen zusammen sehen.
-        Dafür gibt es den **JOIN** -- aber das ist Thema einer späteren Session.
-
-        Hier ein kleiner Vorgeschmack:
+        **Hinweis:** Verbinden Sie über `Verein_ID` und sortieren Sie nach Verein und Spieler.
         """
     )
     return
@@ -676,14 +399,49 @@ def _(mo):
 def _(mo, spieler_gut, vereine):
     _df = mo.sql(
         f"""
-        SELECT
-            s.Spieler,
-            s.Position,
-            v.Verein,
-            v.Stadion
+        -- 🔵 Schreiben Sie Ihre JOIN-Abfrage:
+        SELECT 'Ihre Lösung hier' AS Hinweis;
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT s.Spieler, s.Position, v.Verein, v.Stadion
+FROM spieler_gut s
+JOIN vereine v ON s.Verein_ID = v.Verein_ID
+ORDER BY v.Verein, s.Spieler
+```
+
+**Erklärung:** Der JOIN kombiniert die beiden Tabellen über den gemeinsamen Schlüssel `Verein_ID`. Die Daten sind getrennt gespeichert (keine Redundanz), können aber jederzeit wieder zusammengeführt werden.
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔴 Aufgabe 4.4: Falsche JOIN-Spalte
+
+        Die folgende Abfrage hat einen Fehler im JOIN. Finden und beheben Sie ihn:
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, spieler_gut, vereine):
+    _df = mo.sql(
+        f"""
+        -- 🔴 Diese Abfrage hat einen Fehler — finden und beheben Sie ihn!
+        SELECT s.Spieler, v.Verein, v.Stadion
         FROM spieler_gut s
-        JOIN vereine v ON s.Verein_ID = v.Verein_ID
-        ORDER BY v.Verein, s.Spieler
+        JOIN vereine v ON s.Spieler_ID = v.Verein_ID
+        ORDER BY v.Verein
         """
     )
     return
@@ -691,19 +449,24 @@ def _(mo, spieler_gut, vereine):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
-        Der JOIN kombiniert die beiden Tabellen wieder -- aber die Daten sind
-        **getrennt gespeichert** und damit anomaliefrei!
+    mo.accordion({"🔑 Lösung": mo.md("""
+**Fehler:** `s.Spieler_ID = v.Verein_ID` verbindet die **falschen** Spalten! Die `Spieler_ID` ist der Primärschlüssel des Spielers und hat nichts mit dem Verein zu tun.
 
-        ---
-        """
-    )
+**Korrektur:**
+```sql
+SELECT s.Spieler, v.Verein, v.Stadion
+FROM spieler_gut s
+JOIN vereine v ON s.Verein_ID = v.Verein_ID
+ORDER BY v.Verein
+```
+
+**Merke:** Beim JOIN muss der **Fremdschlüssel** (`s.Verein_ID`) mit dem **Primärschlüssel** (`v.Verein_ID`) der referenzierten Tabelle verbunden werden.
+""")})
     return
 
 
 # ============================================================
-# Teil 3: ER-Modellierung
+# Phase 6: ER-Modellierung
 # ============================================================
 
 
@@ -711,49 +474,11 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-        ## Von der Lösung zur Methode: ER-Modellierung
-
-        Wir haben gesehen: Die Lösung für Redundanz ist, Daten auf **mehrere Tabellen** aufzuteilen.
-
-        **Die Frage:** Wie wissen wir, *welche* Tabellen wir brauchen?
-
-        Die **Entity-Relationship-Modellierung (ER)** gibt uns eine systematische Methode!
-
-        ---
-
-        ## Kernkonzepte
-
-        | Element | Symbol | Beschreibung |
-        |---------|--------|--------------|
-        | **Entität** | Rechteck | Ein "Ding" der realen Welt (Spieler, Verein) |
-        | **Attribut** | Ellipse | Eigenschaft einer Entität (Name, Alter) |
-        | **Schlüssel** | Unterstrichen | Eindeutige Identifikation |
-        | **Beziehung** | Raute | Verbindung zwischen Entitäten |
+        ## Phase 6: ER-Modellierung
 
         ---
         """
     )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-## Crow's Foot Notation (Kardinalitäten)
-
-In ER-Diagrammen verwenden wir oft die **Crow's Foot Notation**:
-
-| Symbol | Bedeutung |
-|--------|-----------|
-| `\|\|` (Strich) | Genau eins |
-| `o\|` (Kreis + Strich) | Null oder eins |
-| `\|{` (Strich + Gabel) | Eins oder mehr |
-| `o{` (Kreis + Gabel) | Null oder mehr |
-
-**Beispiel:** `VEREIN \|\|--\|{ SPIELER` bedeutet: Ein Verein hat *eins oder mehr* Spieler.
-
----
-    """)
     return
 
 
@@ -761,11 +486,9 @@ In ER-Diagrammen verwenden wir oft die **Crow's Foot Notation**:
 def _(mo):
     mo.md(
         r"""
-        ## Quiz: Kardinalitäten bestimmen
+        ### 🟢 Aufgabe 6.1: Kardinalitäten bestimmen
 
-        > **Vorhersage:** Von den 7 Szenarien unten -- wie viele sind 1:1, wie viele 1:N und wie viele M:N? Schätzen Sie die Verteilung, bevor Sie die Quizfragen beantworten.
-
-        Bestimmen Sie für jedes Beispiel die richtige Kardinalität!
+        Bestimmen Sie für jedes Szenario die richtige Kardinalität (1:1, 1:N, oder M:N):
         """
     )
     return
@@ -773,7 +496,6 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    # Quiz 1
     quiz1 = mo.ui.radio(
         options={
             "1:1": "1:1 (Eins zu Eins)",
@@ -797,7 +519,6 @@ def _(mo, quiz1):
 
 @app.cell(hide_code=True)
 def _(mo):
-    # Quiz 2
     quiz2 = mo.ui.radio(
         options={
             "1:1": "1:1 (Eins zu Eins)",
@@ -821,7 +542,6 @@ def _(mo, quiz2):
 
 @app.cell(hide_code=True)
 def _(mo):
-    # Quiz 3
     quiz3 = mo.ui.radio(
         options={
             "1:1": "1:1 (Eins zu Eins)",
@@ -845,7 +565,6 @@ def _(mo, quiz3):
 
 @app.cell(hide_code=True)
 def _(mo):
-    # Quiz 4
     quiz4 = mo.ui.radio(
         options={
             "1:1": "1:1 (Eins zu Eins)",
@@ -861,7 +580,7 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo, quiz4):
     if quiz4.value == "M:N":
-        mo.output.replace(mo.md("Richtig! Co-Autoren und Vielschreiber -- M:N!"))
+        mo.output.replace(mo.md("Richtig! Co-Autoren und Vielschreiber — M:N!"))
     elif quiz4.value:
         mo.output.replace(mo.md("Nicht ganz. Denken Sie an Co-Autoren: Ein Buch kann *mehrere* Autoren haben."))
     return
@@ -869,7 +588,6 @@ def _(mo, quiz4):
 
 @app.cell(hide_code=True)
 def _(mo):
-    # Quiz 5
     quiz5 = mo.ui.radio(
         options={
             "1:1": "1:1 (Eins zu Eins)",
@@ -893,102 +611,136 @@ def _(mo, quiz5):
 
 @app.cell(hide_code=True)
 def _(mo):
-    # Quiz 6
-    quiz6 = mo.ui.radio(
-        options={
-            "attribut": "Attribut (Eigenschaft einer Entität)",
-            "entitaet": "Entität (eigenständiges Objekt)",
-            "beziehung": "Beziehung (Verbindung zwischen Entitäten)"
-        },
-        label="**Frage 6:** Ist 'Raumnummer' in einem Universitätssystem ein Attribut oder eine Entität?"
-    )
-    quiz6
-    return (quiz6,)
-
-
-@app.cell(hide_code=True)
-def _(mo, quiz6):
-    if quiz6.value == "attribut":
-        mo.output.replace(mo.md("Richtig! Raumnummer ist typischerweise ein Attribut von z.B. einer Veranstaltung. *Aber:* Wenn Räume eigene Eigenschaften haben (Kapazität, Gebäude, Beamer), könnte 'Raum' auch eine eigene Entität sein!"))
-    elif quiz6.value == "entitaet":
-        mo.output.replace(mo.md("Möglich! Wenn Räume eigene Eigenschaften haben (Kapazität, Ausstattung), kann 'Raum' eine Entität sein. Die einfache 'Raumnummer' allein ist aber eher ein Attribut."))
-    elif quiz6.value:
-        mo.output.replace(mo.md("Nicht ganz. Eine Raumnummer ist eine Eigenschaft, keine Verbindung zwischen Objekten."))
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    # Quiz 7
-    quiz7 = mo.ui.radio(
-        options={
-            "weak": "Schwache Entität (existiert nicht ohne Buch)",
-            "strong": "Starke Entität (existiert unabhängig)",
-            "beziehung": "Beziehung (Verbindung zwischen Buch und Regal)",
-            "attribut": "Attribut von Buch"
-        },
-        label="**Frage 7:** Ein Bibliotheks-Exemplar hat nur zusammen mit dem Buchtitel eine eindeutige ID (Buch-ISBN + Exemplar-Nr). Was ist es?"
-    )
-    quiz7
-    return (quiz7,)
-
-
-@app.cell(hide_code=True)
-def _(mo, quiz7):
-    if quiz7.value == "weak":
-        mo.output.replace(mo.md("Richtig! Ein Exemplar kann ohne das zugehörige Buch nicht existieren und hat keinen eigenständigen Schlüssel. Das ist eine **schwache Entität** mit einer **identifizierenden Beziehung** zum Buch."))
-    elif quiz7.value:
-        mo.output.replace(mo.md("Nicht ganz. Das Exemplar braucht den Schlüssel des Buches, um eindeutig identifiziert zu werden. Es ist existenzabhängig vom Buch."))
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
     mo.md(
         r"""
-        ---
+        ### 🟡 Aufgabe 6.2: ER-Diagramm ergänzen
 
-        ## Häufige Kardinalitäten
+        Betrachten Sie das folgende ER-Diagramm für unsere Fußball-Daten.
+        Die Kardinalität Verein-Spieler ist bereits eingetragen (`||--|{` = 1:N).
 
-        | Kardinalität | Beispiele | Häufigkeit |
-        |--------------|-----------|------------|
-        | **1:1** | Person-Ausweis, Land-Hauptstadt | Selten |
-        | **1:N** | Abteilung-Mitarbeiter, Verein-Spieler, Kunde-Bestellung | **Sehr häufig** |
-        | **M:N** | Student-Kurs, Autor-Buch, Schauspieler-Film | Häufig |
-
-        **Faustregel:** Die meisten Beziehungen sind 1:N!
-
-        ---
+        **Frage:** Warum ist die Beziehung 1:N und nicht M:N?
         """
     )
     return
 
 
-# ============================================================
-# Teil 4: ER-Diagramme in der Praxis
-# ============================================================
+@app.cell
+def _(mo):
+    mo.mermaid("""
+erDiagram
+    VEREIN ||--|{ SPIELER : hat
+    VEREIN {
+        int ID PK
+        string Name
+        string Ort
+    }
+    SPIELER {
+        int ID PK
+        string Name
+        string Position
+        int Verein_ID FK
+    }
+""")
+    return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        ## Übung: Entitäten und Beziehungen identifizieren
+        **Erklärung:** Die Beziehung ist **1:N**, weil jeder Spieler zu genau **einem** Verein gehört,
+        aber ein Verein **viele** Spieler haben kann. In der Crow's-Foot-Notation zeigt `||--|{`:
+        - `||` (linke Seite) = genau eins (ein Spieler hat einen Verein)
+        - `|{` (rechte Seite) = eins oder mehr (ein Verein hat viele Spieler)
+
+        Der **Fremdschlüssel** `Verein_ID` steht in der Spieler-Tabelle (N-Seite), weil jeder
+        Spieler auf seinen einen Verein verweist.
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔵 Aufgabe 6.3: Bibliotheks-ER entwerfen
+
+        Entwerfen Sie ein ER-Diagramm für eine einfache Bibliothek mit:
+
+        - **Bücher** (ISBN, Titel)
+        - **Autoren** (Name)
+        - **Studierende** (MatrikelNr, Name)
+
+        **Beziehungen:**
+        - Autor **schreibt** Buch (M:N — Co-Autoren möglich)
+        - Studierender **leiht aus** Buch (M:N — mehrere Bücher gleichzeitig)
+
+        Erstellen Sie das Diagramm mit `mo.mermaid()`:
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo):
+    # 🔵 Entwerfen Sie Ihr ER-Diagramm hier:
+    mo.md("*Ersetzen Sie diese Zelle durch Ihr `mo.mermaid()`-Diagramm.*")
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```python
+mo.mermaid(\"\"\"
+erDiagram
+    AUTOR }|--|{ BUCH : schreibt
+    STUDIERENDER }|--o{ AUSLEIHE : leiht
+    BUCH ||--o{ AUSLEIHE : "wird ausgeliehen"
+
+    BUCH {
+        string ISBN PK
+        string Titel
+    }
+    AUTOR {
+        int ID PK
+        string Name
+    }
+    STUDIERENDER {
+        int MatrikelNr PK
+        string Name
+    }
+    AUSLEIHE {
+        string ISBN FK
+        int MatrikelNr FK
+        date Ausleihdatum
+        date Rueckgabedatum
+    }
+\"\"\")
+```
+
+**Beobachtungen:**
+- **Autor-Buch** ist M:N (Co-Autoren, Vielschreiber) — benötigt eine eigene Beziehungstabelle
+- **Studierender-Buch** ist M:N mit Attributen (Datum) — aufgelöst durch die Ausleihe-Tabelle
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔵 Aufgabe 6.4: Entitäten aus Textbeschreibung identifizieren
 
         Lesen Sie die folgende Beschreibung und identifizieren Sie:
         1. Welche **Entitäten** gibt es?
         2. Welche **Beziehungen** bestehen?
         3. Welche **Kardinalitäten** haben diese?
-        """
-    )
-    return
 
+        ---
 
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ### Szenario: Fußball-Liga
+        **Szenario: Fußball-Liga**
 
         *"In einer Fußball-Liga spielen mehrere Vereine. Jeder Verein hat einen Namen,
         einen Ort und ein Gründungsjahr. Spieler gehören zu einem Verein und haben
@@ -997,15 +749,24 @@ def _(mo):
         und ein Ergebnis (Tore Heim, Tore Gast) hat."*
 
         ---
+
+        Notieren Sie Ihre Lösung:
         """
     )
+    return
+
+
+@app.cell
+def _(mo):
+    # 🔵 Notieren Sie hier Ihre Entitäten, Beziehungen und Kardinalitäten:
+    mo.md("*Ersetzen Sie diese Zelle durch Ihre Analyse.*")
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.accordion({
-        "Lösung anzeigen": mo.md(r"""
+        "🔑 Musterlösung": mo.md(r"""
 **Entitäten:**
 - **Verein** (Name, Ort, Gründungsjahr)
 - **Spieler** (Name, Position, Geburtsdatum)
@@ -1023,132 +784,25 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""
-### ER-Diagramm: Fußball-Liga (Mermaid)
-
-Das folgende Diagramm zeigt die Lösung in der **Crow's Foot Notation**:
-    """)
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.mermaid(
-        """
-        erDiagram
-            VEREIN ||--|{ SPIELER : hat
-            VEREIN ||--|{ SPIEL : "spielt (Heim)"
-            VEREIN ||--|{ SPIEL : "spielt (Gast)"
-
-            VEREIN {
-                int ID PK
-                string Name
-                string Ort
-                int Gruendungsjahr
-            }
-
-            SPIELER {
-                int ID PK
-                string Name
-                string Position
-                date Geburtsdatum
-                int Verein_ID FK
-            }
-
-            SPIEL {
-                int ID PK
-                date Datum
-                int Tore_Heim
-                int Tore_Gast
-                int Heim_ID FK
-                int Gast_ID FK
-            }
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
----
-
-## Beispiel: Online-Shop (M:N-Beziehung)
-
-Ein Online-Shop mit Kunden, Bestellungen und Produkten:
-    """)
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.mermaid(
-        """
-        erDiagram
-            KUNDE ||--o{ BESTELLUNG : "gibt auf"
-            BESTELLUNG ||--|{ BESTELLPOSITION : enthaelt
-            PRODUKT ||--o{ BESTELLPOSITION : "ist in"
-            KATEGORIE ||--o{ PRODUKT : beinhaltet
-
-            KUNDE {
-                int ID PK
-                string Name
-                string Email UK
-            }
-
-            BESTELLUNG {
-                int ID PK
-                date Datum
-                int Kunde_ID FK
-            }
-
-            BESTELLPOSITION {
-                int Bestellung_ID PK,FK
-                int Produkt_ID PK,FK
-                int Menge
-            }
-
-            PRODUKT {
-                int ID PK
-                string Name
-                decimal Preis
-                int Kategorie_ID FK
-            }
-
-            KATEGORIE {
-                int ID PK
-                string Name
-            }
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-**Beobachtungen:**
-
-- **1:N:** Kunde -> Bestellung, Kategorie -> Produkt
-- **M:N:** Bestellung <-> Produkt (aufgelöst durch Bestellposition)
-- Die **Bestellposition** ist eine Beziehungstabelle mit zusammengesetztem Primärschlüssel
-
-*In Session 6 werden wir dieses Modell in SQL CREATE TABLE umsetzen!*
-
----
-    """)
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
     mo.md(
         r"""
-        ---
+        ### 🔴 Aufgabe 6.5: 1:N falsch als M:N modelliert
 
-        ## Übung: Bibliotheks-Szenario
+        Ein Kollege modelliert "Person besitzt Personalausweis" als M:N-Beziehung
+        mit einer eigenen Beziehungstabelle. Was ist daran falsch?
+        """
+    )
+    return
 
-        Identifizieren Sie die Entitäten, Beziehungen und Kardinalitäten:
+
+@app.cell
+def _(mo):
+    _df = mo.sql(
+        f"""
+        -- 🔴 Ein Kollege modelliert "Person besitzt Personalausweis" als M:N.
+        -- Was ist daran falsch?
+        SELECT 'Person-Ausweis ist 1:1, nicht M:N!' AS Problem,
+               'Jede Person hat genau EINEN Ausweis' AS Erklärung
         """
     )
     return
@@ -1156,248 +810,24 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
-        ### Szenario: Universitätsbibliothek
+    mo.accordion({"🔑 Lösung": mo.md("""
+**Fehler:** Die Beziehung Person-Personalausweis ist **1:1**, nicht M:N!
 
-        *"Eine Bibliothek verwaltet Bücher und deren Exemplare. Jedes Buch hat eine ISBN,
-        einen Titel und ein Erscheinungsjahr. Ein Buch kann mehrere Autoren haben, und
-        Autoren können mehrere Bücher geschrieben haben. Jedes Buch gehört zu genau einem
-        Verlag (Name, Ort). Von jedem Buch existieren ein oder mehrere physische Exemplare,
-        die durch eine Exemplar-Nummer (innerhalb des Buches) unterschieden werden.
-        Studierende können Exemplare ausleihen, wobei Ausleihdatum und Rückgabedatum
-        gespeichert werden."*
+- Jede Person hat **genau einen** Personalausweis
+- Jeder Personalausweis gehört zu **genau einer** Person
 
-        ---
-        """
-    )
-    return
+**Problem bei M:N-Modellierung:**
+- Eine unnötige **Beziehungstabelle** wird erstellt (verschwendeter Speicher)
+- Das Modell erlaubt fälschlicherweise, dass eine Person *mehrere* Ausweise hat
+- Die Datenintegrität ist nicht korrekt abgebildet
 
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.accordion({
-        "Lösung anzeigen": mo.md(r"""
-**Entitäten:**
-- **Buch** (ISBN, Titel, Erscheinungsjahr)
-- **Autor** (AutorID, Name)
-- **Verlag** (VerlagID, Name, Ort)
-- **Exemplar** (ExemplarNr) -- *schwache Entität*, abhängig von Buch
-- **Student** (MatrikelNr, Name)
-
-**Beziehungen:**
-1. Autor **schreibt** Buch -> **M:N** (Co-Autoren, Vielschreiber)
-2. Verlag **veröffentlicht** Buch -> **1:N** (ein Verlag, viele Bücher)
-3. Buch **hat** Exemplar -> **1:N** (identifizierende Beziehung, schwache Entität)
-4. Student **leiht aus** Exemplar -> **M:N** mit Attributen (Ausleihdatum, Rückgabedatum)
-
-**Besonderheiten:**
-- Exemplar ist eine **schwache Entität**: ExemplarNr allein ist nicht eindeutig, erst ISBN + ExemplarNr
-- Die Ausleihe ist eine M:N-Beziehung mit **Beziehungsattributen** (Datum)
-        """)
-    })
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-### ER-Diagramm: Bibliothek (Mermaid)
-    """)
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.mermaid(
-        """
-        erDiagram
-            VERLAG ||--o{ BUCH : veroeffentlicht
-            BUCH ||--|{ EXEMPLAR : hat
-            AUTOR }|--|{ BUCH : schreibt
-            STUDENT }|--o{ AUSLEIHE : leiht
-            EXEMPLAR ||--o{ AUSLEIHE : "wird ausgeliehen"
-
-            VERLAG {
-                int ID PK
-                string Name
-                string Ort
-            }
-
-            BUCH {
-                string ISBN PK
-                string Titel
-                int Erscheinungsjahr
-                int Verlag_ID FK
-            }
-
-            AUTOR {
-                int ID PK
-                string Name
-            }
-
-            EXEMPLAR {
-                string ISBN PK,FK
-                int ExemplarNr PK
-                string Standort
-            }
-
-            STUDENT {
-                int MatrikelNr PK
-                string Name
-            }
-
-            AUSLEIHE {
-                int ID PK
-                string ISBN FK
-                int ExemplarNr FK
-                int MatrikelNr FK
-                date Ausleihdatum
-                date Rueckgabedatum
-            }
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-**Beobachtungen:**
-
-- **Schwache Entität:** Exemplar hat einen zusammengesetzten Schlüssel (ISBN + ExemplarNr)
-- **M:N mit Attributen:** Die Ausleihe speichert neben den Verweisen auch Datumsangaben
-- **1:N:** Verlag -> Buch (jedes Buch hat genau einen Verlag)
-- **M:N:** Autor <-> Buch (aufgelöst durch implizite Beziehungstabelle)
-
-*Dieses Szenario kombiniert alle Beziehungstypen, die wir kennengelernt haben!*
-
----
-    """)
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-### Visualisierung: Attribute pro Entität
-
-Wie komplex sind die einzelnen Entitäten in unserem Bibliotheks-Modell?
-    """)
-    return
-
-
-@app.cell(hide_code=True)
-def _(px):
-    _entitaeten = ["Verlag", "Buch", "Autor", "Exemplar", "Student", "Ausleihe"]
-    _attribute = [3, 4, 2, 3, 2, 5]  # inkl. PK und FK
-    _typen = ["Starke Entität", "Starke Entität", "Starke Entität",
-              "Schwache Entität", "Starke Entität", "Beziehungstabelle"]
-
-    _fig = px.bar(
-        x=_entitaeten,
-        y=_attribute,
-        color=_typen,
-        title="Attribute pro Entität (Bibliotheks-Modell)",
-        labels={"x": "Entität", "y": "Anzahl Attribute", "color": "Typ"},
-        color_discrete_map={
-            "Starke Entität": "#003560",
-            "Schwache Entität": "#E87722",
-            "Beziehungstabelle": "#5B9BD5",
-        },
-    )
-    _fig.update_layout(xaxis_title="", yaxis_title="Anzahl Attribute")
-    _fig
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-**Beobachtung:** Die **Ausleihe** als Beziehungstabelle hat die meisten Attribute (inkl. Fremdschlüssel und Beziehungsattribute). Schwache Entitäten wie **Exemplar** brauchen den Schlüssel der übergeordneten Entität.
-
----
-    """)
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ## (Min,Max)-Notation
-
-        Genauere Kardinalitätsangabe:
-
-        | Notation | Bedeutung |
-        |----------|-----------|
-        | **(0,1)** | Optional, höchstens einer |
-        | **(1,1)** | Genau einer (Pflicht) |
-        | **(0,N)** | Optional, beliebig viele |
-        | **(1,N)** | Mindestens einer, beliebig viele |
-        | **(15,30)** | Zwischen 15 und 30 |
-
-        **Beispiel:** Ein Bundesliga-Verein hat **(15,30)** Spieler im Kader.
-
-        ---
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ## Selbstständig: Eigenes ER-Modell entwerfen
-
-        **Szenario:** Eine Universitätsbibliothek möchte ihre Ausleihe digitalisieren.
-
-        - Es gibt **Bücher** (ISBN, Titel, Erscheinungsjahr) und **Autoren** (Name, Nationalität)
-        - **Studierende** (Matrikelnummer, Name, Studiengang) können Bücher **ausleihen** (Datum, Rückgabedatum)
-        - Ein Buch kann von mehreren Autoren geschrieben sein
-        - Ein Studierender kann mehrere Bücher gleichzeitig ausleihen
-
-        **Aufgabe:** Zeichnen Sie ein ER-Diagramm auf Papier oder in [draw.io](https://draw.io):
-
-        1. Welche **Entitäten** gibt es? (Tipp: 3 Stück)
-        2. Welche **Attribute** hat jede Entität? Was ist der Primärschlüssel?
-        3. Welche **Beziehungen** bestehen? (Tipp: 2 Stück)
-        4. Was sind die **Kardinalitäten**? (1:1, 1:N, oder M:N?)
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.accordion({"Musterlösung": mo.md("""
-**Entitäten:**
-
-1. **Buch** (Primärschlüssel: ISBN)
-   - Attribute: ISBN, Titel, Erscheinungsjahr
-2. **Autor** (Primärschlüssel: AutorID)
-   - Attribute: AutorID, Name, Nationalität
-3. **Studierender** (Primärschlüssel: Matrikelnummer)
-   - Attribute: Matrikelnummer, Name, Studiengang
-
-**Beziehungen:**
-
-1. **Autor** *schreibt* **Buch** -> **M:N**
-   - Ein Buch kann mehrere Autoren haben (Co-Autoren)
-   - Ein Autor kann mehrere Bücher schreiben
-   - -> Wird als Beziehungstabelle aufgelöst (z.B. `Autor_Buch`)
-2. **Studierender** *leiht aus* **Buch** -> **M:N** (mit Beziehungsattributen)
-   - Ein Studierender kann mehrere Bücher ausleihen
-   - Ein Buch kann von verschiedenen Studierenden ausgeliehen werden
-   - Beziehungsattribute: Datum, Rückgabedatum
-   - -> Wird als Beziehungstabelle aufgelöst (z.B. `Ausleihe`)
+**Richtige Modellierung:** 1:1 — entweder die Tabellen zusammenlegen oder einen Fremdschlüssel mit `UNIQUE`-Constraint verwenden.
 """)})
     return
 
 
 # ============================================================
-# Freie Exploration & Zusammenfassung
+# Exploration
 # ============================================================
 
 
@@ -1407,16 +837,21 @@ def _(mo):
         r"""
         ---
 
-        ## Freie Exploration
+        ## Freie Exploration — Herausforderungen
+        """
+    )
+    return
 
-        Experimentieren Sie selbst:
 
-        - Fügen Sie einen neuen Verein hinzu (ohne Spieler)
-        - Ändern Sie einen Vereinsort
-        - Löschen Sie einen Spieler
-        - Entwerfen Sie ein eigenes ER-Diagramm für ein Szenario Ihrer Wahl
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### ⭐ Neuer Verein per INSERT + LEFT JOIN
 
-        Beobachten Sie, wie das verbesserte Design diese Operationen vereinfacht.
+        Im normalisierten Design können Sie einen neuen Verein hinzufügen, der noch
+        keine Spieler hat. Zeigen Sie mit einem `LEFT JOIN`, dass der Verein trotzdem
+        in der Datenbank existiert (Anzahl_Spieler = 0).
         """
     )
     return
@@ -1424,21 +859,166 @@ def _(mo):
 
 @app.cell
 def _(mo, spieler_gut, vereine):
-    # Ihre eigene Abfrage hier:
     _df = mo.sql(
         f"""
-        -- Beispiel: Neuen Verein hinzufügen geht jetzt einfach
-        -- (In echtem SQL wäre das ein INSERT)
-
-        -- Hier zeigen wir, welche Vereine keine Spieler (mehr) haben könnten:
-        SELECT v.Verein, COUNT(s.Spieler_ID) AS Anzahl_Spieler
-        FROM vereine v
-        LEFT JOIN spieler_gut s ON v.Verein_ID = s.Verein_ID
-        GROUP BY v.Verein
-        ORDER BY Anzahl_Spieler
+        -- ⭐ Neuer Verein ohne Spieler prüfen:
+        SELECT 'Ihre Lösung hier' AS Hinweis;
         """
     )
     return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+-- In der normalisierten Vereine-Tabelle existieren alle Vereine unabhängig
+SELECT v.Verein, COUNT(s.Spieler_ID) AS Anzahl_Spieler
+FROM vereine v
+LEFT JOIN spieler_gut s ON v.Verein_ID = s.Verein_ID
+GROUP BY v.Verein
+ORDER BY Anzahl_Spieler
+```
+
+**Erklärung:** Der `LEFT JOIN` zeigt alle Vereine — auch solche ohne Spieler. In der Mega-Tabelle wäre ein Verein ohne Spieler gar nicht speicherbar (Einfügeanomalie!). Das normalisierte Design löst dieses Problem elegant.
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### ⭐⭐ ER-Diagramm für Spotify
+
+        Entwerfen Sie ein ER-Diagramm für einen Musik-Streaming-Dienst mit:
+        **Künstler**, **Album**, **Song**, **Playlist**, **User**
+
+        Überlegen Sie: Welche Beziehungen sind 1:N, welche M:N?
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo):
+    # ⭐⭐ Entwerfen Sie Ihr Spotify-ER-Diagramm:
+    mo.md("*Ersetzen Sie diese Zelle durch Ihr `mo.mermaid()`-Diagramm.*")
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```python
+mo.mermaid(\"\"\"
+erDiagram
+    KUENSTLER ||--|{ ALBUM : veroeffentlicht
+    ALBUM ||--|{ SONG : enthaelt
+    KUENSTLER }|--|{ SONG : "wirkt mit"
+    USER ||--o{ PLAYLIST : erstellt
+    PLAYLIST }|--|{ SONG : enthaelt
+
+    KUENSTLER {
+        int ID PK
+        string Name
+        string Genre
+    }
+    ALBUM {
+        int ID PK
+        string Titel
+        date Erscheinungsdatum
+        int Kuenstler_ID FK
+    }
+    SONG {
+        int ID PK
+        string Titel
+        int Dauer_Sekunden
+        int Album_ID FK
+    }
+    USER {
+        int ID PK
+        string Username
+        string Email
+    }
+    PLAYLIST {
+        int ID PK
+        string Name
+        int User_ID FK
+    }
+\"\"\")
+```
+
+**Beziehungen:**
+- **Künstler → Album**: 1:N (ein Künstler hat viele Alben)
+- **Album → Song**: 1:N (ein Album enthält viele Songs)
+- **Künstler ↔ Song**: M:N (Features/Kollaborationen)
+- **User → Playlist**: 1:N (ein User erstellt viele Playlists)
+- **Playlist ↔ Song**: M:N (ein Song kann in vielen Playlists sein)
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### ⭐⭐⭐ ER für Uni-Kurssystem mit (Min,Max)-Notation
+
+        Entwerfen Sie ein ER-Modell für ein Universitäts-Kurssystem.
+        Verwenden Sie die **(Min,Max)-Notation** für präzise Kardinalitäten:
+
+        - **Professor** hält Kurse: (0,N) — ein Professor kann 0 bis N Kurse halten
+        - **Kurs** hat Professor: (1,1) — jeder Kurs hat genau einen Professor
+        - **Student** besucht Kurse: (0,N) — ein Student kann 0 bis N Kurse besuchen
+        - **Kurs** hat Studenten: (5,300) — mindestens 5, maximal 300 Teilnehmer
+        - **Raum** wird Kurs zugeordnet: (0,N) — ein Raum kann für mehrere Kurse genutzt werden
+        - **Kurs** findet in Raum statt: (1,1) — jeder Kurs hat genau einen Raum
+
+        Notieren Sie die Entitäten, Beziehungen und (Min,Max)-Angaben:
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo):
+    # ⭐⭐⭐ Entwerfen Sie Ihr Uni-Kurssystem-ER:
+    mo.md("*Ersetzen Sie diese Zelle durch Ihre Lösung.*")
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+**Entitäten:**
+- **Professor** (PersNr PK, Name, Fachgebiet)
+- **Kurs** (KursNr PK, Titel, SWS)
+- **Student** (MatrikelNr PK, Name, Studiengang)
+- **Raum** (RaumNr PK, Gebäude, Kapazität)
+
+**Beziehungen mit (Min,Max)-Notation:**
+
+| Beziehung | Entität A | (Min,Max) A | Entität B | (Min,Max) B |
+|-----------|-----------|-------------|-----------|-------------|
+| hält | Professor | (0,N) | Kurs | (1,1) |
+| besucht | Student | (0,N) | Kurs | (5,300) |
+| findet statt in | Kurs | (1,1) | Raum | (0,N) |
+
+**Erklärung der (Min,Max)-Werte:**
+- Professor (0,N): Ein Professor kann im Forschungssemester 0 Kurse halten
+- Kurs (1,1): Jeder Kurs braucht genau einen verantwortlichen Professor
+- Student (0,N): Erstsemester können sich noch in keinen Kurs eingeschrieben haben
+- Kurs (5,300): Mindestteilnehmerzahl 5, Hörsaalkapazität 300
+- Kurs (1,1): Jeder Kurs braucht genau einen Raum
+- Raum (0,N): Räume können ungenutzt sein oder mehrfach belegt werden
+""")})
+    return
+
+
+# ============================================================
+# Zusammenfassung
+# ============================================================
 
 
 @app.cell(hide_code=True)
@@ -1452,7 +1032,7 @@ def _(mo):
         ### Teil 1: Redundanz und Anomalien
 
         | Problem | Ursache | Lösung |
-        |---------|---------|---------|
+        |---------|---------|--------|
         | **Redundanz** | Alles in einer Tabelle | Daten aufteilen |
         | **Änderungsanomalie** | Gleiche Daten mehrfach | Primärschlüssel |
         | **Einfügeanomalie** | Abhängige Daten | Separate Tabellen |
@@ -1468,14 +1048,7 @@ def _(mo):
         | 4. Beziehungen | Wie hängen sie zusammen? |
         | 5. Kardinalitäten | Wie viele auf jeder Seite? |
 
-        **Kernkonzepte:**
-        - **Entität:** Ein "Ding" der realen Welt (Spieler, Verein)
-        - **Primärschlüssel (PK):** Eindeutige ID für jede Zeile
-        - **Fremdschlüssel (FK):** Verweis auf einen PK in anderer Tabelle
-        - **Kardinalitäten:** 1:1, 1:N, M:N
-        - **Werkzeuge:** Papier, Whiteboard, draw.io, Lucidchart
-
-        **Nächste Session:** Session 6 -- Relationales Modell & Transformation (ER -> SQL CREATE TABLE)
+        **Nächste Session:** ER → SQL (CREATE TABLE)
         """
     )
     return

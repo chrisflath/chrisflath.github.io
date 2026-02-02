@@ -3,97 +3,98 @@
 # dependencies = [
 #     "marimo",
 #     "polars",
-#     "duckdb",
 #     "plotly",
 # ]
 # ///
 
 import marimo
 
-__generated_with = "0.10.14"
-app = marimo.App(width="medium", app_title="DMA Session 9: Subqueries, Views & Transaktionen")
+__generated_with = "0.13.0"
+app = marimo.App(
+    width="medium",
+    app_title="DMA Session 9: Subqueries, Views & Transaktionen — Übungen",
+)
+
+
+@app.cell(hide_code=True)
+def _():
+    import marimo as mo
+    return (mo,)
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        # Vorlesung 9: Subqueries, Views & Transaktionen
+        # Session 9: Subqueries, Views & Transaktionen — Übungen
 
-        **Kursfahrplan:** I: SQL-Grundlagen (S1–4) · II: Datenmodellierung (S5–7) · **▸ III: Fortgeschrittenes SQL (S8–9)** · IV: Datenanalyse (S10–13)
+        Theorie und geführte Beispiele → **09-subqueries-views-transaktionen-guide.py**
 
-        **Lernziele:**
-        - Komplexe Abfragen mit Subqueries strukturieren
-        - CTEs (WITH) für lesbare Abfragen nutzen
-        - Views als wiederverwendbare Abfragen erstellen
-        - ACID-Eigenschaften und Transaktionen verstehen
+        **Aufgabentypen:**
+
+        - 🟡 **Scaffolded**: Teillösung zum Ergänzen
+        - 🔵 **Selbstständig**: Eigene Lösung schreiben
+        - 🔴 **Debugging**: Fehler finden und beheben
+        - ⭐ **Exploration**: Offene Herausforderungen
         """
     )
     return
 
 
 @app.cell
-def _():
-    import marimo as mo
+def _(mo):
     import polars as pl
     import plotly.express as px
-    return mo, pl, px
 
-
-@app.cell(hide_code=True)
-def _(mo, pl):
-    # Bundesliga-Daten laden
     try:
-        csv_path = mo.notebook_location() / "public" / "bundesliga.csv"
+        import pathlib
+        csv_path = pathlib.Path(__file__).parent / "public" / "bundesliga.csv"
         bundesliga = pl.read_csv(str(csv_path))
-        daten_quelle = "Bundesliga Saison 2024/25"
     except Exception:
         bundesliga = pl.DataFrame({
-            "Mannschaft": ["Bayern München", "Bayer Leverkusen", "VfB Stuttgart", "Borussia Dortmund", "RB Leipzig"],
-            "Spiele": [30, 30, 30, 30, 30],
-            "Siege": [22, 20, 16, 15, 14],
-            "Unentschieden": [4, 6, 5, 6, 7],
-            "Niederlagen": [4, 4, 9, 9, 9],
-            "ToreGeschossen": [75, 65, 55, 58, 52],
-            "ToreKassiert": [28, 25, 40, 38, 35],
-            "Tordifferenz": [47, 40, 15, 20, 17],
-            "Punkte": [70, 66, 53, 51, 49],
+            "Mannschaft": [
+                "Bayern München", "Bayer Leverkusen", "VfB Stuttgart",
+                "Borussia Dortmund", "RB Leipzig", "Eintracht Frankfurt",
+                "SC Freiburg", "TSG Hoffenheim", "Werder Bremen", "VfL Wolfsburg",
+                "1. FC Union Berlin", "FC Augsburg", "Borussia M'gladbach",
+                "1. FSV Mainz 05", "1. FC Heidenheim", "VfL Bochum",
+                "FC St. Pauli", "Holstein Kiel",
+            ],
+            "Spiele": [34] * 18,
+            "Siege": [25, 22, 18, 17, 16, 14, 13, 13, 10, 9, 9, 8, 8, 7, 7, 5, 5, 4],
+            "Unentschieden": [4, 6, 5, 6, 7, 8, 6, 5, 8, 9, 7, 7, 5, 8, 6, 7, 5, 4],
+            "Niederlagen": [5, 6, 11, 11, 11, 12, 15, 16, 16, 16, 18, 19, 21, 19, 21, 22, 24, 26],
+            "Tore": [85, 72, 60, 62, 56, 48, 42, 50, 38, 40, 30, 28, 36, 32, 36, 24, 20, 24],
+            "Gegentore": [32, 30, 45, 42, 40, 42, 52, 55, 48, 50, 50, 58, 62, 48, 62, 65, 52, 72],
+            "Tordifferenz": [53, 42, 15, 20, 16, 6, -10, -5, -10, -10, -20, -30, -26, -16, -26, -41, -32, -48],
+            "Punkte": [79, 72, 59, 57, 55, 50, 45, 44, 38, 36, 34, 31, 29, 29, 27, 22, 20, 16],
         })
-        daten_quelle = "Offline-Daten (Fallback)"
-        mo.callout(mo.md("**Hinweis:** CSV konnte nicht geladen werden. Es werden Beispieldaten verwendet."), kind="warn")
 
-    # Zusätzliche Tabellen für Übungen erstellen
-    # Pokal-Halbfinalisten (fiktiv)
     pokal_halbfinale = pl.DataFrame({
         "team": ["Bayern München", "Bayer Leverkusen", "VfB Stuttgart", "RB Leipzig"]
     })
 
-    # Konten-Tabelle für Transaktions-Demo
     konten = pl.DataFrame({
         "konto_id": ["A", "B", "C"],
         "inhaber": ["Alice", "Bob", "Charlie"],
-        "saldo": [1000.0, 500.0, 750.0]
+        "saldo": [1000.0, 500.0, 750.0],
     })
 
-    return bundesliga, daten_quelle, konten, pokal_halbfinale
+    return bundesliga, konten, pl, pokal_halbfinale, px
+
+
+# -----------------------------------------------------------------------
+# Phase 2: Subqueries
+# -----------------------------------------------------------------------
 
 
 @app.cell(hide_code=True)
-def _(daten_quelle, mo):
+def _(mo):
     mo.md(
-        f"""
-        **Datenquelle:** {daten_quelle}
-
-        **Verfügbare Tabellen:**
-        - `bundesliga` – Aktuelle Tabelle (18 Teams)
-        - `pokal_halbfinale` – Teams im DFB-Pokal Halbfinale
-        - `konten` – Bankkonten für Transaktions-Übungen
-
+        r"""
         ---
 
-        ## Phase 1: Subqueries – Grundlagen
-
-        Eine **Subquery** ist eine Abfrage innerhalb einer anderen Abfrage.
+        ## Phase 2: Subqueries
         """
     )
     return
@@ -103,25 +104,9 @@ def _(daten_quelle, mo):
 def _(mo):
     mo.md(
         r"""
-        ### Subquery-Typen
+        ### 🟢 Aufgabe 2.1: Scalar Subquery — Punkte vs. Durchschnitt
 
-        | Typ | Rückgabe | Beispiel-Kontext |
-        |-----|----------|------------------|
-        | **Scalar** | 1 Wert | `SELECT spalte - (SELECT AVG(...))` |
-        | **Column** | 1 Spalte | `WHERE spalte IN (SELECT ...)` |
-        | **Table** | Tabelle | `FROM (SELECT ...) AS t` |
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ### Aufgabe 9.1: Scalar Subquery
-
-        Zeige alle Teams mit ihren Punkten und der **Differenz zum Durchschnitt**.
+        Zeigen Sie alle Teams mit ihren Punkten und der **Differenz zum Liga-Durchschnitt**.
         """
     )
     return
@@ -129,7 +114,7 @@ def _(mo):
 
 @app.cell
 def _(bundesliga, mo):
-    mo.sql(
+    _df = mo.sql(
         f"""
         SELECT
             Mannschaft,
@@ -140,15 +125,16 @@ def _(bundesliga, mo):
         ORDER BY Punkte DESC
         """
     )
+    return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 9.2: Column Subquery mit IN
+        ### 🟢 Aufgabe 2.2: Column Subquery mit IN — Teams im Pokal
 
-        Zeige nur die Teams, die im **Pokal-Halbfinale** stehen.
+        Zeigen Sie nur die Teams, die im **Pokal-Halbfinale** stehen.
         """
     )
     return
@@ -156,7 +142,7 @@ def _(mo):
 
 @app.cell
 def _(bundesliga, mo, pokal_halbfinale):
-    mo.sql(
+    _df = mo.sql(
         f"""
         SELECT Mannschaft, Punkte, Tordifferenz
         FROM bundesliga
@@ -166,16 +152,17 @@ def _(bundesliga, mo, pokal_halbfinale):
         ORDER BY Punkte DESC
         """
     )
+    return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        ### 🟡 Aufgabe 9.2b: Subquery mit Vergleich (scaffolded)
+        ### 🟡 Aufgabe 2.3: Subquery mit AVG (Scaffolded)
 
-        Finde alle Teams mit mehr Toren als der Liga-Durchschnitt.
-        Ergänze die fehlende Subquery:
+        Finden Sie alle Teams mit **mehr Toren als der Liga-Durchschnitt**.
+        Ergänzen Sie die fehlenden Teile (`???`):
         """
     )
     return
@@ -183,16 +170,16 @@ def _(mo):
 
 @app.cell
 def _(bundesliga, mo):
-    # Ergänze: AVG(ToreGeschossen) FROM bundesliga
     _df = mo.sql(
         f"""
-        SELECT Mannschaft, ToreGeschossen
+        SELECT Mannschaft, Tore
         FROM bundesliga
-        WHERE ToreGeschossen > (
+        WHERE Tore > (
             SELECT ???(???)
             FROM ???
         )
-        ORDER BY ToreGeschossen DESC
+        ORDER BY Tore DESC
+        -- Tipp: AVG(Tore) FROM bundesliga
         """
     )
     return
@@ -202,13 +189,13 @@ def _(bundesliga, mo):
 def _(mo):
     mo.accordion({"🔑 Musterlösung": mo.md("""
 ```sql
-SELECT Mannschaft, ToreGeschossen
+SELECT Mannschaft, Tore
 FROM bundesliga
-WHERE ToreGeschossen > (
-    SELECT AVG(ToreGeschossen)
+WHERE Tore > (
+    SELECT AVG(Tore)
     FROM bundesliga
 )
-ORDER BY ToreGeschossen DESC
+ORDER BY Tore DESC
 ```
 """)})
     return
@@ -218,11 +205,11 @@ ORDER BY ToreGeschossen DESC
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 9.3: Selbstständig – Teams über dem Durchschnitt
+        ### 🔵 Aufgabe 2.4: Teams über dem Punktedurchschnitt (Selbstständig)
 
-        Finde alle Teams mit **mehr Punkten als der Durchschnitt**.
+        Finden Sie alle Teams mit **mehr Punkten als der Liga-Durchschnitt**.
 
-        *Hinweis: Nutze eine Scalar Subquery in der WHERE-Klausel.*
+        *Hinweis: Nutzen Sie eine Scalar Subquery in der WHERE-Klausel.*
         """
     )
     return
@@ -230,15 +217,16 @@ def _(mo):
 
 @app.cell
 def _(bundesliga, mo):
-    # Deine Lösung hier:
-    mo.sql(
+    # Ihre Lösung hier:
+    _df = mo.sql(
         f"""
         -- Ihre Lösung hier
-        -- Tipp: Scalar Subquery in WHERE: WHERE Punkte > (SELECT AVG(...) FROM ...)
+        -- Tipp: WHERE Punkte > (SELECT AVG(Punkte) FROM bundesliga)
         -- Erwartete Spalten: Mannschaft, Punkte
-        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS Hinweis
         """
     )
+    return
 
 
 @app.cell(hide_code=True)
@@ -261,40 +249,11 @@ ORDER BY Punkte DESC
 def _(mo):
     mo.md(
         r"""
-        ---
+        ### 🔵 Aufgabe 2.5: Weniger Gegentore als der Durchschnitt (Selbstständig)
 
-        ## Phase 2: Common Table Expressions (CTEs)
+        Finden Sie alle Teams mit **weniger Gegentoren als der Liga-Durchschnitt**.
 
-        CTEs machen komplexe Abfragen **lesbar** durch benannte Zwischenergebnisse.
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ### CTE Syntax
-
-        ```sql
-        WITH cte_name AS (
-            SELECT ...
-        )
-        SELECT ... FROM cte_name ...
-        ```
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ### Aufgabe 9.4: CTE für Durchschnitt
-
-        Berechne den Durchschnitt einmal und verwende ihn mehrfach.
+        *Hinweis: `WHERE Gegentore < (SELECT AVG(Gegentore) ...)`*
         """
     )
     return
@@ -302,12 +261,127 @@ def _(mo):
 
 @app.cell
 def _(bundesliga, mo):
-    mo.sql(
+    # Ihre Lösung hier:
+    _df = mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        -- Tipp: WHERE Gegentore < (SELECT AVG(Gegentore) FROM bundesliga)
+        -- Erwartete Spalten: Mannschaft, Gegentore
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS Hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT Mannschaft, Gegentore
+FROM bundesliga
+WHERE Gegentore < (
+    SELECT AVG(Gegentore)
+    FROM bundesliga
+)
+ORDER BY Gegentore ASC
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔴 Aufgabe 2.6: Debugging — Scalar Subquery liefert mehrere Zeilen
+
+        Die folgende Abfrage hat einen Fehler. Finden und beheben Sie ihn!
+        """
+    )
+    return
+
+
+@app.cell
+def _(bundesliga, mo):
+    _df = mo.sql(
+        f"""
+        -- 🔴 Diese Abfrage hat einen Fehler — finden und beheben Sie ihn!
+        SELECT Mannschaft, Punkte
+        FROM bundesliga
+        WHERE Punkte = (
+            SELECT Punkte FROM bundesliga WHERE Siege > 15
+        )
+        ORDER BY Punkte DESC
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Lösung": mo.md("""
+**Problem:** Die Subquery gibt **mehrere Zeilen** zurück (alle Teams mit > 15 Siegen),
+aber der `=`-Operator erwartet genau **einen** Wert.
+
+**Lösung:** Verwenden Sie `IN` statt `=`, oder schränken Sie die Subquery mit `LIMIT 1` ein:
+
+```sql
+-- Variante 1: IN statt =
+SELECT Mannschaft, Punkte
+FROM bundesliga
+WHERE Punkte IN (
+    SELECT Punkte FROM bundesliga WHERE Siege > 15
+)
+ORDER BY Punkte DESC
+
+-- Variante 2: LIMIT 1 (z.B. Maximum)
+SELECT Mannschaft, Punkte
+FROM bundesliga
+WHERE Punkte = (
+    SELECT MAX(Punkte) FROM bundesliga WHERE Siege > 15
+)
+```
+""")})
+    return
+
+
+# -----------------------------------------------------------------------
+# Phase 4: Common Table Expressions (CTEs)
+# -----------------------------------------------------------------------
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## Phase 4: Common Table Expressions (CTEs)
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🟢 Aufgabe 4.1: CTE für Durchschnitt
+
+        Berechnen Sie den Durchschnitt **einmal** und verwenden Sie ihn mehrfach.
+        """
+    )
+    return
+
+
+@app.cell
+def _(bundesliga, mo):
+    _df = mo.sql(
         f"""
         WITH statistiken AS (
             SELECT
                 AVG(Punkte) AS avg_punkte,
-                AVG(ToreGeschossen) AS avg_tore
+                AVG(Tore) AS avg_tore
             FROM bundesliga
         )
         SELECT
@@ -315,23 +389,24 @@ def _(bundesliga, mo):
             b.Punkte,
             ROUND(s.avg_punkte, 1) AS Liga_Schnitt,
             b.Punkte - s.avg_punkte AS Punkte_Diff,
-            b.ToreGeschossen,
+            b.Tore,
             ROUND(s.avg_tore, 1) AS Tore_Schnitt,
-            b.ToreGeschossen - s.avg_tore AS Tore_Diff
+            b.Tore - s.avg_tore AS Tore_Diff
         FROM bundesliga b, statistiken s
         ORDER BY b.Punkte DESC
         """
     )
+    return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 9.5: Mehrere CTEs verketten
+        ### 🟢 Aufgabe 4.2: Mehrere CTEs verketten
 
-        1. Filtere Top-Teams (> 50 Punkte)
-        2. Berechne Siegquote für diese Teams
+        1. Filtern Sie die Top-Teams (> 50 Punkte)
+        2. Berechnen Sie die Siegquote für diese Teams
         """
     )
     return
@@ -339,7 +414,7 @@ def _(mo):
 
 @app.cell
 def _(bundesliga, mo):
-    mo.sql(
+    _df = mo.sql(
         f"""
         WITH
         top_teams AS (
@@ -360,33 +435,169 @@ def _(bundesliga, mo):
         ORDER BY Siegquote DESC
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🟡 Aufgabe 4.3: CTE mit CASE WHEN — Leistungsgruppen (Scaffolded)
+
+        Teilen Sie die Teams in Leistungsgruppen ein und berechnen Sie Gruppenstatistiken.
+        Ergänzen Sie die fehlenden Teile (`???`):
+        """
+    )
+    return
 
 
 @app.cell
-def _(bundesliga, mo, px):
-    _top = mo.sql(
+def _(bundesliga, mo):
+    _df = mo.sql(
         f"""
-        WITH mit_quote AS (
+        WITH leistung AS (
             SELECT
-                Mannschaft,
-                Punkte,
-                ROUND(CAST(Siege AS FLOAT) / Spiele * 100, 1) AS Siegquote
+                Mannschaft, Punkte,
+                CASE
+                    WHEN Punkte >= 60 THEN ???
+                    WHEN Punkte >= 40 THEN ???
+                    ELSE ???
+                END AS Gruppe
             FROM bundesliga
-            WHERE Punkte > 30
         )
-        SELECT * FROM mit_quote ORDER BY Siegquote DESC
+        SELECT Gruppe, COUNT(*) AS Anzahl, ROUND(AVG(Punkte), 1) AS Schnitt_Punkte
+        FROM leistung
+        GROUP BY Gruppe
+        ORDER BY Schnitt_Punkte DESC
+        -- Tipp: 'Top', 'Mitte', 'Unten'
         """
     )
-    px.bar(
-        _top,
-        x="Mannschaft",
-        y="Siegquote",
-        color="Punkte",
-        title="Siegquote der Top-Teams (berechnet via CTE)",
-        labels={"Siegquote": "Siegquote (%)", "Mannschaft": ""},
-        color_continuous_scale="Blues",
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+WITH leistung AS (
+    SELECT
+        Mannschaft, Punkte,
+        CASE
+            WHEN Punkte >= 60 THEN 'Top'
+            WHEN Punkte >= 40 THEN 'Mitte'
+            ELSE 'Unten'
+        END AS Gruppe
+    FROM bundesliga
+)
+SELECT Gruppe, COUNT(*) AS Anzahl, ROUND(AVG(Punkte), 1) AS Schnitt_Punkte
+FROM leistung
+GROUP BY Gruppe
+ORDER BY Schnitt_Punkte DESC
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔵 Aufgabe 4.4: Tordifferenz-Rangliste Top 5 per CTE (Selbstständig)
+
+        Erstellen Sie eine CTE, die die **Top 5 Teams nach Tordifferenz** ermittelt,
+        und geben Sie Mannschaft, Tordifferenz und Punkte aus.
+
+        *Hinweis: `WITH top_td AS (SELECT ... ORDER BY Tordifferenz DESC LIMIT 5)`*
+        """
     )
     return
+
+
+@app.cell
+def _(bundesliga, mo):
+    # Ihre Lösung hier:
+    _df = mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        -- Tipp: WITH top_td AS (SELECT Mannschaft, Tordifferenz, Punkte FROM bundesliga ORDER BY Tordifferenz DESC LIMIT 5)
+        -- dann: SELECT * FROM top_td
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS Hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+WITH top_td AS (
+    SELECT Mannschaft, Tordifferenz, Punkte
+    FROM bundesliga
+    ORDER BY Tordifferenz DESC
+    LIMIT 5
+)
+SELECT * FROM top_td
+ORDER BY Tordifferenz DESC
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔴 Aufgabe 4.5: Debugging — CTE definiert, aber nicht verwendet
+
+        Die folgende Abfrage definiert eine CTE, nutzt sie aber nicht. Finden Sie den Fehler!
+        """
+    )
+    return
+
+
+@app.cell
+def _(bundesliga, mo):
+    _df = mo.sql(
+        f"""
+        -- 🔴 Diese Abfrage definiert eine CTE, nutzt sie aber nicht!
+        WITH top_teams AS (
+            SELECT Mannschaft, Punkte
+            FROM bundesliga
+            WHERE Punkte > 50
+        )
+        SELECT * FROM bundesliga
+        ORDER BY Punkte DESC
+        LIMIT 5
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Lösung": mo.md("""
+**Problem:** Die CTE `top_teams` wird definiert, aber im `SELECT` wird direkt
+aus `bundesliga` gelesen — die CTE wird ignoriert!
+
+**Lösung:** Lesen Sie aus der CTE statt aus der Originaltabelle:
+
+```sql
+WITH top_teams AS (
+    SELECT Mannschaft, Punkte
+    FROM bundesliga
+    WHERE Punkte > 50
+)
+SELECT * FROM top_teams
+ORDER BY Punkte DESC
+```
+""")})
+    return
+
+
+# -----------------------------------------------------------------------
+# Phase 6: Views
+# -----------------------------------------------------------------------
 
 
 @app.cell(hide_code=True)
@@ -395,9 +606,7 @@ def _(mo):
         r"""
         ---
 
-        ## Phase 3: Views – Virtuelle Tabellen
-
-        Ein **View** ist eine gespeicherte Abfrage, die sich wie eine Tabelle verhält.
+        ## Phase 6: Views
         """
     )
     return
@@ -407,9 +616,9 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 9.6: View erstellen
+        ### 🟢 Aufgabe 6.1: View erstellen — team_statistik
 
-        Erstelle einen View für Team-Statistiken mit berechneten Spalten.
+        Erstellen Sie einen View mit berechneten Spalten (Siegquote, Tore pro Spiel).
         """
     )
     return
@@ -417,7 +626,7 @@ def _(mo):
 
 @app.cell
 def _(bundesliga, mo):
-    mo.sql(
+    _df = mo.sql(
         f"""
         CREATE OR REPLACE VIEW team_statistik AS
         SELECT
@@ -426,20 +635,21 @@ def _(bundesliga, mo):
             Siege,
             Unentschieden,
             Niederlagen,
-            ToreGeschossen,
-            ToreKassiert,
+            Tore,
+            Gegentore,
             Tordifferenz,
             ROUND(CAST(Siege AS FLOAT) / Spiele * 100, 1) AS Siegquote,
-            ROUND(CAST(ToreGeschossen AS FLOAT) / Spiele, 2) AS Tore_pro_Spiel
+            ROUND(CAST(Tore AS FLOAT) / Spiele, 2) AS Tore_pro_Spiel
         FROM bundesliga
         """
     )
+    return
 
 
 @app.cell
 def _(mo):
     # View verwenden wie eine normale Tabelle
-    mo.sql(
+    _df = mo.sql(
         f"""
         SELECT Mannschaft, Siegquote, Tore_pro_Spiel
         FROM team_statistik
@@ -447,16 +657,17 @@ def _(mo):
         ORDER BY Siegquote DESC
         """
     )
+    return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        ### 🟡 Aufgabe 9.6b: View mit Bedingung (scaffolded)
+        ### 🟡 Aufgabe 6.2: Titelkandidaten-View (Scaffolded)
 
-        Erstelle einen View `titelkandidaten` mit den Top-4-Teams nach Punkten.
-        Ergänze die fehlenden Teile:
+        Erstellen Sie einen View `titelkandidaten` mit den **Top 4 Teams** nach Punkten.
+        Ergänzen Sie die fehlenden Teile (`???`):
         """
     )
     return
@@ -464,7 +675,6 @@ def _(mo):
 
 @app.cell
 def _(bundesliga, mo):
-    # Ergänze: ORDER BY Punkte DESC, LIMIT 4
     _df = mo.sql(
         f"""
         CREATE OR REPLACE VIEW titelkandidaten AS
@@ -472,6 +682,7 @@ def _(bundesliga, mo):
         FROM bundesliga
         ORDER BY ??? DESC
         LIMIT ???
+        -- Tipp: Punkte, 4
         """
     )
     return
@@ -495,11 +706,11 @@ LIMIT 4
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 9.7: Selbstständig – View für Kellerkinder
+        ### 🔵 Aufgabe 6.3: Abstiegskandidaten-View (Selbstständig)
 
-        Erstelle einen View `abstiegskandidaten` mit Teams auf den letzten 6 Plätzen.
+        Erstellen Sie einen View `abstiegskandidaten` mit den Teams auf den **letzten 6 Plätzen**.
 
-        *Hinweis: Sortiere nach Punkten und nutze LIMIT.*
+        *Hinweis: Sortieren Sie nach Punkten aufsteigend und nutzen Sie LIMIT.*
         """
     )
     return
@@ -507,16 +718,17 @@ def _(mo):
 
 @app.cell
 def _(bundesliga, mo):
-    # Deine Lösung hier:
-    mo.sql(
+    # Ihre Lösung hier:
+    _df = mo.sql(
         f"""
         -- Ihre Lösung hier
-        -- Tipp: CREATE OR REPLACE VIEW name AS SELECT ...
-        -- Sortieren nach Punkte ASC und LIMIT 6
-        -- Erwartete Spalten im View: Mannschaft, Punkte, Tordifferenz
-        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        -- Tipp: CREATE OR REPLACE VIEW abstiegskandidaten AS
+        --       SELECT Mannschaft, Punkte, Tordifferenz FROM bundesliga
+        --       ORDER BY Punkte ASC LIMIT 6
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS Hinweis
         """
     )
+    return
 
 
 @app.cell(hide_code=True)
@@ -533,14 +745,102 @@ LIMIT 6
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
-    # Prüfe deinen View
-    mo.sql(
-        f"""
-        SELECT * FROM abstiegskandidaten
+    mo.md(
+        r"""
+        ### 🔵 Aufgabe 6.4: View offensive_teams (Selbstständig)
+
+        Erstellen Sie einen View `offensive_teams` mit allen Teams,
+        die **mehr Tore geschossen als kassiert** haben.
+
+        *Hinweis: `WHERE Tore > Gegentore`*
         """
     )
+    return
+
+
+@app.cell
+def _(bundesliga, mo):
+    # Ihre Lösung hier:
+    _df = mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        -- Tipp: CREATE OR REPLACE VIEW offensive_teams AS
+        --       SELECT Mannschaft, Tore, Gegentore,
+        --              ROUND(CAST(Tore AS FLOAT) / Spiele, 2) AS Tore_pro_Spiel,
+        --              ROUND(CAST(Gegentore AS FLOAT) / Spiele, 2) AS Gegentore_pro_Spiel
+        --       FROM bundesliga WHERE Tore > Gegentore
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS Hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+CREATE OR REPLACE VIEW offensive_teams AS
+SELECT
+    Mannschaft,
+    Tore,
+    Gegentore,
+    ROUND(CAST(Tore AS FLOAT) / Spiele, 2) AS Tore_pro_Spiel,
+    ROUND(CAST(Gegentore AS FLOAT) / Spiele, 2) AS Gegentore_pro_Spiel
+FROM bundesliga
+WHERE Tore > Gegentore
+ORDER BY Tore DESC
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔴 Aufgabe 6.5: Debugging — Falscher Spaltenname
+
+        Die folgende Abfrage hat einen Fehler. Finden und beheben Sie ihn!
+        """
+    )
+    return
+
+
+@app.cell
+def _(bundesliga, mo):
+    _df = mo.sql(
+        f"""
+        -- 🔴 Diese Abfrage hat einen Fehler — finden und beheben Sie ihn!
+        SELECT Name, Punkte
+        FROM bundesliga
+        ORDER BY Punkte DESC
+        LIMIT 5
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Lösung": mo.md("""
+**Problem:** Die Spalte heißt `Mannschaft`, nicht `Name`!
+
+**Lösung:**
+```sql
+SELECT Mannschaft, Punkte
+FROM bundesliga
+ORDER BY Punkte DESC
+LIMIT 5
+```
+""")})
+    return
+
+
+# -----------------------------------------------------------------------
+# Exploration
+# -----------------------------------------------------------------------
 
 
 @app.cell(hide_code=True)
@@ -549,9 +849,9 @@ def _(mo):
         r"""
         ---
 
-        ## Phase 4: Transaktionen
+        ## Exploration
 
-        Transaktionen garantieren **ACID-Eigenschaften** bei Datenänderungen.
+        Offene Herausforderungen für Fortgeschrittene.
         """
     )
     return
@@ -561,14 +861,22 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-        ### ACID-Eigenschaften
+        ### ⭐ Exploration 1: View für Teams mit Siegquote > 50 %
 
-        | Eigenschaft | Bedeutung |
-        |-------------|-----------|
-        | **A**tomicity | Alles oder nichts |
-        | **C**onsistency | Datenbank bleibt konsistent |
-        | **I**solation | Parallele Transaktionen stören sich nicht |
-        | **D**urability | Bestätigte Änderungen sind permanent |
+        Erstellen Sie einen View `starke_teams`, der alle Teams mit einer
+        Siegquote über 50 % enthält.
+        """
+    )
+    return
+
+
+@app.cell
+def _(bundesliga, mo):
+    # Ihre Lösung hier:
+    _df = mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS Hinweis
         """
     )
     return
@@ -576,25 +884,19 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    acid_quiz = mo.ui.radio(
-        options={
-            "atomic": "Alles oder nichts — entweder alle Operationen oder keine",
-            "isolation": "Gleichzeitiger Zugriff ist möglich",
-            "durability": "Daten werden dauerhaft gespeichert",
-            "consistency": "Daten bleiben konsistent"
-        },
-        label="**Quiz:** Was garantiert die **Atomarität** (Atomicity) einer Transaktion?"
-    )
-    acid_quiz
-    return (acid_quiz,)
-
-
-@app.cell(hide_code=True)
-def _(acid_quiz, mo):
-    if acid_quiz.value == "atomic":
-        mo.output.replace(mo.md("✅ **Richtig!** Atomarität bedeutet: Eine Transaktion wird entweder *komplett* oder *gar nicht* ausgeführt. Wenn ein Schritt fehlschlägt, werden alle bisherigen Änderungen rückgängig gemacht (ROLLBACK)."))
-    elif acid_quiz.value:
-        mo.output.replace(mo.md("❌ Nicht ganz. Das beschreibt eine andere ACID-Eigenschaft. Atomarität kommt von 'unteilbar' — denken Sie an alles oder nichts."))
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+CREATE OR REPLACE VIEW starke_teams AS
+SELECT
+    Mannschaft,
+    Siege,
+    Spiele,
+    ROUND(CAST(Siege AS FLOAT) / Spiele * 100, 1) AS Siegquote
+FROM bundesliga
+WHERE CAST(Siege AS FLOAT) / Spiele > 0.5
+ORDER BY Siegquote DESC
+```
+""")})
     return
 
 
@@ -602,9 +904,79 @@ def _(acid_quiz, mo):
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 9.8: Überweisung simulieren
+        ### ⭐⭐ Exploration 2: Korrelierte Subquery — Nächstplatzierter Verein
 
-        Simuliere eine Überweisung von Konto A nach Konto B.
+        Finden Sie für jedes Team den **nächstplatzierten Verein** (das Team mit den
+        nächstniedrigeren Punkten). Nutzen Sie eine korrelierte Subquery.
+
+        *Hinweis: Für jede Zeile suchen Sie das Maximum der Punkte, die kleiner als
+        die eigenen Punkte sind.*
+        """
+    )
+    return
+
+
+@app.cell
+def _(bundesliga, mo):
+    # Ihre Lösung hier:
+    _df = mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        -- Tipp: Korrelierte Subquery in SELECT
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS Hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    b1.Mannschaft,
+    b1.Punkte,
+    (
+        SELECT b2.Mannschaft
+        FROM bundesliga b2
+        WHERE b2.Punkte < b1.Punkte
+        ORDER BY b2.Punkte DESC
+        LIMIT 1
+    ) AS Naechstplatzierter,
+    (
+        SELECT MAX(b2.Punkte)
+        FROM bundesliga b2
+        WHERE b2.Punkte < b1.Punkte
+    ) AS Punkte_dahinter,
+    b1.Punkte - (
+        SELECT MAX(b2.Punkte)
+        FROM bundesliga b2
+        WHERE b2.Punkte < b1.Punkte
+    ) AS Abstand
+FROM bundesliga b1
+ORDER BY b1.Punkte DESC
+```
+
+**Erklärung:** Die Subquery ist *korreliert*, weil sie sich auf `b1.Punkte` aus der
+äußeren Abfrage bezieht. Für jede Zeile wird die Subquery erneut ausgewertet.
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### ⭐⭐⭐ Exploration 3: Lost-Update-Problem simulieren
+
+        Die Tabelle `konten` enthält drei Bankkonten. Stellen Sie sich vor, zwei
+        Transaktionen laufen **gleichzeitig** ab:
+
+        - **Transaktion 1:** Überweise 100 € von Alice (A) nach Bob (B)
+        - **Transaktion 2:** Überweise 50 € von Alice (A) nach Charlie (C)
+
+        Ohne Isolation kann ein **Lost Update** auftreten. Beschreiben Sie das Problem
+        konzeptionell und zeigen Sie den Ausgangszustand der Konten.
         """
     )
     return
@@ -612,31 +984,28 @@ def _(mo):
 
 @app.cell
 def _(konten, mo):
-    # Ausgangszustand
-    mo.sql(
+    # Ausgangszustand anzeigen
+    _df = mo.sql(
         f"""
+        -- Ausgangszustand der Konten
         SELECT * FROM konten
         """
     )
+    return
 
 
 @app.cell
 def _(mo):
-    mo.md(
-        r"""
-        **Transaktion: 100€ von Alice (A) nach Bob (B)**
-
-        In einer echten Datenbank würden wir schreiben:
-        ```sql
-        BEGIN TRANSACTION;
-
-        UPDATE konten SET saldo = saldo - 100 WHERE konto_id = 'A';
-        UPDATE konten SET saldo = saldo + 100 WHERE konto_id = 'B';
-
-        COMMIT;
-        ```
-
-        **Wichtig:** Bei Fehler würde ROLLBACK alles rückgängig machen.
+    # Ihre Analyse hier:
+    _df = mo.sql(
+        f"""
+        -- Versuchen Sie, den Ablauf konzeptionell nachzuvollziehen:
+        -- T1 liest Saldo A = 1000
+        -- T2 liest Saldo A = 1000
+        -- T1 schreibt Saldo A = 1000 - 100 = 900
+        -- T2 schreibt Saldo A = 1000 - 50  = 950  ← überschreibt T1!
+        -- Ergebnis: Alice hat 950 statt korrekter 850
+        SELECT 'Schreiben Sie Ihre Analyse hier' AS Hinweis
         """
     )
     return
@@ -644,19 +1013,37 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
-        ### Concurrency-Probleme
+    mo.accordion({"🔑 Erklärung": mo.md("""
+**Lost-Update-Problem:**
 
-        | Problem | Beschreibung |
-        |---------|--------------|
-        | **Lost Update** | Zwei Transaktionen überschreiben sich |
-        | **Dirty Read** | Lesen von nicht-committeten Daten |
-        | **Non-Repeatable Read** | Gleiche Abfrage, verschiedene Ergebnisse |
-        | **Phantom Read** | Neue Zeilen erscheinen zwischen Abfragen |
-        """
-    )
+| Schritt | Transaktion 1 | Transaktion 2 | Saldo A |
+|---------|---------------|---------------|---------|
+| 1 | READ Saldo A → 1000 | | 1000 |
+| 2 | | READ Saldo A → 1000 | 1000 |
+| 3 | WRITE Saldo A = 900 | | 900 |
+| 4 | | WRITE Saldo A = 950 | **950** ← falsch! |
+
+**Problem:** T2 hat den alten Wert (1000) gelesen und überschreibt die Änderung von T1.
+Alice sollte 850 € haben (1000 - 100 - 50), hat aber 950 €.
+
+**Lösung:** Transaktionen mit korrekter Isolation (z.B. Serializable) oder Sperren (Locks)
+verhindern dieses Problem. In SQL:
+
+```sql
+BEGIN TRANSACTION;
+UPDATE konten SET saldo = saldo - 100 WHERE konto_id = 'A';
+UPDATE konten SET saldo = saldo + 100 WHERE konto_id = 'B';
+COMMIT;
+```
+
+Durch `BEGIN ... COMMIT` wird sichergestellt, dass die Transaktion atomar und isoliert abläuft.
+""")})
     return
+
+
+# -----------------------------------------------------------------------
+# Zusammenfassung
+# -----------------------------------------------------------------------
 
 
 @app.cell(hide_code=True)
@@ -667,12 +1054,12 @@ def _(mo):
 
         ## Zusammenfassung
 
-        | Konzept | Wann nutzen? |
-        |---------|--------------|
-        | **Subquery** | Einfache einmalige Berechnungen |
-        | **CTE (WITH)** | Komplexe Abfragen strukturieren |
-        | **View** | Wiederverwendbare, persistente Abfragen |
-        | **Transaktion** | Zusammengehörige Änderungen absichern |
+        | Konzept | Wann nutzen? | Aufgaben |
+        |---------|--------------|----------|
+        | **Subquery** | Einfache einmalige Berechnungen | 2.1 – 2.6 |
+        | **CTE (WITH)** | Komplexe Abfragen strukturieren | 4.1 – 4.5 |
+        | **View** | Wiederverwendbare, persistente Abfragen | 6.1 – 6.5 |
+        | **Transaktion** | Zusammengehörige Änderungen absichern | Exploration 3 |
 
         ### Entscheidungsbaum
 
@@ -681,37 +1068,8 @@ def _(mo):
         ├── Ja → Komplex? → Ja: CTE / Nein: Subquery
         └── Nein → View
         ```
-        """
-    )
-    return
 
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ---
-
-        ## Freie Exploration
-
-        Probieren Sie eigene Abfragen:
-
-        - Erstellen Sie einen View für "Titelkandidaten" (Top 4)
-        - Nutzen Sie CTEs um Teams mit überdurchschnittlichen Heim- UND Auswärtsbilanzen zu finden
-        - Experimentieren Sie mit korrelierten Subqueries
-        """
-    )
-    return
-
-
-@app.cell
-def _(bundesliga, mo):
-    # Ihre eigene Abfrage hier:
-    _df = mo.sql(
-        f"""
-        SELECT Mannschaft, Punkte
-        FROM bundesliga
-        LIMIT 5
+        **Nächste Session:** Explorative Datenanalyse (EDA)
         """
     )
     return

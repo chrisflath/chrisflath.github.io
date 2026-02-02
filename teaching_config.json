@@ -86,6 +86,53 @@
           "topics": ["String-Funktionen", "LIKE", "Regex", "CASE WHEN", "TF-IDF"]
         }
       ],
+      "guide_notebooks": [
+        {
+          "file": "notebooks/dma-sql-1-guide.py",
+          "title": "Session 1: SQL-Grundlagen — Guide",
+          "exercise": "notebooks/dma-sql-1.py"
+        },
+        {
+          "file": "notebooks/dma-sql-2-guide.py",
+          "title": "Session 2: SQL für Datenexploration — Guide",
+          "exercise": "notebooks/dma-sql-2.py"
+        },
+        {
+          "file": "notebooks/dma-sql-3-guide.py",
+          "title": "Session 3: Aggregation & Gruppierung — Guide",
+          "exercise": "notebooks/dma-sql-3.py"
+        },
+        {
+          "file": "notebooks/dma-sql-4-guide.py",
+          "title": "Session 4: CRISP-DM & Fallstudien — Guide",
+          "exercise": "notebooks/dma-sql-4.py"
+        },
+        {
+          "file": "notebooks/dma-sql-5-guide.py",
+          "title": "Session 5: Datenmodellierung — Guide",
+          "exercise": "notebooks/dma-sql-5.py"
+        },
+        {
+          "file": "notebooks/dma-sql-6-guide.py",
+          "title": "Session 6: Relationales Modell & Transformation — Guide",
+          "exercise": "notebooks/dma-sql-6.py"
+        },
+        {
+          "file": "notebooks/dma-sql-7-guide.py",
+          "title": "Session 7: Normalisierung — Guide",
+          "exercise": "notebooks/dma-sql-7.py"
+        },
+        {
+          "file": "notebooks/dma-sql-8-guide.py",
+          "title": "Session 8: JOINs — Guide",
+          "exercise": "notebooks/dma-sql-8.py"
+        },
+        {
+          "file": "notebooks/dma-sql-9-guide.py",
+          "title": "Session 9: Subqueries, Views & Transaktionen — Guide",
+          "exercise": "notebooks/dma-sql-9.py"
+        }
+      ],
       "legacy_notebooks": [
         "notebooks/datenanalyse.py",
         "notebooks/dma-sql-2-loesung.py",
