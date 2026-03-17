@@ -55,7 +55,43 @@
    	  
       {
          "type" : "Publication",
-         "id"   : "https://www.bibsonomy.org/bibtex/2fd5936c159448ac22e525335637ef6c2/cflath",         
+         "id"   : "https://www.bibsonomy.org/bibtex/2placeholder_derzbach2026pikan/cflath",
+         "tags" : [
+            "myown","proceedings"
+         ],
+
+         "intraHash" : "placeholder_derzbach2026pikan",
+         "interHash" : "placeholder_derzbach2026pikan_inter",
+         "label" : "Interpretable Prosumer Load Forecasting via Physics-Informed Kolmogorov-Arnold Networks",
+         "user" : "cflath",
+         "description" : "",
+         "date" : "2026-03-17 12:00:00",
+         "changeDate" : "2026-03-17 12:00:00",
+         "count" : 1,
+         "pub-type": "inproceedings",
+         "booktitle": "Proceedings of the 17th ACM International Conference on Future and Sustainable Energy Systems","publisher":"ACM",
+         "year": "2026",
+         "url": "",
+
+         "author": [
+            "Robin Thomas Derzbach","Anh-Duy Pham","Aabhash Dhakal","Christoph Michael Flath"
+         ],
+         "authors": [
+
+            	{"first" : "Robin Thomas",	"last" : "Derzbach"},
+            	{"first" : "Anh-Duy",	"last" : "Pham"},
+            	{"first" : "Aabhash",	"last" : "Dhakal"},
+            	{"first" : "Christoph Michael",	"last" : "Flath"}
+         ],
+         "abstract": "Modeling prosumer behavior under dynamic electricity tariffs is essential for demand-side flexibility, yet existing approaches trade off accuracy against interpretability. We propose PIKAN-NC, a Physics-Informed Kolmogorov-Arnold Network that represents prosumer load as a driven harmonic oscillator with context-dependent coefficients. The damping, stiffness, and forcing parameters are learned as functions of exogenous features - pricing, weather, calendar - yielding built-in interpretability through their physical meaning: adaptation rate, baseline adherence, and external driver influence. Unlike post-hoc attribution methods, these coefficients are directly inspectable and grounded in dynamical systems theory. We validate PIKAN-NC on synthetic benchmarks with known ground truth and three real-world datasets spanning diverse prosumer populations under time-of-use and dynamic tariffs. Results demonstrate competitive forecasting accuracy while providing physically interpretable characterizations of individual prosumer flexibility that reveal how behavior varies with context and household type.",
+
+         "bibtexKey": "derzbach2026pikan"
+
+      }
+,
+      {
+         "type" : "Publication",
+         "id"   : "https://www.bibsonomy.org/bibtex/2fd5936c159448ac22e525335637ef6c2/cflath",
          "tags" : [
             "journal","myown"
          ],
