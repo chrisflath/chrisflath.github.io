@@ -55,6 +55,41 @@
    	  
       {
          "type" : "Publication",
+         "id"   : "https://www.bibsonomy.org/bibtex/2placeholder_elbert2026ecis/cflath",
+         "tags" : [
+            "myown","proceedings"
+         ],
+
+         "intraHash" : "placeholder_elbert2026ecis",
+         "interHash" : "placeholder_elbert2026ecis_inter",
+         "label" : "From Engine-Optimal to Human-Optimal: Designing Behavior-Grounded AI Training Systems",
+         "user" : "cflath",
+         "description" : "",
+         "date" : "2026-03-17 12:00:00",
+         "changeDate" : "2026-03-17 12:00:00",
+         "count" : 1,
+         "pub-type": "inproceedings",
+         "booktitle": "Proceedings of the European Conference on Information Systems",
+         "year": "2026",
+         "url": "",
+
+         "author": [
+            "Nico Elbert","Philipp Landeck","Christoph Michael Flath"
+         ],
+         "authors": [
+
+            	{"first" : "Nico",	"last" : "Elbert"},
+            	{"first" : "Philipp",	"last" : "Landeck"},
+            	{"first" : "Christoph Michael",	"last" : "Flath"}
+         ],
+         "abstract": "Artificial intelligence systems in digital sports increasingly provide superhuman recommendations, yet these outputs often misalign with human cognitive constraints and learning processes. This limits the effectiveness of AI-based training tools that optimize for machine-perfect play rather than human-optimal skill development. We address this design problem by developing a behavior-grounded AI training system that integrates superhuman engine evaluations with empirical patterns of human decision making. Using millions of recurring decision situations from online chess as an instantiation, we identify positions where engine-ranked moves diverge from empirically stronger human choices and train an interpretable, position-based predictive model to recommend moves aligned with human performance across skill levels. The artifact generalizes to previously unseen positions and systematically improves upon engine-only recommendations in ambiguous decision situations. We demonstrate its utility through large-scale evaluation and derive design principles for human-centric AI training systems that extend to digital sports where human-AI misalignment is prevalent.",
+
+         "bibtexKey": "elbert2026engine"
+
+      }
+,
+      {
+         "type" : "Publication",
          "id"   : "https://www.bibsonomy.org/bibtex/2placeholder_derzbach2026pikan/cflath",
          "tags" : [
             "myown","proceedings"
