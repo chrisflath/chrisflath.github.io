@@ -26,7 +26,7 @@ canvas { display: block; touch-action: none; }
     <h1>Rook Runner</h1>
     <div class="sub">Dodge the pieces, collect the stars!</div>
     <button id="start-btn">Play</button>
-    <div class="hint">Arrow keys / WASD / Swipe to move | Space / Swipe up for ability</div>
+    <div class="hint">← → move | ↑ / Space ability | ↓ crouch | Pawns auto-duck!</div>
 </div>
 <div class="overlay" id="gameover-screen">
     <h2>Game Over!</h2>
@@ -174,6 +174,9 @@ function newGame(){
         shakeTimer:0, shakeX:0, shakeY:0,
         rank:0, starsCollected:0, promoteFlash:0,
         jumpHeight:0, jumpVel:0, isJumping:false,
+        isCrouching:false, crouchAmount:0,
+        // Bonus lanes: -1 (left) and LANES (right), toggled on/off
+        bonusLeft:false, bonusRight:false, bonusTimer:0, bonusStarZ:0,
         abilityCooldown:0, abilityActive:0,
         speedLines:[] };
 }
@@ -228,6 +231,21 @@ function spawnRow(){
         const lane = Math.random() < 0.5 ? 0 : LANES - 1;
         const dir = lane === 0 ? 1 : -1;
         g.obstacles.push({lane, worldZ: baseZ, type: 'bishop', hit: false, sliding: true, slideDir: dir, slideSpeed: 1.5});
+    } else if (g.distance > 500 && formRoll < 0.65) {
+        // OVERHEAD: horizontal bar across 2-4 lanes — must crouch (pawns auto-dodge)
+        const startLane = Math.floor(Math.random() * (LANES - 1));
+        const width = Math.min(LANES - startLane, 2 + Math.floor(Math.random() * 2));
+        for (let i = 0; i < width; i++) {
+            g.obstacles.push({lane: startLane + i, worldZ: baseZ, type: 'overhead', hit: false});
+        }
+        // Stars below the bar as reward for crouching
+        if (width < LANES) {
+            for (let i = 0; i < LANES; i++) {
+                if (i >= startLane && i < startLane + width) {
+                    if (Math.random() < 0.5) g.stars.push({lane: i, worldZ: baseZ, collected: false});
+                }
+            }
+        }
     } else {
         // Standard: random enemies
         const maxBlock=Math.min(LANES-1,1+Math.floor(g.speed/2.5));
@@ -527,6 +545,55 @@ function drawQueen3D(cx, baseY, size, colors, alpha) {
     drawSphere(cx,cb-s*0.04,s*0.022,{body:'#c0392b',shade:'#7b241c',dark:'#4a1510',highlight:'#ff7675'},alpha);
 }
 
+// Overhead bar: horizontal beam with warning stripes
+function drawOverhead(cx, baseY, size, alpha) {
+    const s = size;
+    ctx.globalAlpha = alpha;
+    // Support posts (left and right)
+    const postW = s * 0.06, postH = s * 0.7;
+    const halfW = s * 0.45;
+    ctx.fillStyle = '#8B4513';
+    ctx.fillRect(cx - halfW - postW, baseY - postH, postW, postH);
+    ctx.fillRect(cx + halfW, baseY - postH, postW, postH);
+    // Crossbeam
+    const beamH = s * 0.12;
+    const beamY = baseY - postH;
+    const bg = ctx.createLinearGradient(cx - halfW, beamY, cx + halfW, beamY);
+    bg.addColorStop(0, '#654321');
+    bg.addColorStop(0.5, '#8B6914');
+    bg.addColorStop(1, '#654321');
+    ctx.fillStyle = bg;
+    ctx.fillRect(cx - halfW - postW, beamY, halfW * 2 + postW * 2, beamH);
+    // Warning stripes
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(cx - halfW - postW, beamY, halfW * 2 + postW * 2, beamH);
+    ctx.clip();
+    ctx.strokeStyle = `rgba(255,200,0,${alpha * 0.5})`;
+    ctx.lineWidth = 2;
+    const stripeW = s * 0.08;
+    for (let x = cx - halfW - postW - stripeW; x < cx + halfW + postW + stripeW; x += stripeW * 2) {
+        ctx.beginPath();
+        ctx.moveTo(x, beamY);
+        ctx.lineTo(x + stripeW, beamY + beamH);
+        ctx.stroke();
+    }
+    ctx.restore();
+    // Bottom edge highlight
+    ctx.strokeStyle = `rgba(255,180,0,${alpha * 0.6})`;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(cx - halfW - postW, beamY + beamH);
+    ctx.lineTo(cx + halfW + postW, beamY + beamH);
+    ctx.stroke();
+    // "DUCK!" warning icon
+    ctx.fillStyle = `rgba(255,80,80,${alpha * 0.8})`;
+    ctx.font = `bold ${Math.max(8, s * 0.12)}px Fredoka, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.fillText('⚠', cx, beamY - 2);
+    ctx.globalAlpha = 1;
+}
+
 const DRAW_PIECE = { pawn: drawPawn3D, knight: drawKnight3D, bishop: drawBishop3D, rook: drawRook3D, queen: drawQueen3D };
 
 function drawPieceAt(type, cx, baseY, size, isPlayer, alpha) {
@@ -538,34 +605,40 @@ function drawPieceAt(type, cx, baseY, size, isPlayer, alpha) {
 
 // ---- Board drawing ----
 
+// Compute where the horizon line actually is (board vanishing point)
+function getHorizonY() {
+    const farPoint = worldToScreen(LANES / 2, 20);
+    return farPoint ? farPoint.y : H * 0.55;
+}
+
 function drawSky() {
-    const grad = ctx.createLinearGradient(0, 0, 0, H * 0.45);
+    const horizY = getHorizonY();
+    const grad = ctx.createLinearGradient(0, 0, 0, horizY);
     grad.addColorStop(0, '#5dade2');
     grad.addColorStop(0.6, '#aed6f1');
     grad.addColorStop(1, '#f9e79f');
     ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, W, H * 0.5);
+    ctx.fillRect(0, 0, W, horizY + 20);
     // Sun
-    const sunX = W * 0.78, sunY = H * 0.12;
+    const sunX = W * 0.78, sunY = horizY * 0.25;
     const sg = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, H * 0.15);
     sg.addColorStop(0, 'rgba(255,240,180,0.9)');
     sg.addColorStop(0.4, 'rgba(255,220,130,0.3)');
     sg.addColorStop(1, 'transparent');
     ctx.fillStyle = sg;
-    ctx.fillRect(0, 0, W, H * 0.45);
+    ctx.fillRect(0, 0, W, horizY);
     // Clouds
     const t = performance.now() / 10000;
-    drawCloud(W*0.12+Math.sin(t)*30, H*0.08, 50);
-    drawCloud(W*0.4+Math.sin(t+2)*20, H*0.05, 40);
-    drawCloud(W*0.65+Math.sin(t+4)*25, H*0.12, 55);
+    drawCloud(W*0.12+Math.sin(t)*30, horizY*0.2, 50);
+    drawCloud(W*0.4+Math.sin(t+2)*20, horizY*0.12, 40);
+    drawCloud(W*0.65+Math.sin(t+4)*25, horizY*0.3, 55);
     // Castle
     drawCastle();
     // Hills
-    const hy = H * 0.42;
     ctx.fillStyle = '#82c969';
-    ctx.beginPath(); ctx.moveTo(0, hy+10);
-    for (let x=0;x<=W;x+=15) ctx.lineTo(x, hy + Math.sin(x*0.012)*8 + Math.sin(x*0.005+1)*12);
-    ctx.lineTo(W,hy+20); ctx.lineTo(0,hy+20); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(0, horizY+10);
+    for (let x=0;x<=W;x+=15) ctx.lineTo(x, horizY - 8 + Math.sin(x*0.012)*6 + Math.sin(x*0.005+1)*10);
+    ctx.lineTo(W,horizY+20); ctx.lineTo(0,horizY+20); ctx.closePath(); ctx.fill();
 }
 function drawCloud(x,y,s){
     ctx.fillStyle='rgba(255,255,255,0.75)';
@@ -575,7 +648,7 @@ function drawCloud(x,y,s){
     ctx.fill();
 }
 function drawCastle(){
-    const cx=W*0.5, by=H*0.41;
+    const cx=W*0.5, by=getHorizonY()-5;
     ctx.fillStyle='rgba(140,120,95,0.5)';
     ctx.fillRect(cx-18,by-30,36,30);
     for(let i=-2;i<=2;i++) ctx.fillRect(cx+i*9-3,by-36,6,7);
@@ -602,8 +675,12 @@ function drawBoard() {
         const tileRow = Math.floor(camZ + dz);
         const isOddRow = tileRow % 2;
 
-        for (let col = 0; col < LANES; col++) {
-            const isLight = ((isOddRow + col) % 2 === 0);
+        const startCol = (g && g.bonusLeft) ? -1 : 0;
+        const endCol = (g && g.bonusRight) ? LANES + 1 : LANES;
+
+        for (let col = startCol; col < endCol; col++) {
+            const isBonus = col < 0 || col >= LANES;
+            const isLight = ((isOddRow + Math.abs(col + 100)) % 2 === 0);
 
             const s00 = worldToScreen(col, wz0);
             const s10 = worldToScreen(col + 1, wz0);
@@ -613,8 +690,11 @@ function drawBoard() {
 
             // Fog
             const fogFactor = Math.min(1, dz / FAR);
-            ctx.globalAlpha = 1 - fogFactor * 0.6;
-            ctx.fillStyle = isLight ? '#ffe4b5' : '#dda65a';
+            ctx.globalAlpha = (1 - fogFactor * 0.6) * (isBonus ? 0.75 : 1);
+            // Bonus lanes have a golden tint
+            ctx.fillStyle = isBonus
+                ? (isLight ? '#ffe680' : '#d4a520')
+                : (isLight ? '#ffe4b5' : '#dda65a');
 
             ctx.beginPath();
             ctx.moveTo(s00.x, s00.y);
@@ -632,13 +712,15 @@ function drawBoard() {
     }
     ctx.globalAlpha = 1;
 
-    // Green sides
+    // Green sides (outside bonus lanes if active)
+    const leftEdgeCol = (g && g.bonusLeft) ? -1 : 0;
+    const rightEdgeCol = (g && g.bonusRight) ? LANES + 1 : LANES;
     for (let dz = FAR; dz >= 1; dz -= 0.5) {
         const wz0 = dz, wz1 = dz - 0.5;
-        const sL0 = worldToScreen(0, wz0);
-        const sL1 = worldToScreen(0, wz1);
-        const sR0 = worldToScreen(LANES, wz0);
-        const sR1 = worldToScreen(LANES, wz1);
+        const sL0 = worldToScreen(leftEdgeCol, wz0);
+        const sL1 = worldToScreen(leftEdgeCol, wz1);
+        const sR0 = worldToScreen(rightEdgeCol, wz0);
+        const sR1 = worldToScreen(rightEdgeCol, wz1);
         if (!sL0 || !sL1) continue;
         const fogA = 1 - Math.min(1, dz / FAR) * 0.6;
 
@@ -740,13 +822,17 @@ function drawScene() {
             const size = s.scale * 0.8;
             const alpha = Math.max(0, 1 - (dz / 20) * 0.6);
             drawables.push({ z: dz, fn: () => {
-                // Shadow
-                ctx.globalAlpha = alpha * 0.3;
-                ctx.fillStyle = 'rgba(0,0,0,0.3)';
-                ctx.beginPath();
-                ctx.ellipse(s.x, s.y, size * 0.3, size * 0.08, 0, 0, Math.PI * 2);
-                ctx.fill();
-                drawPieceAt(o.type, s.x, s.y, size, false, alpha);
+                if (o.type === 'overhead') {
+                    drawOverhead(s.x, s.y, size, alpha);
+                } else {
+                    // Shadow
+                    ctx.globalAlpha = alpha * 0.3;
+                    ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                    ctx.beginPath();
+                    ctx.ellipse(s.x, s.y, size * 0.3, size * 0.08, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    drawPieceAt(o.type, s.x, s.y, size, false, alpha);
+                }
             }});
         }
         for (const st of g.stars) {
@@ -764,7 +850,7 @@ function drawScene() {
             const ps = worldToScreen(g.laneX + 0.5, 2.0);
             if (!ps) return;
             const pSize = ps.scale * 0.85;
-            const jumpOff = g.jumpHeight * pSize * 2.5;
+            const jumpOff = g.jumpHeight * pSize * 0.8;
             const bob = Math.sin(performance.now() / 300) * 2 - jumpOff;
 
             // Determine ability color state
@@ -824,9 +910,16 @@ function drawScene() {
                 highlight: '#fff',
             } : PIECE_COLORS.player;
 
+            // Crouch: squash vertically, widen slightly
+            const crouchScale = 1 - g.crouchAmount * 0.4;
+            const crouchWiden = 1 + g.crouchAmount * 0.2;
             ctx.globalAlpha = blink ? 0.5 : 1;
+            ctx.save();
+            ctx.translate(ps.x, ps.y + bob);
+            ctx.scale(crouchWiden, crouchScale);
             const fn = DRAW_PIECE[rank];
-            if (fn) fn(ps.x, ps.y + bob, pSize, playerColors, blink ? 0.5 : 1);
+            if (fn) fn(0, 0, pSize, playerColors, blink ? 0.5 : 1);
+            ctx.restore();
             ctx.globalAlpha = 1;
         }});
 
@@ -903,16 +996,42 @@ function update(dt) {
     const diff = g.targetLane - g.laneX;
     if (Math.abs(diff) < 0.04) g.laneX = g.targetLane;
     else g.laneX += diff * 14 * dt;
+    // Bonus lane toggling (appear/disappear every 8-15 seconds)
+    g.bonusTimer -= dt;
+    if (g.bonusTimer <= 0) {
+        // Toggle one random bonus lane
+        const roll = Math.random();
+        if (roll < 0.3) { g.bonusLeft = !g.bonusLeft; }
+        else if (roll < 0.6) { g.bonusRight = !g.bonusRight; }
+        else { g.bonusLeft = !g.bonusLeft; g.bonusRight = !g.bonusRight; }
+        g.bonusTimer = 8 + Math.random() * 7;
+        // Spawn stars in bonus lanes as reward
+        if (g.bonusLeft) {
+            for (let i = 0; i < 3; i++) g.stars.push({lane: -1, worldZ: g.worldZ + 10 + i * 2, collected: false});
+        }
+        if (g.bonusRight) {
+            for (let i = 0; i < 3; i++) g.stars.push({lane: LANES, worldZ: g.worldZ + 10 + i * 2, collected: false});
+        }
+    }
+    // Clamp player lane to available lanes
+    const minLane = g.bonusLeft ? -1 : 0;
+    const maxLane = g.bonusRight ? LANES : LANES - 1;
+    g.targetLane = Math.max(minLane, Math.min(maxLane, g.targetLane));
+    if (!g.bonusLeft && g.laneX < -0.1) g.targetLane = 0;
+    if (!g.bonusRight && g.laneX > LANES - 0.9) g.targetLane = LANES - 1;
     // Spawn
     spawnTimer += dt;
     const interval = Math.max(0.3, 1.2 - g.speed * 0.05);
     if (spawnTimer > interval) { spawnRow(); spawnTimer = 0; }
     // Jump physics
     if (g.isJumping) {
-        g.jumpVel -= 14 * dt; // gravity
-        g.jumpHeight += g.jumpVel * dt * 60;
+        g.jumpVel -= 8 * dt; // gravity
+        g.jumpHeight += g.jumpVel * dt * 30;
         if (g.jumpHeight <= 0) { g.jumpHeight = 0; g.isJumping = false; g.jumpVel = 0; }
     }
+    // Crouch: smooth transition
+    const crouchTarget = g.isCrouching ? 1 : 0;
+    g.crouchAmount += (crouchTarget - g.crouchAmount) * 12 * dt;
     // Ability cooldown
     if (g.abilityCooldown > 0) g.abilityCooldown -= dt;
     if (g.abilityActive > 0) g.abilityActive -= dt;
@@ -935,13 +1054,27 @@ function update(dt) {
             o.lane = Math.max(0, Math.min(LANES - 1, o.lane));
         }
     }
-    // Collision (skip if jumping high enough)
+    // Collision
     const jumpDodge = g.jumpHeight > 0.4;
+    const rank = RANKS[g.rank];
+    const crouchDodge = g.crouchAmount > 0.6 || rank === 'pawn';
     for (const o of g.obstacles) {
         if (o.hit) continue;
         const dz = o.worldZ - camZ;
         if (dz > 4 || dz < -0.5) continue;
-        if (Math.abs(dz - 2.0) < 0.7 && Math.abs(g.laneX - o.lane) < 0.55 && g.invincible <= 0 && !jumpDodge) {
+        const inRange = Math.abs(dz - 2.0) < 0.7 && Math.abs(g.laneX - o.lane) < 0.55;
+        if (!inRange || g.invincible > 0) continue;
+
+        let dodged = false;
+        if (o.type === 'overhead') {
+            // Overhead bars: crouch to dodge, pawns auto-dodge, jumping INTO one hurts
+            dodged = crouchDodge && !jumpDodge;
+        } else {
+            // Ground obstacles: jump to dodge
+            dodged = jumpDodge;
+        }
+
+        if (!dodged) {
             o.hit = true; g.lives--; g.combo = 0; g.invincible = 1.5; g.shakeTimer = 0.3;
             sfxHit();
             const s = worldToScreen(o.lane + 0.5, dz);
@@ -979,8 +1112,18 @@ function spawnParticles(x, y, color, count) {
 }
 
 // ---- Input ----
-function moveLeft(){if(game?.running){game.targetLane=Math.max(0,game.targetLane-1);sfxDodge();}}
-function moveRight(){if(game?.running){game.targetLane=Math.min(LANES-1,game.targetLane+1);sfxDodge();}}
+function moveLeft(){
+    if(!game?.running) return;
+    const min = game.bonusLeft ? -1 : 0;
+    game.targetLane = Math.max(min, game.targetLane - 1);
+    sfxDodge();
+}
+function moveRight(){
+    if(!game?.running) return;
+    const max = game.bonusRight ? LANES : LANES - 1;
+    game.targetLane = Math.min(max, game.targetLane + 1);
+    sfxDodge();
+}
 function useAbility(){
     const g = game;
     if (!g?.running || g.abilityCooldown > 0) return;
@@ -988,7 +1131,7 @@ function useAbility(){
     if (rank === 'pawn') return; // no ability yet
     if (rank === 'knight') {
         // Jump!
-        if (!g.isJumping) { g.isJumping = true; g.jumpVel = 4.5; g.abilityCooldown = 1.0;
+        if (!g.isJumping) { g.isJumping = true; g.jumpVel = 2.2; g.abilityCooldown = 1.0;
             playTone(400,0.15,'sine',0.1); setTimeout(()=>playTone(600,0.1,'sine',0.08),80); }
     } else if (rank === 'bishop') {
         // Dash: brief speed boost + invincibility
@@ -1021,6 +1164,10 @@ document.addEventListener('keydown',e=>{
     if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A'){e.preventDefault();moveLeft();}
     if(e.key==='ArrowRight'||e.key==='d'||e.key==='D'){e.preventDefault();moveRight();}
     if(e.key===' '||e.key==='ArrowUp'||e.key==='w'||e.key==='W'){e.preventDefault();useAbility();}
+    if(e.key==='ArrowDown'||e.key==='s'||e.key==='S'){e.preventDefault();if(game?.running)game.isCrouching=true;}
+});
+document.addEventListener('keyup',e=>{
+    if(e.key==='ArrowDown'||e.key==='s'||e.key==='S'){if(game)game.isCrouching=false;}
 });
 let touchX=0;
 canvas.addEventListener('touchstart',e=>{touchX=e.touches[0].clientX;},{passive:true});
@@ -1031,6 +1178,7 @@ canvas.addEventListener('touchend',e=>{
     const dy=e.changedTouches[0].clientY-touchStartY;
     if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>30){dx<0?moveLeft():moveRight();}
     else if(dy<-30){useAbility();}
+    else if(dy>30){if(game?.running){game.isCrouching=true;setTimeout(()=>{if(game)game.isCrouching=false;},600);}}
 },{passive:true});
 
 // ---- Flow ----
