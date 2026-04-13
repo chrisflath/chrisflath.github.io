@@ -360,23 +360,20 @@ def _(mo):
 def _(mo):
     quiz_select = mo.ui.radio(
         options={
-            "a": "Alle Spalten der Tabelle bundesliga",
-            "b": "Nur die Spalte Mannschaft für alle Teams",
-            "c": "Nur Teams, die 'Mannschaft' heißen",
-            "d": "Eine Fehlermeldung",
+            "Alle Spalten der Tabelle bundesliga": "a",
+            "Nur die Spalte Mannschaft für alle Teams": "b",
+            "Nur Teams, die 'Mannschaft' heißen": "c",
+            "Eine Fehlermeldung": "d",
         },
         label="Was liefert `SELECT Mannschaft FROM bundesliga`?",
     )
-    quiz_select
-    return (quiz_select,)
-
-
-@app.cell(hide_code=True)
-def _(mo, quiz_select):
     if quiz_select.value == "b":
-        mo.callout(mo.md("**Richtig!** `SELECT Mannschaft` wählt genau eine Spalte aus — für alle Zeilen der Tabelle."), kind="success")
+        _result = mo.callout(mo.md("**Richtig!** `SELECT Mannschaft` wählt genau eine Spalte aus — für alle Zeilen der Tabelle."), kind="success")
     elif quiz_select.value is not None:
-        mo.callout(mo.md("**Nicht ganz.** `SELECT spalte` wählt eine bestimmte Spalte aus. `*` wäre nötig für alle Spalten."), kind="warn")
+        _result = mo.callout(mo.md("**Nicht ganz.** `SELECT spalte` wählt eine bestimmte Spalte aus. `*` wäre nötig für alle Spalten."), kind="warn")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([quiz_select, _result])
     return
 
 
@@ -578,23 +575,20 @@ def _(mo):
 def _(mo):
     quiz_where = mo.ui.radio(
         options={
-            "a": "`WHERE Siege > 10 OR Niederlagen < 5`",
-            "b": "`WHERE Siege > 10 AND Niederlagen < 5`",
-            "c": "`WHERE Siege >= 10 AND Niederlagen <= 5`",
-            "d": "`WHERE Siege >= 10 OR Niederlagen <= 5`",
+            "`WHERE Siege > 10 OR Niederlagen < 5`": "a",
+            "`WHERE Siege > 10 AND Niederlagen < 5`": "b",
+            "`WHERE Siege >= 10 AND Niederlagen <= 5`": "c",
+            "`WHERE Siege >= 10 OR Niederlagen <= 5`": "d",
         },
         label="Welche Abfrage findet Teams mit **mindestens 10 Siegen** UND **höchstens 5 Niederlagen**?",
     )
-    quiz_where
-    return (quiz_where,)
-
-
-@app.cell(hide_code=True)
-def _(mo, quiz_where):
     if quiz_where.value == "c":
-        mo.callout(mo.md("**Richtig!** 'Mindestens' = `>=`, 'höchstens' = `<=`, und beide Bedingungen müssen gelten = `AND`."), kind="success")
+        _result = mo.callout(mo.md("**Richtig!** 'Mindestens' = `>=`, 'höchstens' = `<=`, und beide Bedingungen müssen gelten = `AND`."), kind="success")
     elif quiz_where.value is not None:
-        mo.callout(mo.md("**Nicht ganz.** Achten Sie auf: 'mindestens 10' bedeutet `>= 10` (nicht `> 10`), und 'UND' erfordert `AND` (nicht `OR`)."), kind="warn")
+        _result = mo.callout(mo.md("**Nicht ganz.** Achten Sie auf: 'mindestens 10' bedeutet `>= 10` (nicht `> 10`), und 'UND' erfordert `AND` (nicht `OR`)."), kind="warn")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([quiz_where, _result])
     return
 
 
@@ -848,23 +842,20 @@ def _(mo):
 def _(mo):
     quiz_logic = mo.ui.radio(
         options={
-            "a": "AND — weil beide einschränkend wirken",
-            "b": "OR — weil nur eine Bedingung erfüllt sein muss",
-            "c": "Beide liefern gleich viele Ergebnisse",
-            "d": "Kommt auf die Daten an, man kann es nicht allgemein sagen",
+            "AND — weil beide einschränkend wirken": "a",
+            "OR — weil nur eine Bedingung erfüllt sein muss": "b",
+            "Beide liefern gleich viele Ergebnisse": "c",
+            "Kommt auf die Daten an, man kann es nicht allgemein sagen": "d",
         },
         label="Welcher Operator liefert in der Regel **mehr** Ergebnisse: `WHERE A AND B` oder `WHERE A OR B`?",
     )
-    quiz_logic
-    return (quiz_logic,)
-
-
-@app.cell(hide_code=True)
-def _(mo, quiz_logic):
     if quiz_logic.value == "b":
-        mo.callout(mo.md("**Richtig!** `OR` ist *permissiv* — es reicht, wenn eine Bedingung zutrifft. `AND` ist *restriktiv* — beide müssen gelten."), kind="success")
+        _result = mo.callout(mo.md("**Richtig!** `OR` ist *permissiv* — es reicht, wenn eine Bedingung zutrifft. `AND` ist *restriktiv* — beide müssen gelten."), kind="success")
     elif quiz_logic.value is not None:
-        mo.callout(mo.md("**Nicht ganz.** Merkregel: `AND` = restriktiv (weniger Ergebnisse), `OR` = permissiv (mehr Ergebnisse)."), kind="warn")
+        _result = mo.callout(mo.md("**Nicht ganz.** Merkregel: `AND` = restriktiv (weniger Ergebnisse), `OR` = permissiv (mehr Ergebnisse)."), kind="warn")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([quiz_logic, _result])
     return
 
 

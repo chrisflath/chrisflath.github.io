@@ -400,18 +400,15 @@ def _(mo):
         },
         label="Wie viele Zeilen liefert `SELECT Mannschaft, Tordifferenz FROM bundesliga` (ohne WHERE)?"
     )
-    vorhersage_select
-    return (vorhersage_select,)
-
-
-@app.cell(hide_code=True)
-def _(mo, vorhersage_select):
     if vorhersage_select.value == "alle":
-        mo.output.replace(mo.md("✅ **Richtig!** Ohne `WHERE`-Filter werden **alle Zeilen** der Tabelle zurückgegeben. `SELECT` wählt nur die **Spalten** aus, nicht die Zeilen."))
+        _result = mo.md("✅ **Richtig!** Ohne `WHERE`-Filter werden **alle Zeilen** der Tabelle zurückgegeben. `SELECT` wählt nur die **Spalten** aus, nicht die Zeilen.")
     elif vorhersage_select.value == "1":
-        mo.output.replace(mo.md("❌ Nicht ganz. `SELECT` wählt nur die **Spalten** aus, nicht die Zeilen. Ohne `WHERE`-Filter werden **alle Zeilen** der Tabelle zurückgegeben — egal wie viele Spalten Sie auswählen."))
+        _result = mo.md("❌ Nicht ganz. `SELECT` wählt nur die **Spalten** aus, nicht die Zeilen. Ohne `WHERE`-Filter werden **alle Zeilen** der Tabelle zurückgegeben — egal wie viele Spalten Sie auswählen.")
     elif vorhersage_select.value == "kommt_drauf_an":
-        mo.output.replace(mo.md("❌ Nicht ganz. Die Spaltenauswahl hat keinen Einfluss auf die Zeilenanzahl. Ohne `WHERE` werden **immer alle Zeilen** der Tabelle zurückgegeben. `SELECT` wählt Spalten, `WHERE` filtert Zeilen."))
+        _result = mo.md("❌ Nicht ganz. Die Spaltenauswahl hat keinen Einfluss auf die Zeilenanzahl. Ohne `WHERE` werden **immer alle Zeilen** der Tabelle zurückgegeben. `SELECT` wählt Spalten, `WHERE` filtert Zeilen.")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([vorhersage_select, _result])
     return
 
 
@@ -511,18 +508,15 @@ def _(mo):
         },
         label="Welcher Operator liefert in der Regel mehr Ergebnisse: AND oder OR?"
     )
-    vorhersage_and_or
-    return (vorhersage_and_or,)
-
-
-@app.cell(hide_code=True)
-def _(mo, vorhersage_and_or):
     if vorhersage_and_or.value == "or":
-        mo.output.replace(mo.md("✅ **Richtig!** `OR` liefert mehr Ergebnisse, weil nur **eine** der Bedingungen erfüllt sein muss. `AND` ist restriktiver — **beide** Bedingungen müssen gelten."))
+        _result = mo.md("✅ **Richtig!** `OR` liefert mehr Ergebnisse, weil nur **eine** der Bedingungen erfüllt sein muss. `AND` ist restriktiver — **beide** Bedingungen müssen gelten.")
     elif vorhersage_and_or.value == "and":
-        mo.output.replace(mo.md("❌ Nicht ganz. `AND` ist **restriktiver** — **beide** Bedingungen müssen gleichzeitig gelten. Das schließt mehr Zeilen aus. `OR` dagegen braucht nur **eine** wahre Bedingung und liefert daher mehr Ergebnisse."))
+        _result = mo.md("❌ Nicht ganz. `AND` ist **restriktiver** — **beide** Bedingungen müssen gleichzeitig gelten. Das schließt mehr Zeilen aus. `OR` dagegen braucht nur **eine** wahre Bedingung und liefert daher mehr Ergebnisse.")
     elif vorhersage_and_or.value == "gleich":
-        mo.output.replace(mo.md("❌ Nicht ganz. `AND` und `OR` liefern unterschiedlich viele Ergebnisse: `OR` erweitert die Ergebnismenge (mindestens eine Bedingung reicht), `AND` schränkt sie ein (beide müssen gelten). Daher liefert `OR` in der Regel **mehr** Ergebnisse."))
+        _result = mo.md("❌ Nicht ganz. `AND` und `OR` liefern unterschiedlich viele Ergebnisse: `OR` erweitert die Ergebnismenge (mindestens eine Bedingung reicht), `AND` schränkt sie ein (beide müssen gelten). Daher liefert `OR` in der Regel **mehr** Ergebnisse.")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([vorhersage_and_or, _result])
     return
 
 
@@ -545,20 +539,17 @@ def _(mo):
         },
         label="**Quiz:** Welche Aussage zu AND und OR in SQL ist korrekt?"
     )
-    quiz_operator
-    return (quiz_operator,)
-
-
-@app.cell(hide_code=True)
-def _(mo, quiz_operator):
     if quiz_operator.value == "and_or":
-        mo.output.replace(mo.md("✅ **Richtig!** AND bindet stärker als OR, genau wie `*` vor `+` in der Mathematik. Deshalb sind Klammern bei OR wichtig: `WHERE (A OR B) AND C` ist etwas anderes als `WHERE A OR B AND C`."))
+        _result = mo.md("✅ **Richtig!** AND bindet stärker als OR, genau wie `*` vor `+` in der Mathematik. Deshalb sind Klammern bei OR wichtig: `WHERE (A OR B) AND C` ist etwas anderes als `WHERE A OR B AND C`.")
     elif quiz_operator.value == "or_and":
-        mo.output.replace(mo.md("❌ Genau umgekehrt! **AND** bindet stärker als OR — wie Multiplikation (`×`) vor Addition (`+`). Eselsbrücke: **A**ND = **A**nmultiplizieren."))
+        _result = mo.md("❌ Genau umgekehrt! **AND** bindet stärker als OR — wie Multiplikation (`×`) vor Addition (`+`). Eselsbrücke: **A**ND = **A**nmultiplizieren.")
     elif quiz_operator.value == "gleich":
-        mo.output.replace(mo.md("❌ Nicht ganz. AND und OR haben **unterschiedlichen** Vorrang: AND bindet stärker (wie `×` vor `+` in der Mathematik). Deshalb ist `A OR B AND C` dasselbe wie `A OR (B AND C)`."))
+        _result = mo.md("❌ Nicht ganz. AND und OR haben **unterschiedlichen** Vorrang: AND bindet stärker (wie `×` vor `+` in der Mathematik). Deshalb ist `A OR B AND C` dasselbe wie `A OR (B AND C)`.")
     elif quiz_operator.value == "klammern":
-        mo.output.replace(mo.md("❌ Es gibt einen festen Vorrang: **AND** bindet stärker als OR. Klammern sind also nicht zwingend nötig, machen den Code aber lesbarer. Ohne Klammern gilt: `A OR B AND C` = `A OR (B AND C)`."))
+        _result = mo.md("❌ Es gibt einen festen Vorrang: **AND** bindet stärker als OR. Klammern sind also nicht zwingend nötig, machen den Code aber lesbarer. Ohne Klammern gilt: `A OR B AND C` = `A OR (B AND C)`.")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([quiz_operator, _result])
     return
 
 
@@ -697,20 +688,17 @@ def _(mo):
         },
         label="Sie wollen zeigen, wie sich Bayerns Punkte über die Saison entwickeln. Welcher Diagrammtyp passt am besten?"
     )
-    viz_choice
-    return (viz_choice,)
-
-
-@app.cell(hide_code=True)
-def _(mo, viz_choice):
     if viz_choice.value == "line":
-        mo.output.replace(mo.md("✅ **Richtig!** Ein **Liniendiagramm** ist ideal für **Zeitreihen** — es zeigt die Entwicklung eines Werts über die Zeit. Die x-Achse ist der Spieltag, die y-Achse die kumulierten Punkte."))
+        _result = mo.md("✅ **Richtig!** Ein **Liniendiagramm** ist ideal für **Zeitreihen** — es zeigt die Entwicklung eines Werts über die Zeit. Die x-Achse ist der Spieltag, die y-Achse die kumulierten Punkte.")
     elif viz_choice.value == "bar":
-        mo.output.replace(mo.md("❌ Nicht ganz. Ein Balkendiagramm eignet sich für **Querschnittsdaten** (Kategorien vergleichen), z.B. alle 18 Teams im Vergleich. Für eine **Zeitreihe** (Entwicklung über die Saison) passt ein **Liniendiagramm** besser."))
+        _result = mo.md("❌ Nicht ganz. Ein Balkendiagramm eignet sich für **Querschnittsdaten** (Kategorien vergleichen), z.B. alle 18 Teams im Vergleich. Für eine **Zeitreihe** (Entwicklung über die Saison) passt ein **Liniendiagramm** besser.")
     elif viz_choice.value == "scatter":
-        mo.output.replace(mo.md("❌ Nicht ganz. Ein Streudiagramm zeigt den **Zusammenhang** zwischen zwei Variablen (z.B. Tore vs. Punkte). Für eine **Zeitreihe** (Entwicklung über die Saison) passt ein **Liniendiagramm** besser."))
+        _result = mo.md("❌ Nicht ganz. Ein Streudiagramm zeigt den **Zusammenhang** zwischen zwei Variablen (z.B. Tore vs. Punkte). Für eine **Zeitreihe** (Entwicklung über die Saison) passt ein **Liniendiagramm** besser.")
     elif viz_choice.value == "histogram":
-        mo.output.replace(mo.md("❌ Nicht ganz. Ein Histogramm zeigt die **Verteilung** einer einzelnen Variable (z.B. wie viele Teams haben 20-30 Punkte). Für eine **Zeitreihe** (Entwicklung über die Saison) passt ein **Liniendiagramm** besser."))
+        _result = mo.md("❌ Nicht ganz. Ein Histogramm zeigt die **Verteilung** einer einzelnen Variable (z.B. wie viele Teams haben 20-30 Punkte). Für eine **Zeitreihe** (Entwicklung über die Saison) passt ein **Liniendiagramm** besser.")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([viz_choice, _result])
     return
 
 
@@ -734,18 +722,15 @@ def _(mo):
         },
         label="Wie begrenzen Sie in SQL die **Zeilen** einer Abfrage?"
     )
-    selbsttest
-    return (selbsttest,)
-
-
-@app.cell(hide_code=True)
-def _(mo, selbsttest):
     if selbsttest.value == "where":
-        mo.output.replace(mo.md("✅ **Richtig!** `WHERE` filtert Zeilen nach einer Bedingung. `SELECT` wählt hingegen nur die **Spalten** aus."))
+        _result = mo.md("✅ **Richtig!** `WHERE` filtert Zeilen nach einer Bedingung. `SELECT` wählt hingegen nur die **Spalten** aus.")
     elif selbsttest.value == "select":
-        mo.output.replace(mo.md("❌ `SELECT` wählt **Spalten** aus, nicht Zeilen. Um Zeilen zu filtern, verwenden Sie `WHERE` mit einer Bedingung."))
+        _result = mo.md("❌ `SELECT` wählt **Spalten** aus, nicht Zeilen. Um Zeilen zu filtern, verwenden Sie `WHERE` mit einer Bedingung.")
     elif selbsttest.value == "from":
-        mo.output.replace(mo.md("❌ SQL kann Zeilen filtern — dafür gibt es `WHERE`. Ohne `WHERE` werden zwar alle Zeilen angezeigt, aber mit `WHERE bedingung` bekommen Sie nur die passenden Zeilen."))
+        _result = mo.md("❌ SQL kann Zeilen filtern — dafür gibt es `WHERE`. Ohne `WHERE` werden zwar alle Zeilen angezeigt, aber mit `WHERE bedingung` bekommen Sie nur die passenden Zeilen.")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([selbsttest, _result])
     return
 
 
