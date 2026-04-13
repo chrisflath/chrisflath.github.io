@@ -9,8 +9,11 @@
 
 import marimo
 
-__generated_with = "0.19.4"
-app = marimo.App(width="medium", app_title="DMA Session 1: SQL-Grundlagen — Guide")
+__generated_with = "0.19.7"
+app = marimo.App(
+    width="medium",
+    app_title="DMA Session 1: SQL-Grundlagen — Guide",
+)
 
 
 @app.cell(hide_code=True)
@@ -67,35 +70,88 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     import polars as pl
+    import re
+
+    _BULIBOX_URL = "http://www.bulibox.de/abschlusstabellen/1-Bundesliga.html"
+    _CORS_PROXY = "https://api.allorigins.win/get?url="
+
+    def _fetch_html(url):
+        """Fetch HTML — lokal via urllib, im Browser via pyodide + CORS-Proxy."""
+        try:
+            from urllib.request import urlopen
+            return urlopen(url, timeout=5).read().decode("utf-8")
+        except Exception:
+            pass
+        import json
+        from pyodide.http import open_url  # type: ignore[import-not-found]
+        proxy_url = _CORS_PROXY + url
+        response = json.loads(open_url(proxy_url).read())
+        return response["contents"]
+
+    def _parse_tabelle(html):
+        """Parse bulibox.de HTML-Tabelle in ein Polars DataFrame."""
+        tables = re.findall(
+            r"<table[^>]*class='abschluss'[^>]*>(.*?)</table>", html, re.DOTALL
+        )
+        table_html = tables[-1] if tables else tables[0]
+        rows = re.findall(r"<tr[^>]*>(.*?)</tr>", table_html, re.DOTALL)
+
+        teams = []
+        for row in rows[1:]:
+            cells = re.findall(r"<td[^>]*>(.*?)</td>", row, re.DOTALL)
+            if len(cells) < 6:
+                continue
+            mannschaft = re.sub(r"<[^>]+>|&nbsp;", "", cells[1]).strip()
+            spiele = int(re.sub(r"\D", "", cells[2]))
+            sun = re.sub(r"&nbsp;", "", cells[3]).strip()
+            s, u, n = [int(x) for x in sun.split("-")]
+            tore_raw = re.sub(r"&nbsp;", "", cells[4]).strip()
+            m = re.match(r"(\d+):(\d+)\s*\(([+-]?\d+)\)", tore_raw)
+            teams.append({
+                "Mannschaft": mannschaft, "Spiele": spiele,
+                "Siege": s, "Unentschieden": u, "Niederlagen": n,
+                "Tore": int(m.group(1)), "Gegentore": int(m.group(2)),
+                "Tordifferenz": int(m.group(3)), "Punkte": int(re.sub(r"\D", "", cells[5])),
+            })
+        return pl.DataFrame(teams)
 
     try:
-        csv_path = mo.notebook_location() / "public" / "bundesliga.csv"
-        bundesliga = pl.read_csv(str(csv_path))
-
-        spieltage_path = mo.notebook_location() / "public" / "bundesliga_spieltage.csv"
-        bundesliga_spieltage = pl.read_csv(str(spieltage_path))
-
-        daten_quelle = "Beispieldaten Bundesliga Saison 2024/25"
+        html = _fetch_html(_BULIBOX_URL)
+        bundesliga = _parse_tabelle(html)
+        daten_quelle = "Live-Daten von bulibox.de (Saison 2025/26)"
     except Exception:
         bundesliga = pl.DataFrame({
-            "Mannschaft": ["Bayern München", "Bayer Leverkusen", "VfB Stuttgart", "Borussia Dortmund", "RB Leipzig"],
-            "Spiele": [34, 34, 34, 34, 34],
-            "Siege": [23, 21, 17, 16, 15],
-            "Unentschieden": [5, 7, 6, 7, 8],
-            "Niederlagen": [6, 6, 11, 11, 11],
-            "Tore": [82, 68, 58, 62, 55],
-            "Gegentore": [32, 29, 44, 42, 38],
-            "Tordifferenz": [50, 39, 14, 20, 17],
-            "Punkte": [74, 70, 57, 55, 53],
+            "Mannschaft": ["Bayern München", "Bayer Leverkusen", "VfB Stuttgart",
+                           "Borussia Dortmund", "RB Leipzig", "Eintracht Frankfurt",
+                           "SC Freiburg", "1. FSV Mainz 05", "FC Augsburg",
+                           "Werder Bremen", "VfL Wolfsburg", "Borussia Mönchengladbach",
+                           "1. FC Union Berlin", "1. FC Köln", "Hamburger SV",
+                           "TSG 1899 Hoffenheim", "FC St. Pauli", "1. FC Heidenheim"],
+            "Spiele": [29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29],
+            "Siege": [24, 15, 17, 19, 17, 12, 11, 12, 10, 7, 6, 8, 6, 8, 7, 10, 5, 4],
+            "Unentschieden": [4, 7, 5, 7, 5, 7, 5, 6, 6, 7, 7, 5, 7, 4, 7, 5, 6, 5],
+            "Niederlagen": [1, 7, 7, 3, 7, 10, 13, 11, 13, 15, 16, 16, 16, 17, 15, 14, 18, 20],
+            "Tore": [105, 59, 60, 60, 56, 50, 34, 38, 33, 30, 30, 27, 23, 35, 30, 46, 22, 30],
+            "Gegentore": [27, 39, 38, 29, 36, 42, 40, 37, 43, 43, 54, 46, 49, 50, 44, 51, 50, 62],
+            "Tordifferenz": [78, 20, 22, 31, 20, 8, -6, 1, -10, -13, -24, -19, -26, -15, -14, -5, -28, -32],
+            "Punkte": [76, 52, 56, 64, 56, 43, 38, 42, 36, 28, 25, 29, 25, 28, 28, 35, 21, 17],
         })
+        daten_quelle = "Offline-Daten (Stand: Spieltag 29, Saison 2025/26)"
+        mo.callout(
+            mo.md("**Hinweis:** Live-Daten konnten nicht geladen werden. Es werden Offline-Daten verwendet."),
+            kind="warn",
+        )
+
+    # Spieltage-Daten für Zeitreihen-Demo (separate Quelle)
+    try:
+        spieltage_path = mo.notebook_location() / "public" / "bundesliga_spieltage.csv"
+        bundesliga_spieltage = pl.read_csv(str(spieltage_path))
+    except Exception:
         bundesliga_spieltage = pl.DataFrame({
             "Mannschaft": ["Bayern München"] * 5,
             "Spieltag": [1, 2, 3, 4, 5],
             "Punkte_Kumuliert": [3, 6, 9, 10, 13],
         })
-        daten_quelle = "Offline-Daten (Fallback)"
-        mo.callout(mo.md("**Hinweis:** CSV konnte nicht geladen werden. Es werden Beispieldaten verwendet."), kind="warn")
-
     return bundesliga, bundesliga_spieltage, daten_quelle
 
 
@@ -165,7 +221,7 @@ def _(mo):
     return
 
 
-@app.cell(hide_code=True)
+@app.cell
 def _(bundesliga, mo):
     _df = mo.sql(
         f"""
@@ -185,7 +241,7 @@ def _(mo):
     return
 
 
-@app.cell(hide_code=True)
+@app.cell
 def _(bundesliga, mo):
     _df = mo.sql(
         f"""
@@ -212,7 +268,7 @@ def _(mo):
 def _(bundesliga, mo):
     _df = mo.sql(
         f"""
-        SELECT Mannschaft, Siege, Niederlagen
+        SELECT Spiele
         FROM bundesliga
         """
     )
@@ -275,7 +331,7 @@ def _(mo):
     return
 
 
-@app.cell(hide_code=True)
+@app.cell
 def _(bundesliga, mo):
     _df = mo.sql(
         f"""
@@ -338,9 +394,9 @@ def _(mo):
 def _(mo):
     vorhersage_select = mo.ui.radio(
         options={
-            "1": "Nur 1 Zeile",
-            "alle": "Alle Zeilen der Tabelle",
-            "kommt_drauf_an": "Kommt auf die ausgewählten Spalten an",
+            "Nur 1 Zeile" : "1",
+            "Alle Zeilen der Tabelle" : "alle",
+            "Kommt auf die ausgewählten Spalten an" : "kommt_drauf_an"
         },
         label="Wie viele Zeilen liefert `SELECT Mannschaft, Tordifferenz FROM bundesliga` (ohne WHERE)?"
     )
@@ -349,7 +405,7 @@ def _(mo):
 
 
 @app.cell(hide_code=True)
-def _(vorhersage_select, mo):
+def _(mo, vorhersage_select):
     if vorhersage_select.value == "alle":
         mo.output.replace(mo.md("✅ **Richtig!** Ohne `WHERE`-Filter werden **alle Zeilen** der Tabelle zurückgegeben. `SELECT` wählt nur die **Spalten** aus, nicht die Zeilen."))
     elif vorhersage_select.value == "1":
@@ -449,9 +505,9 @@ def _(mo):
 def _(mo):
     vorhersage_and_or = mo.ui.radio(
         options={
-            "and": "AND liefert mehr Ergebnisse",
-            "or": "OR liefert mehr Ergebnisse",
-            "gleich": "Beide liefern gleich viele Ergebnisse",
+            "AND liefert mehr Ergebnisse" : "and",
+            "OR liefert mehr Ergebnisse" : "or",
+            "Beide liefern gleich viele Ergebnisse" : "gleich",
         },
         label="Welcher Operator liefert in der Regel mehr Ergebnisse: AND oder OR?"
     )
@@ -460,7 +516,7 @@ def _(mo):
 
 
 @app.cell(hide_code=True)
-def _(vorhersage_and_or, mo):
+def _(mo, vorhersage_and_or):
     if vorhersage_and_or.value == "or":
         mo.output.replace(mo.md("✅ **Richtig!** `OR` liefert mehr Ergebnisse, weil nur **eine** der Bedingungen erfüllt sein muss. `AND` ist restriktiver — **beide** Bedingungen müssen gelten."))
     elif vorhersage_and_or.value == "and":
@@ -482,10 +538,10 @@ def _(mo):
 def _(mo):
     quiz_operator = mo.ui.radio(
         options={
-            "and_or": "AND hat Vorrang vor OR (wie Multiplikation vor Addition)",
-            "or_and": "OR hat Vorrang vor AND",
-            "gleich": "Beide haben den gleichen Vorrang (links nach rechts)",
-            "klammern": "Es gibt keinen festen Vorrang, man muss immer Klammern setzen"
+            "AND hat Vorrang vor OR (wie Multiplikation vor Addition)" : "and_or",
+            "OR hat Vorrang vor AND" : "or_and",
+            "Beide haben den gleichen Vorrang (links nach rechts)" : "gleich",
+            "Es gibt keinen festen Vorrang, man muss immer Klammern setzen" : "klammern"
         },
         label="**Quiz:** Welche Aussage zu AND und OR in SQL ist korrekt?"
     )
@@ -494,7 +550,7 @@ def _(mo):
 
 
 @app.cell(hide_code=True)
-def _(quiz_operator, mo):
+def _(mo, quiz_operator):
     if quiz_operator.value == "and_or":
         mo.output.replace(mo.md("✅ **Richtig!** AND bindet stärker als OR, genau wie `*` vor `+` in der Mathematik. Deshalb sind Klammern bei OR wichtig: `WHERE (A OR B) AND C` ist etwas anderes als `WHERE A OR B AND C`."))
     elif quiz_operator.value == "or_and":
@@ -561,23 +617,25 @@ def _():
     return (px,)
 
 
-@app.cell(hide_code=True)
-def _(bundesliga, mo, px):
+@app.cell
+def _(bundesliga, mo):
     top_teams = mo.sql(
         f"""
         SELECT Mannschaft, Punkte
         FROM bundesliga
-        WHERE Punkte > 50
+        WHERE Punkte > 30
         """
     )
+    return (top_teams,)
 
+
+@app.cell
+def _(px, top_teams):
     fig_bar = px.bar(
         top_teams,
         x="Mannschaft",
         y="Punkte",
         title="Top Teams nach Punkten",
-        color="Punkte",
-        color_continuous_scale="Blues"
     )
     fig_bar
     return
@@ -593,23 +651,29 @@ def _(mo):
     return
 
 
-@app.cell(hide_code=True)
-def _(bundesliga_spieltage, mo, px):
+@app.cell
+def _(bundesliga_spieltage, mo):
     bayern_verlauf = mo.sql(
         f"""
-        SELECT Spieltag, Punkte_Kumuliert
-        FROM bundesliga_spieltage
-        WHERE Mannschaft = 'Bayern München'
+        SELECT
+            Spieltag,
+            Punkte_Kumuliert
+        FROM
+            bundesliga_spieltage
+        WHERE
+            Mannschaft = 'Bayern München'
         """
     )
+    return (bayern_verlauf,)
 
+
+@app.cell(hide_code=True)
+def _(bayern_verlauf, px):
     fig_line = px.line(
         bayern_verlauf,
         x="Spieltag",
         y="Punkte_Kumuliert",
-        title="Bayern München: Punkteverlauf",
-        markers=True
-    )
+        title="Bayern München: Punkteverlauf")
     fig_line
     return
 
@@ -626,10 +690,10 @@ def _(mo):
 def _(mo):
     viz_choice = mo.ui.radio(
         options={
-            "bar": "Balkendiagramm",
-            "line": "Liniendiagramm",
-            "scatter": "Streudiagramm",
-            "histogram": "Histogramm",
+            "Balkendiagramm" : "bar",
+            "Liniendiagramm" : "line",
+            "Streudiagramm" : "scatter",
+            "Histogramm" : "histogram",
         },
         label="Sie wollen zeigen, wie sich Bayerns Punkte über die Saison entwickeln. Welcher Diagrammtyp passt am besten?"
     )
@@ -638,7 +702,7 @@ def _(mo):
 
 
 @app.cell(hide_code=True)
-def _(viz_choice, mo):
+def _(mo, viz_choice):
     if viz_choice.value == "line":
         mo.output.replace(mo.md("✅ **Richtig!** Ein **Liniendiagramm** ist ideal für **Zeitreihen** — es zeigt die Entwicklung eines Werts über die Zeit. Die x-Achse ist der Spieltag, die y-Achse die kumulierten Punkte."))
     elif viz_choice.value == "bar":
@@ -664,9 +728,9 @@ def _(mo):
 def _(mo):
     selbsttest = mo.ui.radio(
         options={
-            "where": "Mit WHERE",
-            "select": "Mit SELECT",
-            "from": "Gar nicht — SQL zeigt immer alle Zeilen",
+            "Mit WHERE" : "where",
+            "Mit SELECT" : "select",
+            "Gar nicht — SQL zeigt immer alle Zeilen" : "from",
         },
         label="Wie begrenzen Sie in SQL die **Zeilen** einer Abfrage?"
     )
@@ -675,7 +739,7 @@ def _(mo):
 
 
 @app.cell(hide_code=True)
-def _(selbsttest, mo):
+def _(mo, selbsttest):
     if selbsttest.value == "where":
         mo.output.replace(mo.md("✅ **Richtig!** `WHERE` filtert Zeilen nach einer Bedingung. `SELECT` wählt hingegen nur die **Spalten** aus."))
     elif selbsttest.value == "select":

@@ -9,8 +9,11 @@
 
 import marimo
 
-__generated_with = "0.19.4"
-app = marimo.App(width="medium", app_title="DMA Session 1: SQL-Grundlagen")
+__generated_with = "0.19.7"
+app = marimo.App(
+    width="medium",
+    app_title="DMA Session 1: SQL-Grundlagen — Übungen",
+)
 
 
 @app.cell(hide_code=True)
@@ -22,35 +25,19 @@ def _():
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    # Session 1: SQL-Grundlagen
+    # Session 1: SQL-Grundlagen — Übungen
 
-    **Kursfahrplan:** **▸ I: SQL-Grundlagen (S1–4)** · II: Datenmodellierung (S5–7) · III: Fortgeschrittenes SQL (S8–9) · IV: Datenanalyse (S10–13)
-
-    Willkommen zur ersten Hands-on-Session! In diesem Notebook lernen Sie:
-
-    - Daten mit `SELECT` abfragen
-    - Spalten auswählen
-    - Zeilen mit `WHERE` filtern
-    - Bedingungen mit `AND`, `OR`, `NOT` kombinieren
+    Theorie und geführte Beispiele → **01-sql-grundlagen-guide.py**
 
     **Aufgabentypen:**
-    - 🟢 **Geführt**: Beispiel zum Nachvollziehen
     - 🟡 **Scaffolded**: Teillösung zum Ergänzen
     - 🔵 **Selbstständig**: Eigene Lösung schreiben
     - 🔴 **Debugging**: Fehler finden und beheben
-    - 🟣 **Vorhersage**: Was wird das Ergebnis sein?
+    - ⭐ **Exploration**: Offene Herausforderungen
+
+    > **Hinweis:** 🟡-Aufgaben enthalten `???` als Platzhalter. Die Zelle zeigt einen SQL-Fehler, bis Sie die `???` durch die richtige Lösung ersetzen — das ist Absicht!
 
     ---
-    """)
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-    ## Daten laden: Bundesliga-Tabelle
-
-    Wir arbeiten mit aktuellen Bundesliga-Daten.
     """)
     return
 
@@ -58,38 +45,79 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     import polars as pl
+    import re
+
+    _BULIBOX_URL = "http://www.bulibox.de/abschlusstabellen/1-Bundesliga.html"
+    _CORS_PROXY = "https://api.allorigins.win/get?url="
+
+    def _fetch_html(url):
+        """Fetch HTML — lokal via urllib, im Browser via pyodide + CORS-Proxy."""
+        try:
+            from urllib.request import urlopen
+            return urlopen(url, timeout=5).read().decode("utf-8")
+        except Exception:
+            pass
+        # WASM/Pyodide: nutze CORS-Proxy + pyodide.http
+        import json
+        from pyodide.http import open_url  # type: ignore[import-not-found]
+        proxy_url = _CORS_PROXY + url
+        response = json.loads(open_url(proxy_url).read())
+        return response["contents"]
+
+    def _parse_tabelle(html):
+        """Parse bulibox.de HTML-Tabelle in ein Polars DataFrame."""
+        tables = re.findall(
+            r"<table[^>]*class='abschluss'[^>]*>(.*?)</table>", html, re.DOTALL
+        )
+        table_html = tables[-1] if tables else tables[0]
+        rows = re.findall(r"<tr[^>]*>(.*?)</tr>", table_html, re.DOTALL)
+
+        teams = []
+        for row in rows[1:]:
+            cells = re.findall(r"<td[^>]*>(.*?)</td>", row, re.DOTALL)
+            if len(cells) < 6:
+                continue
+            mannschaft = re.sub(r"<[^>]+>|&nbsp;", "", cells[1]).strip()
+            spiele = int(re.sub(r"\D", "", cells[2]))
+            sun = re.sub(r"&nbsp;", "", cells[3]).strip()
+            s, u, n = [int(x) for x in sun.split("-")]
+            tore_raw = re.sub(r"&nbsp;", "", cells[4]).strip()
+            m = re.match(r"(\d+):(\d+)\s*\(([+-]?\d+)\)", tore_raw)
+            teams.append({
+                "Mannschaft": mannschaft, "Spiele": spiele,
+                "Siege": s, "Unentschieden": u, "Niederlagen": n,
+                "Tore": int(m.group(1)), "Gegentore": int(m.group(2)),
+                "Tordifferenz": int(m.group(3)), "Punkte": int(re.sub(r"\D", "", cells[5])),
+            })
+        return pl.DataFrame(teams)
 
     try:
-        # Works both locally and in WASM/browser mode
-        csv_path = mo.notebook_location() / "public" / "bundesliga.csv"
-        bundesliga = pl.read_csv(str(csv_path))
-
-        # Also load spieltage data for temporal analysis
-        spieltage_path = mo.notebook_location() / "public" / "bundesliga_spieltage.csv"
-        bundesliga_spieltage = pl.read_csv(str(spieltage_path))
-
-        daten_quelle = "Beispieldaten Bundesliga Saison 2024/25"
+        html = _fetch_html(_BULIBOX_URL)
+        bundesliga = _parse_tabelle(html)
+        daten_quelle = "Live-Daten von bulibox.de (Saison 2025/26)"
     except Exception:
         bundesliga = pl.DataFrame({
-            "Mannschaft": ["Bayern München", "Bayer Leverkusen", "VfB Stuttgart", "Borussia Dortmund", "RB Leipzig"],
-            "Spiele": [34, 34, 34, 34, 34],
-            "Siege": [23, 21, 17, 16, 15],
-            "Unentschieden": [5, 7, 6, 7, 8],
-            "Niederlagen": [6, 6, 11, 11, 11],
-            "ToreGeschossen": [82, 68, 58, 62, 55],
-            "ToreKassiert": [32, 29, 44, 42, 38],
-            "Tordifferenz": [50, 39, 14, 20, 17],
-            "Punkte": [74, 70, 57, 55, 53],
+            "Mannschaft": ["Bayern München", "Bayer Leverkusen", "VfB Stuttgart",
+                           "Borussia Dortmund", "RB Leipzig", "Eintracht Frankfurt",
+                           "SC Freiburg", "1. FSV Mainz 05", "FC Augsburg",
+                           "Werder Bremen", "VfL Wolfsburg", "Borussia Mönchengladbach",
+                           "1. FC Union Berlin", "1. FC Köln", "Hamburger SV",
+                           "TSG 1899 Hoffenheim", "FC St. Pauli", "1. FC Heidenheim"],
+            "Spiele": [29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29],
+            "Siege": [24, 15, 17, 19, 17, 12, 11, 12, 10, 7, 6, 8, 6, 8, 7, 10, 5, 4],
+            "Unentschieden": [4, 7, 5, 7, 5, 7, 5, 6, 6, 7, 7, 5, 7, 4, 7, 5, 6, 5],
+            "Niederlagen": [1, 7, 7, 3, 7, 10, 13, 11, 13, 15, 16, 16, 16, 17, 15, 14, 18, 20],
+            "Tore": [105, 59, 60, 60, 56, 50, 34, 38, 33, 30, 30, 27, 23, 35, 30, 46, 22, 30],
+            "Gegentore": [27, 39, 38, 29, 36, 42, 40, 37, 43, 43, 54, 46, 49, 50, 44, 51, 50, 62],
+            "Tordifferenz": [78, 20, 22, 31, 20, 8, -6, 1, -10, -13, -24, -19, -26, -15, -14, -5, -28, -32],
+            "Punkte": [76, 52, 56, 64, 56, 43, 38, 42, 36, 28, 25, 29, 25, 28, 28, 35, 21, 17],
         })
-        bundesliga_spieltage = pl.DataFrame({
-            "Mannschaft": ["Bayern München"] * 5,
-            "Spieltag": [1, 2, 3, 4, 5],
-            "Punkte_Kumuliert": [3, 6, 9, 10, 13],
-        })
-        daten_quelle = "Offline-Daten (Fallback)"
-        mo.callout(mo.md("**Hinweis:** CSV konnte nicht geladen werden. Es werden Beispieldaten verwendet."), kind="warn")
-
-    return bundesliga, bundesliga_spieltage, daten_quelle
+        daten_quelle = "Offline-Daten (Stand: Spieltag 29, Saison 2025/26)"
+        mo.callout(
+            mo.md("**Hinweis:** Live-Daten konnten nicht geladen werden. Es werden Offline-Daten verwendet."),
+            kind="warn",
+        )
+    return bundesliga, daten_quelle
 
 
 @app.cell(hide_code=True)
@@ -97,43 +125,21 @@ def _(daten_quelle, mo):
     mo.md(f"""
     **Datenquelle:** {daten_quelle}
 
-    **Verfügbare Spalten:** Mannschaft, Spiele, Siege, Unentschieden, Niederlagen, ToreGeschossen, ToreKassiert, Tordifferenz, Punkte
+    **Verfügbare Spalten:** Mannschaft, Spiele, Siege, Unentschieden, Niederlagen, Tore, Gegentore, Tordifferenz, Punkte
 
     ---
 
-    ## Phase 2: Erste SELECT-Abfragen (25 Minuten)
-
-    ### 🟢 Aufgabe 2.1: Alle Daten anzeigen (geführt)
-
-    Die einfachste Abfrage zeigt alle Spalten und Zeilen mit `SELECT *`:
+    ## Phase 2: Erste SELECT-Abfragen
     """)
-    return
-
-
-@app.cell
-def _(bundesliga, mo):
-    x = mo.sql(
-        f"""
-        SELECT *
-        FROM bundesliga
-        LIMIT 3
-        """
-    )
-    return (x,)
-
-
-@app.cell
-def _(x):
-    x
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    ### 🟢 Aufgabe 2.2: Bestimmte Spalten auswählen (geführt)
+    ### Aufgabe 2.1: Geführtes Beispiel — Alle Daten anzeigen
 
-    Zeigen Sie nur Mannschaft und Punkte:
+    Führen Sie die folgende Abfrage aus und schauen Sie sich das Ergebnis an:
     """)
     return
 
@@ -142,8 +148,12 @@ def _(mo):
 def _(bundesliga, mo):
     _df = mo.sql(
         f"""
-        SELECT Mannschaft, Punkte
-        FROM bundesliga
+        SELECT
+            *
+        FROM
+            bundesliga
+        LIMIT
+            5
         """
     )
     return
@@ -152,19 +162,19 @@ def _(bundesliga, mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    ### 🟡 Aufgabe 2.3: Drei Spalten auswählen (scaffolded)
+    ### 🟡 Aufgabe 2.2: Drei Spalten auswählen (scaffolded)
 
-    Ergänze den folgenden Befehl, um Mannschaft, Siege und Niederlagen anzuzeigen:
+    Ergänzen Sie den folgenden Befehl, um Mannschaft, Siege und Niederlagen anzuzeigen:
     """)
     return
 
 
 @app.cell
-def _(mo):
-    # Ergänze die fehlende Spalte
+def _(bundesliga, mo):
+    # Ergänzen Sie die fehlende Spalte
     _df = mo.sql(
         f"""
-        SELECT ???
+        SELECT Siege
         FROM bundesliga
         """
     )
@@ -174,67 +184,35 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.accordion({"🔑 Musterlösung": mo.md("""
-```sql
-SELECT Mannschaft, Siege, Niederlagen
-FROM bundesliga
-```
-""")})
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-    ### 🟣 Aufgabe 2.4: Vorhersage
-
-    **Bevor Sie die Abfrage ausführen:** Wie viele Zeilen wird das Ergebnis haben?
-
     ```sql
-    SELECT Mannschaft, Tordifferenz
+    SELECT Mannschaft, Siege, Niederlagen
     FROM bundesliga
     ```
-
-    *Überlegen Sie zuerst, dann führen Sie aus:*
-    """)
-    return
-
-
-@app.cell
-def _(bundesliga, mo):
-    _df = mo.sql(
-        f"""
-        SELECT Mannschaft, Tordifferenz
-        FROM bundesliga
-        """
-    )
+    """)})
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    **Antwort:** 18 Zeilen (alle Teams der Bundesliga), da kein WHERE-Filter verwendet wird.
-
-    ---
-
-    ### 🔵 Aufgabe 2.5: Selbstständig - Torstatistik
+    ### 🔵 Aufgabe 2.3: Selbstständig - Torstatistik
 
     Schreiben Sie eine Abfrage, die zeigt:
     - Mannschaft
-    - ToreGeschossen
-    - ToreKassiert
+    - Tore
+    - Gegentore
     """)
     return
 
 
 @app.cell
-def _(bundesliga, mo):
+def _(mo):
     # Ihre Lösung hier:
     _df = mo.sql(
         f"""
         -- Ihre Lösung hier
         -- Tipp: SELECT mit drei Spalten aus bundesliga
-        -- Erwartete Spalten: Mannschaft, ToreGeschossen, ToreKassiert
+        -- Erwartete Spalten: Mannschaft, Tore, Gegentore
         SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
@@ -244,18 +222,18 @@ def _(bundesliga, mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.accordion({"🔑 Musterlösung": mo.md("""
-```sql
-SELECT Mannschaft, ToreGeschossen, ToreKassiert
-FROM bundesliga
-```
-""")})
+    ```sql
+    SELECT Mannschaft, Tore, Gegentore
+    FROM bundesliga
+    ```
+    """)})
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    ### 🔵 Aufgabe 2.6: Selbstständig - Spielstatistik
+    ### 🔵 Aufgabe 2.4: Selbstständig - Spielstatistik
 
     Zeigen Sie für jedes Team:
     - Mannschaft
@@ -268,7 +246,7 @@ def _(mo):
 
 
 @app.cell
-def _(bundesliga, mo):
+def _(mo):
     # Ihre Lösung hier:
     _df = mo.sql(
         f"""
@@ -284,35 +262,30 @@ def _(bundesliga, mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.accordion({"🔑 Musterlösung": mo.md("""
-```sql
-SELECT Mannschaft, Spiele, Siege, Unentschieden, Niederlagen
-FROM bundesliga
-```
-""")})
+    ```sql
+    SELECT Mannschaft, Spiele, Siege, Unentschieden, Niederlagen
+    FROM bundesliga
+    ```
+    """)})
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    ### 🔴 Aufgabe 2.7: Debugging - Finden Sie den Fehler!
+    ### 🔴 Aufgabe 2.5: Debugging - Finden Sie den Fehler!
 
-    Diese Abfrage hat einen Syntaxfehler. Finden und beheben Sie ihn:
-
-    ```sql
-    SELECT Mannschaft Punkte
-    FROM bundesliga
-    ```
+    Diese Abfrage hat einen Syntaxfehler. **Führen Sie sie aus** und beheben Sie ihn:
     """)
     return
 
 
 @app.cell
 def _(bundesliga, mo):
-    # Korrigieren Sie die Abfrage (Hinweis: Es fehlt etwas zwischen den Spaltennamen)
+    # Diese Abfrage enthält einen Fehler — finden und beheben Sie ihn!
     _df = mo.sql(
         f"""
-        SELECT Mannschaft, Punkte
+        SELECT Mannschaft Punkte
         FROM bundesliga
         """
     )
@@ -321,28 +294,89 @@ def _(bundesliga, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""
-    ### 🔴 Aufgabe 2.8: Debugging - Spaltenname
+    mo.accordion({"🔑 Lösung": mo.md("""
+    **Fehler:** Fehlendes Komma zwischen den Spaltennamen.
 
-    Diese Abfrage hat einen Fehler. Was stimmt nicht?
+    Ohne Komma interpretiert SQL `Punkte` als Alias für `Mannschaft`.
 
     ```sql
-    SELECT Manschaft, Punkte
+    -- Korrektur:
+    SELECT Mannschaft, Punkte
     FROM bundesliga
     ```
+    """)})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ### 🔴 Aufgabe 2.6: Debugging - Spaltenname
+
+    Diese Abfrage hat einen Fehler. **Führen Sie sie aus** — was stimmt nicht?
     """)
     return
 
 
 @app.cell
 def _(bundesliga, mo):
-    # Korrigieren Sie den Spaltennamen
+    # Diese Abfrage enthält einen Fehler — finden und beheben Sie ihn!
     _df = mo.sql(
         f"""
-        SELECT Mannschaft, Punkte
+        SELECT Manschaft, Punkte
         FROM bundesliga
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Lösung": mo.md("""
+    **Fehler:** Tippfehler im Spaltennamen — `Manschaft` statt `Mannschaft` (doppeltes n).
+
+    SQL-Spaltennamen müssen exakt stimmen!
+
+    ```sql
+    -- Korrektur:
+    SELECT Mannschaft, Punkte
+    FROM bundesliga
+    ```
+    """)})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ### Quiz: SELECT-Grundlagen
+
+    Testen Sie Ihr Verständnis der bisherigen Konzepte:
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    quiz_select = mo.ui.radio(
+        options={
+            "a": "Alle Spalten der Tabelle bundesliga",
+            "b": "Nur die Spalte Mannschaft für alle Teams",
+            "c": "Nur Teams, die 'Mannschaft' heißen",
+            "d": "Eine Fehlermeldung",
+        },
+        label="Was liefert `SELECT Mannschaft FROM bundesliga`?",
+    )
+    quiz_select
+    return (quiz_select,)
+
+
+@app.cell(hide_code=True)
+def _(mo, quiz_select):
+    if quiz_select.value == "b":
+        mo.callout(mo.md("**Richtig!** `SELECT Mannschaft` wählt genau eine Spalte aus — für alle Zeilen der Tabelle."), kind="success")
+    elif quiz_select.value is not None:
+        mo.callout(mo.md("**Nicht ganz.** `SELECT spalte` wählt eine bestimmte Spalte aus. `*` wäre nötig für alle Spalten."), kind="warn")
     return
 
 
@@ -351,24 +385,28 @@ def _(mo):
     mo.md(r"""
     ---
 
-    ## Phase 4: Filtern mit WHERE (25 Minuten)
+    ## Phase 4: Filtern mit WHERE
+    """)
+    return
 
-    Mit `WHERE` können wir Zeilen filtern, die bestimmte Bedingungen erfüllen.
 
-    ### 🟢 Aufgabe 4.1: Teams mit vielen Punkten (geführt)
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ### Aufgabe 4.1: Geführtes Beispiel — Teams mit vielen Punkten
 
-    Zeigen Sie alle Teams mit mehr als 30 Punkten:
+    Führen Sie die folgende Abfrage aus. Wie viele Teams haben mehr als 50 Punkte?
     """)
     return
 
 
 @app.cell
 def _(bundesliga, mo):
-    _df = mo.sql(
+    mo.sql(
         f"""
         SELECT Mannschaft, Punkte
         FROM bundesliga
-        WHERE Punkte > 30
+        WHERE Punkte > 50
         """
     )
     return
@@ -377,73 +415,7 @@ def _(bundesliga, mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    ### 🟢 Aufgabe 4.2: Teams mit negativer Tordifferenz (geführt)
-    """)
-    return
-
-
-@app.cell
-def _(bundesliga, mo):
-    _df = mo.sql(
-        f"""
-        SELECT Mannschaft, Tordifferenz
-        FROM bundesliga
-        WHERE Tordifferenz < 0
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-    ### 🟢 Aufgabe 4.3: Exakter Vergleich (geführt)
-
-    Finden Sie Teams mit genau 19 Spielen:
-    """)
-    return
-
-
-@app.cell
-def _(bundesliga, mo):
-    _df = mo.sql(
-        f"""
-        SELECT Mannschaft, Spiele
-        FROM bundesliga
-        WHERE Spiele = 19
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-    ### 🟣 Aufgabe 4.4: Vorhersage
-
-    **Bevor Sie ausführen:** Wie viele Teams haben mindestens 10 Siege?
-
-    Schätzen Sie, dann prüfen Sie:
-    """)
-    return
-
-
-@app.cell
-def _(bundesliga, mo):
-    _df = mo.sql(
-        f"""
-        SELECT Mannschaft, Siege
-        FROM bundesliga
-        WHERE Siege >= 10
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-    ### 🔵 Aufgabe 4.5: Selbstständig - Wenig Niederlagen
+    ### 🔵 Aufgabe 4.2: Selbstständig - Wenig Niederlagen
 
     Finden Sie alle Teams mit weniger als 5 Niederlagen.
     Zeigen Sie Mannschaft und Niederlagen.
@@ -452,7 +424,7 @@ def _(mo):
 
 
 @app.cell
-def _(bundesliga, mo):
+def _(mo):
     # Ihre Lösung:
     _df = mo.sql(
         f"""
@@ -468,19 +440,19 @@ def _(bundesliga, mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.accordion({"🔑 Musterlösung": mo.md("""
-```sql
-SELECT Mannschaft, Niederlagen
-FROM bundesliga
-WHERE Niederlagen < 5
-```
-""")})
+    ```sql
+    SELECT Mannschaft, Niederlagen
+    FROM bundesliga
+    WHERE Niederlagen < 5
+    ```
+    """)})
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    ### 🔵 Aufgabe 4.6: Selbstständig - Tore
+    ### 🔵 Aufgabe 4.3: Selbstständig - Tore
 
     Finden Sie alle Teams, die mehr als 35 Tore geschossen haben.
     """)
@@ -488,13 +460,13 @@ def _(mo):
 
 
 @app.cell
-def _(bundesliga, mo):
+def _(mo):
     # Ihre Lösung:
     _df = mo.sql(
         f"""
         -- Ihre Lösung hier
-        -- Tipp: WHERE mit Vergleichsoperator > auf ToreGeschossen
-        -- Erwartete Spalten: Mannschaft, ToreGeschossen
+        -- Tipp: WHERE mit Vergleichsoperator > auf Tore
+        -- Erwartete Spalten: Mannschaft, Tore
         SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
@@ -504,41 +476,33 @@ def _(bundesliga, mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.accordion({"🔑 Musterlösung": mo.md("""
-```sql
-SELECT Mannschaft, ToreGeschossen
-FROM bundesliga
-WHERE ToreGeschossen > 35
-```
-""")})
+    ```sql
+    SELECT Mannschaft, Tore
+    FROM bundesliga
+    WHERE Tore > 35
+    ```
+    """)})
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    ### 🔴 Aufgabe 4.7: Debugging - Textvergleich
+    ### 🔴 Aufgabe 4.4: Debugging - Textvergleich
 
-    Diese Abfrage soll Bayern München finden, aber funktioniert nicht:
-
-    ```sql
-    SELECT *
-    FROM bundesliga
-    WHERE Mannschaft = Bayern München
-    ```
-
-    Was fehlt?
+    Diese Abfrage soll Bayern München finden. **Führen Sie sie aus** — was fehlt?
     """)
     return
 
 
 @app.cell
-def _(bundesliga, mo):
-    # Korrigieren Sie die Abfrage (Hinweis: Text braucht Anführungszeichen)
+def _(mo):
+    # Diese Abfrage enthält einen Fehler — finden und beheben Sie ihn!
     _df = mo.sql(
         f"""
         SELECT *
         FROM bundesliga
-        WHERE Mannschaft = 'Bayern München'
+        WHERE Mannschaft = Bayern München
         """
     )
     return
@@ -546,33 +510,91 @@ def _(bundesliga, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""
-    ### 🔴 Aufgabe 4.8: Debugging - Operator
+    mo.accordion({"🔑 Lösung": mo.md("""
+    **Fehler:** Text muss in einfache Anführungszeichen gesetzt werden.
 
-    Diese Abfrage soll Teams mit mindestens 25 Punkten finden.
-    Der Operator ist falsch. Korrigieren Sie ihn:
+    Ohne Anführungszeichen denkt SQL, `Bayern` und `München` seien Spaltennamen.
 
     ```sql
-    SELECT Mannschaft, Punkte
+    -- Korrektur:
+    SELECT *
     FROM bundesliga
-    WHERE Punkte > 25
+    WHERE Mannschaft = 'Bayern München'
     ```
+    """)})
+    return
 
-    (Hinweis: "mindestens" bedeutet "größer oder gleich")
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ### 🔴 Aufgabe 4.5: Debugging - Operator
+
+    Diese Abfrage soll Teams mit **mindestens 25 Punkten** finden.
+    **Führen Sie sie aus** — liefert sie das richtige Ergebnis?
     """)
     return
 
 
 @app.cell
 def _(bundesliga, mo):
-    # Korrigieren Sie den Operator
+    # Prüfen Sie: Findet diese Abfrage wirklich "mindestens 25"?
     _df = mo.sql(
         f"""
         SELECT Mannschaft, Punkte
         FROM bundesliga
-        WHERE Punkte >= 25
+        WHERE Punkte > 25
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Lösung": mo.md("""
+    **Fehler:** `>` bedeutet "größer als", nicht "mindestens". Ein Team mit genau 25 Punkten wird nicht gefunden!
+
+    "Mindestens" bedeutet "größer oder gleich" → `>=`
+
+    ```sql
+    -- Korrektur:
+    SELECT Mannschaft, Punkte
+    FROM bundesliga
+    WHERE Punkte >= 25
+    ```
+    """)})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ### Quiz: WHERE-Klausel
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    quiz_where = mo.ui.radio(
+        options={
+            "a": "`WHERE Siege > 10 OR Niederlagen < 5`",
+            "b": "`WHERE Siege > 10 AND Niederlagen < 5`",
+            "c": "`WHERE Siege >= 10 AND Niederlagen <= 5`",
+            "d": "`WHERE Siege >= 10 OR Niederlagen <= 5`",
+        },
+        label="Welche Abfrage findet Teams mit **mindestens 10 Siegen** UND **höchstens 5 Niederlagen**?",
+    )
+    quiz_where
+    return (quiz_where,)
+
+
+@app.cell(hide_code=True)
+def _(mo, quiz_where):
+    if quiz_where.value == "c":
+        mo.callout(mo.md("**Richtig!** 'Mindestens' = `>=`, 'höchstens' = `<=`, und beide Bedingungen müssen gelten = `AND`."), kind="success")
+    elif quiz_where.value is not None:
+        mo.callout(mo.md("**Nicht ganz.** Achten Sie auf: 'mindestens 10' bedeutet `>= 10` (nicht `> 10`), und 'UND' erfordert `AND` (nicht `OR`)."), kind="warn")
     return
 
 
@@ -581,24 +603,28 @@ def _(mo):
     mo.md(r"""
     ---
 
-    ## Phase 6: Komplexe Abfragen mit AND, OR, NOT (40 Minuten)
+    ## Phase 6: Komplexe Abfragen mit AND, OR, NOT
+    """)
+    return
 
-    Jetzt kombinieren wir mehrere Bedingungen!
 
-    ### 🟢 Aufgabe 6.1: AND - Beide Bedingungen (geführt)
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ### Aufgabe 6.1: Geführtes Beispiel — AND-Verknüpfung
 
-    Teams mit vielen Siegen UND wenig Niederlagen:
+    Führen Sie die Abfrage aus. Welche Teams erfüllen beide Bedingungen gleichzeitig?
     """)
     return
 
 
 @app.cell
 def _(bundesliga, mo):
-    _df = mo.sql(
+    mo.sql(
         f"""
         SELECT Mannschaft, Siege, Niederlagen
         FROM bundesliga
-        WHERE Siege > 8 AND Niederlagen < 5
+        WHERE Siege > 15 AND Niederlagen < 10
         """
     )
     return
@@ -607,180 +633,25 @@ def _(bundesliga, mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    ### 🟢 Aufgabe 6.2: OR - Mindestens eine Bedingung (geführt)
-
-    Teams mit vielen Punkten ODER guter Tordifferenz:
-    """)
-    return
-
-
-@app.cell
-def _(bundesliga, mo):
-    _df = mo.sql(
-        f"""
-        SELECT Mannschaft, Punkte, Tordifferenz
-        FROM bundesliga
-        WHERE Punkte > 35 OR Tordifferenz > 15
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-    ### 🟢 Aufgabe 6.3: NOT - Ausschließen (geführt)
-
-    Alle Teams außer Bayern München:
-    """)
-    return
-
-
-@app.cell
-def _(bundesliga, mo):
-    _df = mo.sql(
-        f"""
-        SELECT Mannschaft, Punkte
-        FROM bundesliga
-        WHERE NOT Mannschaft = 'Bayern München'
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-    ### 🟢 Aufgabe 6.4: BETWEEN - Wertebereich (geführt)
-
-    Teams mit 20 bis 30 Punkten (inklusiv):
-    """)
-    return
-
-
-@app.cell
-def _(bundesliga, mo):
-    _df = mo.sql(
-        f"""
-        SELECT Mannschaft, Punkte
-        FROM bundesliga
-        WHERE Punkte BETWEEN 20 AND 30
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-    ### 🟢 Aufgabe 6.5: IN - Werteliste (geführt)
-
-    Nur bestimmte Teams anzeigen:
-    """)
-    return
-
-
-@app.cell
-def _(bundesliga, mo):
-    _df = mo.sql(
-        f"""
-        SELECT Mannschaft, Punkte
-        FROM bundesliga
-        WHERE Mannschaft IN ('Bayern München', 'Borussia Dortmund', 'RB Leipzig')
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-    ### 🟢 Aufgabe 6.6: LIKE - Mustersuche (geführt)
-
-    Teams, deren Name mit 'B' beginnt:
-    """)
-    return
-
-
-@app.cell
-def _(bundesliga, mo):
-    _df = mo.sql(
-        f"""
-        SELECT Mannschaft
-        FROM bundesliga
-        WHERE Mannschaft LIKE 'B%'
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-    ### 🟣 Aufgabe 6.7: Vorhersage - AND vs OR
-
-    **Welche Abfrage liefert MEHR Ergebnisse?**
-
-    A) `WHERE Punkte > 30 AND Siege > 10`
-    B) `WHERE Punkte > 30 OR Siege > 10`
-
-    Überlegen Sie zuerst, dann testen Sie beide:
-    """)
-    return
-
-
-@app.cell
-def _(bundesliga, mo):
-    # Abfrage A: AND
-    _df = mo.sql(
-        f"""
-        SELECT Mannschaft, Punkte, Siege
-        FROM bundesliga
-        WHERE Punkte > 30 AND Siege > 10
-        """
-    )
-    return
-
-
-@app.cell
-def _(bundesliga, mo):
-    # Abfrage B: OR
-    _df = mo.sql(
-        f"""
-        SELECT Mannschaft, Punkte, Siege
-        FROM bundesliga
-        WHERE Punkte > 30 OR Siege > 10
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-    **Erklärung:** OR liefert mehr Ergebnisse, weil nur EINE Bedingung erfüllt sein muss. AND ist restriktiver.
-
-    ---
-
-    ### 🔵 Aufgabe 6.8: Selbstständig - Kombinierte Bedingung
+    ### 🔵 Aufgabe 6.2: Selbstständig - Kombinierte Bedingung
 
     Finden Sie Teams, die:
     - Mehr als 30 Tore geschossen haben UND
     - Weniger als 25 Tore kassiert haben
 
-    Zeigen Sie Mannschaft, ToreGeschossen, ToreKassiert.
+    Zeigen Sie Mannschaft, Tore, Gegentore.
     """)
     return
 
 
 @app.cell
-def _(bundesliga, mo):
+def _(mo):
     # Ihre Lösung:
     _df = mo.sql(
         f"""
         -- Ihre Lösung hier
         -- Tipp: Verwenden Sie AND um zwei WHERE-Bedingungen zu kombinieren
-        -- Erwartete Spalten: Mannschaft, ToreGeschossen, ToreKassiert
+        -- Erwartete Spalten: Mannschaft, Tore, Gegentore
         SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
@@ -790,19 +661,19 @@ def _(bundesliga, mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.accordion({"🔑 Musterlösung": mo.md("""
-```sql
-SELECT Mannschaft, ToreGeschossen, ToreKassiert
-FROM bundesliga
-WHERE ToreGeschossen > 30 AND ToreKassiert < 25
-```
-""")})
+    ```sql
+    SELECT Mannschaft, Tore, Gegentore
+    FROM bundesliga
+    WHERE Tore > 30 AND Gegentore < 25
+    ```
+    """)})
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    ### 🔵 Aufgabe 6.9: Selbstständig - Abstiegskandidaten
+    ### 🔵 Aufgabe 6.3: Selbstständig - Abstiegskandidaten
 
     Finden Sie potenzielle Abstiegskandidaten:
     - Weniger als 20 Punkte ODER
@@ -814,7 +685,7 @@ def _(mo):
 
 
 @app.cell
-def _(bundesliga, mo):
+def _(mo):
     # Ihre Lösung:
     _df = mo.sql(
         f"""
@@ -830,19 +701,19 @@ def _(bundesliga, mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.accordion({"🔑 Musterlösung": mo.md("""
-```sql
-SELECT Mannschaft, Punkte, Niederlagen
-FROM bundesliga
-WHERE Punkte < 20 OR Niederlagen > 10
-```
-""")})
+    ```sql
+    SELECT Mannschaft, Punkte, Niederlagen
+    FROM bundesliga
+    WHERE Punkte < 20 OR Niederlagen > 10
+    ```
+    """)})
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    ### 🔵 Aufgabe 6.10: Selbstständig - LIKE
+    ### 🔵 Aufgabe 6.4: Selbstständig - LIKE
 
     Finden Sie alle Teams mit "Borussia" im Namen.
 
@@ -852,7 +723,7 @@ def _(mo):
 
 
 @app.cell
-def _(bundesliga, mo):
+def _(mo):
     # Ihre Lösung:
     _df = mo.sql(
         f"""
@@ -868,42 +739,35 @@ def _(bundesliga, mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.accordion({"🔑 Musterlösung": mo.md("""
-```sql
-SELECT Mannschaft, Punkte
-FROM bundesliga
-WHERE Mannschaft LIKE '%Borussia%'
-```
-""")})
+    ```sql
+    SELECT Mannschaft, Punkte
+    FROM bundesliga
+    WHERE Mannschaft LIKE '%Borussia%'
+    ```
+    """)})
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    ### 🔴 Aufgabe 6.11: Debugging - Klammern
+    ### 🔴 Aufgabe 6.5: Debugging - Klammern
 
     Diese Abfrage soll Teams finden, die ENTWEDER viele Punkte (>35) ODER viele Tore (>40) haben, UND dabei weniger als 5 Niederlagen haben.
 
-    Die Abfrage ist syntaktisch korrekt, liefert aber falsche Ergebnisse. Warum?
-
-    ```sql
-    SELECT Mannschaft, Punkte, ToreGeschossen, Niederlagen
-    FROM bundesliga
-    WHERE Punkte > 35 OR ToreGeschossen > 40 AND Niederlagen < 5
-    ```
+    **Führen Sie sie aus** — die Abfrage ist syntaktisch korrekt, liefert aber falsche Ergebnisse. Warum?
     """)
     return
 
 
 @app.cell
 def _(bundesliga, mo):
-    # Korrigieren Sie mit Klammern
-    # (Hinweis: AND bindet stärker als OR!)
+    # Diese Abfrage liefert falsche Ergebnisse — finden Sie den logischen Fehler!
     _df = mo.sql(
         f"""
-        SELECT Mannschaft, Punkte, ToreGeschossen, Niederlagen
+        SELECT Mannschaft, Punkte, Tore, Niederlagen
         FROM bundesliga
-        WHERE (Punkte > 35 OR ToreGeschossen > 40) AND Niederlagen < 5
+        WHERE Punkte > 35 OR Tore > 40 AND Niederlagen < 5
         """
     )
     return
@@ -911,30 +775,45 @@ def _(bundesliga, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""
-    ### 🔴 Aufgabe 6.12: Debugging - LIKE
-
-    Diese Abfrage soll alle Teams finden, die "FC" im Namen haben.
-    Sie findet aber nicht alle. Was ist das Problem?
+    mo.accordion({"🔑 Lösung": mo.md("""
+    **Fehler:** AND bindet stärker als OR! Die Abfrage wird gelesen als:
 
     ```sql
-    SELECT Mannschaft
-    FROM bundesliga
-    WHERE Mannschaft LIKE 'FC%'
+    WHERE Punkte > 35 OR (Tore > 40 AND Niederlagen < 5)
     ```
+
+    Das bedeutet: ALLE Teams mit >35 Punkten werden angezeigt, unabhängig von Niederlagen.
+
+    **Korrektur mit Klammern:**
+
+    ```sql
+    SELECT Mannschaft, Punkte, Tore, Niederlagen
+    FROM bundesliga
+    WHERE (Punkte > 35 OR Tore > 40) AND Niederlagen < 5
+    ```
+    """)})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ### 🔴 Aufgabe 6.6: Debugging - LIKE
+
+    Diese Abfrage soll alle Teams finden, die "FC" im Namen haben.
+    **Führen Sie sie aus** — findet sie alle FC-Teams?
     """)
     return
 
 
 @app.cell
 def _(bundesliga, mo):
-    # Korrigieren Sie das LIKE-Muster
-    # (Hinweis: "FC" kann auch mitten im Namen stehen)
+    # Diese Abfrage findet nicht alle Teams mit FC — warum?
     _df = mo.sql(
         f"""
         SELECT Mannschaft
         FROM bundesliga
-        WHERE Mannschaft LIKE '%FC%'
+        WHERE Mannschaft LIKE 'FC%'
         """
     )
     return
@@ -942,25 +821,50 @@ def _(bundesliga, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    quiz_operator = mo.ui.radio(
+    mo.accordion({"🔑 Lösung": mo.md("""
+    **Fehler:** `'FC%'` findet nur Teams, die mit "FC" **beginnen** (z.B. "FC Augsburg").
+
+    Aber "1. FC Union Berlin" oder "1. FC Heidenheim" haben "FC" **mitten im Namen**.
+
+    ```sql
+    -- Korrektur: % auch vor FC setzen
+    SELECT Mannschaft
+    FROM bundesliga
+    WHERE Mannschaft LIKE '%FC%'
+    ```
+    """)})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ### Quiz: Logische Operatoren
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    quiz_logic = mo.ui.radio(
         options={
-            "and_or": "AND hat Vorrang vor OR (wie Multiplikation vor Addition)",
-            "or_and": "OR hat Vorrang vor AND",
-            "gleich": "Beide haben den gleichen Vorrang (links nach rechts)",
-            "klammern": "Es gibt keinen festen Vorrang, man muss immer Klammern setzen"
+            "a": "AND — weil beide einschränkend wirken",
+            "b": "OR — weil nur eine Bedingung erfüllt sein muss",
+            "c": "Beide liefern gleich viele Ergebnisse",
+            "d": "Kommt auf die Daten an, man kann es nicht allgemein sagen",
         },
-        label="**Quiz:** Welche Aussage zu AND und OR in SQL ist korrekt?"
+        label="Welcher Operator liefert in der Regel **mehr** Ergebnisse: `WHERE A AND B` oder `WHERE A OR B`?",
     )
-    quiz_operator
-    return (quiz_operator,)
+    quiz_logic
+    return (quiz_logic,)
 
 
 @app.cell(hide_code=True)
-def _(quiz_operator, mo):
-    if quiz_operator.value == "and_or":
-        mo.output.replace(mo.md("✅ **Richtig!** AND bindet stärker als OR, genau wie `*` vor `+` in der Mathematik. Deshalb sind Klammern bei OR wichtig: `WHERE (A OR B) AND C` ist etwas anderes als `WHERE A OR B AND C`."))
-    elif quiz_operator.value:
-        mo.output.replace(mo.md("❌ Nicht ganz. Denken Sie an die Analogie zur Mathematik: AND entspricht der Multiplikation (bindet stärker), OR der Addition."))
+def _(mo, quiz_logic):
+    if quiz_logic.value == "b":
+        mo.callout(mo.md("**Richtig!** `OR` ist *permissiv* — es reicht, wenn eine Bedingung zutrifft. `AND` ist *restriktiv* — beide müssen gelten."), kind="success")
+    elif quiz_logic.value is not None:
+        mo.callout(mo.md("**Nicht ganz.** Merkregel: `AND` = restriktiv (weniger Ergebnisse), `OR` = permissiv (mehr Ergebnisse)."), kind="warn")
     return
 
 
@@ -969,134 +873,7 @@ def _(mo):
     mo.md(r"""
     ---
 
-    ## Freie Exploration (verbleibende Zeit)
-
-    Jetzt sind Sie dran! Beantworten Sie diese Fragen mit SQL:
-
-    ### Frage 1: Effizienz
-    Welche Teams haben mehr Siege als Niederlagen? (Hinweis: Spalten können verglichen werden!)
-    """)
-    return
-
-
-@app.cell
-def _(bundesliga, mo):
-    # Ihre Abfrage:
-    _df = mo.sql(
-        f"""
-        SELECT Mannschaft, Siege, Niederlagen
-        FROM bundesliga
-        WHERE Siege > Niederlagen
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-    ### Frage 2: Tormaschinen
-    Welche Teams haben mehr als doppelt so viele Tore geschossen wie kassiert?
-    """)
-    return
-
-
-@app.cell
-def _(bundesliga, mo):
-    # Ihre Abfrage:
-    _df = mo.sql(
-        f"""
-        SELECT Mannschaft, ToreGeschossen, ToreKassiert
-        FROM bundesliga
-        WHERE ToreGeschossen > 2 * ToreKassiert
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-    ### Frage 3: Mittelmäßig
-    Welche Teams sind im Mittelfeld? (Zwischen 20 und 35 Punkte, nicht "Bayern" oder "Kiel" im Namen)
-    """)
-    return
-
-
-@app.cell
-def _(bundesliga, mo):
-    # Ihre Abfrage:
-    _df = mo.sql(
-        f"""
-        SELECT Mannschaft, Punkte
-        FROM bundesliga
-        WHERE Punkte BETWEEN 20 AND 35
-          AND Mannschaft NOT LIKE '%Bayern%'
-          AND Mannschaft NOT LIKE '%Kiel%'
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-    ### Frage 4: Eigene Frage
-    Formulieren Sie eine eigene Frage und beantworten Sie sie mit SQL!
-    """)
-    return
-
-
-@app.cell
-def _(bundesliga, mo):
-    # Ihre eigene Frage und Abfrage:
-    _df = mo.sql(
-        f"""
-        SELECT *
-        FROM bundesliga
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-    ---
-
-    ## Phase 7: Erste Visualisierungen 📊
-
-    **Der Workflow:**
-    ```
-    Datenbank → SQL → Abfrageergebnis → plotly → Grafik
-    ```
-
-    SQL liefert Daten – Diagramme machen Muster sichtbar!
-    """)
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-    ### Zwei Datenstrukturen
-
-    | Typ | Beschreibung | Chart |
-    |-----|--------------|-------|
-    | **Querschnitt** | 18 Teams, 1 Zeitpunkt | Balkendiagramm |
-    | **Zeitreihe** | 1 Team, 34 Spieltage | Liniendiagramm |
-
-    Wir haben beide: `bundesliga` (Endstand) und `bundesliga_spieltage` (Verlauf)
-    """)
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-    ### 🟢 7.1 Geführt: Balkendiagramm (Querschnitt)
-
-    Welche Teams haben die meisten Punkte?
+    ## Phase 7: Visualisierung
     """)
     return
 
@@ -1107,96 +884,13 @@ def _():
     return (px,)
 
 
-@app.cell
-def _(bundesliga, mo):
-    # SQL liefert die Daten
-    mo.sql(
-        f"""
-        SELECT Mannschaft, Punkte
-        FROM bundesliga
-        WHERE Punkte > 50
-        """
-    )
-    return
-
-
-@app.cell
-def _(bundesliga, mo, px):
-    # Gleiche Abfrage für Visualisierung
-    top_teams = mo.sql(
-        f"""
-        SELECT Mannschaft, Punkte
-        FROM bundesliga
-        WHERE Punkte > 50
-        """
-    )
-
-    # Visualisierung: Balkendiagramm
-    fig_bar = px.bar(
-        top_teams,
-        x="Mannschaft",
-        y="Punkte",
-        title="Top Teams nach Punkten",
-        color="Punkte",
-        color_continuous_scale="Blues"
-    )
-    fig_bar
-    return
-
-
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    ### 🟢 7.2 Geführt: Liniendiagramm (Zeitreihe)
+    ### 🔵 Aufgabe 7.1: Eigene Visualisierung
 
-    Wie entwickelte sich Bayern über die Saison?
-    """)
-    return
-
-
-@app.cell
-def _(bundesliga_spieltage, mo):
-    # SQL: Ein Team über alle Spieltage
-    mo.sql(
-        f"""
-        SELECT Spieltag, Punkte_Kumuliert
-        FROM bundesliga_spieltage
-        WHERE Mannschaft = 'Bayern München'
-        """
-    )
-    return
-
-
-@app.cell
-def _(bundesliga_spieltage, mo, px):
-    # Gleiche Abfrage für Visualisierung
-    bayern_verlauf = mo.sql(
-        f"""
-        SELECT Spieltag, Punkte_Kumuliert
-        FROM bundesliga_spieltage
-        WHERE Mannschaft = 'Bayern München'
-        """
-    )
-
-    # Visualisierung: Liniendiagramm
-    fig_line = px.line(
-        bayern_verlauf,
-        x="Spieltag",
-        y="Punkte_Kumuliert",
-        title="Bayern München: Punkteverlauf",
-        markers=True
-    )
-    fig_line
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-    ### 🔵 7.3 Selbstständig: Eigene Visualisierung
-
-    Erstelle ein Diagramm deiner Wahl:
-    - Balkendiagramm: Welche Teams kassieren die meisten Gegentore? (`WHERE ToreKassiert > 60`)
+    Erstellen Sie ein Diagramm Ihrer Wahl:
+    - Balkendiagramm: Welche Teams kassieren die meisten Gegentore?
     - Liniendiagramm: Wie entwickelte sich Dortmund über die Saison?
     """)
     return
@@ -1204,12 +898,12 @@ def _(mo):
 
 @app.cell
 def _(bundesliga, mo):
-    # Deine SQL-Abfrage hier:
+    # Ihre SQL-Abfrage hier:
     mo.sql(
         f"""
-        SELECT Mannschaft, ToreKassiert
+        SELECT Mannschaft, Gegentore
         FROM bundesliga
-        WHERE ToreKassiert > 60
+        ORDER BY Gegentore DESC
         """
     )
     return
@@ -1217,17 +911,139 @@ def _(bundesliga, mo):
 
 @app.cell
 def _(bundesliga, mo, px):
-    # Visualisierung:
+    # Ihre Visualisierung:
     meine_daten = mo.sql(
         f"""
-        SELECT Mannschaft, ToreKassiert
+        SELECT Mannschaft, Gegentore
         FROM bundesliga
-        WHERE ToreKassiert > 60
+        ORDER BY Gegentore DESC
         """
     )
 
-    fig_own = px.bar(meine_daten, x="Mannschaft", y="ToreKassiert")
+    fig_own = px.bar(meine_daten, x="Mannschaft", y="Gegentore",
+                     title="Gegentore pro Team")
     fig_own
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ---
+
+    ## Freie Exploration — Herausforderungen
+
+    **Tipp:** Vergleichen Sie Ihre Lösungen mit Ihrem Nachbarn — es gibt oft mehrere Wege zum gleichen Ergebnis!
+
+    ### ⭐ Herausforderung 1: Siegreiche Teams
+
+    Welche Teams haben mehr Siege als Unentschieden und Niederlagen **zusammen**?
+    """)
+    return
+
+
+@app.cell
+def _(mo):
+    # Ihre Lösung:
+    _df = mo.sql(
+        f"""
+        -- ⭐ Siege > Unentschieden + Niederlagen
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+    ```sql
+    SELECT Mannschaft, Siege, Unentschieden, Niederlagen
+    FROM bundesliga
+    WHERE Siege > Unentschieden + Niederlagen
+    ```
+
+    **Erklärung:** In SQL kann man Spalten in WHERE direkt verrechnen. Die rechte Seite `Unentschieden + Niederlagen` wird pro Zeile berechnet.
+    """)})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ### ⭐⭐ Herausforderung 2: Punkte pro Spiel
+
+    Erstelle ein Ranking: Punkte pro Spiel (`Punkte / Spiele`) für jedes Team, absteigend sortiert.
+
+    (Hinweis: SQL kann berechnete Spalten erstellen — `SELECT spalte1, spalte2, ausdruck AS alias`)
+    """)
+    return
+
+
+@app.cell
+def _(mo):
+    # Ihre Lösung:
+    _df = mo.sql(
+        f"""
+        -- ⭐⭐ Punkte pro Spiel berechnen
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+    ```sql
+    SELECT
+    Mannschaft,
+    Punkte,
+    Spiele,
+    ROUND(CAST(Punkte AS FLOAT) / Spiele, 2) AS Punkte_pro_Spiel
+    FROM bundesliga
+    ORDER BY Punkte_pro_Spiel DESC
+    ```
+
+    **Erklärung:** `CAST(... AS FLOAT)` sorgt dafür, dass die Division ein Dezimalergebnis liefert (nicht ganzzahlig). `ROUND(..., 2)` rundet auf 2 Nachkommastellen.
+    """)})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ### ⭐⭐⭐ Herausforderung 3: Kombination von LIKE, AND, OR
+
+    Finde Teams mit "Borussia" oder "Bayern" im Namen, die eine **positive Tordifferenz** haben.
+    """)
+    return
+
+
+@app.cell
+def _(mo):
+    # Ihre Lösung:
+    _df = mo.sql(
+        f"""
+        -- ⭐⭐⭐ LIKE + AND + OR kombinieren
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+    ```sql
+    SELECT Mannschaft, Tordifferenz
+    FROM bundesliga
+    WHERE (Mannschaft LIKE '%Borussia%' OR Mannschaft LIKE '%Bayern%')
+      AND Tordifferenz > 0
+    ```
+
+    **Erklärung:** Die Klammern um die OR-Bedingung sind entscheidend! Ohne Klammern würde AND nur auf die zweite LIKE-Bedingung wirken (Operatorvorrang). Außerdem braucht jeder LIKE-Vergleich ein eigenes `Mannschaft LIKE ...`.
+    """)})
     return
 
 
@@ -1255,12 +1071,6 @@ def _(mo):
     |----------|----------|------------|
     | Balkendiagramm | `px.bar()` | Querschnitt (Kategorien vergleichen) |
     | Liniendiagramm | `px.line()` | Zeitreihe (Entwicklung zeigen) |
-
-    ### Häufige Fehler vermeiden:
-    - ✅ Komma zwischen Spalten: `SELECT a, b`
-    - ✅ Text in Anführungszeichen: `WHERE name = 'Text'`
-    - ✅ Klammern bei komplexen Bedingungen: `WHERE (a OR b) AND c`
-    - ✅ Richtige Operatoren: `>=` für "mindestens", `<=` für "höchstens"
 
     **Nächste Session:** Sortieren, DISTINCT, NULL-Werte, mehr Visualisierung
     """)
