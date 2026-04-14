@@ -10,51 +10,54 @@
 
 import marimo
 
-__generated_with = "0.10.14"
-app = marimo.App(width="medium", app_title="DMA Session 13: Textanalyse")
+__generated_with = "0.13.0"
+app = marimo.App(
+    width="medium",
+    app_title="DMA Session 13: Textanalyse",
+)
+
+
+@app.cell(hide_code=True)
+def _():
+    import marimo as mo
+    return (mo,)
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        # Vorlesung 13: Textanalyse
+        # Session 13: Textanalyse — Übungen
 
-        **Kursfahrplan:** I: SQL-Grundlagen (S1–4) · II: Datenmodellierung (S5–7) · III: Fortgeschrittenes SQL (S8–9) · **▸ IV: Datenanalyse (S10–13)**
+        Theorie und geführte Beispiele → **13-textanalyse-guide.py**
 
-        In Sessions 10–12 haben wir numerische Daten analysiert — Verteilungen, Tests, Zeitreihen. Zum Abschluss wenden wir SQL auf **unstrukturierte Textdaten** an: die häufigste Datenform in der Praxis.
+        **Aufgabentypen:**
 
-        **Lernziele:**
-        - Textdaten mit SQL-String-Funktionen bereinigen und analysieren
-        - Pattern Matching mit LIKE und regulären Ausdrücken anwenden
-        - Texte in Wörter zerlegen (Tokenisierung) und Worthäufigkeiten berechnen
-        - Aspekt-basierte Analyse: Themen aus Freitext extrahieren
+        - 🟢 **Geführt**: Vollständige Lösung zum Nachvollziehen
+        - 🟡 **Angepasst**: Teillösung zum Ergänzen (`???`)
+        - 🔵 **Selbstständig**: Eigene Lösung schreiben
+        - 🔴 **Debugging**: Fehler finden und beheben
+        - ⭐ **Entdecken**: Offene Herausforderungen
+
+        > **Hinweis:** 🟡-Aufgaben enthalten `???` als Platzhalter. Die Zelle zeigt einen SQL-Fehler, bis Sie die `???` durch die richtige Lösung ersetzen — das ist Absicht!
 
         **Drei Datensätze — steigende Komplexität:**
 
-        | Datensatz | Sprache | Größe | Fokus |
-        |-----------|---------|-------|-------|
-        | Produktbewertungen | Deutsch | 150 | String-Grundfunktionen |
-        | McDonald's Reviews | Englisch | 3.000 | Aspekt-Analyse & LIKE |
-        | UFO Sightings | Englisch | 5.000 | Regex, Tokenisierung, Mining |
-
-        > **Vorhersage:** Bei 150 deutschen Produktbewertungen — welche Wörter werden am häufigsten in positiven (4-5 Sterne) vs. negativen (1-2 Sterne) Bewertungen vorkommen? Notieren Sie je 3 vermutete Wörter für jede Kategorie.
+        | Datensatz | Sprache | Fokus |
+        |-----------|---------|-------|
+        | Produktbewertungen | Deutsch | String-Grundfunktionen, TRIM, REPLACE, LOWER |
+        | McDonald's Reviews | Englisch | LIKE, Feature Engineering, Aspekt-Analyse |
+        | UFO Sightings | Englisch | Regex, Tokenisierung, Text Mining |
         """
     )
     return
 
 
 @app.cell
-def _():
-    import marimo as mo
+def _(mo):
     import polars as pl
     import plotly.express as px
-    return mo, pl, px
 
-
-@app.cell(hide_code=True)
-def _(mo, pl):
-    # --- Alle drei Datensätze laden ---
     _warn = ""
     try:
         base = mo.notebook_location() / "public"
@@ -158,7 +161,6 @@ def _(mo, pl):
                 "Airport", "Highway", "Mall", "Drive-Thru", "City Center",
             ],
             "review_text": [
-                # ~15 mentioning food
                 "Terrible food, cold fries and the burger was stale.",
                 "Great burger and fresh fries, loved every bite!",
                 "The food was bland and the nuggets were rubbery.",
@@ -174,7 +176,6 @@ def _(mo, pl):
                 "Kids loved the Happy Meal, good portions and tasty nuggets.",
                 "Fries were soggy and cold, clearly been sitting there for hours.",
                 "The food was okay, just your typical fast food experience.",
-                # ~12 mentioning service
                 "Excellent service, the staff was incredibly friendly and helpful!",
                 "Worst service ever, the employee was rude and dismissive.",
                 "Staff was friendly but a bit slow during the rush hour.",
@@ -185,7 +186,6 @@ def _(mo, pl):
                 "Outstanding service, the manager came to check on us personally.",
                 "Employee was helpful when I asked about allergens in the menu.",
                 "Service took forever, had to wait 25 minutes for a simple order.",
-                # ~10 mentioning price
                 "Great value for the price, you get a lot of food for your money.",
                 "Way too expensive for what you get. The prices keep going up!",
                 "Good value meal deals, especially the combo offers.",
@@ -196,7 +196,6 @@ def _(mo, pl):
                 "The value menu is still affordable, good option on a budget.",
                 "Prices have doubled but quality has dropped. Expensive for fast food!",
                 "Decent price for a family meal, cheaper than cooking at home honestly.",
-                # ~8 mentioning cleanliness
                 "The restaurant was spotless, tables were clean and floors shiny.",
                 "Disgusting! Dirty tables, filthy bathroom and trash everywhere.",
                 "Very clean location, you can tell they take hygiene seriously.",
@@ -205,7 +204,6 @@ def _(mo, pl):
                 "Tables were clean but the bathroom needed serious attention.",
                 "One of the cleanest fast food places I have been to, well maintained.",
                 "Filthy restaurant, saw a cockroach near the drink station. Gross!",
-                # ~5 mixed/other
                 "Convenient location right off the highway, open late which is nice.",
                 "Just a regular McDonald's, nothing great and nothing terrible.",
                 "The new remodel looks modern, comfortable seating and good WiFi.",
@@ -322,12 +320,12 @@ def _(mo, pl):
         {len(ufo_sightings)} UFO Sightings
         """
     )
-    return mcdonalds_reviews, produktbewertungen, ufo_sightings
+    return mcdonalds_reviews, mo, pl, produktbewertungen, px, ufo_sightings
 
 
-# =============================================================================
-# PHASE 1–2: PRODUKTBEWERTUNGEN (guided)
-# =============================================================================
+# -----------------------------------------------------------------------
+# Phase 1: Datenüberblick (Produktbewertungen)
+# -----------------------------------------------------------------------
 
 
 @app.cell(hide_code=True)
@@ -336,9 +334,9 @@ def _(mo):
         r"""
         ---
 
-        ## Phase 1–2: String-Grundfunktionen (Produktbewertungen)
+        ## Phase 1: Datenüberblick (Produktbewertungen)
 
-        Wir starten mit einem kleinen, vertrauten Datensatz: 150 deutsche Produktbewertungen.
+        Wir starten mit einem kleinen, vertrauten Datensatz: 50 deutsche Produktbewertungen.
         Hier lernen wir die SQL-Werkzeuge kennen, bevor wir sie auf die großen Datensätze loslassen.
         """
     )
@@ -349,9 +347,9 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 13.1: Datenüberblick
+        ### 🟢 Aufgabe 13.1: Datenüberblick
 
-        Wie viele Bewertungen gibt es pro Kategorie? Wie sind die Sterne verteilt?
+        Wie viele Bewertungen gibt es pro Kategorie? Wie ist die durchschnittliche Sternebewertung?
         """
     )
     return
@@ -359,7 +357,7 @@ def _(mo):
 
 @app.cell
 def _(mo, produktbewertungen):
-    mo.sql(
+    _df = mo.sql(
         f"""
         SELECT
             kategorie,
@@ -372,15 +370,34 @@ def _(mo, produktbewertungen):
         ORDER BY avg_sterne DESC
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    kategorie,
+    COUNT(*) AS anzahl,
+    ROUND(AVG(sterne), 2) AS avg_sterne,
+    MIN(sterne) AS min_sterne,
+    MAX(sterne) AS max_sterne
+FROM produktbewertungen
+GROUP BY kategorie
+ORDER BY avg_sterne DESC
+```
+""")})
+    return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 13.2: LENGTH-Profiling
+        ### 🟡 Aufgabe 13.2: LENGTH-Profiling
 
-        Wie lang sind die Bewertungstexte? Gibt es Unterschiede nach Kategorie oder Sternebewertung?
+        Wie lang sind die Bewertungstexte? Gibt es Unterschiede nach Sternebewertung? Ergänzen Sie `???`:
         """
     )
     return
@@ -388,43 +405,51 @@ def _(mo):
 
 @app.cell
 def _(mo, produktbewertungen):
-    mo.sql(
+    _df = mo.sql(
         f"""
         SELECT
-            kategorie,
+            ??? AS sterne,
             ROUND(AVG(LENGTH(bewertung_text)), 0) AS avg_laenge,
-            MIN(LENGTH(bewertung_text)) AS min_laenge,
-            MAX(LENGTH(bewertung_text)) AS max_laenge
-        FROM produktbewertungen
-        GROUP BY kategorie
-        ORDER BY avg_laenge DESC
-        """
-    )
-
-
-@app.cell
-def _(mo, produktbewertungen):
-    mo.sql(
-        f"""
-        SELECT
-            sterne,
-            ROUND(AVG(LENGTH(bewertung_text)), 0) AS avg_laenge,
+            MIN(LENGTH(???)) AS min_laenge,
+            MAX(LENGTH(???)) AS max_laenge,
             COUNT(*) AS anzahl
         FROM produktbewertungen
-        GROUP BY sterne
-        ORDER BY sterne
+        GROUP BY ???
+        ORDER BY ???
+        -- Tipp: sterne, bewertung_text
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    sterne,
+    ROUND(AVG(LENGTH(bewertung_text)), 0) AS avg_laenge,
+    MIN(LENGTH(bewertung_text)) AS min_laenge,
+    MAX(LENGTH(bewertung_text)) AS max_laenge,
+    COUNT(*) AS anzahl
+FROM produktbewertungen
+GROUP BY sterne
+ORDER BY sterne
+```
+**Beobachtung:** Schreiben unzufriedene Kunden (1-2 Sterne) längere oder kürzere Texte als zufriedene?
+""")})
+    return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 13.3: Textbereinigung mit TRIM und REPLACE
+        ### 🔵 Aufgabe 13.3: Lange Bewertungen finden
 
-        Einige Bewertungen haben führende/nachfolgende Leerzeichen oder doppelte Leerzeichen.
-        Finden und bereinigen Sie diese.
+        Finden Sie alle Bewertungen mit mehr als 80 Zeichen. Zeigen Sie id, sterne, Textlänge und den Text.
+
+        *Hinweis: `LENGTH(bewertung_text) > 80`*
         """
     )
     return
@@ -432,7 +457,68 @@ def _(mo):
 
 @app.cell
 def _(mo, produktbewertungen):
-    mo.sql(
+    _df = mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        -- Erwartete Spalten: id, sterne, text_laenge, bewertung_text
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    id,
+    sterne,
+    LENGTH(bewertung_text) AS text_laenge,
+    bewertung_text
+FROM produktbewertungen
+WHERE LENGTH(bewertung_text) > 80
+ORDER BY text_laenge DESC
+```
+""")})
+    return
+
+
+# -----------------------------------------------------------------------
+# Phase 2: Textbereinigung (Produktbewertungen)
+# -----------------------------------------------------------------------
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## Phase 2: Textbereinigung (Produktbewertungen)
+
+        Reale Textdaten sind selten sauber: führende Leerzeichen, doppelte Leerzeichen,
+        inkonsistente Schreibweisen. SQL bietet `TRIM`, `REPLACE` und `LOWER` zur Bereinigung.
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🟢 Aufgabe 13.4: TRIM — Unsichtbare Leerzeichen finden
+
+        Finden Sie Bewertungen, bei denen der Text führende oder nachfolgende Leerzeichen hat.
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, produktbewertungen):
+    _df = mo.sql(
         f"""
         SELECT
             id,
@@ -446,121 +532,179 @@ def _(mo, produktbewertungen):
         ORDER BY entfernt DESC
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    id,
+    bewertung_text,
+    TRIM(bewertung_text) AS getrimmt,
+    LENGTH(bewertung_text) AS original_laenge,
+    LENGTH(TRIM(bewertung_text)) AS trimmed_laenge,
+    LENGTH(bewertung_text) - LENGTH(TRIM(bewertung_text)) AS entfernt
+FROM produktbewertungen
+WHERE bewertung_text != TRIM(bewertung_text)
+ORDER BY entfernt DESC
+```
+**Erklärung:** `TRIM()` entfernt Leerzeichen am Anfang und Ende. Die Differenz zeigt, wie viele Zeichen entfernt werden.
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🟡 Aufgabe 13.5: REPLACE — Doppelte Leerzeichen entfernen
+
+        Finden Sie Bewertungen mit doppelten Leerzeichen und ersetzen Sie diese. Ergänzen Sie `???`:
+        """
+    )
+    return
 
 
 @app.cell
 def _(mo, produktbewertungen):
-    mo.sql(
+    _df = mo.sql(
         f"""
         SELECT
             id,
             bewertung_text,
-            REPLACE(bewertung_text, '  ', ' ') AS bereinigt
+            REPLACE(bewertung_text, ???, ???) AS bereinigt
+        FROM produktbewertungen
+        WHERE bewertung_text LIKE ???
+        -- Tipp: REPLACE(text, '  ', ' '), LIKE '%  %'
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    id,
+    bewertung_text,
+    REPLACE(bewertung_text, '  ', ' ') AS bereinigt
+FROM produktbewertungen
+WHERE bewertung_text LIKE '%  %'
+```
+**Erklärung:** `REPLACE(text, alt, neu)` braucht immer 3 Argumente: den Text, was ersetzt werden soll, und den Ersatz.
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔵 Aufgabe 13.6: LENGTH-REPLACE Trick — Ausrufezeichen zählen
+
+        **Klausur-Pattern:** `LENGTH(text) - LENGTH(REPLACE(text, 'x', ''))` = Anzahl von 'x'
+
+        Zählen Sie die Ausrufezeichen pro Bewertung und zeigen Sie die Top 10 emotionalsten Bewertungen.
+        Berechnen Sie auch den Durchschnitt pro Sternebewertung.
+
+        *Hinweis: `LENGTH(bewertung_text) - LENGTH(REPLACE(bewertung_text, '!', ''))` als `anzahl_ausrufezeichen`*
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, produktbewertungen):
+    _df = mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        -- Erwartete Spalten: id, sterne, bewertung_text, anzahl_ausrufezeichen
+        -- Top 10 nach anzahl_ausrufezeichen DESC
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    id, sterne, bewertung_text,
+    LENGTH(bewertung_text) - LENGTH(REPLACE(bewertung_text, '!', ''))
+        AS anzahl_ausrufezeichen
+FROM produktbewertungen
+WHERE LENGTH(bewertung_text) - LENGTH(REPLACE(bewertung_text, '!', '')) > 0
+ORDER BY anzahl_ausrufezeichen DESC
+LIMIT 10
+```
+
+**Bonus — Durchschnitt pro Sternebewertung:**
+```sql
+SELECT
+    sterne,
+    ROUND(AVG(
+        LENGTH(bewertung_text) - LENGTH(REPLACE(bewertung_text, '!', ''))
+    ), 2) AS avg_ausrufezeichen
+FROM produktbewertungen
+GROUP BY sterne
+ORDER BY sterne
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔴 Aufgabe 13.7: Debugging — REPLACE mit falscher Argumentzahl
+
+        Die folgende Abfrage soll doppelte Leerzeichen ersetzen. Sie hat einen Fehler!
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, produktbewertungen):
+    _df = mo.sql(
+        f"""
+        -- 🔴 Diese Abfrage hat einen Fehler — finden und beheben Sie ihn!
+        SELECT
+            id,
+            REPLACE(bewertung_text, '  ') AS bereinigt
         FROM produktbewertungen
         WHERE bewertung_text LIKE '%  %'
         """
     )
+    return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
-        ### Aufgabe 13.4: Zeichen zählen — LENGTH-REPLACE Trick
+    mo.accordion({"🔑 Lösung": mo.md("""
+**Problem:** `REPLACE` braucht **3 Argumente**: text, alt, neu! Hier fehlt das 3. Argument (der Ersatzstring).
 
-        **Klausur-Pattern:** `LENGTH(text) - LENGTH(REPLACE(text, 'x', ''))` = Anzahl von 'x'
-
-        Zählen Sie die Ausrufezeichen pro Bewertung als Emotionalitäts-Indikator.
-        """
-    )
+**Lösung:**
+```sql
+SELECT
+    id,
+    REPLACE(bewertung_text, '  ', ' ') AS bereinigt
+FROM produktbewertungen
+WHERE bewertung_text LIKE '%  %'
+```
+""")})
     return
 
 
-@app.cell
-def _(mo, produktbewertungen):
-    mo.sql(
-        f"""
-        SELECT
-            id, sterne, bewertung_text,
-            LENGTH(bewertung_text) - LENGTH(REPLACE(bewertung_text, '!', ''))
-                AS anzahl_ausrufezeichen
-        FROM produktbewertungen
-        WHERE LENGTH(bewertung_text) - LENGTH(REPLACE(bewertung_text, '!', '')) > 0
-        ORDER BY anzahl_ausrufezeichen DESC
-        LIMIT 10
-        """
-    )
-
-
-@app.cell
-def _(mo, produktbewertungen):
-    mo.sql(
-        f"""
-        SELECT
-            sterne,
-            ROUND(AVG(
-                LENGTH(bewertung_text) - LENGTH(REPLACE(bewertung_text, '!', ''))
-            ), 2) AS avg_ausrufezeichen
-        FROM produktbewertungen
-        GROUP BY sterne
-        ORDER BY sterne
-        """
-    )
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ### Aufgabe 13.5: LOWER-Normalisierung
-
-        Nutzen Sie `LOWER()` um zu prüfen, wie viele Bewertungen das Wort "qualität" (in jeder Schreibweise) enthalten.
-        """
-    )
-    return
-
-
-@app.cell
-def _(mo, produktbewertungen):
-    mo.sql(
-        f"""
-        SELECT
-            COUNT(*) AS bewertungen_mit_qualitaet,
-            ROUND(AVG(sterne), 2) AS avg_sterne_qualitaet
-        FROM produktbewertungen
-        WHERE LOWER(bewertung_text) LIKE '%qualität%'
-           OR LOWER(bewertung_text) LIKE '%hochwertig%'
-        """
-    )
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    quiz_like_regex = mo.ui.radio(
-        options={
-            "correct": "LIKE eignet sich für 1-2 Muster; bei vielen Alternativen ist REGEXP sauberer",
-            "equivalent": "LIKE und REGEXP geben immer das gleiche Ergebnis — persönliche Vorliebe",
-            "always_regex": "REGEXP sollte immer verwendet werden, LIKE ist veraltet",
-            "language": "LIKE funktioniert nur auf Englisch, Deutsch braucht REGEXP",
-        },
-        label="**Quiz:** Wann ist `regexp_matches(text, 'food|burger|fries')` besser als viele `LIKE`-Bedingungen?"
-    )
-    quiz_like_regex
-    return (quiz_like_regex,)
-
-
-@app.cell(hide_code=True)
-def _(quiz_like_regex, mo):
-    if quiz_like_regex.value == "correct":
-        mo.output.replace(mo.md("Richtig! Bei 1-2 Mustern ist LIKE schneller zu lesen. Ab 3+ Alternativen wird REGEXP mit `|` (Oder) deutlich kompakter und weniger fehleranfällig als viele `OR LIKE`-Klauseln."))
-    elif quiz_like_regex.value:
-        mo.output.replace(mo.md("Nicht ganz. LIKE ist einfacher für einzelne Muster (`%food%`), aber bei vielen Alternativen braucht man viele OR-Klauseln. REGEXP kann mit `food|burger|fries` alle in einem Ausdruck prüfen."))
-    return
-
-
-# =============================================================================
-# PHASE 3–4: McDONALD'S REVIEWS (guided)
-# =============================================================================
+# -----------------------------------------------------------------------
+# Phase 3: LOWER & Pattern Matching (Produktbewertungen)
+# -----------------------------------------------------------------------
 
 
 @app.cell(hide_code=True)
@@ -569,9 +713,202 @@ def _(mo):
         r"""
         ---
 
-        ## Phase 3–4: Aspekt-Analyse (McDonald's Reviews)
+        ## Phase 3: LOWER & Pattern Matching (Produktbewertungen)
 
-        Jetzt wechseln wir zu 3.000 englischen McDonald's-Bewertungen.
+        `LOWER()` normalisiert die Groß-/Kleinschreibung — unverzichtbar für Textsuche.
+        Kombiniert mit `LIKE` können wir Muster in Freitext finden.
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🟢 Aufgabe 13.8: LOWER-Normalisierung
+
+        Finden Sie alle Bewertungen, die das Wort "qualität" enthalten (unabhängig von Groß-/Kleinschreibung).
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, produktbewertungen):
+    _df = mo.sql(
+        f"""
+        SELECT
+            id, sterne, bewertung_text
+        FROM produktbewertungen
+        WHERE LOWER(bewertung_text) LIKE '%qualität%'
+           OR LOWER(bewertung_text) LIKE '%hochwertig%'
+        ORDER BY sterne DESC
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    id, sterne, bewertung_text
+FROM produktbewertungen
+WHERE LOWER(bewertung_text) LIKE '%qualität%'
+   OR LOWER(bewertung_text) LIKE '%hochwertig%'
+ORDER BY sterne DESC
+```
+**Beobachtung:** "Qualität" wird sowohl positiv ("super Qualität") als auch negativ ("schlechte Qualität") verwendet!
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🟡 Aufgabe 13.9: Positive vs. negative Wörter — CASE WHEN + LOWER + LIKE
+
+        Klassifizieren Sie jede Bewertung als positiv, negativ oder neutral anhand von Schlüsselwörtern. Ergänzen Sie `???`:
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, produktbewertungen):
+    _df = mo.sql(
+        f"""
+        SELECT
+            id, sterne, bewertung_text,
+            CASE
+                WHEN LOWER(bewertung_text) LIKE '%toll%'
+                  OR LOWER(bewertung_text) LIKE '%super%'
+                  OR LOWER(bewertung_text) LIKE '%perfekt%'
+                  OR LOWER(bewertung_text) LIKE '%empfehl%'
+                  THEN 'positiv'
+                WHEN LOWER(bewertung_text) LIKE ???
+                  OR LOWER(bewertung_text) LIKE ???
+                  OR LOWER(bewertung_text) LIKE ???
+                  THEN 'negativ'
+                ELSE 'neutral'
+            END AS sentiment
+        FROM produktbewertungen
+        ORDER BY sterne
+        -- Tipp: '%schrott%', '%schlecht%', '%enttäusch%'
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    id, sterne, bewertung_text,
+    CASE
+        WHEN LOWER(bewertung_text) LIKE '%toll%'
+          OR LOWER(bewertung_text) LIKE '%super%'
+          OR LOWER(bewertung_text) LIKE '%perfekt%'
+          OR LOWER(bewertung_text) LIKE '%empfehl%'
+          THEN 'positiv'
+        WHEN LOWER(bewertung_text) LIKE '%schrott%'
+          OR LOWER(bewertung_text) LIKE '%schlecht%'
+          OR LOWER(bewertung_text) LIKE '%enttäusch%'
+          THEN 'negativ'
+        ELSE 'neutral'
+    END AS sentiment
+FROM produktbewertungen
+ORDER BY sterne
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔵 Aufgabe 13.10: Eigene Wortliste — Sentiment pro Kategorie
+
+        Erweitern Sie die Sentiment-Analyse: Zählen Sie positive und negative Bewertungen pro Kategorie.
+        Definieren Sie eigene Wortlisten für positiv/negativ.
+
+        *Hinweis: `CASE WHEN ... THEN 'positiv' ...`, dann `COUNT(*) FILTER (WHERE sentiment = 'positiv')` pro Kategorie*
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, produktbewertungen):
+    _df = mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        -- Erwartete Spalten: kategorie, anzahl_positiv, anzahl_negativ, anzahl_neutral
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+WITH mit_sentiment AS (
+    SELECT
+        kategorie,
+        CASE
+            WHEN LOWER(bewertung_text) LIKE '%toll%'
+              OR LOWER(bewertung_text) LIKE '%super%'
+              OR LOWER(bewertung_text) LIKE '%perfekt%'
+              OR LOWER(bewertung_text) LIKE '%empfehl%'
+              OR LOWER(bewertung_text) LIKE '%wunderbar%'
+              OR LOWER(bewertung_text) LIKE '%erstklassig%'
+              OR LOWER(bewertung_text) LIKE '%hervorragend%'
+              THEN 'positiv'
+            WHEN LOWER(bewertung_text) LIKE '%schrott%'
+              OR LOWER(bewertung_text) LIKE '%schlecht%'
+              OR LOWER(bewertung_text) LIKE '%enttäusch%'
+              OR LOWER(bewertung_text) LIKE '%kaputt%'
+              OR LOWER(bewertung_text) LIKE '%defekt%'
+              OR LOWER(bewertung_text) LIKE '%nutzlos%'
+              THEN 'negativ'
+            ELSE 'neutral'
+        END AS sentiment
+    FROM produktbewertungen
+)
+SELECT
+    kategorie,
+    COUNT(*) FILTER (WHERE sentiment = 'positiv') AS anzahl_positiv,
+    COUNT(*) FILTER (WHERE sentiment = 'negativ') AS anzahl_negativ,
+    COUNT(*) FILTER (WHERE sentiment = 'neutral') AS anzahl_neutral
+FROM mit_sentiment
+GROUP BY kategorie
+ORDER BY anzahl_positiv DESC
+```
+""")})
+    return
+
+
+# -----------------------------------------------------------------------
+# Phase 4: LIKE & Feature Engineering (McDonald's)
+# -----------------------------------------------------------------------
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## Phase 4: LIKE & Feature Engineering (McDonald's Reviews)
+
+        Jetzt wechseln wir zu englischen McDonald's-Bewertungen.
         Mit `LIKE` und `CASE WHEN` extrahieren wir Aspekte und korrelieren sie mit Ratings.
         """
     )
@@ -582,7 +919,7 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 13.6: LIKE-Filterung — Food Reviews
+        ### 🟢 Aufgabe 13.11: LIKE-Filterung — Food Reviews finden
 
         Finden Sie alle Reviews, die über das Essen sprechen.
         """
@@ -592,7 +929,7 @@ def _(mo):
 
 @app.cell
 def _(mcdonalds_reviews, mo):
-    mo.sql(
+    _df = mo.sql(
         f"""
         SELECT review_id, rating, review_text
         FROM mcdonalds_reviews
@@ -603,15 +940,33 @@ def _(mcdonalds_reviews, mo):
         LIMIT 15
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT review_id, rating, review_text
+FROM mcdonalds_reviews
+WHERE LOWER(review_text) LIKE '%food%'
+   OR LOWER(review_text) LIKE '%burger%'
+   OR LOWER(review_text) LIKE '%fries%'
+ORDER BY rating
+LIMIT 15
+```
+""")})
+    return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 13.7: CASE WHEN + LIKE — Feature Engineering
+        ### 🟡 Aufgabe 13.12: CASE WHEN + LIKE — Feature Engineering
 
         Erzeugen Sie boolesche Feature-Spalten für: Food, Service, Speed, Cleanliness, Price.
+        Ergänzen Sie die fehlenden `???` LIKE-Patterns:
         """
     )
     return
@@ -619,7 +974,7 @@ def _(mo):
 
 @app.cell
 def _(mcdonalds_reviews, mo):
-    mo.sql(
+    _df = mo.sql(
         f"""
         SELECT
             review_id, rating,
@@ -627,42 +982,214 @@ def _(mcdonalds_reviews, mo):
                       OR LOWER(review_text) LIKE '%burger%'
                       OR LOWER(review_text) LIKE '%fries%'
                       OR LOWER(review_text) LIKE '%nuggets%'
-                      OR LOWER(review_text) LIKE '%coffee%'
                  THEN 1 ELSE 0 END AS food,
             CASE WHEN LOWER(review_text) LIKE '%service%'
                       OR LOWER(review_text) LIKE '%staff%'
                       OR LOWER(review_text) LIKE '%rude%'
                       OR LOWER(review_text) LIKE '%friendly%'
-                      OR LOWER(review_text) LIKE '%employee%'
                  THEN 1 ELSE 0 END AS service,
-            CASE WHEN LOWER(review_text) LIKE '%wait%'
-                      OR LOWER(review_text) LIKE '%slow%'
-                      OR LOWER(review_text) LIKE '%fast%'
-                      OR LOWER(review_text) LIKE '%quick%'
-                      OR LOWER(review_text) LIKE '%minute%'
+            CASE WHEN LOWER(review_text) LIKE ???
+                      OR LOWER(review_text) LIKE ???
+                      OR LOWER(review_text) LIKE ???
                  THEN 1 ELSE 0 END AS speed,
-            CASE WHEN LOWER(review_text) LIKE '%clean%'
-                      OR LOWER(review_text) LIKE '%dirty%'
-                      OR LOWER(review_text) LIKE '%filthy%'
+            CASE WHEN LOWER(review_text) LIKE ???
+                      OR LOWER(review_text) LIKE ???
                  THEN 1 ELSE 0 END AS cleanliness,
             CASE WHEN LOWER(review_text) LIKE '%price%'
                       OR LOWER(review_text) LIKE '%expensive%'
                       OR LOWER(review_text) LIKE '%value%'
-                      OR LOWER(review_text) LIKE '%cheap%'
                  THEN 1 ELSE 0 END AS price
         FROM mcdonalds_reviews
         LIMIT 20
+        -- Tipp speed: '%wait%', '%slow%', '%quick%'
+        -- Tipp cleanliness: '%clean%', '%dirty%'
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    review_id, rating,
+    CASE WHEN LOWER(review_text) LIKE '%food%'
+              OR LOWER(review_text) LIKE '%burger%'
+              OR LOWER(review_text) LIKE '%fries%'
+              OR LOWER(review_text) LIKE '%nuggets%'
+         THEN 1 ELSE 0 END AS food,
+    CASE WHEN LOWER(review_text) LIKE '%service%'
+              OR LOWER(review_text) LIKE '%staff%'
+              OR LOWER(review_text) LIKE '%rude%'
+              OR LOWER(review_text) LIKE '%friendly%'
+         THEN 1 ELSE 0 END AS service,
+    CASE WHEN LOWER(review_text) LIKE '%wait%'
+              OR LOWER(review_text) LIKE '%slow%'
+              OR LOWER(review_text) LIKE '%quick%'
+         THEN 1 ELSE 0 END AS speed,
+    CASE WHEN LOWER(review_text) LIKE '%clean%'
+              OR LOWER(review_text) LIKE '%dirty%'
+         THEN 1 ELSE 0 END AS cleanliness,
+    CASE WHEN LOWER(review_text) LIKE '%price%'
+              OR LOWER(review_text) LIKE '%expensive%'
+              OR LOWER(review_text) LIKE '%value%'
+         THEN 1 ELSE 0 END AS price
+FROM mcdonalds_reviews
+LIMIT 20
+```
+""")})
+    return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 13.8: Aspekt-Rating Korrelation + Visualisierung
+        ### 🔵 Aufgabe 13.13: Aspekt-Rating Korrelation mit UNION ALL
 
         Welche Aspekte haben die höchsten / niedrigsten Durchschnittsbewertungen?
+        Nutzen Sie `UNION ALL` um jeden Aspekt separat auszuwerten.
+
+        *Hinweis: Für jeden Aspekt: `SELECT 'Aspekt' AS aspect, COUNT(*), ROUND(AVG(rating), 2) FROM ... WHERE ...`*
+        """
+    )
+    return
+
+
+@app.cell
+def _(mcdonalds_reviews, mo):
+    _df = mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        -- Erwartete Spalten: aspect, n, avg_rating
+        -- 5 Zeilen (Food, Service, Speed, Cleanliness, Price)
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT 'Food' AS aspect,
+       COUNT(*) AS n,
+       ROUND(AVG(rating), 2) AS avg_rating
+FROM mcdonalds_reviews
+WHERE LOWER(review_text) LIKE '%food%'
+   OR LOWER(review_text) LIKE '%burger%'
+   OR LOWER(review_text) LIKE '%fries%'
+UNION ALL
+SELECT 'Service', COUNT(*), ROUND(AVG(rating), 2)
+FROM mcdonalds_reviews
+WHERE LOWER(review_text) LIKE '%service%'
+   OR LOWER(review_text) LIKE '%staff%'
+   OR LOWER(review_text) LIKE '%rude%'
+   OR LOWER(review_text) LIKE '%friendly%'
+UNION ALL
+SELECT 'Speed', COUNT(*), ROUND(AVG(rating), 2)
+FROM mcdonalds_reviews
+WHERE LOWER(review_text) LIKE '%wait%'
+   OR LOWER(review_text) LIKE '%slow%'
+   OR LOWER(review_text) LIKE '%quick%'
+UNION ALL
+SELECT 'Cleanliness', COUNT(*), ROUND(AVG(rating), 2)
+FROM mcdonalds_reviews
+WHERE LOWER(review_text) LIKE '%clean%'
+   OR LOWER(review_text) LIKE '%dirty%'
+   OR LOWER(review_text) LIKE '%filthy%'
+UNION ALL
+SELECT 'Price', COUNT(*), ROUND(AVG(rating), 2)
+FROM mcdonalds_reviews
+WHERE LOWER(review_text) LIKE '%price%'
+   OR LOWER(review_text) LIKE '%expensive%'
+   OR LOWER(review_text) LIKE '%value%'
+ORDER BY avg_rating DESC
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔴 Aufgabe 13.14: Debugging — UNION ALL mit unterschiedlicher Spaltenanzahl
+
+        Die folgende Abfrage soll Food- und Service-Aspekte vergleichen. Sie hat einen Fehler!
+        """
+    )
+    return
+
+
+@app.cell
+def _(mcdonalds_reviews, mo):
+    _df = mo.sql(
+        f"""
+        -- 🔴 Diese Abfrage hat einen Fehler — finden und beheben Sie ihn!
+        SELECT 'Food' AS aspect,
+               COUNT(*) AS n,
+               ROUND(AVG(rating), 2) AS avg_rating
+        FROM mcdonalds_reviews
+        WHERE LOWER(review_text) LIKE '%food%'
+        UNION ALL
+        SELECT 'Service', COUNT(*)
+        FROM mcdonalds_reviews
+        WHERE LOWER(review_text) LIKE '%service%'
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Lösung": mo.md("""
+**Problem:** Die beiden SELECT-Teile haben **unterschiedliche Spaltenanzahl**: der erste hat 3 Spalten (aspect, n, avg_rating), der zweite nur 2 (aspect, n). UNION ALL erfordert gleiche Spaltenanzahl!
+
+**Lösung:**
+```sql
+SELECT 'Food' AS aspect,
+       COUNT(*) AS n,
+       ROUND(AVG(rating), 2) AS avg_rating
+FROM mcdonalds_reviews
+WHERE LOWER(review_text) LIKE '%food%'
+UNION ALL
+SELECT 'Service', COUNT(*), ROUND(AVG(rating), 2)
+FROM mcdonalds_reviews
+WHERE LOWER(review_text) LIKE '%service%'
+```
+""")})
+    return
+
+
+# -----------------------------------------------------------------------
+# Phase 5: Aspekt-Analyse (McDonald's)
+# -----------------------------------------------------------------------
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## Phase 5: Aspekt-Analyse (McDonald's Reviews)
+
+        Jetzt kombinieren wir Feature Engineering mit Aggregation und Visualisierung.
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🟢 Aufgabe 13.15: Aspekte nach Rating-Tier mit FILTER
+
+        Vergleichen Sie die Häufigkeit der Aspekte in positiven (4-5 Sterne) vs. negativen (1-2 Sterne) Reviews.
         """
     )
     return
@@ -672,40 +1199,54 @@ def _(mo):
 def _(mcdonalds_reviews, mo):
     aspekt_analyse = mo.sql(
         f"""
-        SELECT 'Food' AS aspect,
-               COUNT(*) AS n,
-               ROUND(AVG(rating), 2) AS avg_rating
-        FROM mcdonalds_reviews
-        WHERE LOWER(review_text) LIKE '%food%'
-           OR LOWER(review_text) LIKE '%burger%'
-           OR LOWER(review_text) LIKE '%fries%'
+        WITH features AS (
+            SELECT
+                review_id, rating,
+                CASE WHEN LOWER(review_text) LIKE '%food%'
+                          OR LOWER(review_text) LIKE '%burger%'
+                          OR LOWER(review_text) LIKE '%fries%'
+                          OR LOWER(review_text) LIKE '%nuggets%'
+                     THEN 1 ELSE 0 END AS food,
+                CASE WHEN LOWER(review_text) LIKE '%service%'
+                          OR LOWER(review_text) LIKE '%staff%'
+                          OR LOWER(review_text) LIKE '%rude%'
+                          OR LOWER(review_text) LIKE '%friendly%'
+                     THEN 1 ELSE 0 END AS service,
+                CASE WHEN LOWER(review_text) LIKE '%clean%'
+                          OR LOWER(review_text) LIKE '%dirty%'
+                          OR LOWER(review_text) LIKE '%filthy%'
+                     THEN 1 ELSE 0 END AS cleanliness,
+                CASE WHEN LOWER(review_text) LIKE '%price%'
+                          OR LOWER(review_text) LIKE '%expensive%'
+                          OR LOWER(review_text) LIKE '%value%'
+                     THEN 1 ELSE 0 END AS price
+            FROM mcdonalds_reviews
+        )
+        SELECT
+            'Food' AS aspect,
+            SUM(food) FILTER (WHERE rating >= 4) AS positiv,
+            SUM(food) FILTER (WHERE rating <= 2) AS negativ,
+            SUM(food) AS gesamt
+        FROM features
         UNION ALL
-        SELECT 'Service', COUNT(*), ROUND(AVG(rating), 2)
-        FROM mcdonalds_reviews
-        WHERE LOWER(review_text) LIKE '%service%'
-           OR LOWER(review_text) LIKE '%staff%'
-           OR LOWER(review_text) LIKE '%rude%'
-           OR LOWER(review_text) LIKE '%friendly%'
+        SELECT 'Service',
+            SUM(service) FILTER (WHERE rating >= 4),
+            SUM(service) FILTER (WHERE rating <= 2),
+            SUM(service)
+        FROM features
         UNION ALL
-        SELECT 'Speed', COUNT(*), ROUND(AVG(rating), 2)
-        FROM mcdonalds_reviews
-        WHERE LOWER(review_text) LIKE '%wait%'
-           OR LOWER(review_text) LIKE '%slow%'
-           OR LOWER(review_text) LIKE '%fast%'
-           OR LOWER(review_text) LIKE '%quick%'
+        SELECT 'Cleanliness',
+            SUM(cleanliness) FILTER (WHERE rating >= 4),
+            SUM(cleanliness) FILTER (WHERE rating <= 2),
+            SUM(cleanliness)
+        FROM features
         UNION ALL
-        SELECT 'Cleanliness', COUNT(*), ROUND(AVG(rating), 2)
-        FROM mcdonalds_reviews
-        WHERE LOWER(review_text) LIKE '%clean%'
-           OR LOWER(review_text) LIKE '%dirty%'
-           OR LOWER(review_text) LIKE '%filthy%'
-        UNION ALL
-        SELECT 'Price', COUNT(*), ROUND(AVG(rating), 2)
-        FROM mcdonalds_reviews
-        WHERE LOWER(review_text) LIKE '%price%'
-           OR LOWER(review_text) LIKE '%expensive%'
-           OR LOWER(review_text) LIKE '%value%'
-        ORDER BY avg_rating DESC
+        SELECT 'Price',
+            SUM(price) FILTER (WHERE rating >= 4),
+            SUM(price) FILTER (WHERE rating <= 2),
+            SUM(price)
+        FROM features
+        ORDER BY gesamt DESC
         """
     )
     return (aspekt_analyse,)
@@ -716,41 +1257,14 @@ def _(aspekt_analyse, mcdonalds_reviews, px):
     fig_aspekt = px.bar(
         aspekt_analyse,
         x="aspect",
-        y="avg_rating",
-        text="n",
-        title=f"Average Rating by Mentioned Aspect (McDonald's, n={len(mcdonalds_reviews)})",
-        labels={"aspect": "Aspect", "avg_rating": "Avg Rating", "n": "Count"},
-        color="avg_rating",
-        color_continuous_scale="RdYlGn",
-        range_color=[1, 5],
+        y=["positiv", "negativ"],
+        barmode="group",
+        title=f"Aspekte: Positiv (4-5 Sterne) vs. Negativ (1-2 Sterne) (n={len(mcdonalds_reviews)})",
+        labels={"aspect": "Aspekt", "value": "Anzahl", "variable": "Tier"},
+        color_discrete_map={"positiv": "#2ecc71", "negativ": "#e74c3c"},
     )
-    fig_aspekt.update_traces(texttemplate="n=%{text}", textposition="outside")
-    fig_aspekt.update_layout(yaxis_range=[0, 5.5])
+    fig_aspekt.update_layout(height=400)
     fig_aspekt
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ### Aufgabe 13.9: Aspekte nach Rating-Tier (selbstständig)
-
-        Vergleichen Sie die Häufigkeit der Aspekte in positiven (4–5★) vs. negativen (1–2★) Reviews.
-
-        *Hinweis: `COUNT(*) FILTER (WHERE rating >= 4)` vs. `FILTER (WHERE rating <= 2)`*
-        """
-    )
-    return
-
-
-@app.cell
-def _(mcdonalds_reviews, mo):
-    # Ihre Lösung hier:
-    mo.sql(
-        f"""
-        SELECT 'Tipp: CTE mit Feature-Spalten, dann FILTER' AS hinweis
-        """
-    )
 
 
 @app.cell(hide_code=True)
@@ -758,67 +1272,233 @@ def _(mo):
     mo.accordion({"🔑 Musterlösung": mo.md("""
 ```sql
 WITH features AS (
+    SELECT review_id, rating,
+        CASE WHEN LOWER(review_text) LIKE '%food%' OR ... THEN 1 ELSE 0 END AS food,
+        CASE WHEN LOWER(review_text) LIKE '%service%' OR ... THEN 1 ELSE 0 END AS service,
+        ...
+    FROM mcdonalds_reviews
+)
+SELECT 'Food' AS aspect,
+    SUM(food) FILTER (WHERE rating >= 4) AS positiv,
+    SUM(food) FILTER (WHERE rating <= 2) AS negativ,
+    SUM(food) AS gesamt
+FROM features
+UNION ALL ...
+```
+**Pattern:** CTE mit Feature-Spalten, dann `SUM(...) FILTER (WHERE ...)` für bedingte Aggregation.
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🟡 Aufgabe 13.16: Wörter nach Rating — Tokenisierung + FILTER
+
+        Welche Wörter kommen häufiger in positiven vs. negativen Reviews vor? Ergänzen Sie `???`:
+        """
+    )
+    return
+
+
+@app.cell
+def _(mcdonalds_reviews, mo):
+    _df = mo.sql(
+        f"""
+        WITH stoppwoerter AS (
+            SELECT UNNEST(['the','a','an','and','or','to','in','of','it','is',
+                           'was','for','on','that','with','as','at','by','from',
+                           'this','i','we','no','me','so','very','about','had',
+                           'were','but','not','then','be']) AS wort
+        ),
+        woerter AS (
+            SELECT
+                rating,
+                UNNEST(regexp_split_to_array(
+                    LOWER(TRIM(review_text)), '[^a-z]+')) AS word
+            FROM mcdonalds_reviews
+        )
+        SELECT
+            word,
+            COUNT(*) FILTER (WHERE rating >= ???) AS count_positiv,
+            COUNT(*) FILTER (WHERE rating <= ???) AS count_negativ
+        FROM woerter
+        WHERE LENGTH(word) > 1
+          AND word NOT IN (SELECT wort FROM stoppwoerter)
+        GROUP BY word
+        HAVING COUNT(*) >= 2
+        ORDER BY ??? DESC
+        LIMIT 20
+        -- Tipp: rating >= 4, rating <= 2, count_positiv
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+WITH stoppwoerter AS (
+    SELECT UNNEST(['the','a','an','and','or','to','in','of','it','is',
+                   'was','for','on','that','with','as','at','by','from',
+                   'this','i','we','no','me','so','very','about','had',
+                   'were','but','not','then','be']) AS wort
+),
+woerter AS (
     SELECT
-        review_id, rating,
-        CASE WHEN LOWER(review_text) LIKE '%food%'
-                  OR LOWER(review_text) LIKE '%burger%'
-                  OR LOWER(review_text) LIKE '%fries%'
-                  OR LOWER(review_text) LIKE '%nuggets%'
-             THEN 1 ELSE 0 END AS food,
-        CASE WHEN LOWER(review_text) LIKE '%service%'
-                  OR LOWER(review_text) LIKE '%staff%'
-                  OR LOWER(review_text) LIKE '%rude%'
-                  OR LOWER(review_text) LIKE '%friendly%'
-             THEN 1 ELSE 0 END AS service,
-        CASE WHEN LOWER(review_text) LIKE '%wait%'
-                  OR LOWER(review_text) LIKE '%slow%'
-                  OR LOWER(review_text) LIKE '%fast%'
-                  OR LOWER(review_text) LIKE '%quick%'
-             THEN 1 ELSE 0 END AS speed,
-        CASE WHEN LOWER(review_text) LIKE '%clean%'
-                  OR LOWER(review_text) LIKE '%dirty%'
-                  OR LOWER(review_text) LIKE '%filthy%'
-             THEN 1 ELSE 0 END AS cleanliness,
-        CASE WHEN LOWER(review_text) LIKE '%price%'
-                  OR LOWER(review_text) LIKE '%expensive%'
-                  OR LOWER(review_text) LIKE '%value%'
-             THEN 1 ELSE 0 END AS price
+        rating,
+        UNNEST(regexp_split_to_array(
+            LOWER(TRIM(review_text)), '[^a-z]+')) AS word
     FROM mcdonalds_reviews
 )
 SELECT
-    'Food' AS aspect,
-    SUM(food) FILTER (WHERE rating >= 4) AS positiv,
-    SUM(food) FILTER (WHERE rating <= 2) AS negativ
-FROM features
-UNION ALL
-SELECT 'Service',
-    SUM(service) FILTER (WHERE rating >= 4),
-    SUM(service) FILTER (WHERE rating <= 2)
-FROM features
-UNION ALL
-SELECT 'Speed',
-    SUM(speed) FILTER (WHERE rating >= 4),
-    SUM(speed) FILTER (WHERE rating <= 2)
-FROM features
-UNION ALL
-SELECT 'Cleanliness',
-    SUM(cleanliness) FILTER (WHERE rating >= 4),
-    SUM(cleanliness) FILTER (WHERE rating <= 2)
-FROM features
-UNION ALL
-SELECT 'Price',
-    SUM(price) FILTER (WHERE rating >= 4),
-    SUM(price) FILTER (WHERE rating <= 2)
-FROM features
-ORDER BY positiv DESC
+    word,
+    COUNT(*) FILTER (WHERE rating >= 4) AS count_positiv,
+    COUNT(*) FILTER (WHERE rating <= 2) AS count_negativ
+FROM woerter
+WHERE LENGTH(word) > 1
+  AND word NOT IN (SELECT wort FROM stoppwoerter)
+GROUP BY word
+HAVING COUNT(*) >= 2
+ORDER BY count_positiv DESC
+LIMIT 20
 ```
 """)})
     return
 
 
-# =============================================================================
-# PHASE 5–6: UFO SIGHTINGS (guided intro, then self-service)
-# =============================================================================
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔵 Aufgabe 13.17: Sentiment-Score — positive minus negative Wörter
+
+        Bauen Sie einen einfachen Sentiment-Score pro Rating-Stufe:
+        Zählen Sie positive Wörter (great, fresh, delicious, friendly, clean, excellent, best, love)
+        minus negative (terrible, cold, rude, slow, dirty, worst, wrong, disgusting).
+
+        Korreliert der Score mit dem tatsächlichen Rating?
+
+        *Hinweis: `CASE WHEN LOWER(review_text) LIKE '%great%' THEN 1 ELSE 0 END` für jedes Wort, dann summieren und von negativen subtrahieren.*
+        """
+    )
+    return
+
+
+@app.cell
+def _(mcdonalds_reviews, mo):
+    _df = mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        -- Erwartete Spalten: rating, avg_sentiment_score, anzahl
+        -- Sortiert nach rating
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    rating,
+    ROUND(AVG(
+        (CASE WHEN LOWER(review_text) LIKE '%great%' THEN 1 ELSE 0 END)
+      + (CASE WHEN LOWER(review_text) LIKE '%fresh%' THEN 1 ELSE 0 END)
+      + (CASE WHEN LOWER(review_text) LIKE '%delicious%' THEN 1 ELSE 0 END)
+      + (CASE WHEN LOWER(review_text) LIKE '%friendly%' THEN 1 ELSE 0 END)
+      + (CASE WHEN LOWER(review_text) LIKE '%clean%' THEN 1 ELSE 0 END)
+      + (CASE WHEN LOWER(review_text) LIKE '%excellent%' THEN 1 ELSE 0 END)
+      + (CASE WHEN LOWER(review_text) LIKE '%best%' THEN 1 ELSE 0 END)
+      + (CASE WHEN LOWER(review_text) LIKE '%love%' THEN 1 ELSE 0 END)
+      - (CASE WHEN LOWER(review_text) LIKE '%terrible%' THEN 1 ELSE 0 END)
+      - (CASE WHEN LOWER(review_text) LIKE '%cold%' THEN 1 ELSE 0 END)
+      - (CASE WHEN LOWER(review_text) LIKE '%rude%' THEN 1 ELSE 0 END)
+      - (CASE WHEN LOWER(review_text) LIKE '%slow%' THEN 1 ELSE 0 END)
+      - (CASE WHEN LOWER(review_text) LIKE '%dirty%' THEN 1 ELSE 0 END)
+      - (CASE WHEN LOWER(review_text) LIKE '%worst%' THEN 1 ELSE 0 END)
+      - (CASE WHEN LOWER(review_text) LIKE '%wrong%' THEN 1 ELSE 0 END)
+      - (CASE WHEN LOWER(review_text) LIKE '%disgusting%' THEN 1 ELSE 0 END)
+    ), 2) AS avg_sentiment_score,
+    COUNT(*) AS anzahl
+FROM mcdonalds_reviews
+GROUP BY rating
+ORDER BY rating
+```
+**Beobachtung:** Der Sentiment-Score sollte mit dem Rating steigen — je höher das Rating, desto mehr positive Wörter!
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔴 Aufgabe 13.18: Debugging — WHERE auf falscher CTE-Ebene
+
+        Die folgende Abfrage soll nur Food-Reviews zeigen, aber der Filter greift nicht korrekt.
+        """
+    )
+    return
+
+
+@app.cell
+def _(mcdonalds_reviews, mo):
+    _df = mo.sql(
+        f"""
+        -- 🔴 Diese Abfrage hat einen Fehler — finden und beheben Sie ihn!
+        WITH food_reviews AS (
+            SELECT review_id, rating, review_text
+            FROM mcdonalds_reviews
+        )
+        SELECT
+            rating,
+            COUNT(*) AS anzahl,
+            ROUND(AVG(LENGTH(review_text)), 0) AS avg_laenge
+        FROM food_reviews
+        WHERE LOWER(review_text) LIKE '%food%'
+           OR LOWER(review_text) LIKE '%burger%'
+        GROUP BY rating
+        HAVING anzahl > 0
+        ORDER BY rating
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Lösung": mo.md("""
+**Problem:** Die CTE `food_reviews` holt **alle** Reviews ohne Filter. Der Filter kommt erst in der äußeren Query. Das funktioniert zwar syntaktisch, aber der CTE-Name ist irreführend und das `HAVING anzahl > 0` ist überflüssig (COUNT ist immer > 0 wegen WHERE).
+
+**Bessere Lösung — Filter in die CTE verschieben:**
+```sql
+WITH food_reviews AS (
+    SELECT review_id, rating, review_text
+    FROM mcdonalds_reviews
+    WHERE LOWER(review_text) LIKE '%food%'
+       OR LOWER(review_text) LIKE '%burger%'
+)
+SELECT
+    rating,
+    COUNT(*) AS anzahl,
+    ROUND(AVG(LENGTH(review_text)), 0) AS avg_laenge
+FROM food_reviews
+GROUP BY rating
+ORDER BY rating
+```
+**Merke:** Filter sollten so früh wie möglich angewendet werden (in der CTE, nicht erst in der äußeren Query). Das ist effizienter und lesbarer.
+""")})
+    return
+
+
+# -----------------------------------------------------------------------
+# Phase 6: Regex & Capture Groups (UFO)
+# -----------------------------------------------------------------------
 
 
 @app.cell(hide_code=True)
@@ -827,20 +1507,25 @@ def _(mo):
         r"""
         ---
 
-        ## Phase 5: Reguläre Ausdrücke & Textzerlegung (UFO Sightings)
+        ## Phase 6: Reguläre Ausdrücke & Capture Groups (UFO Sightings)
 
-        Jetzt wird es wild: 5.000 UFO-Augenzeugenberichte. Lange Texte, chaotische Felder,
-        inkonsistente Schreibweisen. Perfekt für Regex und Tokenisierung.
+        Jetzt wird es wild: UFO-Augenzeugenberichte mit chaotischen Freitextfeldern.
+        DuckDB bietet mächtige Regex-Funktionen: `regexp_extract`, `regexp_extract_all`, `regexp_matches`.
+        """
+    )
+    return
 
-        ### Aufgabe 13.10: Regex mit Capture Groups — Dauer parsen
 
-        Das `duration_text`-Feld ist chaotisch: "5 minutes", "about 30 seconds", "~10 min", "2-3 hours"...
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🟢 Aufgabe 13.19: regexp_extract — Dauer parsen mit Capture Groups
 
-        DuckDB kann mit **Capture Groups** Zahl UND Einheit in einem einzigen Pattern extrahieren:
+        Das `duration_text`-Feld ist chaotisch: "5 minutes", "about 30 seconds", "~10 min"...
+
+        DuckDB kann mit **Capture Groups** Zahl UND Einheit extrahieren:
         `regexp_extract(text, '(\d+)\s*(minutes?|seconds?|hours?)', gruppe)`
-
-        - Gruppe 1 = die Zahl
-        - Gruppe 2 = die Einheit
         """
     )
     return
@@ -848,9 +1533,8 @@ def _(mo):
 
 @app.cell
 def _(mo, ufo_sightings):
-    mo.sql(
+    _df = mo.sql(
         f"""
-        -- Capture Groups: Zahl UND Einheit in einem Schritt
         SELECT
             duration_text,
             regexp_extract(duration_text,
@@ -865,18 +1549,162 @@ def _(mo, ufo_sightings):
         LIMIT 20
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    duration_text,
+    regexp_extract(duration_text,
+        '(\\d+)\\s*(seconds?|minutes?|mins?|hours?|hrs?)', 1)
+        AS zahl,
+    regexp_extract(duration_text,
+        '(\\d+)\\s*(seconds?|minutes?|mins?|hours?|hrs?)', 2)
+        AS einheit
+FROM ufo_sightings
+WHERE regexp_matches(duration_text,
+        '\\d+\\s*(seconds?|minutes?|mins?|hours?|hrs?)')
+LIMIT 20
+```
+**Erklärung:** Gruppe 1 = die Zahl (`\\d+`), Gruppe 2 = die Einheit. Das `?` nach dem `s` macht das "s" optional (minute/minutes).
+""")})
+    return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 13.11: Tokenisierung + Top-Wörter
+        ### 🟡 Aufgabe 13.20: regexp_extract_all — Farben aus UFO-Beschreibungen
+
+        UFO-Beschreibungen erwähnen oft Farben. DuckDB kann mit `regexp_extract_all` **alle** Treffer als Liste finden.
+        Ergänzen Sie `???`:
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, ufo_sightings):
+    _df = mo.sql(
+        f"""
+        SELECT
+            UNNEST(regexp_extract_all(LOWER(description),
+                '(???)')) AS farbe,
+            COUNT(*) AS anzahl
+        FROM ufo_sightings
+        GROUP BY farbe
+        ORDER BY anzahl DESC
+        -- Tipp: 'red|orange|white|green|blue|yellow|silver'
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    UNNEST(regexp_extract_all(LOWER(description),
+        '(red|orange|white|green|blue|yellow|silver)')) AS farbe,
+    COUNT(*) AS anzahl
+FROM ufo_sightings
+GROUP BY farbe
+ORDER BY anzahl DESC
+```
+**Erklärung:** `regexp_extract_all` gibt eine Liste aller Treffer zurück. `UNNEST` wandelt die Liste in einzelne Zeilen um.
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔵 Aufgabe 13.21: Bewegungsmuster klassifizieren
+
+        Klassifizieren Sie UFO-Bewegungen mit `regexp_matches` + `CASE WHEN`:
+        - **Hovering**: "hover", "stationary"
+        - **Erratic**: "zigzag", "erratic", "changed direction"
+        - **Vanishing**: "disappear", "vanish"
+        - **Moving**: "moving", "moved", "flew", "flying"
+
+        *Hinweis: `CASE WHEN regexp_matches(LOWER(description), 'hover|stationary') THEN 'Hovering' ...`*
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, ufo_sightings):
+    _df = mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        -- Erwartete Spalten: bewegung, anzahl
+        -- Sortiert nach anzahl DESC
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    CASE
+        WHEN regexp_matches(LOWER(description),
+             'hover|stationary') THEN 'Hovering'
+        WHEN regexp_matches(LOWER(description),
+             'zigzag|erratic|changed direction') THEN 'Erratic'
+        WHEN regexp_matches(LOWER(description),
+             'disappear|vanish') THEN 'Vanishing'
+        WHEN regexp_matches(LOWER(description),
+             'moving|moved|flew|flying') THEN 'Moving'
+        ELSE 'Unbekannt'
+    END AS bewegung,
+    COUNT(*) AS anzahl,
+    ROUND(AVG(LENGTH(description)), 0) AS avg_beschreibungslaenge
+FROM ufo_sightings
+GROUP BY bewegung
+ORDER BY anzahl DESC
+```
+""")})
+    return
+
+
+# -----------------------------------------------------------------------
+# Phase 7: Tokenisierung & Text Mining (UFO)
+# -----------------------------------------------------------------------
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## Phase 7: Tokenisierung & Text Mining (UFO Sightings)
+
+        Tokenisierung = Text in Wörter zerlegen. Mit `UNNEST(regexp_split_to_array(...))` und
+        Stoppwort-Filterung extrahieren wir die informativsten Begriffe.
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🟢 Aufgabe 13.22: Tokenisierung — Top 25 Wörter
 
         Zerlegen Sie alle UFO-Beschreibungen in Wörter und berechnen Sie die Top 25 Worthäufigkeiten.
-
-        Wir nutzen `regexp_split_to_array` statt `string_split` — das handhabt
-        mehrere Leerzeichen, Tabs und Zeilenumbrüche korrekt.
         """
     )
     return
@@ -918,54 +1746,20 @@ def _(px, ufo_sightings, word_freq):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
-        ---
-
-        ## Phase 6: Text-Mining Projekt — Self Service
-
-        Ab hier arbeiten Sie selbstständig. Sie haben alle Werkzeuge —
-        Aufgaben geben Ziel und Hinweise, das SQL schreiben Sie.
-
-        ---
-
-        ### Aufgabe 13.11b: Geführtes Beispiel — Stoppwörter filtern (Produktbewertungen)
-
-        Bevor wir mit den UFO-Daten weitermachen, hier das Muster für
-        **Tokenisierung + Stoppwort-Filterung** am bekannten Datensatz:
-        """
-    )
-    return
-
-
-@app.cell
-def _(mo, produktbewertungen):
-    # Geführtes Beispiel: Stoppwörter filtern
-    _stopword_demo = mo.sql(
-        f"""
-        -- Schritt 1: Stoppwörter definieren
-        WITH stoppwoerter AS (
-            SELECT UNNEST(['der','die','das','und','ist','ein','eine','für',
-                           'mit','nicht','auf','den','von','zu','im','ich',
-                           'es','sich','auch','an','war','sehr','aber']) AS wort
-        ),
-        -- Schritt 2: Tokenisieren
-        woerter AS (
-            SELECT
-                UNNEST(regexp_split_to_array(
-                    LOWER(TRIM(bewertung_text)), '\s+')) AS word
-            FROM produktbewertungen
-        )
-        -- Schritt 3: Filtern + Zählen
-        SELECT word, COUNT(*) AS frequency
-        FROM woerter
-        WHERE LENGTH(word) > 1
-          AND word NOT IN (SELECT wort FROM stoppwoerter)
-        GROUP BY word
-        ORDER BY frequency DESC
-        LIMIT 15
-        """
-    )
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    UNNEST(regexp_split_to_array(
+        LOWER(TRIM(description)), '\\s+')) AS word,
+    COUNT(*) AS frequency
+FROM ufo_sightings
+GROUP BY word
+HAVING LENGTH(word) > 0
+ORDER BY frequency DESC
+LIMIT 25
+```
+**Beobachtung:** Die häufigsten Wörter sind Stoppwörter ("the", "and", "in"). Wir müssen diese filtern!
+""")})
     return
 
 
@@ -973,19 +1767,9 @@ def _(mo, produktbewertungen):
 def _(mo):
     mo.md(
         r"""
-        **Das Muster:** `WITH stoppwoerter → Tokenisieren → WHERE NOT IN → GROUP BY`
+        ### 🟡 Aufgabe 13.23: Stoppwort-Filterung
 
-        Dieses Muster verwenden Sie jetzt auf die UFO- und McDonald's-Daten.
-
-        ---
-
-        ### Aufgabe 13.12: Stoppwort-Filterung (UFO)
-
-        Die häufigsten Wörter sind "the", "a", "was" — wenig informativ. Filtern Sie Stoppwörter heraus.
-
-        *Hinweis: `WHERE word NOT IN ('the', 'a', 'an', 'i', 'in', 'of', 'and', 'to', 'was', 'it', 'is', 'that', 'at', 'my', 'for', 'on', 'with', 'had', 'as', 'were', 'from', 'by', 'or', 'be', 'but', 'not', 'this', 'then', 'we', 'no', 'me', 'so', 'very', 'about')`*
-
-        *Erwartete Ausgabe: 30 Zeilen, Spalten `word`, `frequency`, sortiert nach `frequency DESC`*
+        Filtern Sie Stoppwörter heraus und zeigen Sie die Top 30 informativen Wörter. Ergänzen Sie `???`:
         """
     )
     return
@@ -993,23 +1777,31 @@ def _(mo):
 
 @app.cell
 def _(mo, ufo_sightings):
-    # Ihre Lösung: Wörter ohne Stoppwörter, Top 30
-    mo.sql(
+    _df = mo.sql(
         f"""
-        -- Stoppwörter sind bereits definiert:
         WITH stoppwoerter AS (
             SELECT UNNEST(['the','a','an','and','or','to','in','of','it','is',
                            'was','for','on','that','with','as','at','by','from',
                            'this','i','we','no','me','so','very','about','had',
                            'were','but','not','then','be']) AS wort
+        ),
+        woerter AS (
+            SELECT
+                UNNEST(regexp_split_to_array(
+                    LOWER(TRIM(description)), '\s+')) AS word
+            FROM ufo_sightings
         )
-        -- Ihre Aufgabe: Tokenisieren + Filtern
-        -- Tipp: UNNEST(regexp_split_to_array(LOWER(TRIM(description)), '\s+')) AS word
-        --       WHERE word NOT IN (SELECT wort FROM stoppwoerter)
-        --       GROUP BY word ORDER BY COUNT(*) DESC LIMIT 30
-        SELECT 'Ergänzen Sie die Abfrage oben' AS hinweis
+        SELECT word, COUNT(*) AS frequency
+        FROM woerter
+        WHERE LENGTH(word) > ???
+          AND word NOT IN (SELECT ??? FROM stoppwoerter)
+        GROUP BY word
+        ORDER BY frequency DESC
+        LIMIT 30
+        -- Tipp: LENGTH(word) > 1, SELECT wort FROM stoppwoerter
         """
     )
+    return
 
 
 @app.cell(hide_code=True)
@@ -1025,7 +1817,7 @@ WITH stoppwoerter AS (
 woerter AS (
     SELECT
         UNNEST(regexp_split_to_array(
-            LOWER(TRIM(description)), '\s+')) AS word
+            LOWER(TRIM(description)), '\\s+')) AS word
     FROM ufo_sightings
 )
 SELECT word, COUNT(*) AS frequency
@@ -1036,6 +1828,7 @@ GROUP BY word
 ORDER BY frequency DESC
 LIMIT 30
 ```
+**Pattern:** `WITH stoppwoerter -> Tokenisieren -> WHERE NOT IN -> GROUP BY`
 """)})
     return
 
@@ -1044,16 +1837,14 @@ LIMIT 30
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 13.13: July 4th Spike — UFOs oder Feuerwerk?
+        ### 🔵 Aufgabe 13.24: July 4th Spike — UFOs oder Feuerwerk?
 
-        Gibt es einen Spike an UFO-Meldungen rund um den 4. Juli (US Independence Day)?
-        Vergleichen Sie die Anzahl Sichtungen pro Monat — oder sogar pro Tag im Juli.
+        Gibt es einen Spike an UFO-Meldungen am 4. Juli (US Independence Day)?
+        Vergleichen Sie die Shapes am 4. Juli vs. Rest des Jahres.
 
         *Hinweis: `EXTRACT(MONTH FROM CAST(datetime AS DATE))`, `EXTRACT(DAY FROM ...)`*
 
-        *Bonus: Vergleichen Sie die gemeldeten Shapes am 4. Juli vs. Rest des Jahres — sind es eher "fireball" und "light"?*
-
-        *Erwartete Ausgabe (Basis): 12 Zeilen (Monate), Spalten `monat`, `anzahl_sichtungen`, sortiert nach `monat`*
+        *Bonus: Wie viele "fireball"-Sichtungen sind am 4. Juli vs. Rest des Jahres?*
         """
     )
     return
@@ -1061,18 +1852,21 @@ def _(mo):
 
 @app.cell
 def _(mo, ufo_sightings):
-    # Ihre Lösung: July 4th Analyse
-    mo.sql(
+    _df = mo.sql(
         f"""
-        SELECT 'Finden Sie den July 4th Spike — und prüfen Sie ob die Shapes anders sind!' AS hinweis
+        -- Ihre Lösung hier
+        -- Variante 1: Sichtungen pro Monat
+        -- Variante 2: Shapes am 4. Juli vs. Rest
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
+    return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.accordion({"🔑 Musterlösung": mo.md("""
-**Basis: Sichtungen pro Monat**
+**Variante 1: Sichtungen pro Monat**
 ```sql
 SELECT
     EXTRACT(MONTH FROM CAST(datetime AS DATE)) AS monat,
@@ -1082,7 +1876,7 @@ GROUP BY monat
 ORDER BY monat
 ```
 
-**Bonus: Shapes am 4. Juli vs. Rest**
+**Variante 2: Shapes am 4. Juli vs. Rest**
 ```sql
 SELECT
     shape,
@@ -1097,6 +1891,7 @@ FROM ufo_sightings
 GROUP BY shape
 ORDER BY july_4th DESC
 ```
+**Beobachtung:** "Fireball" dominiert am 4. Juli — wahrscheinlich Feuerwerk!
 """)})
     return
 
@@ -1105,24 +1900,9 @@ ORDER BY july_4th DESC
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 13.14: Farbanalyse — Welche Farben werden gemeldet?
+        ### 🔴 Aufgabe 13.25: Debugging — Unescapte Sonderzeichen in Regex
 
-        UFO-Beschreibungen erwähnen oft Farben: "bright white", "orange", "red", "green", "blue"...
-
-        DuckDB-Power: `regexp_extract_all` findet **alle** Farben pro Bericht als Liste!
-
-        ```sql
-        regexp_extract_all(LOWER(description),
-            '(red|orange|white|green|blue|yellow)')
-        ```
-
-        Mit `UNNEST(...)` wird die Liste zu einzelnen Zeilen — perfekt für `GROUP BY` + `COUNT`.
-
-        *Alternativ: `CASE WHEN + LIKE` für eine einzelne Hauptfarbe pro Bericht.*
-
-        *Bonus: Korreliert die Farbe mit der Form (shape)?*
-
-        *Erwartete Ausgabe: ~6 Zeilen (eine pro Farbe), Spalten `farbe`, `anzahl`, sortiert nach `anzahl DESC`*
+        Die folgende Abfrage soll Zahlen aus dem Dauertext extrahieren. Sie hat einen Fehler!
         """
     )
     return
@@ -1130,12 +1910,84 @@ def _(mo):
 
 @app.cell
 def _(mo, ufo_sightings):
-    # Ihre Lösung: Farbanalyse
-    mo.sql(
+    _df = mo.sql(
         f"""
-        SELECT 'Welche Farben werden am häufigsten in UFO-Berichten erwähnt?' AS hinweis
+        -- 🔴 Diese Abfrage hat einen Fehler — finden und beheben Sie ihn!
+        SELECT
+            duration_text,
+            regexp_extract(duration_text, '(d+) (minutes?|seconds?)', 1) AS zahl
+        FROM ufo_sightings
+        LIMIT 15
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Lösung": mo.md(r"""
+**Problem:** `d+` sucht nach einem oder mehreren Buchstaben "d" — es fehlt der Backslash! `\d+` ist die Regex-Syntax für "eine oder mehrere Ziffern".
+
+Außerdem fehlt `\s*` zwischen Zahl und Einheit.
+
+**Lösung:**
+```sql
+SELECT
+    duration_text,
+    regexp_extract(duration_text, '(\d+)\s*(minutes?|seconds?)', 1) AS zahl
+FROM ufo_sightings
+LIMIT 15
+```
+""")})
+    return
+
+
+# -----------------------------------------------------------------------
+# Phase 8: Exploration
+# -----------------------------------------------------------------------
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## Phase 8: Exploration
+
+        Offene Herausforderungen — kombinieren Sie die gelernten Techniken kreativ!
+
+        **Tipp:** Vergleichen Sie Ihre Lösungen mit Ihrem Nachbarn — bei Textanalyse gibt es oft kreative Ansätze, an die man allein nicht denkt!
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### ⭐ Aufgabe 13.26: German vs. English — Wortlängenvergleich
+
+        Vergleichen Sie die durchschnittliche Wortlänge in deutschen Produktbewertungen vs. englischen McDonald's-Reviews.
+        Deutsche Wörter sind bekanntlich länger — stimmt das auch hier?
+
+        *Hinweis: Tokenisieren Sie beide Datensätze und berechnen Sie `AVG(LENGTH(word))` — nutzen Sie UNION ALL.*
+        """
+    )
+    return
+
+
+@app.cell
+def _(mcdonalds_reviews, mo, produktbewertungen):
+    _df = mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        -- Erwartete Spalten: sprache, avg_wortlaenge, anzahl_woerter
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+    return
 
 
 @app.cell(hide_code=True)
@@ -1143,12 +1995,28 @@ def _(mo):
     mo.accordion({"🔑 Musterlösung": mo.md("""
 ```sql
 SELECT
-    UNNEST(regexp_extract_all(LOWER(description),
-        '(red|orange|white|green|blue|yellow|silver)')) AS farbe,
-    COUNT(*) AS anzahl
-FROM ufo_sightings
-GROUP BY farbe
-ORDER BY anzahl DESC
+    'Deutsch' AS sprache,
+    ROUND(AVG(LENGTH(word)), 2) AS avg_wortlaenge,
+    COUNT(*) AS anzahl_woerter
+FROM (
+    SELECT UNNEST(regexp_split_to_array(
+        LOWER(TRIM(bewertung_text)), '\\s+')) AS word
+    FROM produktbewertungen
+)
+WHERE LENGTH(word) > 0
+
+UNION ALL
+
+SELECT
+    'English',
+    ROUND(AVG(LENGTH(word)), 2),
+    COUNT(*)
+FROM (
+    SELECT UNNEST(regexp_split_to_array(
+        LOWER(TRIM(review_text)), '\\s+')) AS word
+    FROM mcdonalds_reviews
+)
+WHERE LENGTH(word) > 0
 ```
 """)})
     return
@@ -1158,29 +2026,76 @@ ORDER BY anzahl DESC
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 13.15: Bewegungsmuster — Wie bewegen sich UFOs?
+        ### ⭐ Aufgabe 13.27: Aspekt-Analyse Transfer — McDonald's-Pattern auf Produktbewertungen
 
-        Klassifizieren Sie die Bewegung der Objekte anhand der Beschreibungen:
-        - **Hovering**: "hovering", "stationary", "hovered"
-        - **Moving**: "moving", "moved", "flew", "flying"
-        - **Erratic**: "zigzag", "erratic", "changed direction", "sharp turn"
-        - **Vanishing**: "disappeared", "vanished"
+        Übertragen Sie das Aspekt-basierte Feature-Engineering-Pattern von McDonald's auf die Produktbewertungen.
+        Definieren Sie deutsche Aspekte: Qualität, Preis, Haltbarkeit, Komfort.
+        Welcher Aspekt korreliert am stärksten mit der Sternebewertung?
 
-        Welches Bewegungsmuster ist am häufigsten? Gibt es Unterschiede nach Shape?
+        *Hinweis: CASE WHEN + LIKE mit deutschen Schlüsselwörtern, dann AVG(sterne) pro Aspekt.*
+        """
+    )
+    return
 
-        *Erwartete Ausgabe: 4–5 Zeilen, Spalten `bewegung`, `anzahl`, sortiert nach `anzahl DESC`*
 
-        *Hinweis: `regexp_matches` mit `|` (Oder) ist eleganter als viele `LIKE`s:*
+@app.cell
+def _(mo, produktbewertungen):
+    _df = mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        -- Erwartete Spalten: aspekt, n, avg_sterne
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+    return
 
-        ```sql
-        CASE
-            WHEN regexp_matches(LOWER(description),
-                 'hover|stationary') THEN 'Hovering'
-            WHEN regexp_matches(LOWER(description),
-                 'zigzag|erratic|sharp turn') THEN 'Erratic'
-            ...
-        END
-        ```
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT 'Qualität' AS aspekt,
+       COUNT(*) AS n,
+       ROUND(AVG(sterne), 2) AS avg_sterne
+FROM produktbewertungen
+WHERE LOWER(bewertung_text) LIKE '%qualität%'
+   OR LOWER(bewertung_text) LIKE '%hochwertig%'
+   OR LOWER(bewertung_text) LIKE '%erstklassig%'
+UNION ALL
+SELECT 'Preis', COUNT(*), ROUND(AVG(sterne), 2)
+FROM produktbewertungen
+WHERE LOWER(bewertung_text) LIKE '%preis%'
+   OR LOWER(bewertung_text) LIKE '%billig%'
+   OR LOWER(bewertung_text) LIKE '%günstig%'
+UNION ALL
+SELECT 'Haltbarkeit', COUNT(*), ROUND(AVG(sterne), 2)
+FROM produktbewertungen
+WHERE LOWER(bewertung_text) LIKE '%kaputt%'
+   OR LOWER(bewertung_text) LIKE '%defekt%'
+   OR LOWER(bewertung_text) LIKE '%woche%'
+   OR LOWER(bewertung_text) LIKE '%haltbar%'
+UNION ALL
+SELECT 'Komfort', COUNT(*), ROUND(AVG(sterne), 2)
+FROM produktbewertungen
+WHERE LOWER(bewertung_text) LIKE '%bequem%'
+   OR LOWER(bewertung_text) LIKE '%komfortabel%'
+   OR LOWER(bewertung_text) LIKE '%angenehm%'
+ORDER BY avg_sterne DESC
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### ⭐ Aufgabe 13.28: Entity Extraction — US-Staaten in UFO-Beschreibungen
+
+        Einige UFO-Beschreibungen erwähnen Orte. Vergleichen Sie die `state`-Spalte mit dem tatsächlichen
+        Text: Werden bestimmte Städte oder Landmarks erwähnt? Welche Staaten haben die meisten Sichtungen?
+
+        *Hinweis: `GROUP BY state`, oder versuchen Sie Ortsnamen im Text zu finden mit `regexp_extract_all`.*
         """
     )
     return
@@ -1188,34 +2103,39 @@ def _(mo):
 
 @app.cell
 def _(mo, ufo_sightings):
-    # Ihre Lösung: Bewegungsmuster
-    mo.sql(
+    _df = mo.sql(
         f"""
-        SELECT 'Klassifizieren Sie die Bewegungsmuster der UFOs' AS hinweis
+        -- Ihre Lösung hier
+        -- Idee 1: Sichtungen pro State
+        -- Idee 2: Ortserwähnungen im Text extrahieren
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
+    return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.accordion({"🔑 Musterlösung": mo.md("""
+**Sichtungen pro State:**
 ```sql
 SELECT
-    CASE
-        WHEN regexp_matches(LOWER(description),
-             'hover|stationary') THEN 'Hovering'
-        WHEN regexp_matches(LOWER(description),
-             'zigzag|erratic|changed direction|sharp turn') THEN 'Erratic'
-        WHEN regexp_matches(LOWER(description),
-             'disappear|vanish') THEN 'Vanishing'
-        WHEN regexp_matches(LOWER(description),
-             'moving|moved|flew|flying') THEN 'Moving'
-        ELSE 'Unbekannt'
-    END AS bewegung,
+    state,
     COUNT(*) AS anzahl,
     ROUND(AVG(LENGTH(description)), 0) AS avg_beschreibungslaenge
 FROM ufo_sightings
-GROUP BY bewegung
+GROUP BY state
+ORDER BY anzahl DESC
+```
+
+**Landmark-Erwähnungen:**
+```sql
+SELECT
+    UNNEST(regexp_extract_all(LOWER(description),
+        '(highway|airport|lake|city|beach|park|forest|mountains?|stadium|desert|river)')) AS ort,
+    COUNT(*) AS anzahl
+FROM ufo_sightings
+GROUP BY ort
 ORDER BY anzahl DESC
 ```
 """)})
@@ -1226,161 +2146,10 @@ ORDER BY anzahl DESC
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 13.16: Wörter nach Rating-Tier (McDonald's)
-
-        Welche Wörter kommen häufiger in positiven (4–5★) vs. negativen (1–2★) Reviews vor?
-
-        *Hinweis: Tokenisieren + `COUNT(*) FILTER (WHERE rating >= 4)` vs. `FILTER (WHERE rating <= 2)`*
-
-        *Erwartete Ausgabe: ~20 Zeilen, Spalten `word`, `count_positiv`, `count_negativ`, sortiert nach `count_positiv DESC`*
-        """
-    )
-    return
-
-
-@app.cell
-def _(mcdonalds_reviews, mo):
-    # Ihre Lösung: Wörter nach Rating
-    mo.sql(
-        f"""
-        -- Schritt 1 (gegeben): Rating-Tiers bilden
-        WITH bewertungen_mit_tier AS (
-            SELECT *,
-                CASE WHEN rating >= 4 THEN 'positiv'
-                     WHEN rating <= 2 THEN 'negativ'
-                     ELSE 'neutral' END AS tier
-            FROM mcdonalds_reviews
-        )
-        -- Schritt 2 (Ihre Aufgabe): Tokenisieren und Wörter pro Tier zählen
-        -- Tipp: UNNEST(regexp_split_to_array(LOWER(review_text), '\s+')) AS word
-        --       GROUP BY tier, word
-        --       Dann: Vergleichen Sie die häufigsten Wörter pro Tier
-        SELECT 'Ergänzen Sie: UNNEST + GROUP BY tier, word' AS hinweis
-        """
-    )
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.accordion({"🔑 Musterlösung": mo.md("""
-```sql
-WITH stoppwoerter AS (
-    SELECT UNNEST(['the','a','an','and','or','to','in','of','it','is',
-                   'was','for','on','that','with','as','at','by','from',
-                   'this','i','we','no','me','so','very','about','had',
-                   'were','but','not','then','be']) AS wort
-),
-woerter AS (
-    SELECT
-        rating,
-        UNNEST(regexp_split_to_array(
-            LOWER(TRIM(review_text)), '[^a-z]+')) AS word
-    FROM mcdonalds_reviews
-)
-SELECT
-    word,
-    COUNT(*) FILTER (WHERE rating >= 4) AS count_positiv,
-    COUNT(*) FILTER (WHERE rating <= 2) AS count_negativ
-FROM woerter
-WHERE LENGTH(word) > 1
-  AND word NOT IN (SELECT wort FROM stoppwoerter)
-GROUP BY word
-HAVING COUNT(*) >= 2
-ORDER BY count_positiv DESC
-LIMIT 20
-```
-""")})
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ### Aufgabe 13.17: Sentiment-Score (McDonald's)
-
-        Bauen Sie einen einfachen Sentiment-Score:
-        Zählen Sie positive Wörter (great, fresh, delicious, friendly, fast, clean, excellent, perfect)
-        minus negative (terrible, cold, rude, slow, dirty, worst, wrong, disgusting).
-
-        Korreliert der Score mit dem tatsächlichen Rating?
-
-        *Hinweis: `CASE WHEN LOWER(review_text) LIKE '%great%' THEN 1 ELSE 0 END` für jedes Wort, dann summieren.*
-
-        *Erwartete Ausgabe: Eine Zeile pro Review (oder gruppiert nach Rating), Spalten `rating`, `avg_sentiment_score`, sortiert nach `rating`*
-        """
-    )
-    return
-
-
-@app.cell
-def _(mcdonalds_reviews, mo):
-    # Ihre Lösung: Sentiment-Score
-    mo.sql(
-        f"""
-        -- Wortlisten für einfache Sentiment-Analyse:
-        WITH sentiment_woerter AS (
-            SELECT 'positiv' AS typ,
-                   UNNEST(['great','good','excellent','best','love',
-                           'clean','fast','friendly','fresh','amazing']) AS wort
-            UNION ALL
-            SELECT 'negativ' AS typ,
-                   UNNEST(['bad','worst','terrible','slow','rude',
-                           'dirty','cold','wrong','horrible','disgusting']) AS wort
-        )
-        -- Ihre Aufgabe: Zählen Sie positive und negative Wörter pro Review
-        -- Tipp: JOIN über LIKE ('%' || wort || '%') oder einzelne CASE WHEN Spalten
-        --       Dann: SUM(positive) - SUM(negative) AS sentiment_score
-        --       Vergleichen Sie mit dem tatsächlichen Rating
-        SELECT 'Ergänzen Sie: JOIN + GROUP BY + SUM(CASE WHEN ...)' AS hinweis
-        """
-    )
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.accordion({"🔑 Musterlösung": mo.md("""
-```sql
-SELECT
-    rating,
-    ROUND(AVG(
-        (CASE WHEN LOWER(review_text) LIKE '%great%' THEN 1 ELSE 0 END)
-      + (CASE WHEN LOWER(review_text) LIKE '%good%' THEN 1 ELSE 0 END)
-      + (CASE WHEN LOWER(review_text) LIKE '%excellent%' THEN 1 ELSE 0 END)
-      + (CASE WHEN LOWER(review_text) LIKE '%best%' THEN 1 ELSE 0 END)
-      + (CASE WHEN LOWER(review_text) LIKE '%love%' THEN 1 ELSE 0 END)
-      + (CASE WHEN LOWER(review_text) LIKE '%clean%' THEN 1 ELSE 0 END)
-      + (CASE WHEN LOWER(review_text) LIKE '%fast%' THEN 1 ELSE 0 END)
-      + (CASE WHEN LOWER(review_text) LIKE '%friendly%' THEN 1 ELSE 0 END)
-      + (CASE WHEN LOWER(review_text) LIKE '%fresh%' THEN 1 ELSE 0 END)
-      + (CASE WHEN LOWER(review_text) LIKE '%amazing%' THEN 1 ELSE 0 END)
-      - (CASE WHEN LOWER(review_text) LIKE '%bad%' THEN 1 ELSE 0 END)
-      - (CASE WHEN LOWER(review_text) LIKE '%worst%' THEN 1 ELSE 0 END)
-      - (CASE WHEN LOWER(review_text) LIKE '%terrible%' THEN 1 ELSE 0 END)
-      - (CASE WHEN LOWER(review_text) LIKE '%slow%' THEN 1 ELSE 0 END)
-      - (CASE WHEN LOWER(review_text) LIKE '%rude%' THEN 1 ELSE 0 END)
-      - (CASE WHEN LOWER(review_text) LIKE '%dirty%' THEN 1 ELSE 0 END)
-      - (CASE WHEN LOWER(review_text) LIKE '%cold%' THEN 1 ELSE 0 END)
-      - (CASE WHEN LOWER(review_text) LIKE '%wrong%' THEN 1 ELSE 0 END)
-      - (CASE WHEN LOWER(review_text) LIKE '%horrible%' THEN 1 ELSE 0 END)
-      - (CASE WHEN LOWER(review_text) LIKE '%disgusting%' THEN 1 ELSE 0 END)
-    ), 2) AS avg_sentiment_score,
-    COUNT(*) AS anzahl
-FROM mcdonalds_reviews
-GROUP BY rating
-ORDER BY rating
-```
-""")})
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ### Aufgabe 13.18: Textlänge vs. Rating (McDonald's) — Scatter Plot
+        ### ⭐ Aufgabe 13.29: Textlänge vs. Rating — Scatter Plot (McDonald's)
 
         Gibt es einen Zusammenhang zwischen Textlänge und Bewertung?
+        Erstellen Sie einen Scatter Plot mit `px.scatter()`.
 
         *Hinweis: SQL-Query mit `LENGTH(review_text)` und `rating`, dann `px.scatter()`*
         """
@@ -1424,23 +2193,60 @@ def _(mcdonalds_reviews, px, scatter_data):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    review_id,
+    rating,
+    LENGTH(review_text) AS text_length,
+    store_name
+FROM mcdonalds_reviews
+```
+Dann Visualisierung mit:
+```python
+px.scatter(scatter_data, x="text_length", y="rating", color="store_name")
+```
+**Beobachtung:** Schreiben unzufriedene Kunden längere Reviews? Gibt es einen Zusammenhang?
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
-        ---
+        ### ⭐ Aufgabe 13.30: Mini Text-Mining Dashboard
 
-        ## Freie Exploration
+        Kombinieren Sie mehrere Analysen zu einem Überblick:
+        1. **Produktbewertungen:** Top 10 Wörter (ohne Stoppwörter)
+        2. **McDonald's:** Aspekt-Rating Korrelation
+        3. **UFO:** Farben + Shapes Kreuzanalyse
 
-        **UFO-Ideen:**
-        - Welche US-Staaten melden die meisten Sichtungen? (`GROUP BY state`)
-        - Nacht- vs. Tagsichtungen — unterscheiden sich die Beschreibungen?
-        - Werden Berichte über die Jahre länger? (Trend in `LENGTH(description)` über `EXTRACT(YEAR FROM ...)`)
-        - Sichtungen mit mehreren Ausrufe-/Fragezeichen — emotionalste Berichte?
-        - Shape + Farbe + Bewegung als vollständige Feature-Matrix
+        *Hinweis: Drei separate SQL-Queries — nutzen Sie alle gelernten Techniken!*
+        """
+    )
+    return
 
-        **McDonald's-Ideen:**
-        - "wrong order" Reviews — wie korreliert das mit dem Rating?
-        - Welche Filialen (Drive-Thru vs. Airport vs. ...) haben die besten Reviews?
-        - ALL-CAPS Reviews finden (`review_text = UPPER(review_text)`) — sind die wütend?
+
+@app.cell
+def _(mo, produktbewertungen):
+    _df = mo.sql(
+        f"""
+        -- Teil 1: Top 10 Wörter in Produktbewertungen (ohne Stoppwörter)
+        -- Ihre Lösung hier
+        SELECT 'Dashboard Teil 1: Top Wörter in Produktbewertungen' AS hinweis
+        """
+    )
+    return
+
+
+@app.cell
+def _(mcdonalds_reviews, mo):
+    _df = mo.sql(
+        f"""
+        -- Teil 2: Aspekt-Rating Korrelation (McDonald's)
+        -- Ihre Lösung hier
+        SELECT 'Dashboard Teil 2: Aspekt-Analyse McDonald''s' AS hinweis
         """
     )
     return
@@ -1448,12 +2254,69 @@ def _(mo):
 
 @app.cell
 def _(mo, ufo_sightings):
-    # Eigene Analyse hier:
-    mo.sql(
+    _df = mo.sql(
         f"""
-        SELECT 'Freie Exploration — probieren Sie eigene Queries!' AS hinweis
+        -- Teil 3: Farben × Shapes Kreuzanalyse (UFO)
+        -- Ihre Lösung hier
+        SELECT 'Dashboard Teil 3: Farben und Shapes bei UFOs' AS hinweis
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+**Teil 1: Top 10 Wörter in Produktbewertungen**
+```sql
+WITH stoppwoerter AS (
+    SELECT UNNEST(['der','die','das','und','ist','ein','eine','für',
+                   'mit','nicht','auf','den','von','zu','im','ich',
+                   'es','sich','auch','an','war','sehr','aber']) AS wort
+),
+woerter AS (
+    SELECT UNNEST(regexp_split_to_array(
+        LOWER(TRIM(bewertung_text)), '\\s+')) AS word
+    FROM produktbewertungen
+)
+SELECT word, COUNT(*) AS frequency
+FROM woerter
+WHERE LENGTH(word) > 1 AND word NOT IN (SELECT wort FROM stoppwoerter)
+GROUP BY word ORDER BY frequency DESC LIMIT 10
+```
+
+**Teil 2: Aspekt-Rating (McDonald's)**
+```sql
+SELECT 'Food' AS aspect, COUNT(*) AS n, ROUND(AVG(rating), 2) AS avg_rating
+FROM mcdonalds_reviews WHERE LOWER(review_text) LIKE '%food%' OR LOWER(review_text) LIKE '%burger%'
+UNION ALL
+SELECT 'Service', COUNT(*), ROUND(AVG(rating), 2)
+FROM mcdonalds_reviews WHERE LOWER(review_text) LIKE '%service%' OR LOWER(review_text) LIKE '%staff%'
+UNION ALL
+SELECT 'Cleanliness', COUNT(*), ROUND(AVG(rating), 2)
+FROM mcdonalds_reviews WHERE LOWER(review_text) LIKE '%clean%' OR LOWER(review_text) LIKE '%dirty%'
+ORDER BY avg_rating DESC
+```
+
+**Teil 3: Farben x Shapes (UFO)**
+```sql
+SELECT
+    shape,
+    UNNEST(regexp_extract_all(LOWER(description),
+        '(red|orange|white|green|blue|silver)')) AS farbe,
+    COUNT(*) AS anzahl
+FROM ufo_sightings
+GROUP BY shape, farbe
+ORDER BY anzahl DESC
+LIMIT 15
+```
+""")})
+    return
+
+
+# -----------------------------------------------------------------------
+# Zusammenfassung
+# -----------------------------------------------------------------------
 
 
 @app.cell(hide_code=True)
@@ -1479,6 +2342,17 @@ def _(mo):
         | **regexp_split_to_array** | `regexp_split_to_array(text, '\s+')` | Regex-Tokenisierung |
         | **Tokenisierung** | `UNNEST(regexp_split_to_array(...))` | Wörter zerlegen |
         | **Zeichen zählen** | `LENGTH(t) - LENGTH(REPLACE(t,'x',''))` | Vorkommen zählen |
+
+        | Aufgaben | Thema |
+        |----------|-------|
+        | 13.1 – 13.3 | Datenüberblick & LENGTH-Profiling |
+        | 13.4 – 13.7 | Textbereinigung: TRIM, REPLACE |
+        | 13.8 – 13.10 | LOWER & Pattern Matching |
+        | 13.11 – 13.14 | LIKE & Feature Engineering (McDonald's) |
+        | 13.15 – 13.18 | Aspekt-Analyse & Sentiment |
+        | 13.19 – 13.21 | Regex & Capture Groups (UFO) |
+        | 13.22 – 13.25 | Tokenisierung & Text Mining |
+        | 13.26 – 13.30 | Exploration & Dashboard |
 
         **Letzte Session!** Viel Erfolg bei der Klausur!
         """

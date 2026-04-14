@@ -10,40 +10,46 @@
 
 import marimo
 
-__generated_with = "0.10.14"
-app = marimo.App(width="medium", app_title="DMA Session 10: Explorative Datenanalyse")
+__generated_with = "0.13.0"
+app = marimo.App(
+    width="medium",
+    app_title="DMA Session 10: Explorative Datenanalyse — Übungen",
+)
+
+
+@app.cell(hide_code=True)
+def _():
+    import marimo as mo
+    return (mo,)
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        # Vorlesung 10: Explorative Datenanalyse (EDA)
+        # Session 10: Explorative Datenanalyse (EDA) — Übungen
 
-        **Kursfahrplan:** I: SQL-Grundlagen (S1–4) · II: Datenmodellierung (S5–7) · III: Fortgeschrittenes SQL (S8–9) · **▸ IV: Datenanalyse (S10–13)**
+        Theorie und geführte Beispiele → **10-eda-guide.py**
 
-        In den Sessions 1–9 haben wir gelernt, Daten zu speichern, zu modellieren und abzufragen. Jetzt beginnt Teil IV: Wir nutzen SQL als **Analysewerkzeug** — angefangen mit der systematischen Erkundung von Daten.
+        **Aufgabentypen:**
 
-        **Lernziele:**
-        - EDA systematisch durchführen und dokumentieren
-        - Univariate Analyse: Verteilungen, Ausreißer erkennen
-        - Bivariate Analyse: Korrelationen, Gruppenvergleiche
-        - SQL für EDA: Aggregationen, CASE WHEN, Binning
+        - 🟢 **Geführt**: Vollständige Lösung zum Nachvollziehen
+        - 🟡 **Angepasst**: Teillösung zum Ergänzen (`???`)
+        - 🔵 **Selbstständig**: Eigene Lösung schreiben
+        - 🔴 **Debugging**: Fehler finden und beheben
+        - ⭐ **Entdecken**: Offene Herausforderungen
+
+        > **Hinweis:** 🟡-Aufgaben enthalten `???` als Platzhalter. Die Zelle zeigt einen SQL-Fehler, bis Sie die `???` durch die richtige Lösung ersetzen — das ist Absicht!
         """
     )
     return
 
 
 @app.cell
-def _():
-    import marimo as mo
+def _(mo):
     import polars as pl
     import plotly.express as px
-    return mo, pl, px
 
-
-@app.cell(hide_code=True)
-def _(mo, pl):
     # Gehaltsdaten für EDA-Übungen
     gehaltsdaten = pl.DataFrame({
         "mitarbeiter_id": list(range(1, 101)),
@@ -58,7 +64,7 @@ def _(mo, pl):
                   30, 43, 28, 37, 49, 33, 39, 46, 31, 42,
                   35, 29, 44, 32, 54, 38, 30, 47, 36, 41,
                   28, 50, 33, 40, 26, 43, 31, 45, 34, 39,
-                  37, 29, 48, 32, 52, 36, 30, 42, 35, 280],  # Outlier: 280 statt 28
+                  37, 29, 48, 32, 52, 36, 30, 42, 35, 280],
         "gehalt": [52000, 58000, 75000, 48000, 62000, 71000, 65000, 45000, 88000, 55000,
                    53000, 47000, 72000, 59000, 66000, 73000, 51000, 82000, 56000, 63000,
                    44000, 92000, 52000, 68000, 60000, 46000, 54000, 78000, 50000, 64000,
@@ -68,7 +74,7 @@ def _(mo, pl):
                    50000, 73000, 46000, 61000, 83000, 53000, 66000, 79000, 51000, 71000,
                    57000, 48000, 75000, 52000, 91000, 64000, 49000, 80000, 60000, 69000,
                    45000, 84000, 54000, 67000, 42000, 72000, 50000, 78000, 56000, 65000,
-                   62000, 47000, 82000, 53000, 88000, 59000, 49000, 74000, 58000, 450000],  # Outlier: CEO
+                   62000, 47000, 82000, 53000, 88000, 59000, 49000, 74000, 58000, 450000],
         "erfahrung_jahre": [3, 7, 20, 4, 10, 16, 13, 2, 27, 8,
                            6, 4, 19, 11, 14, 17, 5, 23, 9, 12,
                            1, 30, 6, 15, 10, 3, 8, 21, 5, 13,
@@ -91,21 +97,21 @@ def _(mo, pl):
         .alias("erfahrung_jahre")
     ])
 
-    daten_beschreibung = "Fiktive Gehaltsdaten (100 Mitarbeiter, inkl. Ausreißer und Missing Values)"
-    return daten_beschreibung, gehaltsdaten
+    return gehaltsdaten, mo, pl, px
+
+
+# -----------------------------------------------------------------------
+# Phase 1: Erste Dateninspektion
+# -----------------------------------------------------------------------
 
 
 @app.cell(hide_code=True)
-def _(daten_beschreibung, mo):
+def _(mo):
     mo.md(
-        f"""
-        **Datensatz:** {daten_beschreibung}
-
+        r"""
         ---
 
         ## Phase 1: Erste Dateninspektion
-
-        Bevor wir analysieren, müssen wir die Daten **kennenlernen**.
         """
     )
     return
@@ -115,9 +121,9 @@ def _(daten_beschreibung, mo):
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 10.1: Datenüberblick
+        ### 🟢 Aufgabe 1.1: Zeilenanzahl und Schema
 
-        Wie viele Zeilen und Spalten haben unsere Daten? Welche Datentypen?
+        Wie viele Zeilen hat der Datensatz? Welche Spalten gibt es?
         """
     )
     return
@@ -125,19 +131,24 @@ def _(mo):
 
 @app.cell
 def _(gehaltsdaten, mo):
-    mo.sql(
+    _df = mo.sql(
         f"""
-        SELECT
-            COUNT(*) AS anzahl_zeilen
+        SELECT COUNT(*) AS anzahl_zeilen
         FROM gehaltsdaten
         """
     )
+    return
 
 
-@app.cell
-def _(gehaltsdaten):
-    # Spalteninfo mit Polars
-    gehaltsdaten.schema
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT COUNT(*) AS anzahl_zeilen
+FROM gehaltsdaten
+```
+**Ergebnis:** 100 Zeilen mit 8 Spalten (mitarbeiter_id, name, abteilung, alter, gehalt, erfahrung_jahre, geschlecht, standort).
+""")})
     return
 
 
@@ -145,9 +156,9 @@ def _(gehaltsdaten):
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 10.2: Erste Zeilen ansehen
+        ### 🟢 Aufgabe 1.2: Erste Zeilen ansehen
 
-        Schauen Sie sich die ersten Datensätze an, um ein Gefühl für die Daten zu bekommen.
+        Schauen Sie sich die ersten 10 Datensätze an.
         """
     )
     return
@@ -155,11 +166,112 @@ def _(mo):
 
 @app.cell
 def _(gehaltsdaten, mo):
-    mo.sql(
+    _df = mo.sql(
         f"""
         SELECT * FROM gehaltsdaten LIMIT 10
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT * FROM gehaltsdaten LIMIT 10
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🟡 Aufgabe 1.3: Verteilung nach Abteilung (Scaffolded)
+
+        Wie viele Mitarbeiter gibt es pro Abteilung? Ergänzen Sie die fehlenden Teile (`???`):
+        """
+    )
+    return
+
+
+@app.cell
+def _(gehaltsdaten, mo):
+    _df = mo.sql(
+        f"""
+        SELECT
+            ???,
+            COUNT(*) AS anzahl
+        FROM gehaltsdaten
+        GROUP BY ???
+        ORDER BY anzahl DESC
+        -- Tipp: abteilung
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    abteilung,
+    COUNT(*) AS anzahl
+FROM gehaltsdaten
+GROUP BY abteilung
+ORDER BY anzahl DESC
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔵 Aufgabe 1.4: Verteilung nach Standort (Selbstständig)
+
+        Wie viele Mitarbeiter gibt es pro Standort? Zeigen Sie auch den prozentualen Anteil.
+
+        *Hinweis: `COUNT(*) * 100.0 / (SELECT COUNT(*) FROM gehaltsdaten) AS prozent`*
+        """
+    )
+    return
+
+
+@app.cell
+def _(gehaltsdaten, mo):
+    _df = mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        -- Erwartete Spalten: standort, anzahl, prozent
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    standort,
+    COUNT(*) AS anzahl,
+    ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM gehaltsdaten), 1) AS prozent
+FROM gehaltsdaten
+GROUP BY standort
+ORDER BY anzahl DESC
+```
+""")})
+    return
+
+
+# -----------------------------------------------------------------------
+# Phase 2: Univariate Analyse
+# -----------------------------------------------------------------------
 
 
 @app.cell(hide_code=True)
@@ -169,8 +281,6 @@ def _(mo):
         ---
 
         ## Phase 2: Univariate Analyse
-
-        Jede Variable einzeln betrachten: Verteilung, Zentrum, Streuung.
         """
     )
     return
@@ -180,9 +290,9 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 10.3: Deskriptive Statistiken für Gehalt
+        ### 🟢 Aufgabe 2.1: Deskriptive Statistiken — Gehalt
 
-        Berechnen Sie Mittelwert, Median, Min, Max und Standardabweichung.
+        Berechnen Sie Mittelwert, Median, Min, Max und Standardabweichung für das Gehalt.
         """
     )
     return
@@ -190,7 +300,7 @@ def _(mo):
 
 @app.cell
 def _(gehaltsdaten, mo):
-    gehalt_stats = mo.sql(
+    _df = mo.sql(
         f"""
         SELECT
             COUNT(*) AS n,
@@ -202,17 +312,34 @@ def _(gehaltsdaten, mo):
         FROM gehaltsdaten
         """
     )
-    return (gehalt_stats,)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    COUNT(*) AS n,
+    ROUND(AVG(gehalt), 2) AS mittelwert,
+    PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY gehalt) AS median,
+    MIN(gehalt) AS minimum,
+    MAX(gehalt) AS maximum,
+    ROUND(STDDEV(gehalt), 2) AS std_abweichung
+FROM gehaltsdaten
+```
+**Beobachtung:** Mittelwert >> Median → rechtsschiefe Verteilung (Ausreißer nach oben).
+""")})
+    return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        **Beobachtung:** Der Mittelwert ist deutlich höher als der Median!
-        Das deutet auf einen oder mehrere Ausreißer nach oben hin.
+        ### 🟡 Aufgabe 2.2: Quartile und IQR (Scaffolded)
 
-        ### Aufgabe 10.4: Quartile und IQR berechnen
+        Berechnen Sie Q1, Median, Q3 und den IQR. Ergänzen Sie `???`:
         """
     )
     return
@@ -220,56 +347,46 @@ def _(mo):
 
 @app.cell
 def _(gehaltsdaten, mo):
-    quartile = mo.sql(
+    _df = mo.sql(
         f"""
         SELECT
-            PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY gehalt) AS q1,
+            PERCENTILE_CONT(???) WITHIN GROUP (ORDER BY gehalt) AS q1,
             PERCENTILE_CONT(0.50) WITHIN GROUP (ORDER BY gehalt) AS median,
-            PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY gehalt) AS q3,
+            PERCENTILE_CONT(???) WITHIN GROUP (ORDER BY gehalt) AS q3,
             PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY gehalt)
                 - PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY gehalt) AS iqr
         FROM gehaltsdaten
-        """
-    )
-    return (quartile,)
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ### Visualisierung: Gehaltsverteilung
+        -- Tipp: 0.25 und 0.75
         """
     )
     return
 
 
-@app.cell
-def _(gehaltsdaten, px):
-    fig_hist = px.histogram(
-        gehaltsdaten,
-        x="gehalt",
-        nbins=30,
-        title="Verteilung der Gehälter",
-        labels={"gehalt": "Gehalt (EUR)", "count": "Anzahl"}
-    )
-    fig_hist.update_layout(showlegend=False)
-    fig_hist
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY gehalt) AS q1,
+    PERCENTILE_CONT(0.50) WITHIN GROUP (ORDER BY gehalt) AS median,
+    PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY gehalt) AS q3,
+    PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY gehalt)
+        - PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY gehalt) AS iqr
+FROM gehaltsdaten
+```
+""")})
+    return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        **Beobachtung:** Ein extremer Ausreißer ist deutlich sichtbar (CEO-Gehalt?).
+        ### 🔵 Aufgabe 2.3: Deskriptive Statistiken — Alter (Selbstständig)
 
-        > **Vorhersage:** Der Datensatz enthält 100 Mitarbeiter. Wie viele Ausreißer erwarten Sie beim Gehalt, wenn wir die IQR-Regel (1,5 × IQR) anwenden? Und beim Alter?
+        Berechnen Sie die gleichen Statistiken wie in 2.1, aber für die Spalte `alter`.
 
-        ---
-
-        ## Phase 3: Ausreißer erkennen
-
-        ### Aufgabe 10.5: Ausreißer mit IQR-Regel finden
+        *Hinweis: Gleiche Struktur, nur `gehalt` → `alter`*
         """
     )
     return
@@ -277,7 +394,159 @@ def _(mo):
 
 @app.cell
 def _(gehaltsdaten, mo):
-    ausreisser = mo.sql(
+    _df = mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        -- Erwartete Spalten: n, mittelwert, median, minimum, maximum, std_abweichung
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    COUNT(*) AS n,
+    ROUND(AVG(alter), 2) AS mittelwert,
+    PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY alter) AS median,
+    MIN(alter) AS minimum,
+    MAX(alter) AS maximum,
+    ROUND(STDDEV(alter), 2) AS std_abweichung
+FROM gehaltsdaten
+```
+**Beobachtung:** Max = 280! Offensichtlich ein Datenfehler. Der Mittelwert wird dadurch stark verzerrt.
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔵 Aufgabe 2.4: Statistiken pro Abteilung (Selbstständig)
+
+        Berechnen Sie Mittelwert und Median des Gehalts **pro Abteilung** (ohne den CEO-Ausreißer).
+
+        *Hinweis: `GROUP BY abteilung`, `WHERE gehalt < 200000`*
+        """
+    )
+    return
+
+
+@app.cell
+def _(gehaltsdaten, mo):
+    _df = mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        -- Erwartete Spalten: abteilung, n, mittel_gehalt, median_gehalt
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    abteilung,
+    COUNT(*) AS n,
+    ROUND(AVG(gehalt), 0) AS mittel_gehalt,
+    ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY gehalt), 0) AS median_gehalt
+FROM gehaltsdaten
+WHERE gehalt < 200000
+GROUP BY abteilung
+ORDER BY mittel_gehalt DESC
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔴 Aufgabe 2.5: Debugging — Fehlende GROUP BY
+
+        Die folgende Abfrage soll das Durchschnittsgehalt pro Standort berechnen. Sie hat einen Fehler!
+        """
+    )
+    return
+
+
+@app.cell
+def _(gehaltsdaten, mo):
+    _df = mo.sql(
+        f"""
+        -- 🔴 Diese Abfrage hat einen Fehler — finden und beheben Sie ihn!
+        SELECT
+            standort,
+            COUNT(*) AS n,
+            ROUND(AVG(gehalt), 0) AS mittel_gehalt
+        FROM gehaltsdaten
+        WHERE gehalt < 200000
+        ORDER BY mittel_gehalt DESC
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Lösung": mo.md("""
+**Problem:** `GROUP BY standort` fehlt! Ohne GROUP BY kann `standort` nicht zusammen mit Aggregatfunktionen stehen.
+
+**Lösung:**
+```sql
+SELECT
+    standort,
+    COUNT(*) AS n,
+    ROUND(AVG(gehalt), 0) AS mittel_gehalt
+FROM gehaltsdaten
+WHERE gehalt < 200000
+GROUP BY standort
+ORDER BY mittel_gehalt DESC
+```
+""")})
+    return
+
+
+# -----------------------------------------------------------------------
+# Phase 3: Ausreißer erkennen
+# -----------------------------------------------------------------------
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## Phase 3: Ausreißer erkennen
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🟢 Aufgabe 3.1: Ausreißer — Gehalt (IQR-Regel)
+
+        Finden Sie Gehalts-Ausreißer mit der IQR-Regel (Faktor 1.5).
+        """
+    )
+    return
+
+
+@app.cell
+def _(gehaltsdaten, mo):
+    _df = mo.sql(
         f"""
         WITH quartile AS (
             SELECT
@@ -291,23 +560,51 @@ def _(gehaltsdaten, mo):
                 q3 + 1.5 * (q3 - q1) AS obere_grenze
             FROM quartile
         )
-        SELECT g.*, gr.untere_grenze, gr.obere_grenze
+        SELECT g.mitarbeiter_id, g.name, g.abteilung, g.gehalt,
+               gr.untere_grenze, gr.obere_grenze
         FROM gehaltsdaten g, grenzen gr
         WHERE g.gehalt < gr.untere_grenze
            OR g.gehalt > gr.obere_grenze
         ORDER BY g.gehalt DESC
         """
     )
-    return (ausreisser,)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+WITH quartile AS (
+    SELECT
+        PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY gehalt) AS q1,
+        PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY gehalt) AS q3
+    FROM gehaltsdaten
+),
+grenzen AS (
+    SELECT
+        q1 - 1.5 * (q3 - q1) AS untere_grenze,
+        q3 + 1.5 * (q3 - q1) AS obere_grenze
+    FROM quartile
+)
+SELECT g.mitarbeiter_id, g.name, g.abteilung, g.gehalt,
+       gr.untere_grenze, gr.obere_grenze
+FROM gehaltsdaten g, grenzen gr
+WHERE g.gehalt < gr.untere_grenze
+   OR g.gehalt > gr.obere_grenze
+ORDER BY g.gehalt DESC
+```
+""")})
+    return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 10.6: Selbstständig - Ausreißer im Alter finden
+        ### 🟡 Aufgabe 3.2: Ausreißer — Alter (Scaffolded)
 
-        Finden Sie auch die Ausreißer in der Spalte `alter` mit der IQR-Regel.
+        Finden Sie Alters-Ausreißer mit der IQR-Regel. Ergänzen Sie `???`:
         """
     )
     return
@@ -315,18 +612,30 @@ def _(mo):
 
 @app.cell
 def _(gehaltsdaten, mo):
-    # Ihre Lösung hier:
-    alter_ausreisser = mo.sql(
+    _df = mo.sql(
         f"""
-        -- Ihre Lösung hier
-        -- Tipp: Gleiche CTE-Struktur wie bei Aufgabe 10.5 (Gehalt), aber für 'alter'
-        -- 1. WITH quartile AS (SELECT Q1, Q3 FROM gehaltsdaten)
-        -- 2. grenzen AS (SELECT q1 - 1.5*IQR, q3 + 1.5*IQR)
-        -- 3. SELECT WHERE alter < untere_grenze OR alter > obere_grenze
-        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        WITH quartile AS (
+            SELECT
+                PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY ???) AS q1,
+                PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY ???) AS q3
+            FROM gehaltsdaten
+        ),
+        grenzen AS (
+            SELECT
+                q1 - 1.5 * (q3 - q1) AS untere_grenze,
+                q3 + 1.5 * (q3 - q1) AS obere_grenze
+            FROM quartile
+        )
+        SELECT g.mitarbeiter_id, g.name, g.alter,
+               gr.untere_grenze, gr.obere_grenze
+        FROM gehaltsdaten g, grenzen gr
+        WHERE g.??? < gr.untere_grenze
+           OR g.??? > gr.obere_grenze
+        ORDER BY g.alter DESC
+        -- Tipp: Ersetzen Sie alle ??? durch 'alter'
         """
     )
-    return (alter_ausreisser,)
+    return
 
 
 @app.cell(hide_code=True)
@@ -345,12 +654,14 @@ grenzen AS (
         q3 + 1.5 * (q3 - q1) AS obere_grenze
     FROM quartile
 )
-SELECT g.*, gr.untere_grenze, gr.obere_grenze
+SELECT g.mitarbeiter_id, g.name, g.alter,
+       gr.untere_grenze, gr.obere_grenze
 FROM gehaltsdaten g, grenzen gr
 WHERE g.alter < gr.untere_grenze
    OR g.alter > gr.obere_grenze
 ORDER BY g.alter DESC
 ```
+**Ergebnis:** Mitarbeiter_100 mit Alter 280 — ein offensichtlicher Datenfehler.
 """)})
     return
 
@@ -359,13 +670,11 @@ ORDER BY g.alter DESC
 def _(mo):
     mo.md(
         r"""
-        **Beobachtung:** Ein Mitarbeiter hat Alter 280 - offensichtlich ein Datenfehler (vermutlich 28 gemeint).
+        ### 🔵 Aufgabe 3.3: Extreme Ausreißer (3× IQR) — Gehalt (Selbstständig)
 
-        ---
+        Finden Sie nur die **extremen** Ausreißer mit Faktor 3.0 statt 1.5.
 
-        ## Phase 4: Missing Values analysieren
-
-        ### Aufgabe 10.7: Fehlende Werte zählen
+        *Hinweis: Gleiche Struktur wie 3.1, aber `1.5` → `3.0`*
         """
     )
     return
@@ -373,7 +682,139 @@ def _(mo):
 
 @app.cell
 def _(gehaltsdaten, mo):
-    mo.sql(
+    _df = mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        -- Erwartete Spalten: mitarbeiter_id, name, gehalt, untere_grenze, obere_grenze
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+WITH quartile AS (
+    SELECT
+        PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY gehalt) AS q1,
+        PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY gehalt) AS q3
+    FROM gehaltsdaten
+),
+grenzen AS (
+    SELECT
+        q1 - 3.0 * (q3 - q1) AS untere_grenze,
+        q3 + 3.0 * (q3 - q1) AS obere_grenze
+    FROM quartile
+)
+SELECT g.mitarbeiter_id, g.name, g.gehalt,
+       gr.untere_grenze, gr.obere_grenze
+FROM gehaltsdaten g, grenzen gr
+WHERE g.gehalt < gr.untere_grenze
+   OR g.gehalt > gr.obere_grenze
+ORDER BY g.gehalt DESC
+```
+**Ergebnis:** Nur der CEO-Ausreißer (450.000 €) wird erkannt — die „milden" Ausreißer fallen weg.
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔴 Aufgabe 3.4: Debugging — Fehlende FROM in Subquery
+
+        Die folgende Abfrage soll Ausreißer finden. Sie hat einen Fehler!
+        """
+    )
+    return
+
+
+@app.cell
+def _(gehaltsdaten, mo):
+    _df = mo.sql(
+        f"""
+        -- 🔴 Diese Abfrage hat einen Fehler — finden und beheben Sie ihn!
+        WITH quartile AS (
+            SELECT
+                PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY gehalt) AS q1,
+                PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY gehalt) AS q3
+        ),
+        grenzen AS (
+            SELECT
+                q1 - 1.5 * (q3 - q1) AS untere_grenze,
+                q3 + 1.5 * (q3 - q1) AS obere_grenze
+            FROM quartile
+        )
+        SELECT g.mitarbeiter_id, g.gehalt
+        FROM gehaltsdaten g, grenzen gr
+        WHERE g.gehalt > gr.obere_grenze
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Lösung": mo.md("""
+**Problem:** Im ersten CTE `quartile` fehlt `FROM gehaltsdaten`! Ohne FROM weiß die Datenbank nicht, woher die Spalte `gehalt` kommen soll.
+
+**Lösung:**
+```sql
+WITH quartile AS (
+    SELECT
+        PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY gehalt) AS q1,
+        PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY gehalt) AS q3
+    FROM gehaltsdaten   -- ← das fehlte!
+),
+grenzen AS (
+    SELECT
+        q1 - 1.5 * (q3 - q1) AS untere_grenze,
+        q3 + 1.5 * (q3 - q1) AS obere_grenze
+    FROM quartile
+)
+SELECT g.mitarbeiter_id, g.gehalt
+FROM gehaltsdaten g, grenzen gr
+WHERE g.gehalt > gr.obere_grenze
+```
+""")})
+    return
+
+
+# -----------------------------------------------------------------------
+# Phase 4: Fehlende Werte
+# -----------------------------------------------------------------------
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## Phase 4: Fehlende Werte
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🟢 Aufgabe 4.1: Fehlende Werte zählen
+
+        Wie viele Erfahrungswerte fehlen?
+        """
+    )
+    return
+
+
+@app.cell
+def _(gehaltsdaten, mo):
+    _df = mo.sql(
         f"""
         SELECT
             COUNT(*) AS total,
@@ -383,6 +824,113 @@ def _(gehaltsdaten, mo):
         FROM gehaltsdaten
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    COUNT(*) AS total,
+    COUNT(erfahrung_jahre) AS vorhanden,
+    COUNT(*) - COUNT(erfahrung_jahre) AS fehlend,
+    ROUND((COUNT(*) - COUNT(erfahrung_jahre)) * 100.0 / COUNT(*), 1) AS prozent_fehlend
+FROM gehaltsdaten
+```
+**Trick:** `COUNT(*)` zählt alle Zeilen, `COUNT(spalte)` zählt nur Nicht-NULL-Werte.
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🟡 Aufgabe 4.2: NULL-Muster nach Abteilung (Scaffolded)
+
+        Gibt es ein Muster — fehlen die Werte in bestimmten Abteilungen häufiger? Ergänzen Sie `???`:
+        """
+    )
+    return
+
+
+@app.cell
+def _(gehaltsdaten, mo):
+    _df = mo.sql(
+        f"""
+        SELECT
+            abteilung,
+            COUNT(*) AS total,
+            COUNT(erfahrung_jahre) AS vorhanden,
+            COUNT(*) - COUNT(???) AS fehlend
+        FROM gehaltsdaten
+        GROUP BY ???
+        ORDER BY fehlend DESC
+        -- Tipp: erfahrung_jahre, abteilung
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    abteilung,
+    COUNT(*) AS total,
+    COUNT(erfahrung_jahre) AS vorhanden,
+    COUNT(*) - COUNT(erfahrung_jahre) AS fehlend
+FROM gehaltsdaten
+GROUP BY abteilung
+ORDER BY fehlend DESC
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔵 Aufgabe 4.3: Zeilen mit fehlenden Werten anzeigen (Selbstständig)
+
+        Zeigen Sie alle Mitarbeiter, bei denen `erfahrung_jahre` NULL ist.
+
+        *Hinweis: `WHERE erfahrung_jahre IS NULL`*
+        """
+    )
+    return
+
+
+@app.cell
+def _(gehaltsdaten, mo):
+    _df = mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        -- Erwartete Spalten: mitarbeiter_id, name, abteilung, erfahrung_jahre
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT mitarbeiter_id, name, abteilung, erfahrung_jahre
+FROM gehaltsdaten
+WHERE erfahrung_jahre IS NULL
+```
+""")})
+    return
+
+
+# -----------------------------------------------------------------------
+# Phase 5: Bivariate Analyse
+# -----------------------------------------------------------------------
 
 
 @app.cell(hide_code=True)
@@ -392,10 +940,18 @@ def _(mo):
         ---
 
         ## Phase 5: Bivariate Analyse
+        """
+    )
+    return
 
-        Zusammenhänge zwischen Variablen untersuchen.
 
-        ### Aufgabe 10.8: Korrelation Alter-Gehalt
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🟢 Aufgabe 5.1: Korrelation
+
+        Berechnen Sie die Korrelation zwischen Alter und Gehalt (ohne Ausreißer).
         """
     )
     return
@@ -403,52 +959,39 @@ def _(mo):
 
 @app.cell
 def _(gehaltsdaten, mo):
-    mo.sql(
+    _df = mo.sql(
         f"""
         SELECT
             ROUND(CORR(alter, gehalt), 3) AS korrelation_alter_gehalt,
             ROUND(CORR(erfahrung_jahre, gehalt), 3) AS korrelation_erfahrung_gehalt
         FROM gehaltsdaten
-        WHERE alter < 100  -- Ausreißer ausschließen
-        """
-    )
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ### Visualisierung: Scatterplot Erfahrung vs. Gehalt
+        WHERE alter < 100
         """
     )
     return
 
 
-@app.cell
-def _(gehaltsdaten, px):
-    # Daten ohne extreme Ausreißer für bessere Visualisierung
-    clean_data = gehaltsdaten.filter(
-        (gehaltsdaten["gehalt"] < 200000) & (gehaltsdaten["alter"] < 100)
-    )
-
-    fig_scatter = px.scatter(
-        clean_data,
-        x="erfahrung_jahre",
-        y="gehalt",
-        color="abteilung",
-        title="Gehalt vs. Erfahrung (ohne extreme Ausreißer)",
-        labels={"erfahrung_jahre": "Erfahrung (Jahre)", "gehalt": "Gehalt (EUR)"},
-        trendline="ols"
-    )
-    fig_scatter
-    return clean_data, fig_scatter
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    ROUND(CORR(alter, gehalt), 3) AS korrelation_alter_gehalt,
+    ROUND(CORR(erfahrung_jahre, gehalt), 3) AS korrelation_erfahrung_gehalt
+FROM gehaltsdaten
+WHERE alter < 100
+```
+""")})
+    return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 10.9: Gruppenvergleich nach Abteilung
+        ### 🟡 Aufgabe 5.2: Gruppenvergleich nach Geschlecht (Scaffolded)
+
+        Vergleichen Sie das Durchschnittsgehalt nach Geschlecht. Ergänzen Sie `???`:
         """
     )
     return
@@ -456,58 +999,183 @@ def _(mo):
 
 @app.cell
 def _(gehaltsdaten, mo):
-    abteilung_stats = mo.sql(
+    _df = mo.sql(
         f"""
         SELECT
-            abteilung,
+            ???,
             COUNT(*) AS n,
             ROUND(AVG(gehalt), 0) AS mittel_gehalt,
-            ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY gehalt), 0) AS median_gehalt,
-            MIN(gehalt) AS min_gehalt,
-            MAX(gehalt) AS max_gehalt
+            ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY gehalt), 0) AS median_gehalt
         FROM gehaltsdaten
-        WHERE gehalt < 200000  -- Ausreißer ausschließen
-        GROUP BY abteilung
+        WHERE gehalt < 200000
+        GROUP BY ???
         ORDER BY mittel_gehalt DESC
+        -- Tipp: geschlecht
         """
     )
-    return (abteilung_stats,)
-
-
-@app.cell
-def _(clean_data, px):
-    fig_box = px.box(
-        clean_data,
-        x="abteilung",
-        y="gehalt",
-        title="Gehaltsverteilung nach Abteilung",
-        labels={"abteilung": "Abteilung", "gehalt": "Gehalt (EUR)"}
-    )
-    fig_box
+    return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    quiz_window = mo.ui.radio(
-        options={
-            "correct": "GROUP BY reduziert Zeilen (eine pro Gruppe), Window Functions behalten alle Zeilen",
-            "reversed": "Window Functions reduzieren Zeilen, GROUP BY behält alle Zeilen",
-            "speed": "GROUP BY ist schneller, Window Functions sind langsamer — sonst gleich",
-            "syntax": "GROUP BY braucht SELECT, Window Functions brauchen nur OVER()",
-        },
-        label="**Quiz:** Was ist der Hauptunterschied zwischen GROUP BY und Window Functions?"
-    )
-    quiz_window
-    return (quiz_window,)
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    geschlecht,
+    COUNT(*) AS n,
+    ROUND(AVG(gehalt), 0) AS mittel_gehalt,
+    ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY gehalt), 0) AS median_gehalt
+FROM gehaltsdaten
+WHERE gehalt < 200000
+GROUP BY geschlecht
+ORDER BY mittel_gehalt DESC
+```
+""")})
+    return
 
 
 @app.cell(hide_code=True)
-def _(quiz_window, mo):
-    if quiz_window.value == "correct":
-        mo.output.replace(mo.md("Richtig! GROUP BY fasst viele Zeilen zu einer zusammen (z.B. eine Zeile pro Mannschaft). Window Functions berechnen Aggregate, aber **jede Originalzeile bleibt erhalten** — Sie bekommen die Aggregation *neben* den Originaldaten."))
-    elif quiz_window.value:
-        mo.output.replace(mo.md("Nicht ganz. Der entscheidende Unterschied: GROUP BY *komprimiert* Zeilen (viele → eine pro Gruppe). Window Functions mit OVER() berechnen dasselbe, aber **behalten alle Originalzeilen** bei."))
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔵 Aufgabe 5.3: Kreuztabelle Standort × Geschlecht (Selbstständig)
+
+        Berechnen Sie das Durchschnittsgehalt nach **Standort und Geschlecht** (ohne Ausreißer).
+
+        *Hinweis: `GROUP BY standort, geschlecht`*
+        """
+    )
     return
+
+
+@app.cell
+def _(gehaltsdaten, mo):
+    _df = mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        -- Erwartete Spalten: standort, geschlecht, anzahl, durchschnitt_gehalt
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    standort,
+    geschlecht,
+    COUNT(*) AS anzahl,
+    ROUND(AVG(gehalt), 0) AS durchschnitt_gehalt
+FROM gehaltsdaten
+WHERE gehalt < 200000
+GROUP BY standort, geschlecht
+ORDER BY standort, geschlecht
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔵 Aufgabe 5.4: Gehalt mit Abteilungsdurchschnitt vergleichen (Selbstständig)
+
+        Zeigen Sie für jeden Mitarbeiter sein Gehalt neben dem Durchschnitt seiner Abteilung. Nutzen Sie eine **Window Function**.
+
+        *Hinweis: `AVG(gehalt) OVER (PARTITION BY abteilung)`*
+        """
+    )
+    return
+
+
+@app.cell
+def _(gehaltsdaten, mo):
+    _df = mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        -- Erwartete Spalten: name, abteilung, gehalt, abteilung_avg, differenz
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    name,
+    abteilung,
+    gehalt,
+    ROUND(AVG(gehalt) OVER (PARTITION BY abteilung), 0) AS abteilung_avg,
+    gehalt - ROUND(AVG(gehalt) OVER (PARTITION BY abteilung), 0) AS differenz
+FROM gehaltsdaten
+WHERE gehalt < 200000
+ORDER BY abteilung, differenz DESC
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔴 Aufgabe 5.5: Debugging — Fehlende GROUP BY bei Window + GROUP BY Mix
+
+        Die folgende Abfrage soll die Varianz des Gehalts pro Abteilung zeigen. Sie hat einen Fehler!
+        """
+    )
+    return
+
+
+@app.cell
+def _(gehaltsdaten, mo):
+    _df = mo.sql(
+        f"""
+        -- 🔴 Diese Abfrage hat einen Fehler — finden und beheben Sie ihn!
+        SELECT
+            abteilung,
+            ROUND(AVG(gehalt), 0) AS mittel,
+            ROUND(STDDEV(gehalt), 0) AS std,
+            ROUND(STDDEV(gehalt) / AVG(gehalt) * 100, 1) AS variationskoeffizient
+        FROM gehaltsdaten
+        WHERE gehalt < 200000
+        ORDER BY variationskoeffizient DESC
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Lösung": mo.md("""
+**Problem:** `GROUP BY abteilung` fehlt! Ohne GROUP BY kann `abteilung` nicht neben Aggregatfunktionen stehen.
+
+**Lösung:**
+```sql
+SELECT
+    abteilung,
+    ROUND(AVG(gehalt), 0) AS mittel,
+    ROUND(STDDEV(gehalt), 0) AS std,
+    ROUND(STDDEV(gehalt) / AVG(gehalt) * 100, 1) AS variationskoeffizient
+FROM gehaltsdaten
+WHERE gehalt < 200000
+GROUP BY abteilung       -- ← das fehlte!
+ORDER BY variationskoeffizient DESC
+```
+""")})
+    return
+
+
+# -----------------------------------------------------------------------
+# Phase 6: Binning
+# -----------------------------------------------------------------------
 
 
 @app.cell(hide_code=True)
@@ -516,9 +1184,19 @@ def _(mo):
         r"""
         ---
 
-        ## Phase 6: SQL für EDA - Binning
+        ## Phase 6: Binning mit CASE WHEN
+        """
+    )
+    return
 
-        ### Aufgabe 10.10: Gehaltsklassen erstellen
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🟢 Aufgabe 6.1: Gehaltsklassen erstellen
+
+        Teilen Sie die Gehälter in Klassen ein.
         """
     )
     return
@@ -526,7 +1204,7 @@ def _(mo):
 
 @app.cell
 def _(gehaltsdaten, mo):
-    mo.sql(
+    _df = mo.sql(
         f"""
         SELECT
             CASE
@@ -543,18 +1221,38 @@ def _(gehaltsdaten, mo):
         ORDER BY gehaltsklasse
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    CASE
+        WHEN gehalt < 50000 THEN '1: unter 50k'
+        WHEN gehalt < 65000 THEN '2: 50-65k'
+        WHEN gehalt < 80000 THEN '3: 65-80k'
+        WHEN gehalt < 100000 THEN '4: 80-100k'
+        ELSE '5: über 100k'
+    END AS gehaltsklasse,
+    COUNT(*) AS anzahl,
+    ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM gehaltsdaten), 1) AS prozent
+FROM gehaltsdaten
+GROUP BY gehaltsklasse
+ORDER BY gehaltsklasse
+```
+""")})
+    return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 10.11: Selbstständig - Altersgruppen analysieren
+        ### 🟡 Aufgabe 6.2: Altersgruppen (Scaffolded)
 
-        Erstellen Sie Altersgruppen (unter 30, 30-40, 40-50, über 50) und
-        berechnen Sie das Durchschnittsgehalt pro Gruppe.
-
-        *Hinweis: Schließen Sie den Ausreißer (Alter > 100) aus.*
+        Erstellen Sie Altersgruppen und berechnen Sie das Durchschnittsgehalt pro Gruppe. Ergänzen Sie `???`:
         """
     )
     return
@@ -562,17 +1260,25 @@ def _(mo):
 
 @app.cell
 def _(gehaltsdaten, mo):
-    # Ihre Lösung hier:
-    mo.sql(
+    _df = mo.sql(
         f"""
-        -- Ihre Lösung hier
-        -- Tipp: CASE WHEN alter < 30 THEN '1: unter 30' ... END AS altersgruppe
-        -- GROUP BY altersgruppe, dann AVG(gehalt) berechnen
-        -- Ausreißer ausschließen: WHERE alter < 100 AND gehalt < 200000
-        -- Erwartete Spalten: altersgruppe, anzahl, durchschnitt_gehalt
-        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        SELECT
+            CASE
+                WHEN alter < 30 THEN ???
+                WHEN alter < 40 THEN ???
+                WHEN alter < 50 THEN ???
+                ELSE ???
+            END AS altersgruppe,
+            COUNT(*) AS anzahl,
+            ROUND(AVG(gehalt), 0) AS durchschnitt_gehalt
+        FROM gehaltsdaten
+        WHERE alter < 100 AND gehalt < 200000
+        GROUP BY altersgruppe
+        ORDER BY altersgruppe
+        -- Tipp: '1: unter 30', '2: 30-40', '3: 40-50', '4: über 50'
         """
     )
+    return
 
 
 @app.cell(hide_code=True)
@@ -601,135 +1307,12 @@ ORDER BY altersgruppe
 def _(mo):
     mo.md(
         r"""
-        ---
+        ### 🔵 Aufgabe 6.3: Erfahrungsgruppen (Selbstständig)
 
-        ## Phase 7: Vollständige EDA - Zusammenfassung
+        Erstellen Sie Erfahrungsgruppen (Junior: <5 Jahre, Mid: 5-15, Senior: 15-25, Expert: >25)
+        und berechnen Sie Durchschnittsgehalt und Anzahl pro Gruppe.
 
-        ### Aufgabe 10.12: EDA-Report erstellen
-
-        Fassen Sie Ihre Erkenntnisse zusammen:
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        **EDA-Erkenntnisse für den Gehaltsdatensatz:**
-
-        1. **Datenqualität:**
-           - 100 Datensätze, 8 Variablen
-           - 4 fehlende Werte bei `erfahrung_jahre` (4%)
-           - 2 Ausreißer identifiziert: CEO-Gehalt (450k), Alter-Fehler (280)
-
-        2. **Univariate Analyse:**
-           - Gehaltsverteilung ist rechtsschief (Mean > Median)
-           - Typisches Gehalt: ca. 55-65k EUR (ohne Ausreißer)
-           - Alter: 26-55 Jahre (ein Datenfehler bei 280)
-
-        3. **Bivariate Analyse:**
-           - Positive Korrelation zwischen Erfahrung und Gehalt
-           - Gehaltsunterschiede zwischen Abteilungen
-           - IT und Finanzen haben höchste Durchschnittsgehälter
-
-        4. **Empfehlungen:**
-           - Alter-Fehler (280) korrigieren zu 28
-           - CEO-Gehalt separat behandeln oder ausschließen
-           - Missing Values bei Erfahrung untersuchen (nur 4 Fälle)
-        """
-    )
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ---
-
-        ## Datasaurus Dozen: Warum Visualisierung unverzichtbar ist
-
-        **Anscombe's Quartet** (1973) zeigte: 4 Datensätze mit identischen Statistiken,
-        aber völlig verschiedenen Mustern.
-
-        Das **Datasaurus Dozen** (2017) treibt das auf die Spitze:
-        **13 Datensätze** mit nahezu identischen Statistiken — darunter ein Dinosaurier!
-
-        Alle 13 Datensätze haben:
-
-        - Gleichen Mittelwert (x ≈ 54.3, y ≈ 47.8)
-        - Gleiche Standardabweichung (x ≈ 16.8, y ≈ 26.9)
-        - Gleiche Korrelation (r ≈ −0.06)
-        """
-    )
-    return
-
-
-@app.cell
-def _(pl):
-    # Datasaurus Dozen laden
-    try:
-        datasaurus = pl.read_csv(
-            "https://raw.githubusercontent.com/jumpingrivers/datasauRus/main/inst/extdata/DatasaurusDozen-long.csv"
-        )
-        ds_quelle = "Live-Daten (GitHub)"
-    except Exception:
-        # Minimaler Fallback: leerer Hinweis
-        datasaurus = pl.DataFrame({"dataset": ["?"], "x": [0.0], "y": [0.0]})
-        ds_quelle = "Fehler beim Laden — bitte Internetverbindung prüfen"
-
-    return datasaurus, ds_quelle
-
-
-@app.cell
-def _(datasaurus, mo):
-    mo.sql(
-        f"""
-        SELECT
-            dataset,
-            ROUND(AVG(x), 2) AS mean_x,
-            ROUND(AVG(y), 2) AS mean_y,
-            ROUND(STDDEV(x), 2) AS std_x,
-            ROUND(STDDEV(y), 2) AS std_y,
-            ROUND(CORR(x, y), 3) AS korrelation,
-            COUNT(*) AS n
-        FROM datasaurus
-        GROUP BY dataset
-        ORDER BY dataset
-        """
-    )
-
-
-@app.cell
-def _(datasaurus, px):
-    px.scatter(
-        datasaurus,
-        x="x",
-        y="y",
-        facet_col="dataset",
-        facet_col_wrap=4,
-        width=900,
-        height=900,
-        title="Datasaurus Dozen — Gleiche Statistiken, völlig verschiedene Muster",
-    )
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ---
-
-        ## Freie Exploration
-
-        Probieren Sie eigene Analysen:
-
-        - Geschlechterverteilung nach Abteilung
-        - Gehalt nach Standort vergleichen
-        - Korrelationsmatrix erstellen
-        - Weitere Visualisierungen
+        *Hinweis: Schließen Sie NULL-Werte aus (`WHERE erfahrung_jahre IS NOT NULL`)*
         """
     )
     return
@@ -737,20 +1320,317 @@ def _(mo):
 
 @app.cell
 def _(gehaltsdaten, mo):
-    # Eigene Analyse hier:
-    mo.sql(
+    _df = mo.sql(
         f"""
-        SELECT
-            standort,
-            geschlecht,
-            COUNT(*) AS anzahl,
-            ROUND(AVG(gehalt), 0) AS durchschnitt_gehalt
-        FROM gehaltsdaten
-        WHERE gehalt < 200000
-        GROUP BY standort, geschlecht
-        ORDER BY standort, geschlecht
+        -- Ihre Lösung hier
+        -- Erwartete Spalten: erfahrungsgruppe, anzahl, durchschnitt_gehalt
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    CASE
+        WHEN erfahrung_jahre < 5 THEN '1: Junior (<5)'
+        WHEN erfahrung_jahre < 15 THEN '2: Mid (5-15)'
+        WHEN erfahrung_jahre < 25 THEN '3: Senior (15-25)'
+        ELSE '4: Expert (>25)'
+    END AS erfahrungsgruppe,
+    COUNT(*) AS anzahl,
+    ROUND(AVG(gehalt), 0) AS durchschnitt_gehalt
+FROM gehaltsdaten
+WHERE erfahrung_jahre IS NOT NULL AND gehalt < 200000
+GROUP BY erfahrungsgruppe
+ORDER BY erfahrungsgruppe
+```
+""")})
+    return
+
+
+# -----------------------------------------------------------------------
+# Exploration
+# -----------------------------------------------------------------------
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## Exploration
+
+        Offene Herausforderungen für Fortgeschrittene.
+
+        **Tipp:** Vergleichen Sie Ihre Analysen mit Ihrem Nachbarn — verschiedene EDA-Perspektiven ergänzen sich!
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### ⭐ Exploration 1: Gender Pay Gap Analyse
+
+        Gibt es einen Gehaltsunterschied zwischen Geschlechtern? Unterscheidet sich der Gap nach Abteilung oder Standort?
+
+        *Hinweis: `GROUP BY abteilung, geschlecht` + `AVG(gehalt)`, dann vergleichen*
+        """
+    )
+    return
+
+
+@app.cell
+def _(gehaltsdaten, mo):
+    _df = mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    abteilung,
+    ROUND(AVG(CASE WHEN geschlecht = 'M' THEN gehalt END), 0) AS avg_gehalt_m,
+    ROUND(AVG(CASE WHEN geschlecht = 'W' THEN gehalt END), 0) AS avg_gehalt_w,
+    ROUND(AVG(CASE WHEN geschlecht = 'M' THEN gehalt END)
+        - AVG(CASE WHEN geschlecht = 'W' THEN gehalt END), 0) AS gap_absolut,
+    ROUND((AVG(CASE WHEN geschlecht = 'M' THEN gehalt END)
+         - AVG(CASE WHEN geschlecht = 'W' THEN gehalt END))
+         * 100.0
+         / AVG(CASE WHEN geschlecht = 'M' THEN gehalt END), 1) AS gap_prozent
+FROM gehaltsdaten
+WHERE gehalt < 200000
+GROUP BY abteilung
+ORDER BY gap_prozent DESC
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### ⭐⭐ Exploration 2: Varianz nach Abteilung — Welche Abteilung streut am meisten?
+
+        Berechnen Sie den **Variationskoeffizienten** (STDDEV/AVG × 100) für jede Abteilung.
+        Welche Abteilung hat die homogensten Gehälter?
+        """
+    )
+    return
+
+
+@app.cell
+def _(gehaltsdaten, mo):
+    _df = mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    abteilung,
+    COUNT(*) AS n,
+    ROUND(AVG(gehalt), 0) AS mittel,
+    ROUND(STDDEV(gehalt), 0) AS std,
+    ROUND(STDDEV(gehalt) / AVG(gehalt) * 100, 1) AS variationskoeffizient
+FROM gehaltsdaten
+WHERE gehalt < 200000
+GROUP BY abteilung
+ORDER BY variationskoeffizient ASC
+```
+Die Abteilung mit dem niedrigsten Variationskoeffizienten hat die homogensten Gehälter.
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### ⭐⭐⭐ Exploration 3: Vollständiger EDA-Report
+
+        Erstellen Sie einen EDA-Report: Finden Sie Gehälter, die mehr als 2 Standardabweichungen vom Durchschnitt **ihrer Abteilung** abweichen. Sind es immer die gleichen Abteilungen?
+
+        *Hinweis: `AVG() + STDDEV()` als Window Function mit `PARTITION BY abteilung`*
+        """
+    )
+    return
+
+
+@app.cell
+def _(gehaltsdaten, mo):
+    _df = mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+WITH mit_stats AS (
+    SELECT
+        name,
+        abteilung,
+        gehalt,
+        AVG(gehalt) OVER (PARTITION BY abteilung) AS abt_avg,
+        STDDEV(gehalt) OVER (PARTITION BY abteilung) AS abt_std
+    FROM gehaltsdaten
+    WHERE gehalt < 200000 AND alter < 100
+)
+SELECT
+    name,
+    abteilung,
+    gehalt,
+    ROUND(abt_avg, 0) AS abt_durchschnitt,
+    ROUND((gehalt - abt_avg) / abt_std, 2) AS z_score
+FROM mit_stats
+WHERE ABS((gehalt - abt_avg) / abt_std) > 2
+ORDER BY ABS((gehalt - abt_avg) / abt_std) DESC
+```
+""")})
+    return
+
+
+# -----------------------------------------------------------------------
+# Zusammenfassung
+# -----------------------------------------------------------------------
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## ⭐ Analyse-Aufgabe: Team Performance-Profile
+
+        Diese Aufgabe kombiniert mehrere EDA-Konzepte aus dieser Session:
+        - Deskriptive Statistik (Mittelwert, Median, Standardabweichung)
+        - Ausreißererkennung (IQR-Methode)
+        - Binning (Kategorisierung)
+        - Bivariate Analyse (Gruppenvergleiche)
+
+        **Geschäftsfrage:** Wie lassen sich die Mitarbeiter-Gehälter nach Abteilung charakterisieren und vergleichen?
+
+        ---
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### ⭐ Analyse: Vollständiges Abteilungs-Profil
+
+        **Aufgabe:** Erstellen Sie ein vollständiges Profil für jede Abteilung:
+        1. Grundstatistiken (n, Mittelwert, Median, Standardabweichung)
+        2. Variationskoeffizient als Maß für die Homogenität
+        3. Anteil der Ausreißer (per IQR-Methode)
+        4. Klassifizierung: "Homogen" (VK < 20%), "Mittel" (20-30%), "Heterogen" (> 30%)
+
+        Nutzen Sie CTEs, um die Analyse zu strukturieren.
+        """
+    )
+    return
+
+
+@app.cell
+def _(gehaltsdaten, mo):
+    # ⭐ Analyse-Aufgabe: Ihre Lösung
+    _df = mo.sql(
+        f"""
+        -- Schreiben Sie Ihre Analyse-Abfrage hier
+        -- Ziel: Vollständiges Abteilungs-Profil mit Klassifizierung
+        SELECT 'Ihre Lösung hier' AS hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+WITH abt_stats AS (
+    SELECT
+        abteilung,
+        COUNT(*) AS n,
+        ROUND(AVG(gehalt), 0) AS mittelwert,
+        ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY gehalt), 0) AS median,
+        ROUND(STDDEV(gehalt), 0) AS std,
+        ROUND(STDDEV(gehalt) / AVG(gehalt) * 100, 1) AS variationskoeffizient,
+        ROUND(PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY gehalt), 0) AS q1,
+        ROUND(PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY gehalt), 0) AS q3
+    FROM gehaltsdaten
+    WHERE gehalt < 200000
+    GROUP BY abteilung
+),
+klassifiziert AS (
+    SELECT
+        *,
+        CASE
+            WHEN variationskoeffizient < 20 THEN 'Homogen'
+            WHEN variationskoeffizient < 30 THEN 'Mittel'
+            ELSE 'Heterogen'
+        END AS homogenitaet,
+        q3 - q1 AS iqr
+    FROM abt_stats
+)
+SELECT
+    abteilung,
+    n,
+    mittelwert,
+    median,
+    std,
+    variationskoeffizient || '%' AS vk,
+    homogenitaet,
+    ROUND(q1 - 1.5 * iqr, 0) AS ausreisser_grenze_unten,
+    ROUND(q3 + 1.5 * iqr, 0) AS ausreisser_grenze_oben
+FROM klassifiziert
+ORDER BY variationskoeffizient
+```
+
+**Analyse-Erkenntnisse:**
+- Zwei CTEs strukturieren die Analyse: erst Grundstatistiken, dann Klassifizierung
+- Der Variationskoeffizient normalisiert die Streuung für den Vergleich
+- Die Homogenitäts-Klassifizierung erleichtert die Interpretation
+- IQR-Grenzen ermöglichen Ausreißer-Erkennung pro Abteilung
+
+**Business Value:** Diese Analyse hilft bei:
+- Identifikation von Abteilungen mit ungleichmäßiger Gehaltsstruktur
+- Benchmarking zwischen Abteilungen
+- Erkennung potenzieller Fairness-Probleme
+""")})
+    return
 
 
 @app.cell(hide_code=True)
@@ -761,16 +1641,14 @@ def _(mo):
 
         ## Zusammenfassung
 
-        | Konzept | Beschreibung | SQL |
-        |---------|--------------|-----|
-        | **Lagemaße** | Zentrum der Daten | `AVG()`, `PERCENTILE_CONT(0.5)` |
-        | **Streuungsmaße** | Variabilität | `STDDEV()`, `MAX()-MIN()` |
-        | **Ausreißer** | IQR-Regel | `Q1 - 1.5*IQR`, `Q3 + 1.5*IQR` |
-        | **Korrelation** | Zusammenhang | `CORR(x, y)` |
-        | **Binning** | Kategorisieren | `CASE WHEN ... THEN ...` |
-        | **Missing Values** | Fehlende Werte | `COUNT(*) - COUNT(spalte)` |
-
-        **Goldene Regel:** Immer visualisieren! (Anscombe's Quartet / Datasaurus Dozen)
+        | Konzept | Aufgaben | Wann nutzen? |
+        |---------|----------|--------------|
+        | **Dateninspektion** | 1.1 – 1.4 | Immer zuerst: COUNT, Schema, LIMIT |
+        | **Univariate Analyse** | 2.1 – 2.5 | Jede Variable einzeln beschreiben |
+        | **Ausreißer (IQR)** | 3.1 – 3.4 | Extreme Werte und Datenfehler finden |
+        | **Fehlende Werte** | 4.1 – 4.3 | NULL-Muster erkennen |
+        | **Bivariate Analyse** | 5.1 – 5.5 | Zusammenhänge untersuchen |
+        | **Binning** | 6.1 – 6.3 | Kategorien aus numerischen Werten |
 
         **Nächste Session:** Statistische Inferenz & A/B-Tests
         """

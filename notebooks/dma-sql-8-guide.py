@@ -157,27 +157,29 @@ def _(mo):
 def _(mo):
     vorhersage_inner = mo.ui.radio(
         options={
-            "5": "5 Zeilen",
-            "8": "8 Zeilen",
-            "11": "11 Zeilen",
-            "3": "3 Zeilen",
+            "5 Zeilen": "5",
+            "8 Zeilen": "8",
+            "11 Zeilen": "11",
+            "3 Zeilen": "3",
         },
         label="8 Spieler, 3 ohne Verein. Wie viele Zeilen liefert ein INNER JOIN zwischen Spieler und Vereine?"
     )
-    vorhersage_inner
     return (vorhersage_inner,)
 
 
 @app.cell(hide_code=True)
-def _(vorhersage_inner, mo):
+def _(mo, vorhersage_inner):
     if vorhersage_inner.value == "5":
-        mo.output.replace(mo.md("✅ **Richtig!** Nur 5 Spieler haben eine gültige `Verein_ID`. Die 3 Spieler ohne Verein (NULL) finden keinen Partner in der Vereine-Tabelle und werden vom INNER JOIN herausgefiltert."))
+        _result = mo.md("✅ **Richtig!** Nur 5 Spieler haben eine gültige `Verein_ID`. Die 3 Spieler ohne Verein (NULL) finden keinen Partner in der Vereine-Tabelle und werden vom INNER JOIN herausgefiltert.")
     elif vorhersage_inner.value == "8":
-        mo.output.replace(mo.md("❌ 8 wären alle Spieler — aber der INNER JOIN filtert Spieler **ohne** passenden Verein heraus. Sabitzer, Reus und Götze haben `Verein_ID = NULL` und finden keinen Partner. Es bleiben nur **5 Zeilen**."))
+        _result = mo.md("❌ 8 wären alle Spieler — aber der INNER JOIN filtert Spieler **ohne** passenden Verein heraus. Sabitzer, Reus und Götze haben `Verein_ID = NULL` und finden keinen Partner. Es bleiben nur **5 Zeilen**.")
     elif vorhersage_inner.value == "11":
-        mo.output.replace(mo.md("❌ 11 wäre die Summe beider Tabellen (8+4) abzüglich einer Zeile — aber so funktioniert ein JOIN nicht. Der INNER JOIN gibt nur Zeilen zurück, bei denen der Schlüssel in **beiden** Tabellen existiert. Das sind **5 Zeilen**."))
+        _result = mo.md("❌ 11 wäre die Summe beider Tabellen (8+4) abzüglich einer Zeile — aber so funktioniert ein JOIN nicht. Der INNER JOIN gibt nur Zeilen zurück, bei denen der Schlüssel in **beiden** Tabellen existiert. Das sind **5 Zeilen**.")
     elif vorhersage_inner.value == "3":
-        mo.output.replace(mo.md("❌ 3 sind die Spieler **ohne** Verein. Der INNER JOIN zeigt aber die Spieler **mit** Verein: Müller, Neuer (Bayern), Wirtz, Xhaka (Leverkusen), Hummels (BVB) = **5 Zeilen**."))
+        _result = mo.md("❌ 3 sind die Spieler **ohne** Verein. Der INNER JOIN zeigt aber die Spieler **mit** Verein: Müller, Neuer (Bayern), Wirtz, Xhaka (Leverkusen), Hummels (BVB) = **5 Zeilen**.")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([vorhersage_inner, _result])
     return
 
 
@@ -310,27 +312,29 @@ def _(mo):
 def _(mo):
     vorhersage_left = mo.ui.radio(
         options={
-            "inner_links": "INNER JOIN von links",
-            "left_verein": "LEFT JOIN mit Vereine als linke Tabelle",
-            "right_spieler": "RIGHT JOIN mit Spieler als linke Tabelle",
-            "left_spieler": "LEFT JOIN mit Spieler als linke Tabelle",
+            "INNER JOIN von links": "inner_links",
+            "LEFT JOIN mit Vereine als linke Tabelle": "left_verein",
+            "RIGHT JOIN mit Spieler als linke Tabelle": "right_spieler",
+            "LEFT JOIN mit Spieler als linke Tabelle": "left_spieler",
         },
         label="RB Leipzig hat 0 Spieler. Welcher JOIN zeigt alle 4 Vereine — auch die ohne Spieler?"
     )
-    vorhersage_left
     return (vorhersage_left,)
 
 
 @app.cell(hide_code=True)
-def _(vorhersage_left, mo):
+def _(mo, vorhersage_left):
     if vorhersage_left.value == "left_verein":
-        mo.output.replace(mo.md("✅ **Richtig!** `FROM vereine v LEFT JOIN spieler s` behält alle Vereine — auch RB Leipzig ohne Spieler. Die Spieler-Spalten werden dort mit NULL gefüllt."))
+        _result = mo.md("✅ **Richtig!** `FROM vereine v LEFT JOIN spieler s` behält alle Vereine — auch RB Leipzig ohne Spieler. Die Spieler-Spalten werden dort mit NULL gefüllt.")
     elif vorhersage_left.value == "inner_links":
-        mo.output.replace(mo.md("❌ Ein INNER JOIN zeigt nur Treffer in **beiden** Tabellen. RB Leipzig hat keine Spieler → es würde nicht erscheinen. Sie brauchen einen **LEFT JOIN mit Vereine als linke Tabelle**."))
+        _result = mo.md("❌ Ein INNER JOIN zeigt nur Treffer in **beiden** Tabellen. RB Leipzig hat keine Spieler → es würde nicht erscheinen. Sie brauchen einen **LEFT JOIN mit Vereine als linke Tabelle**.")
     elif vorhersage_left.value == "right_spieler":
-        mo.output.replace(mo.md("❌ Nicht ganz. `FROM spieler s RIGHT JOIN vereine v` wäre technisch korrekt (behält alle Vereine rechts), aber die elegantere Lösung ist `FROM vereine v LEFT JOIN spieler s` — **LEFT JOIN mit Vereine als linke Tabelle**."))
+        _result = mo.md("❌ Nicht ganz. `FROM spieler s RIGHT JOIN vereine v` wäre technisch korrekt (behält alle Vereine rechts), aber die elegantere Lösung ist `FROM vereine v LEFT JOIN spieler s` — **LEFT JOIN mit Vereine als linke Tabelle**.")
     elif vorhersage_left.value == "left_spieler":
-        mo.output.replace(mo.md("❌ `FROM spieler s LEFT JOIN vereine v` behält alle **Spieler** (links), nicht alle **Vereine**. Um alle Vereine zu sehen, muss Vereine die **linke** Tabelle sein: `FROM vereine v LEFT JOIN spieler s`."))
+        _result = mo.md("❌ `FROM spieler s LEFT JOIN vereine v` behält alle **Spieler** (links), nicht alle **Vereine**. Um alle Vereine zu sehen, muss Vereine die **linke** Tabelle sein: `FROM vereine v LEFT JOIN spieler s`.")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([vorhersage_left, _result])
     return
 
 
@@ -646,23 +650,25 @@ def _(mo):
 def _(mo):
     join_quiz1 = mo.ui.radio(
         options={
-            "inner": "INNER JOIN",
-            "left": "LEFT JOIN",
-            "right": "RIGHT JOIN",
-            "self": "Self-Join"
+            "INNER JOIN": "inner",
+            "LEFT JOIN": "left",
+            "RIGHT JOIN": "right",
+            "Self-Join": "self"
         },
         label="**Quiz:** Welcher JOIN zeigt auch Spieler, die keinem Verein zugeordnet sind?"
     )
-    join_quiz1
     return (join_quiz1,)
 
 
 @app.cell(hide_code=True)
-def _(join_quiz1, mo):
+def _(mo, join_quiz1):
     if join_quiz1.value == "left":
-        mo.output.replace(mo.md("✅ **Richtig!** LEFT JOIN behält alle Zeilen der linken Tabelle (Spieler), auch wenn kein passender Verein existiert. Die Vereinsspalten werden dann mit NULL gefüllt."))
+        _result = mo.md("✅ **Richtig!** LEFT JOIN behält alle Zeilen der linken Tabelle (Spieler), auch wenn kein passender Verein existiert. Die Vereinsspalten werden dann mit NULL gefüllt.")
     elif join_quiz1.value:
-        mo.output.replace(mo.md("❌ Nicht ganz. Wir brauchen einen JOIN, der *alle* Spieler behält — auch die ohne Verein. Das ist der **LEFT JOIN** (mit Spieler als linke Tabelle)."))
+        _result = mo.md("❌ Nicht ganz. Wir brauchen einen JOIN, der *alle* Spieler behält — auch die ohne Verein. Das ist der **LEFT JOIN** (mit Spieler als linke Tabelle).")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([join_quiz1, _result])
     return
 
 
@@ -670,23 +676,25 @@ def _(join_quiz1, mo):
 def _(mo):
     join_quiz2 = mo.ui.radio(
         options={
-            "inner": "INNER JOIN",
-            "left": "LEFT JOIN",
-            "right": "RIGHT JOIN",
-            "self": "Self-Join"
+            "INNER JOIN": "inner",
+            "LEFT JOIN": "left",
+            "RIGHT JOIN": "right",
+            "Self-Join": "self"
         },
         label="**Quiz:** Welchen JOIN-Typ brauchen Sie, um Rückspiele zu finden (gleiche Tabelle, verschiedene Zeilen)?"
     )
-    join_quiz2
     return (join_quiz2,)
 
 
 @app.cell(hide_code=True)
-def _(join_quiz2, mo):
+def _(mo, join_quiz2):
     if join_quiz2.value == "self":
-        mo.output.replace(mo.md("✅ **Richtig!** Ein Self-Join verknüpft eine Tabelle mit sich selbst. Wir geben der Tabelle zwei verschiedene Aliase (s1 und s2), um Hin- und Rückspiel zu vergleichen."))
+        _result = mo.md("✅ **Richtig!** Ein Self-Join verknüpft eine Tabelle mit sich selbst. Wir geben der Tabelle zwei verschiedene Aliase (s1 und s2), um Hin- und Rückspiel zu vergleichen.")
     elif join_quiz2.value:
-        mo.output.replace(mo.md("❌ Nicht ganz. Wir suchen innerhalb *derselben* Tabelle nach zueinander passenden Zeilen — das ist ein **Self-Join**."))
+        _result = mo.md("❌ Nicht ganz. Wir suchen innerhalb *derselben* Tabelle nach zueinander passenden Zeilen — das ist ein **Self-Join**.")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([join_quiz2, _result])
     return
 
 
@@ -702,27 +710,29 @@ def _(mo):
 def _(mo):
     vorhersage_multi = mo.ui.radio(
         options={
-            "1": "1 JOIN",
-            "2": "2 JOINs",
-            "3": "3 JOINs",
-            "0": "0 JOINs",
+            "1 JOIN": "1",
+            "2 JOINs": "2",
+            "3 JOINs": "3",
+            "0 JOINs": "0",
         },
         label="Die Spiele-Tabelle hat Heim_ID und Gast_ID. Wie viele JOINs brauchen Sie, um beide Mannschaftsnamen anzuzeigen?"
     )
-    vorhersage_multi
     return (vorhersage_multi,)
 
 
 @app.cell(hide_code=True)
-def _(vorhersage_multi, mo):
+def _(mo, vorhersage_multi):
     if vorhersage_multi.value == "2":
-        mo.output.replace(mo.md("✅ **Richtig!** Jeder Fremdschlüssel braucht seinen eigenen JOIN: einen für `Heim_ID → Vereine` (Alias `vh`) und einen für `Gast_ID → Vereine` (Alias `vg`). Zwei Schlüssel = zwei JOINs."))
+        _result = mo.md("✅ **Richtig!** Jeder Fremdschlüssel braucht seinen eigenen JOIN: einen für `Heim_ID → Vereine` (Alias `vh`) und einen für `Gast_ID → Vereine` (Alias `vg`). Zwei Schlüssel = zwei JOINs.")
     elif vorhersage_multi.value == "1":
-        mo.output.replace(mo.md("❌ Ein JOIN würde nur **einen** der beiden Mannschaftsnamen auflösen. Da die Spiele-Tabelle **zwei** Fremdschlüssel hat (Heim_ID und Gast_ID), brauchen Sie **2 JOINs** — einen pro Schlüssel."))
+        _result = mo.md("❌ Ein JOIN würde nur **einen** der beiden Mannschaftsnamen auflösen. Da die Spiele-Tabelle **zwei** Fremdschlüssel hat (Heim_ID und Gast_ID), brauchen Sie **2 JOINs** — einen pro Schlüssel.")
     elif vorhersage_multi.value == "3":
-        mo.output.replace(mo.md("❌ 3 wären zu viele. Sie brauchen einen JOIN pro Fremdschlüssel: `Heim_ID → Vereine` und `Gast_ID → Vereine`. Das sind genau **2 JOINs**."))
+        _result = mo.md("❌ 3 wären zu viele. Sie brauchen einen JOIN pro Fremdschlüssel: `Heim_ID → Vereine` und `Gast_ID → Vereine`. Das sind genau **2 JOINs**.")
     elif vorhersage_multi.value == "0":
-        mo.output.replace(mo.md("❌ Ohne JOIN könnten Sie nur die IDs anzeigen, nicht die Vereinsnamen. Sie brauchen **2 JOINs** zur Vereine-Tabelle — einen für Heim_ID und einen für Gast_ID."))
+        _result = mo.md("❌ Ohne JOIN könnten Sie nur die IDs anzeigen, nicht die Vereinsnamen. Sie brauchen **2 JOINs** zur Vereine-Tabelle — einen für Heim_ID und einen für Gast_ID.")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([vorhersage_multi, _result])
     return
 
 
@@ -855,27 +865,29 @@ def _(mo):
 def _(mo):
     viz_choice_8 = mo.ui.radio(
         options={
-            "inner": "INNER JOIN",
-            "left": "LEFT JOIN",
-            "right": "RIGHT JOIN",
-            "cross": "CROSS JOIN",
+            "INNER JOIN": "inner",
+            "LEFT JOIN": "left",
+            "RIGHT JOIN": "right",
+            "CROSS JOIN": "cross",
         },
         label="Spieler pro Verein inkl. Vereine mit 0 Spielern. Welcher JOIN?"
     )
-    viz_choice_8
     return (viz_choice_8,)
 
 
 @app.cell(hide_code=True)
-def _(viz_choice_8, mo):
+def _(mo, viz_choice_8):
     if viz_choice_8.value == "left":
-        mo.output.replace(mo.md("✅ **Richtig!** Ein **LEFT JOIN** (mit Vereine als linke Tabelle) stellt sicher, dass auch Vereine **ohne Spieler** im Ergebnis erscheinen — z.B. RB Leipzig mit 0 Spielern. Ein INNER JOIN würde diese Vereine verlieren."))
+        _result = mo.md("✅ **Richtig!** Ein **LEFT JOIN** (mit Vereine als linke Tabelle) stellt sicher, dass auch Vereine **ohne Spieler** im Ergebnis erscheinen — z.B. RB Leipzig mit 0 Spielern. Ein INNER JOIN würde diese Vereine verlieren.")
     elif viz_choice_8.value == "inner":
-        mo.output.replace(mo.md("❌ Ein INNER JOIN zeigt nur Vereine, die **mindestens einen** Spieler haben. RB Leipzig (0 Spieler) würde fehlen. Für eine vollständige Übersicht brauchen Sie einen **LEFT JOIN**."))
+        _result = mo.md("❌ Ein INNER JOIN zeigt nur Vereine, die **mindestens einen** Spieler haben. RB Leipzig (0 Spieler) würde fehlen. Für eine vollständige Übersicht brauchen Sie einen **LEFT JOIN**.")
     elif viz_choice_8.value == "right":
-        mo.output.replace(mo.md("❌ Ein RIGHT JOIN *könnte* funktionieren (wenn Vereine rechts steht), aber die Konvention ist **LEFT JOIN** mit der 'vollständigen' Tabelle links. Das ist lesbarer und verbreiteter."))
+        _result = mo.md("❌ Ein RIGHT JOIN *könnte* funktionieren (wenn Vereine rechts steht), aber die Konvention ist **LEFT JOIN** mit der 'vollständigen' Tabelle links. Das ist lesbarer und verbreiteter.")
     elif viz_choice_8.value == "cross":
-        mo.output.replace(mo.md("❌ Ein CROSS JOIN erzeugt das **kartesische Produkt** — jede Kombination aus Verein und Spieler. Das wäre viel zu viel und inhaltlich falsch. Sie brauchen einen **LEFT JOIN**."))
+        _result = mo.md("❌ Ein CROSS JOIN erzeugt das **kartesische Produkt** — jede Kombination aus Verein und Spieler. Das wäre viel zu viel und inhaltlich falsch. Sie brauchen einen **LEFT JOIN**.")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([viz_choice_8, _result])
     return
 
 
@@ -893,24 +905,26 @@ def _(mo):
 def _(mo):
     selbsttest_8 = mo.ui.radio(
         options={
-            "left_null": "LEFT JOIN + WHERE ... IS NULL",
-            "inner": "INNER JOIN",
-            "not_in": "NOT IN Subquery",
+            "LEFT JOIN + WHERE ... IS NULL": "left_null",
+            "INNER JOIN": "inner",
+            "NOT IN Subquery": "not_in",
         },
         label="Welches Pattern findet 'Waisen-Datensätze' (z.B. Spieler ohne Verein)?"
     )
-    selbsttest_8
     return (selbsttest_8,)
 
 
 @app.cell(hide_code=True)
-def _(selbsttest_8, mo):
+def _(mo, selbsttest_8):
     if selbsttest_8.value == "left_null":
-        mo.output.replace(mo.md("✅ **Richtig!** `LEFT JOIN` + `WHERE ... IS NULL` ist das Standardmuster, um Datensätze ohne Verknüpfung zu finden. Der LEFT JOIN behält alle Zeilen der linken Tabelle, und `IS NULL` filtert auf die, die keinen Partner in der rechten Tabelle haben."))
+        _result = mo.md("✅ **Richtig!** `LEFT JOIN` + `WHERE ... IS NULL` ist das Standardmuster, um Datensätze ohne Verknüpfung zu finden. Der LEFT JOIN behält alle Zeilen der linken Tabelle, und `IS NULL` filtert auf die, die keinen Partner in der rechten Tabelle haben.")
     elif selbsttest_8.value == "inner":
-        mo.output.replace(mo.md("❌ Ein INNER JOIN zeigt nur Zeilen **mit** Verknüpfung — das Gegenteil von dem, was wir suchen. Für 'Waisen-Datensätze' brauchen Sie **LEFT JOIN + WHERE ... IS NULL**."))
+        _result = mo.md("❌ Ein INNER JOIN zeigt nur Zeilen **mit** Verknüpfung — das Gegenteil von dem, was wir suchen. Für 'Waisen-Datensätze' brauchen Sie **LEFT JOIN + WHERE ... IS NULL**.")
     elif selbsttest_8.value == "not_in":
-        mo.output.replace(mo.md("❌ `NOT IN` kann funktionieren, ist aber fehleranfällig bei NULL-Werten und oft langsamer. Das Standardmuster ist **LEFT JOIN + WHERE ... IS NULL** — es ist robust, performant und gut lesbar."))
+        _result = mo.md("❌ `NOT IN` kann funktionieren, ist aber fehleranfällig bei NULL-Werten und oft langsamer. Das Standardmuster ist **LEFT JOIN + WHERE ... IS NULL** — es ist robust, performant und gut lesbar.")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([selbsttest_8, _result])
     return
 
 

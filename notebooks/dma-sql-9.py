@@ -36,6 +36,8 @@ def _(mo):
         - 🔵 **Selbstständig**: Eigene Lösung schreiben
         - 🔴 **Debugging**: Fehler finden und beheben
         - ⭐ **Exploration**: Offene Herausforderungen
+
+        > **Hinweis:** 🟡-Aufgaben enthalten `???` als Platzhalter. Die Zelle zeigt einen SQL-Fehler, bis Sie die `???` durch die richtige Lösung ersetzen — das ist Absicht!
         """
     )
     return
@@ -852,6 +854,8 @@ def _(mo):
         ## Exploration
 
         Offene Herausforderungen für Fortgeschrittene.
+
+        **Tipp:** Vergleichen Sie Ihre Lösungen mit Ihrem Nachbarn — es gibt oft mehrere Wege zum gleichen Ergebnis!
         """
     )
     return
@@ -1013,30 +1017,82 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.accordion({"🔑 Erklärung": mo.md("""
-**Lost-Update-Problem:**
+    mo.md(
+        r"""
+        ---
 
-| Schritt | Transaktion 1 | Transaktion 2 | Saldo A |
-|---------|---------------|---------------|---------|
-| 1 | READ Saldo A → 1000 | | 1000 |
-| 2 | | READ Saldo A → 1000 | 1000 |
-| 3 | WRITE Saldo A = 900 | | 900 |
-| 4 | | WRITE Saldo A = 950 | **950** ← falsch! |
+        ## 🎓 Übungsklausur: Transaktions-Serialisierbarkeit
 
-**Problem:** T2 hat den alten Wert (1000) gelesen und überschreibt die Änderung von T1.
-Alice sollte 850 € haben (1000 - 100 - 50), hat aber 950 €.
+        In der Klausur werden Sie häufiger auf Aufgaben zur Serialisierbarkeit treffen. Hier ist ein typisches Beispiel aus einer vergangenen Klausur.
 
-**Lösung:** Transaktionen mit korrekter Isolation (z.B. Serializable) oder Sperren (Locks)
-verhindern dieses Problem. In SQL:
+        Gegeben sei folgende Historie von drei Transaktionen ($T_1, T_2, T_3$).
 
-```sql
-BEGIN TRANSACTION;
-UPDATE konten SET saldo = saldo - 100 WHERE konto_id = 'A';
-UPDATE konten SET saldo = saldo + 100 WHERE konto_id = 'B';
-COMMIT;
-```
+        | Schritt | $T_1$ | $T_2$ | $T_3$ |
+        |---|---|---|---|
+        | 1 | | `read(x)` | |
+        | 2 | | `write(x)` | |
+        | 3 | `read(y)` | | |
+        | 4 | | `read(y)` | |
+        | 5 | | | `write(y)` |
+        | 6 | `write(y)` | | |
+        | 7 | | | `read(y)` |
 
-Durch `BEGIN ... COMMIT` wird sichergestellt, dass die Transaktion atomar und isoliert abläuft.
+        **Aufgabe:**
+        1. Zeichnen Sie (mental oder auf Papier) den Präzedenzgraphen.
+        2. Bestimmen Sie, ob die Historie **konfliktserialisierbar** ist.
+        3. Identifizieren Sie ggf. den Konfliktzyklus.
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo):
+    # Tragen Sie Ihre Analyse hier ein
+    mo.md(
+        """
+        **Ihre Antwort:**
+
+        - Konflikte:
+          - ...
+        - Präzedenzgraph Kanten:
+          - ...
+        - Zyklus vorhanden?
+        - Serialisierbar?
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Lösung": mo.md("""
+**Konfliktanalyse:**
+Wir suchen nach Konfliktpaaren (R-W, W-R, W-W) auf demselben Objekt zwischen verschiedenen Transaktionen:
+
+1. **Konflikt auf y:**
+   - Schritt 4: $T_2$ `read(y)`
+   - Schritt 5: $T_3$ `write(y)`
+   - **Kante:** $T_2 \to T_3$
+
+2. **Konflikt auf y:**
+   - Schritt 3: $T_1$ `read(y)`
+   - Schritt 5: $T_3$ `write(y)`
+   - **Kante:** $T_1 \to T_3$
+
+3. **Konflikt auf y:**
+   - Schritt 5: $T_3$ `write(y)`
+   - Schritt 6: $T_1$ `write(y)`
+   - **Kante:** $T_3 \to T_1$
+
+**Präzedenzgraph:**
+- $T_2 \to T_3$
+- $T_1 \to T_3$
+- $T_3 \to T_1$
+
+**Ergebnis:**
+- Wir haben einen Zyklus: $T_1 \to T_3 \to T_1$.
+- Die Historie ist **NICHT konfliktserialisierbar**.
 """)})
     return
 
@@ -1044,6 +1100,103 @@ Durch `BEGIN ... COMMIT` wird sichergestellt, dass die Transaktion atomar und is
 # -----------------------------------------------------------------------
 # Zusammenfassung
 # -----------------------------------------------------------------------
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## ⭐ Analyse-Aufgabe: Teams über dem Liga-Durchschnitt
+
+        Diese Aufgabe kombiniert mehrere Konzepte aus dieser Session:
+        - CTEs für strukturierte Berechnungen
+        - Aggregation (AVG, Vergleiche)
+        - Subqueries für dynamische Schwellenwerte
+
+        **Geschäftsfrage:** Welche Teams performen besser als der Liga-Durchschnitt — und wie weit?
+
+        ---
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### ⭐ Analyse: Teams über Durchschnitt mit Abweichung
+
+        **Aufgabe:** Erstellen Sie eine Analyse, die zeigt:
+        1. Alle Teams mit mehr Punkten als der Liga-Durchschnitt
+        2. Den Liga-Durchschnitt als Referenzwert
+        3. Die Abweichung vom Durchschnitt (absolut und prozentual)
+        4. Eine Klassifizierung: "Deutlich über" (>20%), "Über" (>0%), oder "Im Durchschnitt"
+
+        Nutzen Sie CTEs, um die Berechnung zu strukturieren.
+        """
+    )
+    return
+
+
+@app.cell
+def _(bundesliga, mo):
+    # ⭐ Analyse-Aufgabe: Ihre Lösung
+    _df = mo.sql(
+        f"""
+        -- Schreiben Sie Ihre Analyse-Abfrage hier
+        -- Ziel: Teams über dem Durchschnitt mit Klassifizierung
+        SELECT 'Ihre Lösung hier' AS hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+WITH liga_stats AS (
+    SELECT
+        AVG(Punkte) AS avg_punkte,
+        AVG(Tore) AS avg_tore,
+        AVG(Tordifferenz) AS avg_td
+    FROM bundesliga
+),
+teams_bewertet AS (
+    SELECT
+        b.Mannschaft,
+        b.Punkte,
+        ROUND(l.avg_punkte, 1) AS Liga_Schnitt,
+        b.Punkte - l.avg_punkte AS Abweichung_Absolut,
+        ROUND((b.Punkte - l.avg_punkte) / l.avg_punkte * 100, 1) AS Abweichung_Prozent,
+        CASE
+            WHEN (b.Punkte - l.avg_punkte) / l.avg_punkte > 0.20 THEN 'Deutlich über Durchschnitt'
+            WHEN b.Punkte > l.avg_punkte THEN 'Über Durchschnitt'
+            ELSE 'Im Durchschnitt oder darunter'
+        END AS Klassifizierung
+    FROM bundesliga b, liga_stats l
+)
+SELECT *
+FROM teams_bewertet
+WHERE Abweichung_Absolut > 0
+ORDER BY Abweichung_Prozent DESC
+```
+
+**Analyse-Erkenntnisse:**
+- Zwei CTEs strukturieren die Berechnung: erst Liga-Statistiken, dann Team-Bewertung
+- Die prozentuale Abweichung normalisiert den Vergleich
+- CASE WHEN klassifiziert in verständliche Kategorien
+- Diese Struktur ist leicht erweiterbar (z.B. für Tore, Tordifferenz)
+
+**Business Value:** Diese Analyse hilft bei:
+- Identifikation von Überperformern
+- Benchmarking gegen Liga-Durchschnitt
+- Reporting für Stakeholder
+""")})
+    return
 
 
 @app.cell(hide_code=True)

@@ -36,6 +36,8 @@ def _(mo):
         - 🔴 **Debugging**: Fehler finden und beheben
         - ⭐ **Exploration**: Offene Herausforderungen
 
+        > **Hinweis:** 🟡-Aufgaben enthalten `???` als Platzhalter. Die Zelle zeigt einen SQL-Fehler, bis Sie die `???` durch die richtige Lösung ersetzen — das ist Absicht!
+
         ---
         """
     )
@@ -150,21 +152,20 @@ def _(mo):
 def _(mo):
     quiz_crisp = mo.ui.radio(
         options={
-            "correct": "Business Understanding → Data Understanding → Data Preparation → Modeling → Evaluation → Deployment",
-            "wrong1": "Data Understanding → Data Preparation → Business Understanding → Modeling → Evaluation → Deployment",
-            "wrong2": "Business Understanding → Modeling → Data Preparation → Evaluation → Data Understanding → Deployment",
-            "wrong3": "Data Preparation → Data Understanding → Modeling → Business Understanding → Deployment → Evaluation",
+            "Business Understanding → Data Understanding → Data Preparation → Modeling → Evaluation → Deployment": "correct",
+            "Data Understanding → Data Preparation → Business Understanding → Modeling → Evaluation → Deployment": "wrong1",
+            "Business Understanding → Modeling → Data Preparation → Evaluation → Data Understanding → Deployment": "wrong2",
+            "Data Preparation → Data Understanding → Modeling → Business Understanding → Deployment → Evaluation": "wrong3",
         },
         label="**Quiz:** In welcher Reihenfolge werden die CRISP-DM Phasen typischerweise durchlaufen?",
     )
-    quiz_crisp
     return (quiz_crisp,)
 
 
 @app.cell(hide_code=True)
 def _(mo, quiz_crisp):
     if quiz_crisp.value == "correct":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "✅ **Richtig!** CRISP-DM beginnt immer mit dem **Business Understanding** — "
                 "erst das Problem verstehen, dann die Daten. In der Praxis ist der Prozess "
@@ -172,12 +173,15 @@ def _(mo, quiz_crisp):
             )
         )
     elif quiz_crisp.value:
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Nicht ganz. CRISP-DM beginnt immer mit **Business Understanding** — "
                 "man muss zuerst das Problem verstehen, bevor man die Daten analysiert."
             )
         )
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([quiz_crisp, _result])
     return
 
 
@@ -739,6 +743,8 @@ def _(mo):
         ---
 
         ## Freie Exploration — Herausforderungen
+
+        **Tipp:** Vergleichen Sie Ihre Lösungen mit Ihrem Nachbarn — es gibt oft mehrere Wege zum gleichen Ergebnis!
         """
     )
     return

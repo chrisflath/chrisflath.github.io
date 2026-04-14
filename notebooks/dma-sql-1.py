@@ -367,6 +367,11 @@ def _(mo):
         },
         label="Was liefert `SELECT Mannschaft FROM bundesliga`?",
     )
+    return (quiz_select,)
+
+
+@app.cell(hide_code=True)
+def _(mo, quiz_select):
     if quiz_select.value == "b":
         _result = mo.callout(mo.md("**Richtig!** `SELECT Mannschaft` wählt genau eine Spalte aus — für alle Zeilen der Tabelle."), kind="success")
     elif quiz_select.value is not None:
@@ -582,6 +587,11 @@ def _(mo):
         },
         label="Welche Abfrage findet Teams mit **mindestens 10 Siegen** UND **höchstens 5 Niederlagen**?",
     )
+    return (quiz_where,)
+
+
+@app.cell(hide_code=True)
+def _(mo, quiz_where):
     if quiz_where.value == "c":
         _result = mo.callout(mo.md("**Richtig!** 'Mindestens' = `>=`, 'höchstens' = `<=`, und beide Bedingungen müssen gelten = `AND`."), kind="success")
     elif quiz_where.value is not None:
@@ -849,6 +859,11 @@ def _(mo):
         },
         label="Welcher Operator liefert in der Regel **mehr** Ergebnisse: `WHERE A AND B` oder `WHERE A OR B`?",
     )
+    return (quiz_logic,)
+
+
+@app.cell(hide_code=True)
+def _(mo, quiz_logic):
     if quiz_logic.value == "b":
         _result = mo.callout(mo.md("**Richtig!** `OR` ist *permissiv* — es reicht, wenn eine Bedingung zutrifft. `AND` ist *restriktiv* — beide müssen gelten."), kind="success")
     elif quiz_logic.value is not None:

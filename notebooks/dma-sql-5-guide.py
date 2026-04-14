@@ -215,20 +215,19 @@ def _(mo):
 def _(mo):
     pred_redundanz = mo.ui.radio(
         options={
-            "1": "1 Zeile",
-            "5": "5 Zeilen",
-            "10": "10 Zeilen",
+            "1 Zeile": "1",
+            "5 Zeilen": "5",
+            "10 Zeilen": "10",
         },
         label="**Vorhersage:** Bayern hat 5 Spieler. In wie vielen Zeilen müsste das Stadion geändert werden?"
     )
-    pred_redundanz
     return (pred_redundanz,)
 
 
 @app.cell(hide_code=True)
 def _(mo, pred_redundanz):
     if pred_redundanz.value == "5":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "Richtig! Da jede Spielerzeile die Vereinsinformation wiederholt, "
                 "müsste das Stadion in **allen 5 Zeilen** geändert werden. "
@@ -237,7 +236,7 @@ def _(mo, pred_redundanz):
             )
         )
     elif pred_redundanz.value == "1":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "Nicht ganz. In der Mega-Tabelle wird die Vereinsinformation "
                 "**in jeder Spielerzeile** wiederholt. Bayern hat 5 Spieler, "
@@ -246,13 +245,16 @@ def _(mo, pred_redundanz):
             )
         )
     elif pred_redundanz.value == "10":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "Nicht ganz. 10 Zeilen ist die Gesamtanzahl aller Spieler in der Tabelle. "
                 "Aber nur **5 Zeilen** gehören zu Bayern München -- "
                 "in diesen 5 Zeilen müsste das Stadion geändert werden."
             )
         )
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([pred_redundanz, _result])
     return
 
 
@@ -444,23 +446,25 @@ def _(mo):
 def _(mo):
     quiz_anomalie = mo.ui.radio(
         options={
-            "correct": "Löschanomalie -- Vereinsinformationen gingen verloren",
-            "aenderung": "Änderungsanomalie -- ein Verein ist nicht kohärent aktualisiert",
-            "einfuege": "Einfügeanomalie -- wir konnten nicht alle Infos speichern",
-            "normal": "Normalisierungsanomalie -- die Tabelle ist nicht in 3NF",
+            "Löschanomalie -- Vereinsinformationen gingen verloren": "correct",
+            "Änderungsanomalie -- ein Verein ist nicht kohärent aktualisiert": "aenderung",
+            "Einfügeanomalie -- wir konnten nicht alle Infos speichern": "einfuege",
+            "Normalisierungsanomalie -- die Tabelle ist nicht in 3NF": "normal",
         },
         label="**Quiz:** Wir haben alle Leverkusen-Spieler gelöscht. Jetzt wissen wir nicht mehr, wo Leverkusen liegt oder wie das Stadion heißt. Welche Anomalie ist das?"
     )
-    quiz_anomalie
     return (quiz_anomalie,)
 
 
 @app.cell(hide_code=True)
-def _(quiz_anomalie, mo):
+def _(mo, quiz_anomalie):
     if quiz_anomalie.value == "correct":
-        mo.output.replace(mo.md("Richtig! Das ist die **Löschanomalie**: Beim Löschen von Spielerdaten gehen ungewollt auch die Vereinsinformationen verloren, weil beides in derselben Tabelle gespeichert ist."))
+        _result = mo.md("Richtig! Das ist die **Löschanomalie**: Beim Löschen von Spielerdaten gehen ungewollt auch die Vereinsinformationen verloren, weil beides in derselben Tabelle gespeichert ist.")
     elif quiz_anomalie.value:
-        mo.output.replace(mo.md("Nicht ganz. Beim **Löschen** von Daten gehen *andere* Informationen verloren -- das ist die Löschanomalie. Tipp: Der Name der Anomalie beschreibt die Aktion, die das Problem verursacht."))
+        _result = mo.md("Nicht ganz. Beim **Löschen** von Daten gehen *andere* Informationen verloren -- das ist die Löschanomalie. Tipp: Der Name der Anomalie beschreibt die Aktion, die das Problem verursacht.")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([quiz_anomalie, _result])
     return
 
 
@@ -476,20 +480,19 @@ def _(mo):
 def _(mo):
     pred_einfuege = mo.ui.radio(
         options={
-            "null": "Wir müssen NULL-Werte für Spieler eintragen (Einfügeanomalie)",
-            "normal": "Der Verein wird ganz normal eingefügt",
-            "fehler": "Die Datenbank gibt einen Fehler aus",
+            "Wir müssen NULL-Werte für Spieler eintragen (Einfügeanomalie)": "null",
+            "Der Verein wird ganz normal eingefügt": "normal",
+            "Die Datenbank gibt einen Fehler aus": "fehler",
         },
         label="**Vorhersage:** Neuen Verein ohne Spieler einfügen -- was passiert in der Mega-Tabelle?"
     )
-    pred_einfuege
     return (pred_einfuege,)
 
 
 @app.cell(hide_code=True)
 def _(mo, pred_einfuege):
     if pred_einfuege.value == "null":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "Richtig! In der Mega-Tabelle kann ein Verein nur als Teil einer "
                 "**Spielerzeile** existieren. Ohne Spieler müssen wir `NULL`-Werte "
@@ -498,7 +501,7 @@ def _(mo, pred_einfuege):
             )
         )
     elif pred_einfuege.value == "normal":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "Nicht ganz. In der Mega-Tabelle sind Spieler- und Vereinsdaten "
                 "in derselben Zeile verknüpft. Ohne Spieler müssen Sie `NULL`-Werte "
@@ -506,13 +509,16 @@ def _(mo, pred_einfuege):
             )
         )
     elif pred_einfuege.value == "fehler":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "Nicht ganz. Die Datenbank gibt keinen Fehler aus, aber das Ergebnis ist "
                 "unbefriedigend: Sie müssen `NULL`-Werte für Spieler und Position eintragen, "
                 "um den Verein speichern zu können -- das ist die **Einfügeanomalie**."
             )
         )
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([pred_einfuege, _result])
     return
 
 
@@ -650,22 +656,24 @@ def _(mo):
 def _(mo):
     quiz1 = mo.ui.radio(
         options={
-            "1:1": "1:1 (Eins zu Eins)",
-            "1:N": "1:N (Eins zu Viele)",
-            "M:N": "M:N (Viele zu Viele)"
+            "1:1 (Eins zu Eins)": "1:1",
+            "1:N (Eins zu Viele)": "1:N",
+            "M:N (Viele zu Viele)": "M:N"
         },
         label="**Frage 1:** Verein <-> Spieler (ein Spieler spielt für einen Verein)"
     )
-    quiz1
     return (quiz1,)
 
 
 @app.cell(hide_code=True)
 def _(mo, quiz1):
     if quiz1.value == "1:N":
-        mo.output.replace(mo.md("Richtig! Ein Verein hat viele Spieler, aber jeder Spieler gehört zu einem Verein."))
+        _result = mo.md("Richtig! Ein Verein hat viele Spieler, aber jeder Spieler gehört zu einem Verein.")
     elif quiz1.value:
-        mo.output.replace(mo.md("Nicht ganz. Denken Sie daran: Ein Verein kann *viele* Spieler haben."))
+        _result = mo.md("Nicht ganz. Denken Sie daran: Ein Verein kann *viele* Spieler haben.")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([quiz1, _result])
     return
 
 
@@ -673,22 +681,24 @@ def _(mo, quiz1):
 def _(mo):
     quiz2 = mo.ui.radio(
         options={
-            "1:1": "1:1 (Eins zu Eins)",
-            "1:N": "1:N (Eins zu Viele)",
-            "M:N": "M:N (Viele zu Viele)"
+            "1:1 (Eins zu Eins)": "1:1",
+            "1:N (Eins zu Viele)": "1:N",
+            "M:N (Viele zu Viele)": "M:N"
         },
         label="**Frage 2:** Student <-> Kurs (Studierende können mehrere Kurse besuchen, Kurse haben mehrere Studierende)"
     )
-    quiz2
     return (quiz2,)
 
 
 @app.cell(hide_code=True)
 def _(mo, quiz2):
     if quiz2.value == "M:N":
-        mo.output.replace(mo.md("Richtig! Beide Seiten können mit vielen auf der anderen verbunden sein."))
+        _result = mo.md("Richtig! Beide Seiten können mit vielen auf der anderen verbunden sein.")
     elif quiz2.value:
-        mo.output.replace(mo.md("Nicht ganz. Auf *beiden* Seiten sind mehrere möglich."))
+        _result = mo.md("Nicht ganz. Auf *beiden* Seiten sind mehrere möglich.")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([quiz2, _result])
     return
 
 
@@ -711,14 +721,13 @@ def _(mo):
         },
         label="**Vorhersage:** Von diesen 5 Beziehungen (Abt-Mitarbeiter, Student-Kurs, Person-Ausweis, Autor-Buch, Verein-Spieler) -- wie viele sind 1:N?"
     )
-    pred_kardinalitaet
     return (pred_kardinalitaet,)
 
 
 @app.cell(hide_code=True)
 def _(mo, pred_kardinalitaet):
     if pred_kardinalitaet.value == "2":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "Richtig! Genau **2** der 5 Beziehungen sind 1:N:\n\n"
                 "- **Abteilung -- Mitarbeiter:** 1:N (eine Abteilung hat viele Mitarbeiter)\n"
@@ -730,7 +739,7 @@ def _(mo, pred_kardinalitaet):
             )
         )
     elif pred_kardinalitaet.value == "0":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "Nicht ganz. Es gibt durchaus 1:N-Beziehungen in der Liste! "
                 "Denken Sie an Abteilung -- Mitarbeiter: Eine Abteilung hat *viele* Mitarbeiter, "
@@ -738,7 +747,7 @@ def _(mo, pred_kardinalitaet):
             )
         )
     elif pred_kardinalitaet.value == "3":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "Nicht ganz. Prüfen Sie nochmal genau: Student -- Kurs und Autor -- Buch "
                 "sind **M:N** (auf *beiden* Seiten mehrere möglich). "
@@ -746,7 +755,7 @@ def _(mo, pred_kardinalitaet):
             )
         )
     elif pred_kardinalitaet.value == "5":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "Nicht ganz. Nicht alle Beziehungen sind 1:N! "
                 "Person -- Ausweis ist **1:1** (jede Person hat genau einen). "
@@ -754,6 +763,9 @@ def _(mo, pred_kardinalitaet):
                 "Nur **2** der 5 sind 1:N."
             )
         )
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([pred_kardinalitaet, _result])
     return
 
 
@@ -889,21 +901,20 @@ def _(mo):
 def _(mo):
     viz_choice_5 = mo.ui.radio(
         options={
-            "grouped_bar": "Gruppiertes Balkendiagramm",
-            "pie": "Kreisdiagramm",
-            "line": "Liniendiagramm",
-            "scatter": "Streudiagramm",
+            "Gruppiertes Balkendiagramm": "grouped_bar",
+            "Kreisdiagramm": "pie",
+            "Liniendiagramm": "line",
+            "Streudiagramm": "scatter",
         },
         label="Redundanz zeigen: 10 Zeilen gespeichert vs. nur 3 eindeutige Fakten?"
     )
-    viz_choice_5
     return (viz_choice_5,)
 
 
 @app.cell(hide_code=True)
 def _(mo, viz_choice_5):
     if viz_choice_5.value == "grouped_bar":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "Richtig! Ein **gruppiertes Balkendiagramm** eignet sich ideal, um "
                 "zwei Kennzahlen (Gespeicherte Zeilen vs. Eindeutige Fakten) für die gleichen "
@@ -912,7 +923,7 @@ def _(mo, viz_choice_5):
             )
         )
     elif viz_choice_5.value == "pie":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "Nicht ganz. Ein Kreisdiagramm zeigt Anteile am Ganzen, aber hier wollen wir "
                 "**zwei verschiedene Kennzahlen** für zwei Designs vergleichen. "
@@ -920,7 +931,7 @@ def _(mo, viz_choice_5):
             )
         )
     elif viz_choice_5.value == "line":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "Nicht ganz. Ein Liniendiagramm suggeriert eine zeitliche Entwicklung oder "
                 "Reihenfolge. Hier vergleichen wir **zwei Designs** nebeneinander -- "
@@ -928,13 +939,16 @@ def _(mo, viz_choice_5):
             )
         )
     elif viz_choice_5.value == "scatter":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "Nicht ganz. Ein Streudiagramm zeigt den Zusammenhang zweier numerischer "
                 "Variablen. Hier haben wir Kategorien (Designs) und wollen Kennzahlen vergleichen -- "
                 "ein **gruppiertes Balkendiagramm** ist die bessere Wahl."
             )
         )
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([viz_choice_5, _result])
     return
 
 
@@ -952,20 +966,19 @@ def _(mo):
 def _(mo):
     selbsttest_5 = mo.ui.radio(
         options={
-            "redundanz": "Redundanz (mehrfach gespeicherte Daten)",
-            "geschwindigkeit": "Langsamere Abfragen",
-            "speicher": "Höherer Speicherverbrauch",
+            "Redundanz (mehrfach gespeicherte Daten)": "redundanz",
+            "Langsamere Abfragen": "geschwindigkeit",
+            "Höherer Speicherverbrauch": "speicher",
         },
         label="Welches Problem löst die Aufteilung auf mehrere Tabellen primär?"
     )
-    selbsttest_5
     return (selbsttest_5,)
 
 
 @app.cell(hide_code=True)
 def _(mo, selbsttest_5):
     if selbsttest_5.value == "redundanz":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "Richtig! Die Aufteilung auf mehrere Tabellen löst primär das "
                 "**Redundanz-Problem**: Jede Information wird nur **einmal** gespeichert. "
@@ -975,7 +988,7 @@ def _(mo, selbsttest_5):
             )
         )
     elif selbsttest_5.value == "geschwindigkeit":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "Nicht ganz. Normalisierung kann Abfragen sogar *langsamer* machen (wegen JOINs). "
                 "Das Hauptproblem, das gelöst wird, ist **Redundanz**: mehrfach gespeicherte Daten "
@@ -983,13 +996,16 @@ def _(mo, selbsttest_5):
             )
         )
     elif selbsttest_5.value == "speicher":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "Nicht ganz. Normalisierung spart zwar etwas Speicher, aber das ist ein "
                 "Nebeneffekt. Das Hauptproblem ist **Redundanz**: Wenn dieselbe Information "
                 "an mehreren Stellen steht, entstehen Inkonsistenzen bei Änderungen."
             )
         )
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([selbsttest_5, _result])
     return
 
 

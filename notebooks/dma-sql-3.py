@@ -13,7 +13,7 @@ import marimo
 __generated_with = "0.13.0"
 app = marimo.App(
     width="medium",
-    app_title="DMA Session 3: Aggregation & Gruppierung",
+    app_title="DMA Session 3: Aggregation & Gruppierung — Übungen",
 )
 
 
@@ -27,16 +27,17 @@ def _():
 def _(mo):
     mo.md(
         r"""
-        # Session 3: Aggregation & Gruppierung
+        # Session 3: Aggregation & Gruppierung — Übungen
 
-        **Kursfahrplan:** **▸ I: SQL-Grundlagen (S1–4)** · II: Datenmodellierung (S5–7) · III: Fortgeschrittenes SQL (S8–9) · IV: Datenanalyse (S10–13)
+        Theorie und geführte Beispiele → **03-sql-aggregation-guide.py**
 
-        In dieser Session lernen Sie:
+        **Aufgabentypen:**
+        - 🟡 **Scaffolded**: Teillösung zum Ergänzen
+        - 🔵 **Selbstständig**: Eigene Lösung schreiben
+        - 🔴 **Debugging**: Fehler finden und beheben
+        - ⭐ **Exploration**: Offene Herausforderungen
 
-        - **Aggregatfunktionen**: COUNT, SUM, AVG, MIN, MAX
-        - **Gruppierung** mit `GROUP BY`
-        - **Filter auf Gruppen** mit `HAVING`
-        - Unterschied zwischen `WHERE` und `HAVING`
+        > **Hinweis:** 🟡-Aufgaben enthalten `???` als Platzhalter. Die Zelle zeigt einen SQL-Fehler, bis Sie die `???` durch die richtige Lösung ersetzen — das ist Absicht!
 
         ---
         """
@@ -49,10 +50,6 @@ def _(mo):
     mo.md(
         r"""
         ## Daten laden
-
-        Wir arbeiten heute mit:
-        1. **Bundesliga-Tabelle** (bekannt aus den letzten Sessions)
-        2. **Spieler-Daten** (erweitert mit mehr Spielern)
         """
     )
     return
@@ -69,8 +66,6 @@ def _():
         url = f"https://www.fussballdaten.de/bundesliga/{saison}/tabelle/"
 
         try:
-            # Try different parsers for compatibility
-            # html.parser is in stdlib, lxml/html5lib need installation
             for parser in ['html.parser', 'lxml', 'html5lib']:
                 try:
                     tabellen = pd.read_html(url, flavor=parser)
@@ -87,21 +82,21 @@ def _():
                 "D": "Unentschieden", "U": "Unentschieden",
                 "L": "Niederlagen", "V": "Niederlagen",
                 "Sp.": "Spiele",
-                "Goals": "Tore", "Tore": "Tore",
+                "Goals": "Tore_roh", "Tore": "Tore_roh",
                 "Diff.": "Tordifferenz"
             }
             df = df.rename(columns={k: v for k, v in spalten_mapping.items() if k in df.columns})
 
-            if "Tordifferenz" not in df.columns and "Tore" in df.columns:
-                df[["ToreGeschossen", "ToreKassiert"]] = df["Tore"].str.split(":", expand=True).astype(int)
-                df["Tordifferenz"] = df["ToreGeschossen"] - df["ToreKassiert"]
+            if "Tordifferenz" not in df.columns and "Tore_roh" in df.columns:
+                df[["Tore", "Gegentore"]] = df["Tore_roh"].str.split(":", expand=True).astype(int)
+                df["Tordifferenz"] = df["Tore"] - df["Gegentore"]
             elif "Tordifferenz" in df.columns:
                 df["Tordifferenz"] = pd.to_numeric(df["Tordifferenz"], errors="coerce").fillna(0).astype(int)
-                if "Tore" in df.columns:
-                    df[["ToreGeschossen", "ToreKassiert"]] = df["Tore"].str.split(":", expand=True).astype(int)
+                if "Tore_roh" in df.columns:
+                    df[["Tore", "Gegentore"]] = df["Tore_roh"].str.split(":", expand=True).astype(int)
 
             gewünschte_spalten = ["Mannschaft", "Spiele", "Siege", "Unentschieden", "Niederlagen",
-                                   "ToreGeschossen", "ToreKassiert", "Tordifferenz", "Punkte"]
+                                   "Tore", "Gegentore", "Tordifferenz", "Punkte"]
             df = df[[c for c in gewünschte_spalten if c in df.columns]]
             quelle = f"Live von fussballdaten.de (Saison {saison})"
 
@@ -117,8 +112,8 @@ def _():
                 "Siege": [16, 12, 11, 11, 10, 9, 9, 11, 7, 6, 6, 6, 6, 5, 5, 3, 4, 3],
                 "Unentschieden": [2, 6, 3, 2, 2, 6, 3, 3, 6, 7, 5, 5, 3, 6, 4, 5, 3, 3],
                 "Niederlagen": [1, 1, 5, 5, 6, 4, 6, 4, 6, 6, 7, 8, 9, 8, 10, 11, 11, 13],
-                "ToreGeschossen": [72, 38, 40, 32, 41, 35, 28, 38, 29, 31, 22, 21, 26, 24, 28, 17, 14, 18],
-                "ToreKassiert": [16, 17, 30, 20, 31, 24, 26, 22, 32, 34, 24, 32, 33, 28, 40, 38, 25, 45],
+                "Tore": [72, 38, 40, 32, 41, 35, 28, 38, 29, 31, 22, 21, 26, 24, 28, 17, 14, 18],
+                "Gegentore": [16, 17, 30, 20, 31, 24, 26, 22, 32, 34, 24, 32, 33, 28, 40, 38, 25, 45],
                 "Tordifferenz": [56, 21, 10, 12, 10, 11, 2, 16, -3, -3, -2, -11, -7, -4, -12, -21, -11, -27],
                 "Punkte": [50, 42, 36, 35, 32, 33, 30, 36, 27, 25, 23, 23, 21, 21, 19, 14, 15, 12]
             })
@@ -172,7 +167,7 @@ def _(daten_quelle, mo):
 
         ## Phase 2: Aggregatfunktionen
 
-        ### Aufgabe 2.1: COUNT - Zeilen zählen
+        ### Aufgabe 2.1: Geführtes Beispiel — COUNT
 
         Wie viele Teams sind in der Bundesliga?
         """
@@ -195,9 +190,10 @@ def _(bundesliga, mo):
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 2.2: SUM und AVG
+        ### 🟡 Aufgabe 2.2: SUM und AVG
 
         Wie viele Tore wurden insgesamt geschossen? Wie viele im Durchschnitt?
+        Ergänzen Sie die fehlenden Aggregatfunktionen:
         """
     )
     return
@@ -208,9 +204,10 @@ def _(bundesliga, mo):
     _df = mo.sql(
         f"""
         SELECT
-            SUM(ToreGeschossen) AS Gesamttore,
-            AVG(ToreGeschossen) AS Durchschnitt_Tore
+            ???(Tore) AS Gesamttore,
+            ???(Tore) AS Durchschnitt_Tore
         FROM bundesliga
+        -- Tipp: SUM für die Gesamtsumme, AVG für den Durchschnitt
         """
     )
     return
@@ -218,27 +215,14 @@ def _(bundesliga, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
-        ### Aufgabe 2.3: MIN und MAX
-
-        Welches ist die beste und schlechteste Tordifferenz?
-        """
-    )
-    return
-
-
-@app.cell
-def _(bundesliga, mo):
-    _df = mo.sql(
-        f"""
-        SELECT
-            MIN(Tordifferenz) AS Schlechteste,
-            MAX(Tordifferenz) AS Beste,
-            MAX(Tordifferenz) - MIN(Tordifferenz) AS Spannweite
-        FROM bundesliga
-        """
-    )
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    SUM(Tore) AS Gesamttore,
+    AVG(Tore) AS Durchschnitt_Tore
+FROM bundesliga
+```
+""")})
     return
 
 
@@ -246,9 +230,9 @@ def _(bundesliga, mo):
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 2.4: Mehrere Aggregationen kombinieren
+        ### 🔵 Aufgabe 2.3: MIN und MAX
 
-        Erstellen Sie eine Übersicht mit allen wichtigen Statistiken:
+        Finden Sie die beste und schlechteste Tordifferenz. Berechnen Sie auch die Spannweite (Differenz zwischen Maximum und Minimum).
         """
     )
     return
@@ -258,15 +242,63 @@ def _(mo):
 def _(bundesliga, mo):
     _df = mo.sql(
         f"""
-        SELECT
-            COUNT(*) AS Teams,
-            SUM(Siege) AS Gesamtsiege,
-            AVG(Punkte) AS Schnitt_Punkte,
-            MIN(Punkte) AS Min_Punkte,
-            MAX(Punkte) AS Max_Punkte
-        FROM bundesliga
+        -- 🔵 Schreiben Sie Ihre Abfrage:
+        SELECT 'Ihre Lösung hier' AS hinweis
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    MIN(Tordifferenz) AS Schlechteste,
+    MAX(Tordifferenz) AS Beste,
+    MAX(Tordifferenz) - MIN(Tordifferenz) AS Spannweite
+FROM bundesliga
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔵 Aufgabe 2.4: Mehrere Aggregationen kombinieren
+
+        Erstellen Sie eine Übersicht der Bundesliga mit: Anzahl Teams, Gesamtsiege, Durchschnittspunkte, niedrigste und höchste Punktzahl.
+        """
+    )
+    return
+
+
+@app.cell
+def _(bundesliga, mo):
+    _df = mo.sql(
+        f"""
+        -- 🔵 Schreiben Sie Ihre Abfrage:
+        SELECT 'Ihre Lösung hier' AS hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    COUNT(*) AS Teams,
+    SUM(Siege) AS Gesamtsiege,
+    AVG(Punkte) AS Schnitt_Punkte,
+    MIN(Punkte) AS Min_Punkte,
+    MAX(Punkte) AS Max_Punkte
+FROM bundesliga
+```
+""")})
     return
 
 
@@ -278,9 +310,7 @@ def _(mo):
 
         ## Phase 4: GROUP BY - Daten gruppieren
 
-        > **Vorhersage:** Die Spieler-Tabelle hat 16 Einträge mit den Positionen Sturm, Tor, Mittelfeld und Abwehr. Wenn wir `GROUP BY Position` verwenden — wie viele Zeilen hat das Ergebnis? Überlegen Sie kurz, bevor Sie weiterscrollen.
-
-        ### Aufgabe 4.1: Einfache Gruppierung
+        ### Aufgabe 4.1: Geführtes Beispiel — Einfache Gruppierung
 
         Wie viele Spieler gibt es pro Position?
         """
@@ -305,9 +335,10 @@ def _(mo, spieler):
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 4.2: Durchschnitt pro Gruppe
+        ### 🟡 Aufgabe 4.2: Durchschnitt pro Gruppe
 
         Wie viele Tore schießen die verschiedenen Positionen im Durchschnitt?
+        Ergänzen Sie die fehlenden Aggregatfunktionen:
         """
     )
     return
@@ -320,11 +351,12 @@ def _(mo, spieler):
         SELECT
             Position,
             COUNT(*) AS Spieler,
-            AVG(Tore) AS Schnitt_Tore,
-            SUM(Tore) AS Gesamt_Tore
+            ???(Tore) AS Schnitt_Tore,
+            ???(Tore) AS Gesamt_Tore
         FROM spieler
         GROUP BY Position
         ORDER BY Schnitt_Tore DESC
+        -- Tipp: AVG für Durchschnitt, SUM für Summe
         """
     )
     return (tore_by_position,)
@@ -332,11 +364,26 @@ def _(mo, spieler):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    Position,
+    COUNT(*) AS Spieler,
+    AVG(Tore) AS Schnitt_Tore,
+    SUM(Tore) AS Gesamt_Tore
+FROM spieler
+GROUP BY Position
+ORDER BY Schnitt_Tore DESC
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
         ### Visualisierung: Aggregierte Daten als Balkendiagramm
-
-        Mit `GROUP BY` berechnete Werte lassen sich hervorragend als Balkendiagramm darstellen:
         """
     )
     return
@@ -350,7 +397,7 @@ def _(px, tore_by_position):
         y="Schnitt_Tore",
         title="Durchschnittliche Tore nach Position",
         labels={"Position": "Position", "Schnitt_Tore": "Ø Tore"},
-        color="Position"
+        labels={"Position": "Position", "Schnitt_Tore": "Ø Tore"}
     )
 
 
@@ -358,7 +405,7 @@ def _(px, tore_by_position):
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 4.3: Scaffolded — Gruppierung vervollständigen
+        ### 🟡 Aufgabe 4.3: Scaffolded — Gruppierung vervollständigen
 
         Welcher Verein hat die meisten Nationalspieler?
         Ergänzen Sie die `GROUP BY`-Spalte und die Sortierung:
@@ -403,7 +450,7 @@ ORDER BY Nationalspieler DESC
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 4.4: Scaffolded — Mehrere Aggregatfunktionen
+        ### 🟡 Aufgabe 4.4: Scaffolded — Mehrere Aggregatfunktionen
 
         Erweitern Sie die Abfrage: Zeigen Sie pro Verein die Anzahl Spieler,
         die Gesamttore und das Durchschnittsalter.
@@ -452,9 +499,9 @@ ORDER BY Nationalspieler DESC
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 4.5: Bundesliga nach Spielanzahl gruppieren
+        ### 🔵 Aufgabe 4.5: Bundesliga nach Spielanzahl
 
-        Welche Teams haben wie viele Spiele absolviert?
+        Welche Teams haben wie viele Spiele absolviert? Zeigen Sie die Spieleanzahl, die Anzahl Teams und die Durchschnittspunkte pro Gruppe.
         """
     )
     return
@@ -464,15 +511,26 @@ def _(mo):
 def _(bundesliga, mo):
     _df = mo.sql(
         f"""
-        SELECT
-            Spiele,
-            COUNT(*) AS Anzahl_Teams,
-            AVG(Punkte) AS Schnitt_Punkte
-        FROM bundesliga
-        GROUP BY Spiele
-        ORDER BY Spiele
+        -- 🔵 Schreiben Sie Ihre Abfrage:
+        SELECT 'Ihre Lösung hier' AS hinweis
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    Spiele,
+    COUNT(*) AS Anzahl_Teams,
+    AVG(Punkte) AS Schnitt_Punkte
+FROM bundesliga
+GROUP BY Spiele
+ORDER BY Spiele
+```
+""")})
     return
 
 
@@ -484,7 +542,7 @@ def _(mo):
 
         ## Phase 6: HAVING - Filter auf Gruppen
 
-        ### Aufgabe 6.1: Gruppen filtern
+        ### Aufgabe 6.1: Geführtes Beispiel — HAVING
 
         Welche Positionen haben mehr als 3 Spieler?
         """
@@ -509,9 +567,10 @@ def _(mo, spieler):
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 6.2: HAVING mit AVG
+        ### 🟡 Aufgabe 6.2: HAVING mit AVG
 
         Welche Positionen haben im Durchschnitt mehr als 5 Tore?
+        Ergänzen Sie die HAVING-Bedingung:
         """
     )
     return
@@ -524,8 +583,9 @@ def _(mo, spieler):
         SELECT Position, AVG(Tore) AS Schnitt_Tore
         FROM spieler
         GROUP BY Position
-        HAVING AVG(Tore) > 5
+        HAVING ???
         ORDER BY Schnitt_Tore DESC
+        -- Tipp: Verwenden Sie AVG(Tore) > 5
         """
     )
     return
@@ -533,25 +593,15 @@ def _(mo, spieler):
 
 @app.cell(hide_code=True)
 def _(mo):
-    quiz_where_having = mo.ui.radio(
-        options={
-            "correct": "WHERE filtert Zeilen vor GROUP BY, HAVING filtert Gruppen danach",
-            "reversed": "HAVING filtert Zeilen vor GROUP BY, WHERE filtert Gruppen danach",
-            "same": "WHERE und HAVING sind austauschbar — beide filtern Gruppen",
-            "dtype": "WHERE ist für Zahlen, HAVING ist für Text",
-        },
-        label="**Quiz:** Was ist der Unterschied zwischen WHERE und HAVING?"
-    )
-    quiz_where_having
-    return (quiz_where_having,)
-
-
-@app.cell(hide_code=True)
-def _(quiz_where_having, mo):
-    if quiz_where_having.value == "correct":
-        mo.output.replace(mo.md("Richtig! WHERE filtert *einzelne Zeilen* bevor sie gruppiert werden. HAVING filtert *ganze Gruppen* nach der Aggregation. Deshalb kann HAVING Aggregatfunktionen wie COUNT(*) oder AVG() verwenden."))
-    elif quiz_where_having.value:
-        mo.output.replace(mo.md("Nicht ganz. Denken Sie an die Reihenfolge: Erst werden Zeilen gefiltert (WHERE), dann gruppiert (GROUP BY), dann werden Gruppen gefiltert (HAVING)."))
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT Position, AVG(Tore) AS Schnitt_Tore
+FROM spieler
+GROUP BY Position
+HAVING AVG(Tore) > 5
+ORDER BY Schnitt_Tore DESC
+```
+""")})
     return
 
 
@@ -559,9 +609,9 @@ def _(quiz_where_having, mo):
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 6.3: WHERE und HAVING kombinieren
+        ### 🔵 Aufgabe 6.3: WHERE und HAVING kombinieren
 
-        Welche Vereine haben mehr als 2 Spieler unter 30 Jahren?
+        Welche Vereine haben mehr als 2 Spieler unter 30 Jahren? Nutzen Sie WHERE für die Altersfilterung und HAVING für die Gruppenfilterung.
         """
     )
     return
@@ -571,12 +621,10 @@ def _(mo):
 def _(mo, spieler):
     _df = mo.sql(
         f"""
-        SELECT Verein, COUNT(*) AS Junge_Spieler
-        FROM spieler
-        WHERE "Alter" < 30
-        GROUP BY Verein
-        HAVING COUNT(*) >= 2
-        ORDER BY Junge_Spieler DESC
+        -- 🔵 Schreiben Sie Ihre Abfrage:
+        -- Hinweis: WHERE filtert Zeilen VOR der Gruppierung
+        --          HAVING filtert Gruppen NACH der Gruppierung
+        SELECT 'Ihre Lösung hier' AS hinweis
         """
     )
     return
@@ -584,11 +632,28 @@ def _(mo, spieler):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT Verein, COUNT(*) AS Junge_Spieler
+FROM spieler
+WHERE "Alter" < 30
+GROUP BY Verein
+HAVING COUNT(*) >= 2
+ORDER BY Junge_Spieler DESC
+```
+
+**Erklärung:** `WHERE "Alter" < 30` filtert zuerst die Spieler unter 30. Dann gruppiert `GROUP BY Verein` die verbleibenden Spieler. `HAVING COUNT(*) >= 2` behält nur Vereine mit mindestens 2 jungen Spielern.
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 6.4: Komplexe Analyse
+        ### 🔵 Aufgabe 6.4: Komplexe Analyse
 
-        Finden Sie Vereine mit hoher Torbeteiligung (Tore + Vorlagen > 20):
+        Finden Sie Vereine mit hoher Torbeteiligung: Zeigen Sie Verein, Summe Tore, Summe Vorlagen und Scorerpunkte (Tore + Vorlagen) — aber nur Vereine mit mehr als 20 Scorerpunkten.
         """
     )
     return
@@ -598,15 +663,8 @@ def _(mo):
 def _(mo, spieler):
     _df = mo.sql(
         f"""
-        SELECT
-            Verein,
-            SUM(Tore) AS Tore,
-            SUM(Vorlagen) AS Vorlagen,
-            SUM(Tore) + SUM(Vorlagen) AS Scorerpunkte
-        FROM spieler
-        GROUP BY Verein
-        HAVING SUM(Tore) + SUM(Vorlagen) > 20
-        ORDER BY Scorerpunkte DESC
+        -- 🔵 Schreiben Sie Ihre Abfrage:
+        SELECT 'Ihre Lösung hier' AS hinweis
         """
     )
     return
@@ -614,11 +672,31 @@ def _(mo, spieler):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    Verein,
+    SUM(Tore) AS Tore,
+    SUM(Vorlagen) AS Vorlagen,
+    SUM(Tore) + SUM(Vorlagen) AS Scorerpunkte
+FROM spieler
+GROUP BY Verein
+HAVING SUM(Tore) + SUM(Vorlagen) > 20
+ORDER BY Scorerpunkte DESC
+```
+
+**Erklärung:** `HAVING` kann auch Ausdrücke mit mehreren Aggregatfunktionen enthalten. Hier filtern wir nach der Summe von Toren und Vorlagen.
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 6.5: Bundesliga-Analyse
+        ### 🔵 Aufgabe 6.5: Bundesliga-Analyse mit CASE
 
-        Finden Sie alle Punktebereiche mit mehr als 3 Teams:
+        Klassifizieren Sie Teams in Punktebereiche (Top 40+, Oberes Mittelfeld 30-39, Unteres Mittelfeld 20-29, Abstiegskampf <20) und zeigen Sie nur Bereiche mit mehr als 3 Teams.
         """
     )
     return
@@ -628,20 +706,123 @@ def _(mo):
 def _(bundesliga, mo):
     _df = mo.sql(
         f"""
-        SELECT
-            CASE
-                WHEN Punkte >= 40 THEN 'Top (40+)'
-                WHEN Punkte >= 30 THEN 'Oberes Mittelfeld (30-39)'
-                WHEN Punkte >= 20 THEN 'Unteres Mittelfeld (20-29)'
-                ELSE 'Abstiegskampf (<20)'
-            END AS Punktebereich,
-            COUNT(*) AS Teams
-        FROM bundesliga
-        GROUP BY Punktebereich
-        HAVING COUNT(*) > 3
-        ORDER BY MIN(Punkte) DESC
+        -- 🔵 Schreiben Sie Ihre Abfrage:
+        -- Hinweis: Verwenden Sie CASE WHEN ... THEN ... END
+        SELECT 'Ihre Lösung hier' AS hinweis
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    CASE
+        WHEN Punkte >= 40 THEN 'Top (40+)'
+        WHEN Punkte >= 30 THEN 'Oberes Mittelfeld (30-39)'
+        WHEN Punkte >= 20 THEN 'Unteres Mittelfeld (20-29)'
+        ELSE 'Abstiegskampf (<20)'
+    END AS Punktebereich,
+    COUNT(*) AS Teams
+FROM bundesliga
+GROUP BY Punktebereich
+HAVING COUNT(*) > 3
+ORDER BY MIN(Punkte) DESC
+```
+
+**Erklärung:** `CASE WHEN` erzeugt eine berechnete Spalte, nach der man gruppieren kann. `HAVING COUNT(*) > 3` filtert dann nur die Punktebereiche mit mehr als 3 Teams.
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔴 Aufgabe 6.6: Debugging — WHERE statt HAVING
+
+        Diese Abfrage soll Positionen mit mehr als 3 Spielern finden.
+        **Führen Sie sie aus** — was ist das Problem?
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, spieler):
+    # Diese Abfrage enthält einen Fehler — finden und beheben Sie ihn!
+    _df = mo.sql(
+        f"""
+        SELECT Position, COUNT(*) AS Anzahl
+        FROM spieler
+        WHERE COUNT(*) > 3
+        GROUP BY Position
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Lösung": mo.md("""
+**Fehler:** `COUNT(*)` kann nicht in `WHERE` stehen! WHERE wird **vor** GROUP BY ausgeführt — zu diesem Zeitpunkt gibt es noch keine Gruppen.
+
+Aggregatfunktionen in Filterbedingungen gehören in `HAVING` (wird **nach** GROUP BY ausgeführt):
+
+```sql
+-- Korrektur:
+SELECT Position, COUNT(*) AS Anzahl
+FROM spieler
+GROUP BY Position
+HAVING COUNT(*) > 3
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔴 Aufgabe 6.7: Debugging — Fehlende GROUP BY
+
+        Diese Abfrage soll die Gesamttore pro Verein zeigen.
+        **Führen Sie sie aus** — warum funktioniert sie nicht?
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, spieler):
+    # Diese Abfrage enthält einen Fehler — finden und beheben Sie ihn!
+    _df = mo.sql(
+        f"""
+        SELECT Verein, SUM(Tore) AS Gesamttore
+        FROM spieler
+        ORDER BY Gesamttore DESC
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Lösung": mo.md("""
+**Fehler:** `Verein` im SELECT ohne `GROUP BY`! SQL weiß nicht, welcher Verein zur Gesamtsumme gehört.
+
+**Goldene Regel:** Im SELECT nur Spalten aus GROUP BY oder Aggregatfunktionen!
+
+```sql
+-- Korrektur:
+SELECT Verein, SUM(Tore) AS Gesamttore
+FROM spieler
+GROUP BY Verein
+ORDER BY Gesamttore DESC
+```
+""")})
     return
 
 
@@ -652,9 +833,6 @@ def _(mo):
         ---
 
         ## Visualisierung: Referenzlinien
-
-        Ein häufiges Muster: Balkendiagramm mit **Durchschnittslinie** als Referenz.
-        So sieht man sofort, welche Werte über/unter dem Durchschnitt liegen.
         """
     )
     return
@@ -687,7 +865,6 @@ def _(bundesliga, mo, px, team_punkte):
         labels={"Mannschaft": "Team", "Punkte": "Punkte"}
     )
 
-    # Durchschnittslinie hinzufügen
     fig.add_hline(
         y=avg_punkte,
         line_dash="dash",
@@ -704,34 +881,135 @@ def _(bundesliga, mo, px, team_punkte):
 def _(mo):
     mo.md(
         r"""
-        **Interpretation:** Teams über der roten Linie performen überdurchschnittlich.
-
         ---
 
-        ## Freie Exploration
+        ## Freie Exploration — Herausforderungen
 
-        Probieren Sie eigene Abfragen! Ideen:
+        **Tipp:** Vergleichen Sie Ihre Lösungen mit Ihrem Nachbarn — es gibt oft mehrere Wege zum gleichen Ergebnis!
 
-        - Durchschnittsalter pro Position
-        - Vereine mit mehr als 50 Länderspielen insgesamt
-        - Teams mit mindestens 10 Siegen
-        - Positionen sortiert nach Gesamtvorlagen
+        ### ⭐ Herausforderung 1: Offensive vs. Defensive Vereine
+
+        Welche Vereine haben insgesamt mehr Tore als Vorlagen? Zeigen Sie Verein, Summe Tore und Summe Vorlagen.
         """
     )
     return
 
 
 @app.cell
-def _(bundesliga, mo, spieler):
-    # Ihre eigene Abfrage hier:
+def _(mo, spieler):
+    # Ihre Lösung:
     _df = mo.sql(
         f"""
-        SELECT Position, AVG("Alter") AS Durchschnittsalter
-        FROM spieler
-        GROUP BY Position
-        ORDER BY Durchschnittsalter
+        -- ⭐ Offensive vs. Defensive Vereine
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    Verein,
+    SUM(Tore) AS Tore_Gesamt,
+    SUM(Vorlagen) AS Vorlagen_Gesamt
+FROM spieler
+GROUP BY Verein
+HAVING SUM(Tore) > SUM(Vorlagen)
+ORDER BY Tore_Gesamt DESC
+```
+
+**Erklärung:** `HAVING SUM(Tore) > SUM(Vorlagen)` vergleicht die aggregierten Werte pro Gruppe. Das ist ein gutes Beispiel für HAVING mit einem Vergleich zwischen zwei Aggregaten.
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### ⭐⭐ Herausforderung 2: Positionen mit hohem Durchschnittsalter
+
+        Finde Positionen mit einem Durchschnittsalter über 28.
+
+        (Hinweis: Verwenden Sie HAVING)
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, spieler):
+    # Ihre Lösung:
+    _df = mo.sql(
+        f"""
+        -- ⭐⭐ Positionen mit Ø Alter > 28
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT Position, AVG("Alter") AS Durchschnittsalter
+FROM spieler
+GROUP BY Position
+HAVING AVG("Alter") > 28
+ORDER BY Durchschnittsalter DESC
+```
+
+**Erklärung:** `HAVING` filtert Gruppen nach der Aggregation. `WHERE` könnte einzelne Spieler filtern (z.B. `WHERE Alter > 28`), aber wir wollen den **Durchschnitt** der Gruppe prüfen — das geht nur mit `HAVING`.
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### ⭐⭐⭐ Herausforderung 3: Vereinsstatistiken
+
+        Berechne für jeden Verein: Anzahl Spieler, Durchschnittsalter, Summe Tore, Durchschnitt Tore — aber nur Vereine mit mindestens 2 Spielern.
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, spieler):
+    # Ihre Lösung:
+    _df = mo.sql(
+        f"""
+        -- ⭐⭐⭐ Vereinsstatistiken (mind. 2 Spieler)
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    Verein,
+    COUNT(*) AS Anzahl_Spieler,
+    ROUND(AVG("Alter"), 1) AS Durchschnittsalter,
+    SUM(Tore) AS Tore_Gesamt,
+    ROUND(AVG(Tore), 1) AS Tore_Durchschnitt
+FROM spieler
+GROUP BY Verein
+HAVING COUNT(*) >= 2
+ORDER BY Tore_Gesamt DESC
+```
+
+**Erklärung:** Hier kombinieren wir alles: `GROUP BY` für die Gruppierung, mehrere Aggregatfunktionen im `SELECT`, `HAVING` um kleine Vereine auszufiltern, und `ORDER BY` für die Sortierung. `ROUND(..., 1)` rundet auf eine Nachkommastelle.
+""")})
     return
 
 

@@ -36,6 +36,8 @@ def _(mo):
         - 🔴 **Debugging**: Fehler finden und beheben
         - ⭐ **Exploration**: Offene Herausforderungen
 
+        > **Hinweis:** 🟡-Aufgaben enthalten `???` als Platzhalter. Die Zelle zeigt einen SQL-Fehler, bis Sie die `???` durch die richtige Lösung ersetzen — das ist Absicht!
+
         ---
         """
     )
@@ -787,6 +789,8 @@ def _(mo):
 
         ## Freie Exploration — Herausforderungen
 
+        **Tipp:** Vergleichen Sie Ihre JOIN-Lösungen mit Ihrem Nachbarn — es gibt oft mehrere Wege zum gleichen Ergebnis!
+
         ---
         """
     )
@@ -954,6 +958,102 @@ ORDER BY Schritt_0, Schritt_1, Schritt_2, Schritt_3
 ```
 
 **Erklärung:** Drei Self-Joins auf die Kantenliste bilden 3-Hop-Pfade. Die WHERE-Bedingungen verhindern Zyklen: Keine Person darf an zwei verschiedenen Stellen im Pfad auftauchen. Das ist die Grundidee von Graphtraversierung in SQL!
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## ⭐ Analyse-Aufgabe: Spieler-Performance im Vereinskontext
+
+        Diese Aufgabe kombiniert mehrere Konzepte aus dieser Session:
+        - JOINs (Spieler + Vereine)
+        - Aggregation (Durchschnitte)
+        - Vergleiche zwischen verschiedenen Ebenen
+
+        **Geschäftsfrage:** Welche Spieler performen überdurchschnittlich im Vergleich zu ihren Vereinskollegen?
+
+        ---
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### ⭐ Analyse: Tordifferenz pro Spieler vs. Vereinsdurchschnitt
+
+        **Aufgabe:** Zeigen Sie für jeden Spieler:
+        1. Seine individuelle Statistik
+        2. Den Durchschnitt seines Vereins
+        3. Die Abweichung vom Vereinsdurchschnitt
+
+        Sortieren Sie nach der Abweichung (beste zuerst).
+
+        Hinweise:
+        - Verwenden Sie einen JOIN zwischen Spieler und Vereine
+        - Eine Subquery oder CTE kann den Vereinsdurchschnitt berechnen
+        - Kombinieren Sie die Ergebnisse
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, spieler, vereine):
+    # ⭐ Analyse-Aufgabe: Ihre Lösung
+    _df = mo.sql(
+        f"""
+        -- Schreiben Sie Ihre Analyse-Abfrage hier
+        -- Ziel: Spieler mit ihrer Performance relativ zum Vereinsdurchschnitt
+        SELECT 'Ihre Lösung hier' AS hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+WITH verein_stats AS (
+    SELECT
+        Verein_ID,
+        AVG(Tore) AS Durchschnitt_Tore,
+        AVG(Assists) AS Durchschnitt_Assists
+    FROM spieler
+    WHERE Verein_ID IS NOT NULL
+    GROUP BY Verein_ID
+)
+SELECT
+    s.Name AS Spieler,
+    v.Name AS Verein,
+    s.Position,
+    s.Tore,
+    ROUND(vs.Durchschnitt_Tore, 1) AS Verein_Schnitt_Tore,
+    s.Tore - ROUND(vs.Durchschnitt_Tore, 1) AS Abweichung_Tore
+FROM spieler s
+INNER JOIN vereine v ON s.Verein_ID = v.Verein_ID
+INNER JOIN verein_stats vs ON s.Verein_ID = vs.Verein_ID
+ORDER BY Abweichung_Tore DESC
+```
+
+**Analyse-Erkenntnisse:**
+- Der CTE `verein_stats` berechnet erst die Durchschnittswerte pro Verein
+- Zwei JOINs: einer für Vereinsnamen, einer für Vereinsstatistiken
+- Die Abweichung zeigt, wer über/unter dem Teamdurchschnitt liegt
+- Positive Werte = überdurchschnittlich, negative = unterdurchschnittlich
+
+**Business Value:** Diese Analyse hilft bei:
+- Identifikation von Leistungsträgern
+- Benchmarking innerhalb von Teams
+- Entscheidungen über Spielertransfers
 """)})
     return
 

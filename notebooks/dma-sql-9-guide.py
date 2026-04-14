@@ -181,21 +181,20 @@ def _(mo):
 def _(mo):
     pred_subquery = mo.ui.radio(
         options={
-            "ueber_avg": "Nur Teams über dem Durchschnitt",
-            "genau_avg": "Teams genau am Durchschnitt",
-            "alle": "Alle Teams",
-            "fehler": "Einen Fehler",
+            "Nur Teams über dem Durchschnitt": "ueber_avg",
+            "Teams genau am Durchschnitt": "genau_avg",
+            "Alle Teams": "alle",
+            "Einen Fehler": "fehler",
         },
         label="**Vorhersage:** Was liefert `WHERE Punkte > (SELECT AVG(Punkte) FROM bundesliga)`?",
     )
-    pred_subquery
     return (pred_subquery,)
 
 
 @app.cell(hide_code=True)
 def _(mo, pred_subquery):
     if pred_subquery.value == "ueber_avg":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "✅ **Richtig!** Die Scalar Subquery berechnet den Durchschnitt (einen einzigen Wert). "
                 "Der `>`-Operator vergleicht dann jeden Punkte-Wert mit diesem Durchschnitt. "
@@ -203,7 +202,7 @@ def _(mo, pred_subquery):
             )
         )
     elif pred_subquery.value == "genau_avg":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Nicht ganz. Der Operator `>` schließt den Durchschnittswert selbst aus — "
                 "nur Teams **über** dem Durchschnitt werden zurückgegeben. "
@@ -211,7 +210,7 @@ def _(mo, pred_subquery):
             )
         )
     elif pred_subquery.value == "alle":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Nicht alle Teams. Die WHERE-Klausel filtert: Nur Teams mit Punkten "
                 "**über** dem Durchschnitt bleiben. Teams mit unterdurchschnittlichen Punkten "
@@ -219,13 +218,16 @@ def _(mo, pred_subquery):
             )
         )
     elif pred_subquery.value == "fehler":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Kein Fehler. Eine Scalar Subquery in WHERE ist gültiges SQL. "
                 "Die innere Abfrage liefert genau einen Wert (den Durchschnitt), "
                 "der dann als Vergleichswert für jede Zeile dient."
             )
         )
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([pred_subquery, _result])
     return
 
 
@@ -384,21 +386,20 @@ def _(mo):
 def _(mo):
     pred_cte = mo.ui.radio(
         options={
-            "lesbarkeit": "Bessere Lesbarkeit und Struktur",
-            "schneller": "Schnellere Ausführung",
-            "mehr_daten": "Können mehr Daten verarbeiten",
-            "persistent": "Werden dauerhaft gespeichert",
+            "Bessere Lesbarkeit und Struktur": "lesbarkeit",
+            "Schnellere Ausführung": "schneller",
+            "Können mehr Daten verarbeiten": "mehr_daten",
+            "Werden dauerhaft gespeichert": "persistent",
         },
         label="**Vorhersage:** Was ist der Hauptvorteil von CTEs gegenüber verschachtelten Subqueries?",
     )
-    pred_cte
     return (pred_cte,)
 
 
 @app.cell(hide_code=True)
 def _(mo, pred_cte):
     if pred_cte.value == "lesbarkeit":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "✅ **Richtig!** Der Hauptvorteil von CTEs ist die **bessere Lesbarkeit**. "
                 "Statt tief verschachtelter Subqueries schreiben Sie benannte Zwischenschritte, "
@@ -406,7 +407,7 @@ def _(mo, pred_cte):
             )
         )
     elif pred_cte.value == "schneller":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ CTEs sind in der Regel **nicht schneller** als äquivalente Subqueries. "
                 "Die Datenbank optimiert beide oft zum gleichen Ausführungsplan. "
@@ -414,7 +415,7 @@ def _(mo, pred_cte):
             )
         )
     elif pred_cte.value == "mehr_daten":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ CTEs können nicht mehr Daten verarbeiten als Subqueries — "
                 "sie sind nur eine andere Schreibweise. Der Hauptvorteil ist die "
@@ -422,13 +423,16 @@ def _(mo, pred_cte):
             )
         )
     elif pred_cte.value == "persistent":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ CTEs werden **nicht** dauerhaft gespeichert — sie existieren nur innerhalb "
                 "einer einzigen Abfrage. Für dauerhafte Speicherung brauchen Sie **Views**. "
                 "Der Hauptvorteil von CTEs ist die **bessere Lesbarkeit**."
             )
         )
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([pred_cte, _result])
     return
 
 
@@ -609,21 +613,20 @@ def _(mo):
 def _(mo):
     acid_quiz = mo.ui.radio(
         options={
-            "atomic": "Alles oder nichts — entweder alle Operationen oder keine",
-            "isolation": "Gleichzeitiger Zugriff ist möglich",
-            "durability": "Daten werden dauerhaft gespeichert",
-            "consistency": "Daten bleiben konsistent",
+            "Alles oder nichts — entweder alle Operationen oder keine": "atomic",
+            "Gleichzeitiger Zugriff ist möglich": "isolation",
+            "Daten werden dauerhaft gespeichert": "durability",
+            "Daten bleiben konsistent": "consistency",
         },
         label="**Quiz:** Was garantiert die **Atomarität** (Atomicity) einer Transaktion?",
     )
-    acid_quiz
     return (acid_quiz,)
 
 
 @app.cell(hide_code=True)
-def _(acid_quiz, mo):
+def _(mo, acid_quiz):
     if acid_quiz.value == "atomic":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "✅ **Richtig!** Atomarität bedeutet: Eine Transaktion wird entweder "
                 "**komplett** oder **gar nicht** ausgeführt. Wenn ein Schritt fehlschlägt, "
@@ -631,7 +634,7 @@ def _(acid_quiz, mo):
             )
         )
     elif acid_quiz.value == "isolation":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Das beschreibt **Isolation**, nicht Atomarität. "
                 "Isolation sorgt dafür, dass parallele Transaktionen sich nicht gegenseitig stören. "
@@ -639,7 +642,7 @@ def _(acid_quiz, mo):
             )
         )
     elif acid_quiz.value == "durability":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Das beschreibt **Durability** (Dauerhaftigkeit), nicht Atomarität. "
                 "Durability garantiert, dass bestätigte Änderungen permanent sind. "
@@ -647,13 +650,16 @@ def _(acid_quiz, mo):
             )
         )
     elif acid_quiz.value == "consistency":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Das beschreibt **Consistency** (Konsistenz), nicht Atomarität. "
                 "Konsistenz garantiert, dass Integritätsbedingungen eingehalten werden. "
                 "Atomarität bedeutet: **Alles oder nichts** — die Transaktion ist unteilbar."
             )
         )
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([acid_quiz, _result])
     return
 
 
@@ -669,21 +675,20 @@ def _(mo):
 def _(mo):
     pred_acid = mo.ui.radio(
         options={
-            "geld_weg": "Geld ist weg — Alice hat weniger, Bob nicht mehr",
-            "rollback": "Automatisches Rollback — beide Konten wie vorher",
-            "halb": "Halb ausgeführt — Abbuchung bleibt, Gutschrift fehlt",
-            "retry": "Automatische Wiederholung der Transaktion",
+            "Geld ist weg — Alice hat weniger, Bob nicht mehr": "geld_weg",
+            "Automatisches Rollback — beide Konten wie vorher": "rollback",
+            "Halb ausgeführt — Abbuchung bleibt, Gutschrift fehlt": "halb",
+            "Automatische Wiederholung der Transaktion": "retry",
         },
         label="**Vorhersage:** Der Server stürzt nach der Abbuchung bei Alice, aber vor der Gutschrift bei Bob ab. Was passiert?",
     )
-    pred_acid
     return (pred_acid,)
 
 
 @app.cell(hide_code=True)
 def _(mo, pred_acid):
     if pred_acid.value == "rollback":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "✅ **Richtig!** Die ACID-Eigenschaft **Atomicity** garantiert: Wenn die Transaktion "
                 "nicht vollständig abgeschlossen wurde (kein COMMIT), werden **alle** Änderungen "
@@ -691,7 +696,7 @@ def _(mo, pred_acid):
             )
         )
     elif pred_acid.value == "geld_weg":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Das wäre ein Albtraum-Szenario — aber genau davor schützt **Atomicity**! "
                 "Ohne COMMIT wird die gesamte Transaktion zurückgerollt. "
@@ -699,7 +704,7 @@ def _(mo, pred_acid):
             )
         )
     elif pred_acid.value == "halb":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Genau das verhindert **Atomicity**: Es gibt keine halb ausgeführten Transaktionen. "
                 "Entweder werden alle Operationen ausgeführt (COMMIT) oder keine (ROLLBACK). "
@@ -707,13 +712,16 @@ def _(mo, pred_acid):
             )
         )
     elif pred_acid.value == "retry":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Die Datenbank wiederholt die Transaktion nicht automatisch. "
                 "Stattdessen greift **Atomicity**: Die nicht abgeschlossene Transaktion wird "
                 "zurückgerollt (ROLLBACK), und die Anwendung muss sie bei Bedarf erneut starten."
             )
         )
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([pred_acid, _result])
     return
 
 
@@ -828,21 +836,20 @@ def _(mo):
 def _(mo):
     viz_choice_9 = mo.ui.radio(
         options={
-            "bar_diverging": "Divergierendes Balkendiagramm",
-            "pie": "Kreisdiagramm",
-            "line": "Liniendiagramm",
-            "scatter": "Streudiagramm",
+            "Divergierendes Balkendiagramm": "bar_diverging",
+            "Kreisdiagramm": "pie",
+            "Liniendiagramm": "line",
+            "Streudiagramm": "scatter",
         },
         label="Sie wollen die Differenz jedes Teams zum Liga-Durchschnitt darstellen. Welcher Charttyp eignet sich am besten?",
     )
-    viz_choice_9
     return (viz_choice_9,)
 
 
 @app.cell(hide_code=True)
 def _(mo, viz_choice_9):
     if viz_choice_9.value == "bar_diverging":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "✅ **Richtig!** Ein **divergierendes Balkendiagramm** ist ideal für Abweichungen "
                 "von einem Referenzwert. Die Nulllinie markiert den Durchschnitt, positive Balken "
@@ -851,7 +858,7 @@ def _(mo, viz_choice_9):
             )
         )
     elif viz_choice_9.value == "pie":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Ein Kreisdiagramm zeigt Anteile am Ganzen (z.B. 'Bayern hat X% aller Punkte'). "
                 "Für **Abweichungen** mit positiven und negativen Werten ist es ungeeignet. "
@@ -859,7 +866,7 @@ def _(mo, viz_choice_9):
             )
         )
     elif viz_choice_9.value == "line":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Ein Liniendiagramm suggeriert eine zeitliche Entwicklung oder Verbindung "
                 "zwischen den Datenpunkten. Teams haben keine natürliche Reihenfolge. "
@@ -867,13 +874,16 @@ def _(mo, viz_choice_9):
             )
         )
     elif viz_choice_9.value == "scatter":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Ein Streudiagramm zeigt den Zusammenhang zwischen zwei numerischen Variablen. "
                 "Hier haben wir Kategorien (Teams) und einen Wert (Differenz). "
                 "Ein **divergierendes Balkendiagramm** stellt positive und negative Abweichungen am klarsten dar."
             )
         )
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([viz_choice_9, _result])
     return
 
 
@@ -891,20 +901,19 @@ def _(mo):
 def _(mo):
     selbsttest_9 = mo.ui.radio(
         options={
-            "cte_temp": "CTE existiert nur innerhalb einer Abfrage, View ist dauerhaft gespeichert",
-            "gleich": "Kein Unterschied — beides sind Aliase für Abfragen",
-            "view_schneller": "Views sind schneller als CTEs",
+            "CTE existiert nur innerhalb einer Abfrage, View ist dauerhaft gespeichert": "cte_temp",
+            "Kein Unterschied — beides sind Aliase für Abfragen": "gleich",
+            "Views sind schneller als CTEs": "view_schneller",
         },
         label="Was ist der Unterschied zwischen einer CTE und einem View?",
     )
-    selbsttest_9
     return (selbsttest_9,)
 
 
 @app.cell(hide_code=True)
 def _(mo, selbsttest_9):
     if selbsttest_9.value == "cte_temp":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "✅ **Richtig!** Eine CTE existiert nur innerhalb der **einen** Abfrage, in der sie "
                 "definiert wird. Ein View wird dauerhaft in der Datenbank gespeichert und kann "
@@ -913,7 +922,7 @@ def _(mo, selbsttest_9):
             )
         )
     elif selbsttest_9.value == "gleich":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Es gibt einen wichtigen Unterschied: Eine CTE existiert nur **innerhalb einer Abfrage** "
                 "und verschwindet danach. Ein View wird **dauerhaft gespeichert** und kann wie eine Tabelle "
@@ -921,13 +930,16 @@ def _(mo, selbsttest_9):
             )
         )
     elif selbsttest_9.value == "view_schneller":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Views sind nicht grundsätzlich schneller als CTEs — beide werden bei jeder "
                 "Abfrage neu berechnet. Der wahre Unterschied: CTEs sind **temporär** (eine Abfrage), "
                 "Views sind **dauerhaft** (in der Datenbank gespeichert)."
             )
         )
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([selbsttest_9, _result])
     return
 
 

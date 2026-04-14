@@ -147,21 +147,20 @@ def _(mo):
 def _(mo):
     pred_crisp = mo.ui.radio(
         options={
-            "business": "Business Understanding",
-            "data_prep": "Data Preparation",
-            "modeling": "Modeling",
-            "evaluation": "Evaluation",
+            "Business Understanding": "business",
+            "Data Preparation": "data_prep",
+            "Modeling": "modeling",
+            "Evaluation": "evaluation",
         },
         label="**Vorhersage:** Welche CRISP-DM Phase kommt *vor* der Datenanalyse (Modeling)?",
     )
-    pred_crisp
     return (pred_crisp,)
 
 
 @app.cell(hide_code=True)
 def _(mo, pred_crisp):
     if pred_crisp.value == "business":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "✅ **Richtig!** **Business Understanding** ist immer der erste Schritt. "
                 "Bevor Sie Daten analysieren, müssen Sie das Geschäftsproblem verstehen: "
@@ -170,7 +169,7 @@ def _(mo, pred_crisp):
             )
         )
     elif pred_crisp.value == "data_prep":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Data Preparation kommt zwar vor Modeling, aber es ist nicht die *erste* Phase. "
                 "Vor der Datenaufbereitung müssen Sie zuerst das Problem verstehen (**Business Understanding**) "
@@ -178,20 +177,23 @@ def _(mo, pred_crisp):
             )
         )
     elif pred_crisp.value == "modeling":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Modeling ist die Phase, auf die wir uns beziehen — die Frage war, was *davor* kommt. "
                 "Die richtige Antwort ist **Business Understanding**: Erst das Problem verstehen, dann analysieren."
             )
         )
     elif pred_crisp.value == "evaluation":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Evaluation kommt *nach* dem Modeling, nicht davor. "
                 "Die richtige Reihenfolge: Business Understanding → Data Understanding → "
                 "Data Preparation → **Modeling** → Evaluation → Deployment."
             )
         )
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([pred_crisp, _result])
     return
 
 
@@ -367,20 +369,19 @@ def _(mo):
 def _(mo):
     pred_age = mo.ui.radio(
         options={
-            "correct": "Shipmans Opfer sind im Schnitt deutlich älter",
-            "wrong1": "Alle Ärzte haben ähnliche Altersverteilungen",
-            "wrong2": "Shipmans Opfer sind jünger als bei anderen Ärzten",
+            "Shipmans Opfer sind im Schnitt deutlich älter": "correct",
+            "Alle Ärzte haben ähnliche Altersverteilungen": "wrong1",
+            "Shipmans Opfer sind jünger als bei anderen Ärzten": "wrong2",
         },
         label="**Vorhersage:** Wie unterscheidet sich das Durchschnittsalter der Verstorbenen bei Shipman vs. anderen Ärzten?",
     )
-    pred_age
     return (pred_age,)
 
 
 @app.cell(hide_code=True)
 def _(mo, pred_age):
     if pred_age.value == "correct":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "✅ **Richtig!** Shipmans Opfer waren überwiegend ältere Patientinnen — "
                 "das ist eines der Muster, das die Ermittler schließlich auf seine Spur brachte. "
@@ -388,19 +389,22 @@ def _(mo, pred_age):
             )
         )
     elif pred_age.value == "wrong1":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Nicht ganz. Shipman wählte gezielt ältere, alleinstehende Patientinnen. "
                 "Das Durchschnittsalter seiner Opfer weicht deutlich von der Referenzgruppe ab."
             )
         )
     elif pred_age.value == "wrong2":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Im Gegenteil — Shipmans Opfer waren im Schnitt **älter**, nicht jünger. "
                 "Er suchte gezielt ältere Patientinnen, bei denen ein natürlicher Tod plausibler erschien."
             )
         )
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([pred_age, _result])
     return
 
 
@@ -564,21 +568,20 @@ def _(mo):
 def _(mo):
     pred_benford = mo.ui.radio(
         options={
-            "aktien": "Aktienkurse",
-            "groessen": "Körpergrößen von Studierenden",
-            "lotto": "Lottozahlen",
-            "hausnummern": "Hausnummern in einer Stadt",
+            "Aktienkurse": "aktien",
+            "Körpergrößen von Studierenden": "groessen",
+            "Lottozahlen": "lotto",
+            "Hausnummern in einer Stadt": "hausnummern",
         },
         label="**Vorhersage:** Welcher Datensatz folgt Benford's Law am wahrscheinlichsten?",
     )
-    pred_benford
     return (pred_benford,)
 
 
 @app.cell(hide_code=True)
 def _(mo, pred_benford):
     if pred_benford.value == "aktien":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "✅ **Richtig!** **Aktienkurse** wachsen multiplikativ (prozentuale Veränderungen), "
                 "und genau solche Daten folgen Benford's Law. Über mehrere Größenordnungen hinweg "
@@ -586,7 +589,7 @@ def _(mo, pred_benford):
             )
         )
     elif pred_benford.value == "groessen":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ **Körpergrößen** folgen Benford's Law nicht. Sie liegen in einem engen Wertebereich "
                 "(ca. 150–200 cm) und sind normalverteilt. Benford braucht Daten, die sich über "
@@ -594,7 +597,7 @@ def _(mo, pred_benford):
             )
         )
     elif pred_benford.value == "lotto":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ **Lottozahlen** sind gleichverteilte Zufallszahlen in einem festen Bereich (z.B. 1–49). "
                 "Sie folgen Benford's Law nicht, weil sie nicht natürlich gewachsen sind — "
@@ -602,13 +605,16 @@ def _(mo, pred_benford):
             )
         )
     elif pred_benford.value == "hausnummern":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ **Hausnummern** werden zugewiesen und folgen einem festen Vergabeschema. "
                 "Sie sind nicht natürlich gewachsen und erstrecken sich nicht über viele Größenordnungen. "
                 "Benford's Law braucht multiplikativ wachsende Daten wie **Aktienkurse**."
             )
         )
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([pred_benford, _result])
     return
 
 
@@ -702,21 +708,20 @@ def _(mo):
 def _(mo):
     viz_choice_4 = mo.ui.radio(
         options={
-            "bar": "Balkendiagramm",
-            "line": "Liniendiagramm",
-            "pie": "Kreisdiagramm",
-            "scatter": "Streudiagramm",
+            "Balkendiagramm": "bar",
+            "Liniendiagramm": "line",
+            "Kreisdiagramm": "pie",
+            "Streudiagramm": "scatter",
         },
         label="Abweichung jeder Ziffer von der Benford-Erwartung darstellen — welcher Charttyp?",
     )
-    viz_choice_4
     return (viz_choice_4,)
 
 
 @app.cell(hide_code=True)
 def _(mo, viz_choice_4):
     if viz_choice_4.value == "bar":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "✅ **Richtig!** Ein **Balkendiagramm** ist ideal, um die Abweichung pro Ziffer darzustellen. "
                 "Jede Ziffer ist eine Kategorie, und die Balkenhöhe zeigt die Abweichung — "
@@ -724,7 +729,7 @@ def _(mo, viz_choice_4):
             )
         )
     elif viz_choice_4.value == "line":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Nicht ganz. Ein Liniendiagramm suggeriert eine **Verbindung** zwischen den Datenpunkten "
                 "und eignet sich für Zeitreihen. Die Ziffern 1–9 haben zwar eine Reihenfolge, aber die "
@@ -732,7 +737,7 @@ def _(mo, viz_choice_4):
             )
         )
     elif viz_choice_4.value == "pie":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Ein Kreisdiagramm zeigt Anteile am Ganzen (z.B. '30% beginnen mit 1'). "
                 "Für **Abweichungen** (die positiv oder negativ sein können) ist es ungeeignet. "
@@ -740,13 +745,16 @@ def _(mo, viz_choice_4):
             )
         )
     elif viz_choice_4.value == "scatter":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Streudiagramme zeigen den **Zusammenhang** zweier numerischer Variablen. "
                 "Hier vergleichen wir kategorische Werte (Ziffern) mit ihren Abweichungen — "
                 "ein **Balkendiagramm** eignet sich dafür besser."
             )
         )
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([viz_choice_4, _result])
     return
 
 
@@ -764,20 +772,19 @@ def _(mo):
 def _(mo):
     selbsttest_4 = mo.ui.radio(
         options={
-            "zeitlich": "Die zeitliche Konzentration der Todesfälle auf die Nachmittagsstunden",
-            "alter": "Das Durchschnittsalter der Opfer",
-            "gleichverteilt": "Die gleichmäßige Verteilung über alle Tageszeiten",
+            "Die zeitliche Konzentration der Todesfälle auf die Nachmittagsstunden": "zeitlich",
+            "Das Durchschnittsalter der Opfer": "alter",
+            "Die gleichmäßige Verteilung über alle Tageszeiten": "gleichverteilt",
         },
         label="Welche Anomalie fiel bei Shipmans Todesfällen am stärksten auf?",
     )
-    selbsttest_4
     return (selbsttest_4,)
 
 
 @app.cell(hide_code=True)
 def _(mo, selbsttest_4):
     if selbsttest_4.value == "zeitlich":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "✅ **Richtig!** Die auffälligste Anomalie war die extreme **Konzentration auf die "
                 "Nachmittagsstunden** (13–16 Uhr). Während bei anderen Ärzten die Todesfälle "
@@ -786,7 +793,7 @@ def _(mo, selbsttest_4):
             )
         )
     elif selbsttest_4.value == "alter":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Das Durchschnittsalter war zwar auch auffällig, aber nicht die **stärkste** Anomalie. "
                 "Am deutlichsten war die **zeitliche Konzentration**: Fast alle Todesfälle fielen in "
@@ -794,13 +801,16 @@ def _(mo, selbsttest_4):
             )
         )
     elif selbsttest_4.value == "gleichverteilt":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Eine gleichmäßige Verteilung wäre gerade **keine** Anomalie — das ist das erwartete Muster "
                 "bei natürlichen Todesfällen. Die Anomalie bei Shipman war die **ungleichmäßige** Verteilung: "
                 "eine extreme Häufung in den Nachmittagsstunden."
             )
         )
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([selbsttest_4, _result])
     return
 
 

@@ -144,21 +144,20 @@ def _(mo):
 def _(mo):
     pred_fk = mo.ui.radio(
         options={
-            "n_seite": "Auf der N-Seite (Spieler) — jeder Spieler verweist auf seinen Verein",
-            "1_seite": "Auf der 1-Seite (Verein) — der Verein listet seine Spieler",
-            "beide": "In beiden Tabellen — eine Referenz in jede Richtung",
-            "extra": "In einer separaten Beziehungstabelle",
+            "Auf der N-Seite (Spieler) — jeder Spieler verweist auf seinen Verein": "n_seite",
+            "Auf der 1-Seite (Verein) — der Verein listet seine Spieler": "1_seite",
+            "In beiden Tabellen — eine Referenz in jede Richtung": "beide",
+            "In einer separaten Beziehungstabelle": "extra",
         },
         label="**Vorhersage:** 1:N-Beziehung (Verein → Spieler) — wo steht der Fremdschlüssel?",
     )
-    pred_fk
     return (pred_fk,)
 
 
 @app.cell(hide_code=True)
-def _(pred_fk, mo):
+def _(mo, pred_fk):
     if pred_fk.value == "n_seite":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "✅ **Richtig!** Der Fremdschlüssel steht immer auf der **N-Seite**. "
                 "Jeder Spieler gehört zu *einem* Verein, also speichert die Spieler-Tabelle "
@@ -167,7 +166,7 @@ def _(pred_fk, mo):
             )
         )
     elif pred_fk.value == "1_seite":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Nicht ganz. Wenn der Verein seine Spieler listen würde, bräuchte er "
                 "eine variable Anzahl von Spalten (Spieler1_ID, Spieler2_ID, ...) — das ist nicht möglich. "
@@ -176,7 +175,7 @@ def _(pred_fk, mo):
             )
         )
     elif pred_fk.value == "beide":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Zwei Referenzen wären redundant. Es reicht, wenn jeder Spieler auf seinen "
                 "Verein verweist — der Verein kann seine Spieler über einen JOIN finden. "
@@ -184,13 +183,16 @@ def _(pred_fk, mo):
             )
         )
     elif pred_fk.value == "extra":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Eine separate Beziehungstabelle braucht man bei **M:N**-Beziehungen. "
                 "Bei 1:N reicht ein Fremdschlüssel auf der **N-Seite (Spieler)** — "
                 "das ist einfacher und effizienter."
             )
         )
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([pred_fk, _result])
     return
 
 
@@ -416,14 +418,13 @@ def _(mo):
         },
         label="**Vorhersage:** Wie viele Fremdschlüssel hat eine M:N-Beziehungstabelle mindestens?",
     )
-    pred_mn
     return (pred_mn,)
 
 
 @app.cell(hide_code=True)
-def _(pred_mn, mo):
+def _(mo, pred_mn):
     if pred_mn.value == "2":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "✅ **Richtig!** Jede M:N-Beziehungstabelle braucht mindestens **2 Fremdschlüssel** — "
                 "einen für jede Seite der Beziehung. `Student_ID` verweist auf Student, "
@@ -431,26 +432,29 @@ def _(pred_mn, mo):
             )
         )
     elif pred_mn.value == "0":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Ohne Fremdschlüssel wäre die Beziehungstabelle nicht mit den Entitätstabellen "
                 "verbunden. Sie braucht mindestens **2 Fremdschlüssel** — einen pro Seite der M:N-Beziehung."
             )
         )
     elif pred_mn.value == "1":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Ein Fremdschlüssel verbindet nur mit **einer** Seite. Bei einer M:N-Beziehung "
                 "müssen **beide** Seiten referenziert werden — also mindestens **2 Fremdschlüssel**."
             )
         )
     elif pred_mn.value == "3":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ 3 wären zu viele für eine einfache M:N-Beziehung. Es braucht genau **2 Fremdschlüssel** — "
                 "einen pro Seite. (Mehr FKs gibt es nur bei ternären Beziehungen mit 3 Entitäten.)"
             )
         )
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([pred_mn, _result])
     return
 
 
@@ -665,21 +669,20 @@ def _(mo):
 def _(mo):
     pred_order = mo.ui.radio(
         options={
-            "richtig": "Kategorie → Produkt → Kunde → Bestellung → Bestellposition",
-            "reverse": "Bestellposition → Bestellung → Kunde → Produkt → Kategorie",
-            "egal": "Die Reihenfolge spielt keine Rolle",
-            "wrong": "Kunde → Bestellung → Bestellposition → Kategorie → Produkt",
+            "Kategorie → Produkt → Kunde → Bestellung → Bestellposition": "richtig",
+            "Bestellposition → Bestellung → Kunde → Produkt → Kategorie": "reverse",
+            "Die Reihenfolge spielt keine Rolle": "egal",
+            "Kunde → Bestellung → Bestellposition → Kategorie → Produkt": "wrong",
         },
         label="**Vorhersage:** In welcher Reihenfolge müssen die CREATE TABLE Statements ausgeführt werden?",
     )
-    pred_order
     return (pred_order,)
 
 
 @app.cell(hide_code=True)
-def _(pred_order, mo):
+def _(mo, pred_order):
     if pred_order.value == "richtig":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "✅ **Richtig!** Tabellen, die von anderen referenziert werden, müssen **zuerst** "
                 "erstellt werden. Kategorie hat keine Abhängigkeiten → zuerst. Produkt verweist auf "
@@ -687,7 +690,7 @@ def _(pred_order, mo):
             )
         )
     elif pred_order.value == "reverse":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Umgekehrt! Bestellposition hat Fremdschlüssel auf Bestellung und Produkt — "
                 "diese müssen **vorher** existieren. Die Reihenfolge ist: zuerst die Tabellen "
@@ -696,7 +699,7 @@ def _(pred_order, mo):
             )
         )
     elif pred_order.value == "egal":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Die Reihenfolge ist **nicht** egal! Ein `FOREIGN KEY` kann nur auf eine Tabelle "
                 "verweisen, die **bereits existiert**. Deshalb müssen referenzierte Tabellen zuerst "
@@ -704,12 +707,15 @@ def _(pred_order, mo):
             )
         )
     elif pred_order.value == "wrong":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Fast, aber Kategorie muss **vor** Produkt kommen (Produkt hat FK auf Kategorie). "
                 "Richtige Reihenfolge: **Kategorie → Produkt → Kunde → Bestellung → Bestellposition**."
             )
         )
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([pred_order, _result])
     return
 
 
@@ -912,21 +918,20 @@ def _(mo):
 def _(mo):
     quiz_fk = mo.ui.radio(
         options={
-            "correct": "Auf der N-Seite (Spieler) — jeder Spieler verweist auf seinen Verein",
-            "parent": "Auf der 1-Seite (Verein) — der Verein verweist auf seine Spieler",
-            "both": "In beiden Tabellen — eine Referenz in jede Richtung",
-            "join": "In einer separaten Join-Tabelle",
+            "Auf der N-Seite (Spieler) — jeder Spieler verweist auf seinen Verein": "correct",
+            "Auf der 1-Seite (Verein) — der Verein verweist auf seine Spieler": "parent",
+            "In beiden Tabellen — eine Referenz in jede Richtung": "both",
+            "In einer separaten Join-Tabelle": "join",
         },
         label="**Quiz:** Bei einer 1:N-Beziehung (Verein → Spieler) — auf welcher Seite steht der Fremdschlüssel?",
     )
-    quiz_fk
     return (quiz_fk,)
 
 
 @app.cell(hide_code=True)
-def _(quiz_fk, mo):
+def _(mo, quiz_fk):
     if quiz_fk.value == "correct":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "✅ **Richtig!** Der Fremdschlüssel steht immer auf der **N-Seite**. "
                 "Jeder Spieler gehört zu *einem* Verein, also speichert die Spieler-Tabelle "
@@ -935,13 +940,16 @@ def _(quiz_fk, mo):
             )
         )
     elif quiz_fk.value:
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Nicht ganz. Überlegen Sie: Kann ein Verein auf *alle* seine Spieler verweisen? "
                 "Das wäre eine variable Anzahl! Stattdessen verweist jeder **einzelne Spieler** "
                 "auf seinen (einen) Verein — der FK steht auf der **N-Seite**."
             )
         )
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([quiz_fk, _result])
     return
 
 
@@ -1078,21 +1086,20 @@ def _(mo):
 def _(mo):
     viz_choice_6 = mo.ui.radio(
         options={
-            "bar": "Balkendiagramm",
-            "pie": "Kreisdiagramm",
-            "line": "Liniendiagramm",
-            "heatmap": "Heatmap",
+            "Balkendiagramm": "bar",
+            "Kreisdiagramm": "pie",
+            "Liniendiagramm": "line",
+            "Heatmap": "heatmap",
         },
         label="Umsatz pro Produktkategorie darstellen — welcher Charttyp?",
     )
-    viz_choice_6
     return (viz_choice_6,)
 
 
 @app.cell(hide_code=True)
-def _(viz_choice_6, mo):
+def _(mo, viz_choice_6):
     if viz_choice_6.value == "bar":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "✅ **Richtig!** Ein **Balkendiagramm** eignet sich ideal für den Vergleich von "
                 "Kategorien — die Balkenlänge macht Unterschiede sofort sichtbar. "
@@ -1100,7 +1107,7 @@ def _(viz_choice_6, mo):
             )
         )
     elif viz_choice_6.value == "pie":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Kreisdiagramme zeigen Anteile am Ganzen, aber der Mensch kann Winkel "
                 "schlecht vergleichen. Ein **Balkendiagramm** macht die Unterschiede zwischen "
@@ -1108,7 +1115,7 @@ def _(viz_choice_6, mo):
             )
         )
     elif viz_choice_6.value == "line":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Liniendiagramme sind für **zeitliche Verläufe** gedacht — sie suggerieren "
                 "eine Reihenfolge zwischen den Datenpunkten. Kategorien haben keine natürliche "
@@ -1116,13 +1123,16 @@ def _(viz_choice_6, mo):
             )
         )
     elif viz_choice_6.value == "heatmap":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Heatmaps eignen sich für **zweidimensionale** Daten (z.B. Korrelationen). "
                 "Hier haben wir nur eine Dimension (Kategorie → Umsatz) — "
                 "ein **Balkendiagramm** ist einfacher und klarer."
             )
         )
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([viz_choice_6, _result])
     return
 
 
@@ -1140,20 +1150,19 @@ def _(mo):
 def _(mo):
     selbsttest_6 = mo.ui.radio(
         options={
-            "restrict": "Die Löschung wird verhindert (RESTRICT)",
-            "auto_delete": "Alle Produkte werden automatisch mitgelöscht",
-            "nichts": "Nichts — Fremdschlüssel werden ignoriert",
+            "Die Löschung wird verhindert (RESTRICT)": "restrict",
+            "Alle Produkte werden automatisch mitgelöscht": "auto_delete",
+            "Nichts — Fremdschlüssel werden ignoriert": "nichts",
         },
         label="Was passiert beim Löschen einer Kategorie, die noch Produkte enthält (Standard-Verhalten)?",
     )
-    selbsttest_6
     return (selbsttest_6,)
 
 
 @app.cell(hide_code=True)
-def _(selbsttest_6, mo):
+def _(mo, selbsttest_6):
     if selbsttest_6.value == "restrict":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "✅ **Richtig!** Das Standardverhalten ist **RESTRICT** — die Datenbank "
                 "verweigert die Löschung, solange noch abhängige Datensätze existieren. "
@@ -1162,7 +1171,7 @@ def _(selbsttest_6, mo):
             )
         )
     elif selbsttest_6.value == "auto_delete":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Automatisches Mitlöschen wäre **CASCADE** — das muss explizit mit "
                 "`ON DELETE CASCADE` definiert werden. Das Standard-Verhalten ist **RESTRICT**: "
@@ -1170,13 +1179,16 @@ def _(selbsttest_6, mo):
             )
         )
     elif selbsttest_6.value == "nichts":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Fremdschlüssel-Constraints werden **nicht** ignoriert! Die Datenbank prüft "
                 "bei jeder Änderung, ob die Integrität gewahrt bleibt. Das Standard-Verhalten "
                 "ist **RESTRICT**: Die Löschung wird abgelehnt."
             )
         )
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([selbsttest_6, _result])
     return
 
 

@@ -10,53 +10,53 @@
 
 import marimo
 
-__generated_with = "0.10.14"
-app = marimo.App(width="medium", app_title="DMA Session 12: Zeitreihenanalyse")
+__generated_with = "0.13.0"
+app = marimo.App(
+    width="medium",
+    app_title="DMA Session 12: Zeitreihenanalyse — Übungen",
+)
+
+
+@app.cell(hide_code=True)
+def _():
+    import marimo as mo
+    return (mo,)
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        # Vorlesung 12: Zeitreihenanalyse
+        # Session 12: Zeitreihenanalyse — Übungen
 
-        **Kursfahrplan:** I: SQL-Grundlagen (S1–4) · II: Datenmodellierung (S5–7) · III: Fortgeschrittenes SQL (S8–9) · **▸ IV: Datenanalyse (S10–13)**
+        Theorie und geführte Beispiele → **12-zeitreihen-guide.py**
 
-        Session 10 hat Querschnittsdaten analysiert, Session 11 hat statistische Signifikanz getestet. Jetzt kommt die Zeitdimension dazu: Wie verändern sich Daten über die Zeit?
+        **Aufgabentypen:**
 
-        **Lernziele:**
-        - Zeitreihendaten analysieren und Trends/Saisonalität erkennen
-        - Window Functions: LAG, LEAD, ROW_NUMBER, RANK
-        - Moving Averages mit SQL berechnen
-        - Year-over-Year Vergleiche durchführen
+        - 🟢 **Geführt**: Vollständige Lösung zum Nachvollziehen
+        - 🟡 **Angepasst**: Teillösung zum Ergänzen (`???`)
+        - 🔵 **Selbstständig**: Eigene Lösung schreiben
+        - 🔴 **Debugging**: Fehler finden und beheben
+        - ⭐ **Entdecken**: Offene Herausforderungen
 
-        **Datenquelle:** U.S. Census Bureau - Monthly Retail Trade Survey (1992-2020)
+        > **Hinweis:** 🟡-Aufgaben enthalten `???` als Platzhalter. Die Zelle zeigt einen SQL-Fehler, bis Sie die `???` durch die richtige Lösung ersetzen — das ist Absicht!
         """
     )
     return
 
 
 @app.cell
-def _():
-    import marimo as mo
+def _(mo):
     import polars as pl
     import plotly.express as px
-    return mo, pl, px
 
-
-@app.cell(hide_code=True)
-def _(mo, pl):
-    # Retail Sales Daten laden
     try:
         csv_path = mo.notebook_location() / "public" / "us_retail_sales.csv"
         retail_sales = pl.read_csv(str(csv_path))
-
-        # Datentypen anpassen
         retail_sales = retail_sales.with_columns([
             pl.col("sales_month").str.to_date("%Y-%m-%d"),
             pl.col("sales").cast(pl.Float64)
         ])
-        daten_quelle = "U.S. Census Bureau - Monthly Retail Trade Survey (1992-2020)"
     except Exception:
         from datetime import date
         retail_sales = pl.DataFrame({
@@ -67,22 +67,27 @@ def _(mo, pl):
                       1100.0, 1000.0, 1050.0, 1100.0, 1150.0, 900.0,
                       850.0, 1200.0, 1300.0, 1100.0, 1050.0, 1400.0],
         })
-        daten_quelle = "Offline-Daten (Fallback)"
         mo.callout(mo.md("**Hinweis:** CSV konnte nicht geladen werden. Es werden Beispieldaten verwendet."), kind="warn")
-    return daten_quelle, retail_sales
+
+    return mo, pl, px, retail_sales
+
+
+# -----------------------------------------------------------------------
+# Phase 1: Daten erkunden
+# -----------------------------------------------------------------------
 
 
 @app.cell(hide_code=True)
-def _(daten_quelle, mo):
+def _(mo):
     mo.md(
-        f"""
-        **Datenquelle:** {daten_quelle}
-
+        r"""
         ---
 
         ## Phase 1: Daten erkunden
 
-        Unser Datensatz enthält monatliche Einzelhandelsumsätze für verschiedene Branchen.
+        Unser Datensatz enthält monatliche Einzelhandelsumsätze verschiedener Branchen in den USA (1992-2020).
+
+        Spalten: `sales_month` (Datum), `kind_of_business` (Branche), `sales` (Umsatz in Mio. USD)
         """
     )
     return
@@ -92,9 +97,9 @@ def _(daten_quelle, mo):
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 12.1: Datenüberblick
+        ### 🟢 Aufgabe 12.1: Datenüberblick
 
-        Wie viele Datensätze haben wir? Welche Branchen sind enthalten?
+        Wie viele Datensätze haben wir? Wie viele verschiedene Branchen? Welcher Zeitraum?
         """
     )
     return
@@ -102,7 +107,7 @@ def _(mo):
 
 @app.cell
 def _(mo, retail_sales):
-    mo.sql(
+    _df = mo.sql(
         f"""
         SELECT
             COUNT(*) AS anzahl_datensaetze,
@@ -112,27 +117,67 @@ def _(mo, retail_sales):
         FROM retail_sales
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    COUNT(*) AS anzahl_datensaetze,
+    COUNT(DISTINCT kind_of_business) AS anzahl_branchen,
+    MIN(sales_month) AS erster_monat,
+    MAX(sales_month) AS letzter_monat
+FROM retail_sales
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🟢 Aufgabe 12.2: Branchen auflisten
+
+        Welche Branchen sind im Datensatz enthalten?
+        """
+    )
+    return
 
 
 @app.cell
 def _(mo, retail_sales):
-    mo.sql(
+    _df = mo.sql(
         f"""
         SELECT DISTINCT kind_of_business
         FROM retail_sales
         ORDER BY kind_of_business
-        LIMIT 15
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT DISTINCT kind_of_business
+FROM retail_sales
+ORDER BY kind_of_business
+```
+""")})
+    return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 12.2: Erste Visualisierung
+        ### 🟡 Aufgabe 12.3: Gesamtumsatz einer Branche (Scaffolded)
 
-        Wie entwickelt sich der Gesamtumsatz über die Zeit?
+        Berechnen Sie den Gesamtumsatz für Juweliergeschäfte. Ergänzen Sie `???`:
         """
     )
     return
@@ -140,43 +185,62 @@ def _(mo):
 
 @app.cell
 def _(mo, retail_sales):
-    total_sales = mo.sql(
+    _df = mo.sql(
         f"""
-        SELECT sales_month, sales
+        SELECT
+            COUNT(*) AS anzahl_monate,
+            ROUND(SUM(sales), 0) AS gesamt_umsatz,
+            ROUND(AVG(sales), 0) AS durchschnitt_umsatz,
+            ROUND(MIN(sales), 0) AS min_umsatz,
+            ROUND(MAX(sales), 0) AS max_umsatz
         FROM retail_sales
-        WHERE kind_of_business = 'Retail and food services sales, total'
-        ORDER BY sales_month
+        WHERE kind_of_business = ???
+        -- Tipp: 'Jewelry stores'
         """
     )
-    return (total_sales,)
+    return
 
 
-@app.cell
-def _(px, total_sales):
-    fig_total = px.line(
-        total_sales,
-        x="sales_month",
-        y="sales",
-        title="US Retail Sales - Gesamt (1992-2020)",
-        labels={"sales_month": "Monat", "sales": "Umsatz (Mio. USD)"}
-    )
-    fig_total
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    COUNT(*) AS anzahl_monate,
+    ROUND(SUM(sales), 0) AS gesamt_umsatz,
+    ROUND(AVG(sales), 0) AS durchschnitt_umsatz,
+    ROUND(MIN(sales), 0) AS min_umsatz,
+    ROUND(MAX(sales), 0) AS max_umsatz
+FROM retail_sales
+WHERE kind_of_business = 'Jewelry stores'
+```
+""")})
+    return
+
+
+# -----------------------------------------------------------------------
+# Phase 2: Window Functions Syntax
+# -----------------------------------------------------------------------
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        **Beobachtung:** Deutlicher Aufwärtstrend mit starker Saisonalität (Weihnachtsgeschäft).
-
-        > **Vorhersage:** Betrachten Sie die Zeitreihe oben. Um wie viel Prozent schätzen Sie den typischen Dezember-Umsatz höher als den Jahresdurchschnitt? Und was passiert im Jahr 2020?
-
         ---
 
-        ## Phase 2: Window Functions - Syntax
+        ## Phase 2: Window Functions — Syntax
 
         Window Functions berechnen Werte über ein "Fenster" von Zeilen,
         **ohne** die Zeilen zu reduzieren (anders als GROUP BY).
+
+        ```sql
+        funktion() OVER (
+            [PARTITION BY ...]
+            [ORDER BY ...]
+            [ROWS BETWEEN ... AND ...]
+        )
+        ```
         """
     )
     return
@@ -186,7 +250,7 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 12.3: Laufende Summe
+        ### 🟢 Aufgabe 12.4: Laufende Summe
 
         Berechnen Sie die kumulierte Summe der Umsätze für Buchläden.
         """
@@ -196,7 +260,7 @@ def _(mo):
 
 @app.cell
 def _(mo, retail_sales):
-    mo.sql(
+    _df = mo.sql(
         f"""
         SELECT
             sales_month,
@@ -208,15 +272,34 @@ def _(mo, retail_sales):
         LIMIT 20
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    sales_month,
+    sales,
+    SUM(sales) OVER (ORDER BY sales_month) AS cumulative_sales
+FROM retail_sales
+WHERE kind_of_business = 'Book stores'
+ORDER BY sales_month
+LIMIT 20
+```
+**Erklärung:** `SUM() OVER (ORDER BY ...)` berechnet die laufende Summe. Jede Zeile enthält die Summe aller bisherigen Werte.
+""")})
+    return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 12.4: Ranking
+        ### 🟡 Aufgabe 12.5: Ranking (Scaffolded)
 
-        Welche Monate hatten die höchsten Umsätze bei Juwelieren?
+        Welche Monate hatten die höchsten Umsätze bei Juwelieren? Ergänzen Sie `???`:
         """
     )
     return
@@ -224,18 +307,142 @@ def _(mo):
 
 @app.cell
 def _(mo, retail_sales):
-    mo.sql(
+    _df = mo.sql(
         f"""
         SELECT
             sales_month,
             sales,
-            RANK() OVER (ORDER BY sales DESC) AS rang
+            RANK() OVER (ORDER BY ???) AS rang
         FROM retail_sales
         WHERE kind_of_business = 'Jewelry stores'
         ORDER BY rang
         LIMIT 10
+        -- Tipp: sales DESC
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    sales_month,
+    sales,
+    RANK() OVER (ORDER BY sales DESC) AS rang
+FROM retail_sales
+WHERE kind_of_business = 'Jewelry stores'
+ORDER BY rang
+LIMIT 10
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔵 Aufgabe 12.6: ROW_NUMBER vs. DENSE_RANK (Selbstständig)
+
+        Vergleichen Sie `ROW_NUMBER()`, `RANK()` und `DENSE_RANK()` für Juweliergeschäfte,
+        sortiert nach Umsatz absteigend. Was ist der Unterschied?
+
+        *Hinweis: Alle drei Funktionen mit `OVER (ORDER BY sales DESC)`. Zeigen Sie die Top 15.*
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, retail_sales):
+    _df = mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        -- Erwartete Spalten: sales_month, sales, row_num, rang, dense_rang
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    sales_month,
+    sales,
+    ROW_NUMBER() OVER (ORDER BY sales DESC) AS row_num,
+    RANK() OVER (ORDER BY sales DESC) AS rang,
+    DENSE_RANK() OVER (ORDER BY sales DESC) AS dense_rang
+FROM retail_sales
+WHERE kind_of_business = 'Jewelry stores'
+ORDER BY row_num
+LIMIT 15
+```
+**Unterschied:** Bei gleichen Werten:
+- `ROW_NUMBER`: fortlaufend (1, 2, 3, ...) — keine Duplikate
+- `RANK`: gleicher Rang, dann Lücke (1, 1, 3, ...)
+- `DENSE_RANK`: gleicher Rang, keine Lücke (1, 1, 2, ...)
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔴 Aufgabe 12.7: Debugging — Fehlende Window-Spezifikation
+
+        Die folgende Abfrage soll eine laufende Summe berechnen. Sie hat einen Fehler!
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, retail_sales):
+    _df = mo.sql(
+        f"""
+        -- 🔴 Diese Abfrage hat einen Fehler — finden und beheben Sie ihn!
+        SELECT
+            sales_month,
+            sales,
+            SUM(sales) AS cumulative_sales
+        FROM retail_sales
+        WHERE kind_of_business = 'Book stores'
+        ORDER BY sales_month
+        LIMIT 20
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Lösung": mo.md("""
+**Problem:** `SUM(sales)` ohne `OVER`-Klausel! Ohne OVER ist SUM eine Aggregatfunktion, die alle Zeilen zu einer zusammenfasst — es fehlt dann entweder GROUP BY oder die Window-Spezifikation.
+
+**Lösung:**
+```sql
+SELECT
+    sales_month,
+    sales,
+    SUM(sales) OVER (ORDER BY sales_month) AS cumulative_sales
+FROM retail_sales
+WHERE kind_of_business = 'Book stores'
+ORDER BY sales_month
+LIMIT 20
+```
+""")})
+    return
+
+
+# -----------------------------------------------------------------------
+# Phase 3: LAG und LEAD
+# -----------------------------------------------------------------------
 
 
 @app.cell(hide_code=True)
@@ -246,8 +453,10 @@ def _(mo):
 
         ## Phase 3: LAG und LEAD
 
-        Mit LAG greifen wir auf den Wert einer **vorherigen** Zeile zu,
-        mit LEAD auf den Wert einer **nachfolgenden** Zeile.
+        - `LAG(spalte, n)` greift auf den Wert **n Zeilen vorher** zu
+        - `LEAD(spalte, n)` greift auf den Wert **n Zeilen danach** zu
+
+        Damit können wir Veränderungen von Monat zu Monat berechnen.
         """
     )
     return
@@ -257,9 +466,9 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 12.5: Monatliche Änderung
+        ### 🟢 Aufgabe 12.8: Monatliche Änderung — Juweliere
 
-        Berechnen Sie die monatliche Änderung der Umsätze für Juweliergeschäfte.
+        Berechnen Sie die monatliche Umsatzänderung (absolut und prozentual) für Juweliergeschäfte.
         """
     )
     return
@@ -267,7 +476,7 @@ def _(mo):
 
 @app.cell
 def _(mo, retail_sales):
-    monthly_change = mo.sql(
+    _df = mo.sql(
         f"""
         SELECT
             sales_month,
@@ -279,31 +488,40 @@ def _(mo, retail_sales):
         FROM retail_sales
         WHERE kind_of_business = 'Jewelry stores'
         ORDER BY sales_month
+        LIMIT 20
         """
     )
-    return (monthly_change,)
+    return
 
 
-@app.cell
-def _(monthly_change, px):
-    fig_change = px.bar(
-        monthly_change.drop_nulls(),
-        x="sales_month",
-        y="pct_change",
-        title="Monatliche Umsatzänderung - Juweliere (%)",
-        labels={"sales_month": "Monat", "pct_change": "Änderung (%)"}
-    )
-    fig_change.update_traces(marker_color=["green" if x > 0 else "red" for x in monthly_change.drop_nulls().get_column("pct_change")])
-    fig_change
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    sales_month,
+    sales,
+    LAG(sales, 1) OVER (ORDER BY sales_month) AS prev_month_sales,
+    sales - LAG(sales, 1) OVER (ORDER BY sales_month) AS abs_change,
+    ROUND((sales * 1.0 / LAG(sales, 1) OVER (ORDER BY sales_month) - 1) * 100, 1)
+        AS pct_change
+FROM retail_sales
+WHERE kind_of_business = 'Jewelry stores'
+ORDER BY sales_month
+LIMIT 20
+```
+**Beobachtung:** Die erste Zeile hat NULL bei prev_month_sales — es gibt keinen Vorgänger!
+""")})
+    return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 12.6: Selbstständig - Sportgeschäfte analysieren
+        ### 🟡 Aufgabe 12.9: Monatliche Änderung — Sportgeschäfte (Scaffolded)
 
-        Berechnen Sie die monatliche prozentuale Änderung für "Sporting goods stores".
+        Berechnen Sie die monatliche prozentuale Änderung für Sportgeschäfte. Ergänzen Sie `???`:
         """
     )
     return
@@ -311,16 +529,22 @@ def _(mo):
 
 @app.cell
 def _(mo, retail_sales):
-    # Ihre Lösung hier:
-    mo.sql(
+    _df = mo.sql(
         f"""
-        -- Ihre Lösung hier
-        -- Tipp: Verwenden Sie LAG(sales, 1) OVER (ORDER BY sales_month)
-        -- Filter: WHERE kind_of_business = 'Sporting goods stores'
-        -- Erwartete Spalten: sales_month, sales, prev_month, pct_change
-        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        SELECT
+            sales_month,
+            sales,
+            LAG(sales, 1) OVER (ORDER BY ???) AS prev_month,
+            ROUND((sales * 1.0 / LAG(sales, 1) OVER (ORDER BY ???) - 1) * 100, 1)
+                AS pct_change
+        FROM retail_sales
+        WHERE kind_of_business = ???
+        ORDER BY sales_month
+        LIMIT 20
+        -- Tipp: ORDER BY sales_month, WHERE 'Sporting goods stores'
         """
     )
+    return
 
 
 @app.cell(hide_code=True)
@@ -336,9 +560,134 @@ SELECT
 FROM retail_sales
 WHERE kind_of_business = 'Sporting goods stores'
 ORDER BY sales_month
+LIMIT 20
 ```
 """)})
     return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔵 Aufgabe 12.10: LEAD — Nächster Monat (Selbstständig)
+
+        Zeigen Sie für Buchläden den Umsatz des **nächsten** Monats neben dem aktuellen.
+        Berechnen Sie auch die erwartete Änderung.
+
+        *Hinweis: `LEAD(sales, 1) OVER (ORDER BY sales_month)`*
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, retail_sales):
+    _df = mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        -- Erwartete Spalten: sales_month, sales, next_month_sales, expected_change
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    sales_month,
+    sales,
+    LEAD(sales, 1) OVER (ORDER BY sales_month) AS next_month_sales,
+    LEAD(sales, 1) OVER (ORDER BY sales_month) - sales AS expected_change
+FROM retail_sales
+WHERE kind_of_business = 'Book stores'
+ORDER BY sales_month
+LIMIT 20
+```
+**Beobachtung:** Die letzte Zeile hat NULL bei next_month_sales — es gibt keinen Nachfolger!
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔴 Aufgabe 12.11: Debugging — NULL in der ersten Zeile
+
+        Die folgende Abfrage berechnet die prozentuale Änderung, aber die erste Zeile erzeugt einen NULL-Wert.
+        Wie können wir das bereinigen?
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, retail_sales):
+    _df = mo.sql(
+        f"""
+        -- 🔴 Diese Abfrage hat einen Fehler — finden und beheben Sie ihn!
+        SELECT
+            sales_month,
+            sales,
+            LAG(sales, 1) OVER (ORDER BY sales_month) AS prev_month,
+            ROUND((sales * 1.0 / LAG(sales, 1) OVER (ORDER BY sales_month) - 1) * 100, 1)
+                AS pct_change
+        FROM retail_sales
+        WHERE kind_of_business = 'Jewelry stores'
+        ORDER BY sales_month
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Lösung": mo.md("""
+**Problem:** Die erste Zeile hat keinen Vorgänger, daher ist `LAG()` NULL und die Division ergibt NULL. Das ist zwar kein Fehler im SQL, aber oft unerwünscht.
+
+**Lösung 1: NULL-Zeilen ausfiltern (bevorzugt)**
+```sql
+WITH mit_lag AS (
+    SELECT
+        sales_month,
+        sales,
+        LAG(sales, 1) OVER (ORDER BY sales_month) AS prev_month
+    FROM retail_sales
+    WHERE kind_of_business = 'Jewelry stores'
+)
+SELECT
+    sales_month,
+    sales,
+    prev_month,
+    ROUND((sales * 1.0 / prev_month - 1) * 100, 1) AS pct_change
+FROM mit_lag
+WHERE prev_month IS NOT NULL
+ORDER BY sales_month
+```
+
+**Lösung 2: COALESCE als Fallback**
+```sql
+SELECT
+    sales_month,
+    sales,
+    COALESCE(LAG(sales, 1) OVER (ORDER BY sales_month), sales) AS prev_month,
+    ROUND((sales * 1.0 / COALESCE(LAG(sales, 1) OVER (ORDER BY sales_month), sales) - 1) * 100, 1)
+        AS pct_change
+FROM retail_sales
+WHERE kind_of_business = 'Jewelry stores'
+ORDER BY sales_month
+```
+""")})
+    return
+
+
+# -----------------------------------------------------------------------
+# Phase 4: Moving Averages
+# -----------------------------------------------------------------------
 
 
 @app.cell(hide_code=True)
@@ -349,7 +698,14 @@ def _(mo):
 
         ## Phase 4: Moving Averages
 
-        Gleitende Durchschnitte glätten kurzfristige Schwankungen und machen den Trend sichtbar.
+        Gleitende Durchschnitte glätten kurzfristige Schwankungen und machen den **Trend** sichtbar.
+
+        ```sql
+        AVG(sales) OVER (
+            ORDER BY sales_month
+            ROWS BETWEEN n PRECEDING AND CURRENT ROW  -- trailing
+        )
+        ```
         """
     )
     return
@@ -359,9 +715,9 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 12.7: 12-Monats Moving Average
+        ### 🟢 Aufgabe 12.12: 12-Monats Moving Average (trailing)
 
-        Berechnen Sie einen 12-Monats gleitenden Durchschnitt (trailing).
+        Berechnen Sie einen 12-Monats gleitenden Durchschnitt für den Gesamtumsatz.
         """
     )
     return
@@ -388,9 +744,8 @@ def _(mo, retail_sales):
 
 @app.cell
 def _(ma_12, px):
-    ma_df = ma_12
     fig_ma = px.line(
-        ma_df,
+        ma_12,
         x="sales_month",
         y=["sales", "ma_12"],
         title="Retail Sales mit 12-Monats Moving Average",
@@ -401,13 +756,31 @@ def _(ma_12, px):
 
 @app.cell(hide_code=True)
 def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    sales_month,
+    sales,
+    ROUND(AVG(sales) OVER (
+        ORDER BY sales_month
+        ROWS BETWEEN 11 PRECEDING AND CURRENT ROW
+    ), 0) AS ma_12
+FROM retail_sales
+WHERE kind_of_business = 'Retail and food services sales, total'
+ORDER BY sales_month
+```
+**Erklärung:** `ROWS BETWEEN 11 PRECEDING AND CURRENT ROW` = 12 Monate (11 vorherige + aktueller). Der MA glättet die Saisonalität!
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 12.8: Selbstständig - 3-Monats MA
+        ### 🟡 Aufgabe 12.13: 3-Monats zentrierter Moving Average (Scaffolded)
 
-        Berechnen Sie einen zentrierten 3-Monats Moving Average für Buchläden.
-
-        *Hinweis: ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING*
+        Berechnen Sie einen **zentrierten** 3-Monats Moving Average für Buchläden. Ergänzen Sie `???`:
         """
     )
     return
@@ -415,16 +788,23 @@ def _(mo):
 
 @app.cell
 def _(mo, retail_sales):
-    # Ihre Lösung hier:
-    mo.sql(
+    _df = mo.sql(
         f"""
-        -- Ihre Lösung hier
-        -- Tipp: AVG(sales) OVER (ORDER BY sales_month ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING)
-        -- Filter: WHERE kind_of_business = 'Book stores'
-        -- Erwartete Spalten: sales_month, sales, ma_3_centered
-        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        SELECT
+            sales_month,
+            sales,
+            ROUND(AVG(sales) OVER (
+                ORDER BY sales_month
+                ROWS BETWEEN ??? PRECEDING AND ??? FOLLOWING
+            ), 0) AS ma_3_centered
+        FROM retail_sales
+        WHERE kind_of_business = 'Book stores'
+        ORDER BY sales_month
+        LIMIT 20
+        -- Tipp: 1 PRECEDING und 1 FOLLOWING
         """
     )
+    return
 
 
 @app.cell(hide_code=True)
@@ -441,9 +821,118 @@ SELECT
 FROM retail_sales
 WHERE kind_of_business = 'Book stores'
 ORDER BY sales_month
+LIMIT 20
+```
+**Zentriert** bedeutet: gleich viele Monate vor und nach dem aktuellen Datum.
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔵 Aufgabe 12.14: 6-Monats Moving Average (Selbstständig)
+
+        Berechnen Sie einen 6-Monats trailing Moving Average für Sportgeschäfte.
+
+        *Hinweis: `ROWS BETWEEN 5 PRECEDING AND CURRENT ROW` für 6 Monate*
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, retail_sales):
+    _df = mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        -- Erwartete Spalten: sales_month, sales, ma_6
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    sales_month,
+    sales,
+    ROUND(AVG(sales) OVER (
+        ORDER BY sales_month
+        ROWS BETWEEN 5 PRECEDING AND CURRENT ROW
+    ), 0) AS ma_6
+FROM retail_sales
+WHERE kind_of_business = 'Sporting goods stores'
+ORDER BY sales_month
 ```
 """)})
     return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔴 Aufgabe 12.15: Debugging — Falscher Window Frame
+
+        Die folgende Abfrage soll einen 3-Monats trailing Moving Average berechnen. Sie hat einen Fehler!
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, retail_sales):
+    _df = mo.sql(
+        f"""
+        -- 🔴 Diese Abfrage hat einen Fehler — finden und beheben Sie ihn!
+        SELECT
+            sales_month,
+            sales,
+            ROUND(AVG(sales) OVER (
+                ORDER BY sales_month
+                ROWS 2 PRECEDING
+            ), 0) AS ma_3
+        FROM retail_sales
+        WHERE kind_of_business = 'Book stores'
+        ORDER BY sales_month
+        LIMIT 20
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Lösung": mo.md("""
+**Problem:** `ROWS 2 PRECEDING` ist keine gültige Syntax! Es fehlt das Schlüsselwort `BETWEEN`.
+
+**Lösung:**
+```sql
+SELECT
+    sales_month,
+    sales,
+    ROUND(AVG(sales) OVER (
+        ORDER BY sales_month
+        ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
+    ), 0) AS ma_3
+FROM retail_sales
+WHERE kind_of_business = 'Book stores'
+ORDER BY sales_month
+LIMIT 20
+```
+**Merke:** Die korrekte Syntax ist immer `ROWS BETWEEN ... AND ...`.
+""")})
+    return
+
+
+# -----------------------------------------------------------------------
+# Phase 5: Year-over-Year Vergleiche
+# -----------------------------------------------------------------------
 
 
 @app.cell(hide_code=True)
@@ -455,7 +944,7 @@ def _(mo):
         ## Phase 5: Year-over-Year Vergleiche
 
         YoY-Vergleiche eliminieren Saisonalität, indem sie jeden Monat mit dem
-        **gleichen Monat des Vorjahres** vergleichen.
+        **gleichen Monat des Vorjahres** vergleichen. Dafür nutzen wir `LAG(sales, 12)`.
         """
     )
     return
@@ -465,9 +954,9 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 12.9: YoY-Wachstum
+        ### 🟢 Aufgabe 12.16: YoY-Wachstum — Juweliere
 
-        Berechnen Sie das Year-over-Year Wachstum mit LAG(12).
+        Berechnen Sie das Year-over-Year Wachstum mit LAG(12) für Juweliergeschäfte.
         """
     )
     return
@@ -498,7 +987,7 @@ def _(px, yoy):
         yoy_df,
         x="sales_month",
         y="yoy_growth",
-        title="Year-over-Year Wachstum - Juweliere (%)",
+        title="Year-over-Year Wachstum — Juweliere (%)",
         labels={"sales_month": "Monat", "yoy_growth": "YoY Wachstum (%)"}
     )
     fig_yoy.add_hline(y=0, line_dash="dash", line_color="gray")
@@ -507,29 +996,186 @@ def _(px, yoy):
 
 @app.cell(hide_code=True)
 def _(mo):
-    quiz_lag = mo.ui.radio(
-        options={
-            "correct": "LAG(12) vergleicht mit dem gleichen Monat im Vorjahr — das eliminiert Saisonalität",
-            "same": "LAG(12) und LAG(1) geben das gleiche Ergebnis, LAG(12) ist nur schneller",
-            "avg": "LAG(12) berechnet einen 12-Monats-Durchschnitt, LAG(1) einen 1-Monats-Durchschnitt",
-            "usage": "LAG kann nur mit Zeitreihen verwendet werden, nicht mit normalem GROUP BY",
-        },
-        label="**Quiz:** Oktober-Umsatz ist sehr hoch. Ist das ungewöhnlich, oder ist Oktober immer stark? Welche LAG-Verschiebung hilft?"
-    )
-    quiz_lag
-    return (quiz_lag,)
-
-
-@app.cell(hide_code=True)
-def _(quiz_lag, mo):
-    if quiz_lag.value == "correct":
-        mo.output.replace(mo.md("Richtig! LAG(12) vergleicht Oktober 2020 mit Oktober 2019 — so sehen wir, ob der Wert *für diesen Monat* ungewöhnlich ist. LAG(1) würde nur mit September vergleichen, was bei saisonalen Daten irreführend wäre."))
-    elif quiz_lag.value:
-        mo.output.replace(mo.md("Nicht ganz. LAG(n) greift auf den Wert *n Zeilen vorher* zu — bei monatlichen Daten bedeutet LAG(12) den *gleichen Monat im Vorjahr*. So eliminieren wir saisonale Effekte."))
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    sales_month,
+    sales,
+    LAG(sales, 12) OVER (ORDER BY sales_month) AS sales_last_year,
+    ROUND((sales * 1.0 / LAG(sales, 12) OVER (ORDER BY sales_month) - 1) * 100, 1)
+        AS yoy_growth
+FROM retail_sales
+WHERE kind_of_business = 'Jewelry stores'
+ORDER BY sales_month
+```
+**Warum LAG(12)?** Bei monatlichen Daten ist LAG(12) = gleicher Monat im Vorjahr. So eliminieren wir saisonale Effekte.
+""")})
     return
 
 
-    # Aufgabe 12.10 (Indexierung) moved to Bonus section at end
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🟡 Aufgabe 12.17: YoY-Wachstum jährlich (Scaffolded)
+
+        Berechnen Sie das jährliche YoY-Wachstum: Erst Jahresdaten aggregieren, dann vergleichen. Ergänzen Sie `???`:
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, retail_sales):
+    _df = mo.sql(
+        f"""
+        WITH yearly AS (
+            SELECT
+                EXTRACT(YEAR FROM sales_month) AS year,
+                ROUND(SUM(sales), 0) AS annual_sales
+            FROM retail_sales
+            WHERE kind_of_business = 'Jewelry stores'
+            GROUP BY ???
+        )
+        SELECT
+            year,
+            annual_sales,
+            LAG(annual_sales, 1) OVER (ORDER BY ???) AS prev_year,
+            ROUND((annual_sales * 1.0 / LAG(annual_sales, 1) OVER (ORDER BY ???) - 1) * 100, 1)
+                AS yoy_growth
+        FROM yearly
+        ORDER BY year
+        -- Tipp: GROUP BY EXTRACT(YEAR FROM sales_month), ORDER BY year
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+WITH yearly AS (
+    SELECT
+        EXTRACT(YEAR FROM sales_month) AS year,
+        ROUND(SUM(sales), 0) AS annual_sales
+    FROM retail_sales
+    WHERE kind_of_business = 'Jewelry stores'
+    GROUP BY EXTRACT(YEAR FROM sales_month)
+)
+SELECT
+    year,
+    annual_sales,
+    LAG(annual_sales, 1) OVER (ORDER BY year) AS prev_year,
+    ROUND((annual_sales * 1.0 / LAG(annual_sales, 1) OVER (ORDER BY year) - 1) * 100, 1)
+        AS yoy_growth
+FROM yearly
+ORDER BY year
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔵 Aufgabe 12.18: COVID-Effekt — Buchläden 2020 (Selbstständig)
+
+        Berechnen Sie das monatliche YoY-Wachstum für Buchläden im Jahr 2020.
+        Können Sie den COVID-Effekt erkennen?
+
+        *Hinweis: Erst YoY mit LAG(12) berechnen, dann auf 2020 filtern*
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, retail_sales):
+    _df = mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        -- Erwartete Spalten: sales_month, sales, sales_last_year, yoy_growth
+        -- Filter: nur 2020
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+WITH mit_yoy AS (
+    SELECT
+        sales_month,
+        sales,
+        LAG(sales, 12) OVER (ORDER BY sales_month) AS sales_last_year,
+        ROUND((sales * 1.0 / LAG(sales, 12) OVER (ORDER BY sales_month) - 1) * 100, 1)
+            AS yoy_growth
+    FROM retail_sales
+    WHERE kind_of_business = 'Book stores'
+)
+SELECT *
+FROM mit_yoy
+WHERE EXTRACT(YEAR FROM sales_month) = 2020
+ORDER BY sales_month
+```
+**Beobachtung:** Ab März/April 2020 starker Einbruch durch Lockdowns!
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔵 Aufgabe 12.19: Anteil am Gesamtumsatz pro Monat (Selbstständig)
+
+        Berechnen Sie für jeden Monat den Anteil von "Jewelry stores" am Gesamtumsatz aller Branchen.
+
+        *Hinweis: `SUM(sales) OVER (PARTITION BY sales_month)` für den Gesamtumsatz pro Monat*
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, retail_sales):
+    _df = mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        -- Erwartete Spalten: sales_month, sales, total_sales, pct_of_total
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    sales_month,
+    kind_of_business,
+    sales,
+    SUM(sales) OVER (PARTITION BY sales_month) AS total_sales,
+    ROUND(sales * 100.0 / SUM(sales) OVER (PARTITION BY sales_month), 2) AS pct_of_total
+FROM retail_sales
+WHERE kind_of_business = 'Jewelry stores'
+ORDER BY sales_month
+```
+**PARTITION BY sales_month** berechnet den Gesamtumsatz separat für jeden Monat.
+""")})
+    return
+
+
+# -----------------------------------------------------------------------
+# Phase 6: Praktische Analyse
+# -----------------------------------------------------------------------
 
 
 @app.cell(hide_code=True)
@@ -538,9 +1184,21 @@ def _(mo):
         r"""
         ---
 
-        ## Phase 6: Praktische Zeitreihenanalyse
+        ## Phase 6: Praktische Analyse
 
-        ### Aufgabe 12.11: Branchenvergleich - Herren vs. Damen Bekleidung
+        Jetzt kombinieren wir die gelernten Techniken für echte Geschäftsanalysen.
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🟢 Aufgabe 12.20: Herren- vs. Damenbekleidung — Verhältnis
+
+        Wie hat sich das Umsatzverhältnis zwischen Damen- und Herrenbekleidung über die Jahre entwickelt?
         """
     )
     return
@@ -580,92 +1238,18 @@ def _(men_vs_women, px):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
-        ### Aufgabe 12.12: Saisonale Muster erkennen
-
-        Welche Monate sind am stärksten für verschiedene Branchen?
-        """
-    )
-    return
-
-
-@app.cell
-def _(mo, retail_sales):
-    seasonal_pattern = mo.sql(
-        f"""
-        SELECT
-            EXTRACT(MONTH FROM sales_month) AS month_num,
-            kind_of_business,
-            ROUND(AVG(sales), 0) AS avg_sales
-        FROM retail_sales
-        WHERE kind_of_business IN ('Jewelry stores', 'Sporting goods stores', 'Book stores')
-        GROUP BY EXTRACT(MONTH FROM sales_month), kind_of_business
-        ORDER BY kind_of_business, month_num
-        """
-    )
-    return (seasonal_pattern,)
-
-
-@app.cell
-def _(px, seasonal_pattern):
-    fig_seasonal = px.line(
-        seasonal_pattern,
-        x="month_num",
-        y="avg_sales",
-        color="kind_of_business",
-        title="Saisonale Muster nach Branche (Durchschnitt 1992-2020)",
-        labels={"month_num": "Monat", "avg_sales": "Ø Umsatz (Mio. USD)", "kind_of_business": "Branche"}
-    )
-    fig_seasonal
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ### Aufgabe 12.13: Selbstständig - COVID-Effekt
-
-        Vergleichen Sie das YoY-Wachstum für 2020 mit den Vorjahren für "Book stores".
-        Sehen Sie den COVID-Effekt?
-        """
-    )
-    return
-
-
-@app.cell
-def _(mo, retail_sales):
-    # Ihre Lösung hier:
-    mo.sql(
-        f"""
-        -- Ihre Lösung hier
-        -- Tipp: GROUP BY Jahr, dann LAG(..., 1) OVER (ORDER BY year) für Vorjahresvergleich
-        -- Filter: WHERE kind_of_business = 'Book stores'
-        -- Erwartete Spalten: year, annual_sales, prev_year, yoy_growth
-        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
-        """
-    )
-
-
-@app.cell(hide_code=True)
-def _(mo):
     mo.accordion({"🔑 Musterlösung": mo.md("""
 ```sql
-WITH yearly AS (
-    SELECT
-        EXTRACT(YEAR FROM sales_month) AS year,
-        ROUND(SUM(sales), 0) AS annual_sales
-    FROM retail_sales
-    WHERE kind_of_business = 'Book stores'
-    GROUP BY EXTRACT(YEAR FROM sales_month)
-)
 SELECT
-    year,
-    annual_sales,
-    LAG(annual_sales, 1) OVER (ORDER BY year) AS prev_year,
-    ROUND((annual_sales * 1.0 / LAG(annual_sales, 1) OVER (ORDER BY year) - 1) * 100, 1)
-        AS yoy_growth
-FROM yearly
+    EXTRACT(YEAR FROM sales_month) AS year,
+    SUM(CASE WHEN kind_of_business = 'Women''s clothing stores' THEN sales END) AS womens_sales,
+    SUM(CASE WHEN kind_of_business = 'Men''s clothing stores' THEN sales END) AS mens_sales,
+    ROUND(SUM(CASE WHEN kind_of_business = 'Women''s clothing stores' THEN sales END) * 1.0 /
+          SUM(CASE WHEN kind_of_business = 'Men''s clothing stores' THEN sales END), 2)
+        AS womens_to_mens_ratio
+FROM retail_sales
+WHERE kind_of_business IN ('Women''s clothing stores', 'Men''s clothing stores')
+GROUP BY EXTRACT(YEAR FROM sales_month)
 ORDER BY year
 ```
 """)})
@@ -676,11 +1260,9 @@ ORDER BY year
 def _(mo):
     mo.md(
         r"""
-        ### Aufgabe 12.14: Selbstständig - Anteil am Gesamtumsatz
+        ### 🟡 Aufgabe 12.21: Saisonale Muster für 3 Branchen (Scaffolded)
 
-        Berechnen Sie für jeden Monat den Anteil von "Jewelry stores" am Gesamtumsatz.
-
-        *Hinweis: Verwenden Sie SUM() OVER (PARTITION BY sales_month)*
+        Welche Monate sind für verschiedene Branchen am stärksten? Ergänzen Sie `???`:
         """
     )
     return
@@ -688,16 +1270,188 @@ def _(mo):
 
 @app.cell
 def _(mo, retail_sales):
-    # Ihre Lösung hier:
-    mo.sql(
+    _df = mo.sql(
+        f"""
+        SELECT
+            EXTRACT(??? FROM sales_month) AS month_num,
+            kind_of_business,
+            ROUND(AVG(sales), 0) AS avg_sales
+        FROM retail_sales
+        WHERE kind_of_business IN ('Jewelry stores', 'Sporting goods stores', ???)
+        GROUP BY EXTRACT(??? FROM sales_month), kind_of_business
+        ORDER BY kind_of_business, month_num
+        -- Tipp: EXTRACT(MONTH FROM ...), dritte Branche z.B. 'Book stores'
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    EXTRACT(MONTH FROM sales_month) AS month_num,
+    kind_of_business,
+    ROUND(AVG(sales), 0) AS avg_sales
+FROM retail_sales
+WHERE kind_of_business IN ('Jewelry stores', 'Sporting goods stores', 'Book stores')
+GROUP BY EXTRACT(MONTH FROM sales_month), kind_of_business
+ORDER BY kind_of_business, month_num
+```
+**Beobachtung:** Juweliere haben ihren Peak im Dezember (Weihnachten), Sportgeschäfte eher im Frühjahr/Sommer.
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔵 Aufgabe 12.22: Volatilität — Welche Branche schwankt am meisten? (Selbstständig)
+
+        Berechnen Sie die Standardabweichung der YoY-Wachstumsraten pro Branche.
+        Die Branche mit der höchsten STDDEV ist die volatilste.
+
+        *Hinweis: Erst YoY berechnen (LAG(12) mit PARTITION BY kind_of_business), dann STDDEV pro Branche*
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, retail_sales):
+    _df = mo.sql(
         f"""
         -- Ihre Lösung hier
-        -- Tipp: SUM(sales) OVER (PARTITION BY sales_month) für den Gesamtumsatz pro Monat
-        -- Dann: sales * 100.0 / SUM(sales) OVER (...) für den Anteil
-        -- Erwartete Spalten: sales_month, kind_of_business, sales, total_sales, pct_of_total
+        -- Erwartete Spalten: kind_of_business, avg_yoy, stddev_yoy
+        -- Sortiert nach stddev_yoy DESC
         SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    kind_of_business,
+    ROUND(AVG(yoy_growth), 1) AS avg_yoy,
+    ROUND(STDDEV(yoy_growth), 1) AS stddev_yoy
+FROM (
+    SELECT
+        kind_of_business,
+        sales_month,
+        (sales * 1.0 / LAG(sales, 12) OVER (
+            PARTITION BY kind_of_business ORDER BY sales_month
+        ) - 1) * 100 AS yoy_growth
+    FROM retail_sales
+    WHERE kind_of_business NOT LIKE '%total%'
+)
+WHERE yoy_growth IS NOT NULL
+GROUP BY kind_of_business
+ORDER BY stddev_yoy DESC
+LIMIT 10
+```
+""")})
+    return
+
+
+# -----------------------------------------------------------------------
+# Phase 7 (Bonus): Indexierung
+# -----------------------------------------------------------------------
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## Phase 7 (Bonus): Indexierung
+
+        Indexierung normalisiert alle Werte relativ zu einem Basiswert (z.B. erster Monat = 100).
+        So können wir Branchen mit **unterschiedlichen Umsatzniveaus** direkt vergleichen.
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🟢 Aufgabe 12.23: FIRST_VALUE — Indexierung zum Basisjahr
+
+        Zeigen Sie alle Werte relativ zum ersten Wert (Januar 1992 = 100).
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, retail_sales):
+    _df = mo.sql(
+        f"""
+        SELECT
+            sales_month,
+            sales,
+            FIRST_VALUE(sales) OVER (ORDER BY sales_month) AS base_sales,
+            ROUND(sales * 100.0 / FIRST_VALUE(sales) OVER (ORDER BY sales_month), 1)
+                AS index_value
+        FROM retail_sales
+        WHERE kind_of_business = 'Women''s clothing stores'
+        ORDER BY sales_month
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    sales_month,
+    sales,
+    FIRST_VALUE(sales) OVER (ORDER BY sales_month) AS base_sales,
+    ROUND(sales * 100.0 / FIRST_VALUE(sales) OVER (ORDER BY sales_month), 1)
+        AS index_value
+FROM retail_sales
+WHERE kind_of_business = 'Women''s clothing stores'
+ORDER BY sales_month
+```
+**Interpretation:** Ein Index von 120 bedeutet: 20% mehr als der Basiswert.
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### 🔵 Aufgabe 12.24: Zwei Branchen indexiert vergleichen (Selbstständig)
+
+        Vergleichen Sie Juweliere und Buchläden mit Indexierung (Basis = erster Monat jeder Branche = 100).
+
+        *Hinweis: `FIRST_VALUE(sales) OVER (PARTITION BY kind_of_business ORDER BY sales_month)`*
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, retail_sales):
+    _df = mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        -- Erwartete Spalten: sales_month, kind_of_business, sales, index_value
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+    return
 
 
 @app.cell(hide_code=True)
@@ -708,11 +1462,88 @@ SELECT
     sales_month,
     kind_of_business,
     sales,
-    SUM(sales) OVER (PARTITION BY sales_month) AS total_sales,
-    ROUND(sales * 100.0 / SUM(sales) OVER (PARTITION BY sales_month), 2) AS pct_of_total
+    ROUND(sales * 100.0 / FIRST_VALUE(sales) OVER (
+        PARTITION BY kind_of_business ORDER BY sales_month
+    ), 1) AS index_value
 FROM retail_sales
-WHERE kind_of_business = 'Jewelry stores'
-ORDER BY sales_month
+WHERE kind_of_business IN ('Jewelry stores', 'Book stores')
+ORDER BY sales_month, kind_of_business
+```
+**Durch PARTITION BY** bekommt jede Branche ihren eigenen Basiswert (= erster Monat jeder Branche).
+""")})
+    return
+
+
+# -----------------------------------------------------------------------
+# Exploration
+# -----------------------------------------------------------------------
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## Exploration
+
+        Offene Herausforderungen für Fortgeschrittene.
+
+        **Tipp:** Vergleichen Sie Ihre Analysen mit Ihrem Nachbarn — bei Zeitreihen gibt es oft mehrere spannende Perspektiven!
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### ⭐ Exploration 1: Volatilste Branchen
+
+        Finden Sie die 5 volatilsten Branchen (höchste STDDEV der monatlichen YoY-Wachstumsraten).
+        Visualisieren Sie deren YoY-Verlauf.
+
+        *Hinweis: Wie Aufgabe 12.22, aber mit Visualisierung der Top-5*
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, retail_sales):
+    _df = mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    kind_of_business,
+    ROUND(AVG(yoy_growth), 1) AS avg_yoy,
+    ROUND(STDDEV(yoy_growth), 1) AS stddev_yoy
+FROM (
+    SELECT
+        kind_of_business,
+        sales_month,
+        (sales * 1.0 / LAG(sales, 12) OVER (
+            PARTITION BY kind_of_business ORDER BY sales_month
+        ) - 1) * 100 AS yoy_growth
+    FROM retail_sales
+    WHERE kind_of_business NOT LIKE '%total%'
+      AND kind_of_business NOT LIKE '%and%'
+)
+WHERE yoy_growth IS NOT NULL
+GROUP BY kind_of_business
+ORDER BY stddev_yoy DESC
+LIMIT 5
 ```
 """)})
     return
@@ -722,15 +1553,12 @@ ORDER BY sales_month
 def _(mo):
     mo.md(
         r"""
-        ---
+        ### ⭐⭐ Exploration 2: Finanzkrise 2008 — Vorher vs. Nachher
 
-        ## Freie Exploration
+        Vergleichen Sie den durchschnittlichen Umsatz **vor** (2005-2007) und **nach** (2009-2011) der Finanzkrise
+        für verschiedene Branchen. Welche Branchen waren am stärksten betroffen?
 
-        Probieren Sie eigene Zeitreihenanalysen:
-
-        - Vergleichen Sie verschiedene Branchen mit Indexierung
-        - Finden Sie die volatilsten Branchen (höchste Standardabweichung der YoY-Wachstumsraten)
-        - Analysieren Sie Trends vor und nach der Finanzkrise 2008
+        *Hinweis: CASE WHEN + EXTRACT(YEAR FROM ...) für die Perioden*
         """
     )
     return
@@ -738,28 +1566,122 @@ def _(mo):
 
 @app.cell
 def _(mo, retail_sales):
-    # Eigene Analyse hier:
-    mo.sql(
+    _df = mo.sql(
         f"""
-        SELECT
-            kind_of_business,
-            ROUND(AVG(yoy_growth), 1) AS avg_yoy_growth,
-            ROUND(STDDEV(yoy_growth), 1) AS stddev_yoy_growth
-        FROM (
-            SELECT
-                kind_of_business,
-                sales_month,
-                (sales * 1.0 / LAG(sales, 12) OVER (PARTITION BY kind_of_business ORDER BY sales_month) - 1) * 100
-                    AS yoy_growth
-            FROM retail_sales
-            WHERE kind_of_business NOT LIKE '%total%'
-        )
-        WHERE yoy_growth IS NOT NULL
-        GROUP BY kind_of_business
-        ORDER BY stddev_yoy_growth DESC
-        LIMIT 10
+        -- Ihre Lösung hier
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+```sql
+SELECT
+    kind_of_business,
+    ROUND(AVG(CASE WHEN EXTRACT(YEAR FROM sales_month) BETWEEN 2005 AND 2007
+              THEN sales END), 0) AS avg_pre_crisis,
+    ROUND(AVG(CASE WHEN EXTRACT(YEAR FROM sales_month) BETWEEN 2009 AND 2011
+              THEN sales END), 0) AS avg_post_crisis,
+    ROUND(
+        (AVG(CASE WHEN EXTRACT(YEAR FROM sales_month) BETWEEN 2009 AND 2011 THEN sales END)
+         - AVG(CASE WHEN EXTRACT(YEAR FROM sales_month) BETWEEN 2005 AND 2007 THEN sales END))
+        * 100.0
+        / AVG(CASE WHEN EXTRACT(YEAR FROM sales_month) BETWEEN 2005 AND 2007 THEN sales END),
+    1) AS change_pct
+FROM retail_sales
+WHERE kind_of_business NOT LIKE '%total%'
+  AND EXTRACT(YEAR FROM sales_month) BETWEEN 2005 AND 2011
+GROUP BY kind_of_business
+HAVING AVG(CASE WHEN EXTRACT(YEAR FROM sales_month) BETWEEN 2005 AND 2007 THEN sales END) IS NOT NULL
+ORDER BY change_pct ASC
+LIMIT 10
+```
+""")})
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ### ⭐⭐⭐ Exploration 3: Mini-Dashboard — Eine Branche komplett analysieren
+
+        Erstellen Sie eine Gesamtanalyse für eine Branche Ihrer Wahl:
+        1. **Trend:** 12-Monats Moving Average
+        2. **Saisonalität:** Durchschnittsumsatz pro Monat
+        3. **YoY-Wachstum:** Monatlich mit LAG(12)
+        4. **Volatilität:** STDDEV des YoY-Wachstums
+
+        *Hinweis: Nutzen Sie CTEs, um die verschiedenen Perspektiven zu kombinieren*
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo, retail_sales):
+    _df = mo.sql(
+        f"""
+        -- Ihre Lösung hier
+        SELECT 'Schreiben Sie Ihre Abfrage hier' AS hinweis
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Musterlösung": mo.md("""
+**Beispiel für "Jewelry stores":**
+
+**1. Trend (12-Monats MA):**
+```sql
+SELECT sales_month, sales,
+       ROUND(AVG(sales) OVER (ORDER BY sales_month
+           ROWS BETWEEN 11 PRECEDING AND CURRENT ROW), 0) AS ma_12
+FROM retail_sales
+WHERE kind_of_business = 'Jewelry stores'
+ORDER BY sales_month
+```
+
+**2. Saisonalität:**
+```sql
+SELECT EXTRACT(MONTH FROM sales_month) AS monat,
+       ROUND(AVG(sales), 0) AS avg_sales
+FROM retail_sales
+WHERE kind_of_business = 'Jewelry stores'
+GROUP BY EXTRACT(MONTH FROM sales_month)
+ORDER BY monat
+```
+
+**3. YoY-Wachstum:**
+```sql
+SELECT sales_month, sales,
+       ROUND((sales * 1.0 / LAG(sales, 12) OVER (ORDER BY sales_month) - 1) * 100, 1) AS yoy
+FROM retail_sales
+WHERE kind_of_business = 'Jewelry stores'
+ORDER BY sales_month
+```
+
+**4. Volatilität:**
+```sql
+SELECT ROUND(STDDEV(yoy_growth), 1) AS volatilitaet
+FROM (
+    SELECT (sales * 1.0 / LAG(sales, 12) OVER (ORDER BY sales_month) - 1) * 100 AS yoy_growth
+    FROM retail_sales
+    WHERE kind_of_business = 'Jewelry stores'
+) WHERE yoy_growth IS NOT NULL
+```
+""")})
+    return
+
+
+# -----------------------------------------------------------------------
+# Zusammenfassung
+# -----------------------------------------------------------------------
 
 
 @app.cell(hide_code=True)
@@ -770,66 +1692,20 @@ def _(mo):
 
         ## Zusammenfassung
 
-        | Konzept | Syntax | Anwendung |
-        |---------|--------|-----------|
-        | **LAG** | `LAG(col, n) OVER (ORDER BY ...)` | Vorheriger Wert |
-        | **LEAD** | `LEAD(col, n) OVER (ORDER BY ...)` | Nächster Wert |
-        | **Moving Avg** | `AVG() OVER (ROWS BETWEEN ...)` | Trend glätten |
-        | **YoY** | `LAG(col, 12) OVER (...)` | Saisonalität eliminieren |
-        | **Indexierung** | `FIRST_VALUE() OVER (...)` | Normalisieren (Bonus) |
-        | **Ranking** | `RANK() OVER (ORDER BY ...)` | Top-N finden |
+        | Konzept | Aufgaben | Wann nutzen? |
+        |---------|----------|--------------|
+        | **Daten erkunden** | 12.1 – 12.3 | Immer zuerst: COUNT, DISTINCT, MIN/MAX |
+        | **Window Functions** | 12.4 – 12.7 | SUM/RANK/ROW_NUMBER ohne GROUP BY |
+        | **LAG / LEAD** | 12.8 – 12.11 | Monatliche Veränderungen berechnen |
+        | **Moving Averages** | 12.12 – 12.15 | Trend glätten mit ROWS BETWEEN |
+        | **Year-over-Year** | 12.16 – 12.19 | Saisonalität eliminieren mit LAG(12) |
+        | **Praktische Analyse** | 12.20 – 12.22 | Branchenvergleiche, Saisonalität, Volatilität |
+        | **Indexierung (Bonus)** | 12.23 – 12.24 | Branchen normalisiert vergleichen |
 
         **Nächste Session:** Textanalyse mit SQL-String-Funktionen
         """
     )
     return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-        ---
-
-        ## Bonus: Indexierung (nicht klausurrelevant)
-
-        ### Aufgabe 12.10: Indexierung zum Basisjahr
-
-        Zeigen Sie alle Werte relativ zum ersten Wert (Januar 1992 = 0%).
-        """
-    )
-    return
-
-
-@app.cell
-def _(mo, retail_sales):
-    indexed = mo.sql(
-        f"""
-        SELECT
-            sales_month,
-            sales,
-            FIRST_VALUE(sales) OVER (ORDER BY sales_month) AS base_sales,
-            ROUND((sales * 1.0 / FIRST_VALUE(sales) OVER (ORDER BY sales_month) - 1) * 100, 1)
-                AS pct_from_base
-        FROM retail_sales
-        WHERE kind_of_business = 'Women''s clothing stores'
-        ORDER BY sales_month
-        """
-    )
-    return (indexed,)
-
-
-@app.cell
-def _(indexed, px):
-    fig_indexed = px.line(
-        indexed,
-        x="sales_month",
-        y="pct_from_base",
-        title="Indexierte Verkaufszahlen - Damenbekleidung (Basis: Jan 1992)",
-        labels={"sales_month": "Monat", "pct_from_base": "Änderung vs. Basis (%)"}
-    )
-    fig_indexed.add_hline(y=0, line_dash="dash", line_color="gray", annotation_text="Basiswert")
-    fig_indexed
 
 
 if __name__ == "__main__":

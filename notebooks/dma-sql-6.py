@@ -839,6 +839,8 @@ def _(mo):
         ---
 
         ## Freie Exploration — Herausforderungen
+
+        **Tipp:** Vergleichen Sie Ihre Schema-Entwürfe mit Ihrem Nachbarn — es gibt oft mehrere sinnvolle Lösungen!
         """
     )
     return

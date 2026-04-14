@@ -9,7 +9,7 @@
 
 import marimo
 
-__generated_with = "0.13.0"
+__generated_with = "0.19.7"
 app = marimo.App(
     width="medium",
     app_title="DMA Session 2: SQL für Datenexploration — Guide",
@@ -24,40 +24,36 @@ def _():
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
-        # Session 2: SQL für Datenexploration — Guide
+    mo.md(r"""
+    # Session 2: SQL für Datenexploration — Guide
 
-        **Kursfahrplan:** **▸ I: SQL-Grundlagen (S1–4)** · II: Datenmodellierung (S5–7) · III: Fortgeschrittenes SQL (S8–9) · IV: Datenanalyse (S10–13)
+    **Kursfahrplan:** **▸ I: SQL-Grundlagen (S1–4)** · II: Datenmodellierung (S5–7) · III: Fortgeschrittenes SQL (S8–9) · IV: Datenanalyse (S10–13)
 
-        ### Lernziele
+    ### Lernziele
 
-        Nach dieser Session können Sie:
+    Nach dieser Session können Sie:
 
-        - Ergebnisse **sortieren** mit `ORDER BY` (ASC/DESC)
-        - Ergebnisse **begrenzen** mit `LIMIT` und **überspringen** mit `OFFSET`
-        - **Eindeutige Werte** finden mit `DISTINCT`
-        - **Mustersuche** vertiefen mit `LIKE`
-        - Mit **NULL-Werten** umgehen (`IS NULL`, `COALESCE`)
-        - **Streudiagramme** für Zusammenhänge nutzen
+    - Ergebnisse **sortieren** mit `ORDER BY` (ASC/DESC)
+    - Ergebnisse **begrenzen** mit `LIMIT` und **überspringen** mit `OFFSET`
+    - **Eindeutige Werte** finden mit `DISTINCT`
+    - **Mustersuche** vertiefen mit `LIKE`
+    - Mit **NULL-Werten** umgehen (`IS NULL`, `COALESCE`)
+    - **Streudiagramme** für Zusammenhänge nutzen
 
-        ---
-        """
-    )
+    ---
+    """)
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
-        ## Daten laden
+    mo.md(r"""
+    ## Daten laden
 
-        Wir arbeiten heute mit zwei Datensätzen:
-        1. **Bundesliga-Tabelle** (wie letzte Woche)
-        2. **Spieler-Daten** (mit fehlenden Werten für NULL-Übungen)
-        """
-    )
+    Wir arbeiten heute mit zwei Datensätzen:
+    1. **Bundesliga-Tabelle** (wie letzte Woche)
+    2. **Spieler-Daten** (mit fehlenden Werten für NULL-Übungen)
+    """)
     return
 
 
@@ -83,7 +79,6 @@ def _(mo):
         })
         daten_quelle = "Offline-Daten (Fallback)"
         mo.callout(mo.md("**Hinweis:** CSV konnte nicht geladen werden. Es werden Beispieldaten verwendet."), kind="warn")
-
     return bundesliga, daten_quelle, pl
 
 
@@ -113,36 +108,31 @@ def _(mo, pl):
             "Punkte_Kumuliert": [3, 6, 9, 10, 13],
         })
         mo.callout(mo.md("**Hinweis:** CSVs konnten nicht geladen werden. Es werden Beispieldaten verwendet."), kind="warn")
-
     return bundesliga_spieltage, spieler
 
 
 @app.cell(hide_code=True)
 def _(daten_quelle, mo):
-    mo.md(
-        f"""
-        **Datenquelle Bundesliga:** {daten_quelle}
+    mo.md(f"""
+    **Datenquelle Bundesliga:** {daten_quelle}
 
-        **Datensätze:**
-        - `bundesliga` – Finale Tabelle (18 Teams, 1 Zeitpunkt)
-        - `bundesliga_spieltage` – Verlauf (18 Teams × 34 Spieltage)
-        - `spieler` – Spielerdaten (mit NULL-Werten)
+    **Datensätze:**
+    - `bundesliga` – Finale Tabelle (18 Teams, 1 Zeitpunkt)
+    - `bundesliga_spieltage` – Verlauf (18 Teams × 34 Spieltage)
+    - `spieler` – Spielerdaten (mit NULL-Werten)
 
-        ---
-        """
-    )
+    ---
+    """)
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
-        ## Recap: Von Zeitreihe zu Querschnitt
+    mo.md(r"""
+    ## Recap: Von Zeitreihe zu Querschnitt
 
-        Die finale Tabelle ist nur ein **WHERE-Filter** auf den letzten Spieltag!
-        """
-    )
+    Die finale Tabelle ist nur ein **WHERE-Filter** auf den letzten Spieltag!
+    """)
     return
 
 
@@ -161,44 +151,42 @@ def _(bundesliga_spieltage, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
-        **Erkenntnis:** Die "Tabelle" die wir letzte Woche verwendet haben, ist einfach der letzte Spieltag!
+    mo.md(r"""
+    **Erkenntnis:** Die "Tabelle" die wir letzte Woche verwendet haben, ist einfach der letzte Spieltag!
 
-        ---
+    ---
 
-        ## Phase 2: Daten sortieren und begrenzen
+    ## Phase 2: Daten sortieren und begrenzen
 
-        ### ORDER BY — Ergebnisse sortieren
+    ### ORDER BY — Ergebnisse sortieren
 
-        ```sql
-        SELECT spalten
-        FROM tabelle
-        ORDER BY spalte ASC    -- aufsteigend (Standard)
-        ORDER BY spalte DESC   -- absteigend
-        ```
+    ```sql
+    SELECT spalten
+    FROM tabelle
+    ORDER BY spalte ASC    -- aufsteigend (Standard)
+    ORDER BY spalte DESC   -- absteigend
+    ```
 
-        - `ASC` = aufsteigend (ascending) — Standard, kann weggelassen werden
-        - `DESC` = absteigend (descending) — muss explizit angegeben werden
-        - Mehrere Sortierkriterien: `ORDER BY spalte1 DESC, spalte2 ASC`
+    - `ASC` = aufsteigend (ascending) — Standard, kann weggelassen werden
+    - `DESC` = absteigend (descending) — muss explizit angegeben werden
+    - Mehrere Sortierkriterien: `ORDER BY spalte1 DESC, spalte2 ASC`
 
-        ### LIMIT und OFFSET — Paginierung
+    ### LIMIT und OFFSET — Paginierung
 
-        ```sql
-        SELECT spalten
-        FROM tabelle
-        ORDER BY spalte DESC
-        LIMIT 5           -- nur die ersten 5 Zeilen
-        LIMIT 5 OFFSET 5  -- 5 Zeilen, überspringe die ersten 5 (= Plätze 6-10)
-        ```
+    ```sql
+    SELECT spalten
+    FROM tabelle
+    ORDER BY spalte DESC
+    LIMIT 5           -- nur die ersten 5 Zeilen
+    LIMIT 5 OFFSET 5  -- 5 Zeilen, überspringe die ersten 5 (= Plätze 6-10)
+    ```
 
-        **Reihenfolge der Klauseln:**
-        ```
-        SELECT → FROM → WHERE → ORDER BY → LIMIT
-        ```
-        Diese Reihenfolge muss eingehalten werden!
-        """
-    )
+    **Reihenfolge der Klauseln:**
+    ```
+    SELECT → FROM → WHERE → ORDER BY → LIMIT
+    ```
+    Diese Reihenfolge muss eingehalten werden!
+    """)
     return
 
 
@@ -279,60 +267,60 @@ def _(mo):
 def _(mo):
     vorhersage_limit = mo.ui.radio(
         options={
-            "5": "5 Zeilen",
-            "18": "18 Zeilen (alle Teams)",
-            "fehler": "Fehler",
+            "5 Zeilen": "5",
+            "18 Zeilen (alle Teams)": "18",
+            "Fehler": "fehler",
         },
         label="Wie viele Zeilen liefert `SELECT Mannschaft, Punkte FROM bundesliga ORDER BY Punkte DESC LIMIT 5`?"
     )
-    vorhersage_limit
     return (vorhersage_limit,)
 
 
 @app.cell(hide_code=True)
-def _(vorhersage_limit, mo):
+def _(mo, vorhersage_limit):
     if vorhersage_limit.value == "5":
-        mo.output.replace(mo.md("✅ **Richtig!** `LIMIT 5` begrenzt das Ergebnis auf maximal 5 Zeilen — unabhängig davon, wie viele Zeilen die Tabelle hat."))
+        _result = mo.md("✅ **Richtig!** `LIMIT 5` begrenzt das Ergebnis auf maximal 5 Zeilen — unabhängig davon, wie viele Zeilen die Tabelle hat.")
     elif vorhersage_limit.value == "18":
-        mo.output.replace(mo.md("❌ 18 Zeilen wären das Ergebnis **ohne** LIMIT. `LIMIT 5` begrenzt die Ausgabe auf maximal **5 Zeilen** — die ersten 5 nach der Sortierung."))
+        _result = mo.md("❌ 18 Zeilen wären das Ergebnis **ohne** LIMIT. `LIMIT 5` begrenzt die Ausgabe auf maximal **5 Zeilen** — die ersten 5 nach der Sortierung.")
     elif vorhersage_limit.value == "fehler":
-        mo.output.replace(mo.md("❌ Kein Fehler — die Abfrage ist syntaktisch korrekt. `LIMIT 5` begrenzt das Ergebnis auf maximal **5 Zeilen**. Es werden die Top-5 Teams nach Punkten angezeigt."))
+        _result = mo.md("❌ Kein Fehler — die Abfrage ist syntaktisch korrekt. `LIMIT 5` begrenzt das Ergebnis auf maximal **5 Zeilen**. Es werden die Top-5 Teams nach Punkten angezeigt.")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([vorhersage_limit, _result])
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
-        ---
+    mo.md(r"""
+    ---
 
-        **Jetzt zum Übungs-Notebook → Aufgaben 2.x**
+    **Jetzt zum Übungs-Notebook → Aufgaben 2.x**
 
-        ---
+    ---
 
-        ## Phase 4: DISTINCT und LIKE
+    ## Phase 4: DISTINCT und LIKE
 
-        ### DISTINCT — Eindeutige Werte
+    ### DISTINCT — Eindeutige Werte
 
-        ```sql
-        SELECT DISTINCT spalte
-        FROM tabelle
-        ```
+    ```sql
+    SELECT DISTINCT spalte
+    FROM tabelle
+    ```
 
-        Entfernt doppelte Zeilen aus dem Ergebnis. Nützlich um herauszufinden, welche verschiedenen Werte eine Spalte enthält.
+    Entfernt doppelte Zeilen aus dem Ergebnis. Nützlich um herauszufinden, welche verschiedenen Werte eine Spalte enthält.
 
-        **Wichtig:** `NULL` zählt als eigener "Wert" bei DISTINCT!
+    **Wichtig:** `NULL` zählt als eigener "Wert" bei DISTINCT!
 
-        ### LIKE — Wildcards im Detail
+    ### LIKE — Wildcards im Detail
 
-        | Muster | Bedeutung | Beispiel | Findet |
-        |--------|-----------|----------|--------|
-        | `'B%'` | Beginnt mit B | `LIKE 'B%'` | Bayern, Borussia |
-        | `'%er'` | Endet mit er | `LIKE '%er'` | Müller, Neuer |
-        | `'%FC%'` | Enthält FC | `LIKE '%FC%'` | 1. FC Union, FC Augsburg |
-        | `'M___r'` | M + 3 Zeichen + r | `LIKE 'M___r'` | Mayer, Meier |
-        """
-    )
+    | Muster | Bedeutung | Beispiel | Findet |
+    |--------|-----------|----------|--------|
+    | `'B%'` | Beginnt mit B | `LIKE 'B%'` | Bayern, Borussia |
+    | `'%er'` | Endet mit er | `LIKE '%er'` | Müller, Neuer |
+    | `'%FC%'` | Enthält FC | `LIKE '%FC%'` | 1. FC Union, FC Augsburg |
+    | `'M___r'` | M + 3 Zeichen + r | `LIKE 'M___r'` | Mayer, Meier |
+    """)
     return
 
 
@@ -348,83 +336,83 @@ def _(mo):
 def _(mo):
     vorhersage_distinct = mo.ui.radio(
         options={
-            "ohne_null": "NULL-Zeilen werden herausgefiltert — nur echte Vereine erscheinen",
-            "mit_null": "NULL erscheint als eigene Zeile im Ergebnis",
-            "fehler": "Es gibt einen Fehler, weil DISTINCT mit NULL nicht funktioniert",
+            "NULL-Zeilen werden herausgefiltert — nur echte Vereine erscheinen": "ohne_null",
+            "NULL erscheint als eigene Zeile im Ergebnis": "mit_null",
+            "Es gibt einen Fehler, weil DISTINCT mit NULL nicht funktioniert": "fehler",
         },
         label="Die Spieler-Tabelle enthält NULL-Werte in der Spalte `Verein`. Was passiert bei `SELECT DISTINCT Verein FROM spieler` mit den NULL-Einträgen?"
     )
-    vorhersage_distinct
     return (vorhersage_distinct,)
 
 
 @app.cell(hide_code=True)
-def _(vorhersage_distinct, mo):
+def _(mo, vorhersage_distinct):
     if vorhersage_distinct.value == "mit_null":
-        mo.output.replace(mo.md("✅ **Richtig!** DISTINCT behandelt NULL als eigenen 'Wert'. Im Ergebnis erscheint genau **eine** NULL-Zeile — egal wie viele Spieler keinen Verein haben. So können Sie fehlende Daten gezielt erkennen."))
+        _result = mo.md("✅ **Richtig!** DISTINCT behandelt NULL als eigenen 'Wert'. Im Ergebnis erscheint genau **eine** NULL-Zeile — egal wie viele Spieler keinen Verein haben. So können Sie fehlende Daten gezielt erkennen.")
     elif vorhersage_distinct.value == "ohne_null":
-        mo.output.replace(mo.md("❌ Nicht ganz. DISTINCT filtert NULL **nicht** heraus. Stattdessen wird NULL als eigener 'Wert' behandelt und erscheint als **eigene Zeile** im Ergebnis. Um NULL-Werte auszuschließen, brauchen Sie explizit `WHERE spalte IS NOT NULL`."))
+        _result = mo.md("❌ Nicht ganz. DISTINCT filtert NULL **nicht** heraus. Stattdessen wird NULL als eigener 'Wert' behandelt und erscheint als **eigene Zeile** im Ergebnis. Um NULL-Werte auszuschließen, brauchen Sie explizit `WHERE spalte IS NOT NULL`.")
     elif vorhersage_distinct.value == "fehler":
-        mo.output.replace(mo.md("❌ Nicht ganz. DISTINCT funktioniert problemlos mit NULL-Werten. NULL wird dabei als eigener 'Wert' behandelt und erscheint als **eigene Zeile** im Ergebnis — kein Fehler."))
+        _result = mo.md("❌ Nicht ganz. DISTINCT funktioniert problemlos mit NULL-Werten. NULL wird dabei als eigener 'Wert' behandelt und erscheint als **eigene Zeile** im Ergebnis — kein Fehler.")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([vorhersage_distinct, _result])
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
-        ---
+    mo.md(r"""
+    ---
 
-        **Jetzt zum Übungs-Notebook → Aufgaben 4.x**
+    **Jetzt zum Übungs-Notebook → Aufgaben 4.x**
 
-        ---
+    ---
 
-        ## Phase 6: NULL-Werte — Das Unbekannte
+    ## Phase 6: NULL-Werte — Das Unbekannte
 
-        ### Was ist NULL?
+    ### Was ist NULL?
 
-        NULL bedeutet **"unbekannt"** oder **"nicht vorhanden"** — es ist NICHT dasselbe wie 0, leer oder False!
+    NULL bedeutet **"unbekannt"** oder **"nicht vorhanden"** — es ist NICHT dasselbe wie 0, leer oder False!
 
-        ### Dreiwertige Logik
+    ### Dreiwertige Logik
 
-        In den meisten Programmiersprachen gibt es nur TRUE und FALSE. SQL hat **drei** Wahrheitswerte:
+    In den meisten Programmiersprachen gibt es nur TRUE und FALSE. SQL hat **drei** Wahrheitswerte:
 
-        | Vergleich | Ergebnis |
-        |-----------|----------|
-        | `5 = 5` | TRUE |
-        | `5 = 3` | FALSE |
-        | `5 = NULL` | **NULL** (unbekannt!) |
-        | `NULL = NULL` | **NULL** (nicht TRUE!) |
+    | Vergleich | Ergebnis |
+    |-----------|----------|
+    | `5 = 5` | TRUE |
+    | `5 = 3` | FALSE |
+    | `5 = NULL` | **NULL** (unbekannt!) |
+    | `NULL = NULL` | **NULL** (nicht TRUE!) |
 
-        ### IS NULL und IS NOT NULL
+    ### IS NULL und IS NOT NULL
 
-        ```sql
-        -- ✅ Richtig:
-        WHERE spalte IS NULL
-        WHERE spalte IS NOT NULL
+    ```sql
+    -- ✅ Richtig:
+    WHERE spalte IS NULL
+    WHERE spalte IS NOT NULL
 
-        -- ❌ Falsch (liefert nie Ergebnisse!):
-        WHERE spalte = NULL
-        ```
+    -- ❌ Falsch (liefert nie Ergebnisse!):
+    WHERE spalte = NULL
+    ```
 
-        ### COALESCE — NULL ersetzen
+    ### COALESCE — NULL ersetzen
 
-        ```sql
-        COALESCE(wert, ersatz)
-        -- Wenn wert NULL ist, verwende ersatz
+    ```sql
+    COALESCE(wert, ersatz)
+    -- Wenn wert NULL ist, verwende ersatz
 
-        COALESCE(wert1, wert2, wert3)
-        -- Erster nicht-NULL Wert wird verwendet
-        ```
+    COALESCE(wert1, wert2, wert3)
+    -- Erster nicht-NULL Wert wird verwendet
+    ```
 
-        ### NULL in Berechnungen
+    ### NULL in Berechnungen
 
-        Jede Berechnung mit NULL ergibt NULL:
-        - `5 + NULL` → NULL
-        - `NULL * 3` → NULL
-        - `'Hallo' || NULL` → NULL
-        """
-    )
+    Jede Berechnung mit NULL ergibt NULL:
+    - `5 + NULL` → NULL
+    - `NULL * 3` → NULL
+    - `'Hallo' || NULL` → NULL
+    """)
     return
 
 
@@ -463,27 +451,29 @@ def _(mo):
 def _(mo):
     vorhersage_null = mo.ui.radio(
         options={
-            "null": "NULL",
+            "NULL": "null",
             "5": "5",
             "0": "0",
-            "fehler": "Fehler",
+            "Fehler": "fehler",
         },
         label="Was ergibt `5 + NULL` in SQL?"
     )
-    vorhersage_null
     return (vorhersage_null,)
 
 
 @app.cell(hide_code=True)
-def _(vorhersage_null, mo):
+def _(mo, vorhersage_null):
     if vorhersage_null.value == "null":
-        mo.output.replace(mo.md("✅ **Richtig!** Jede Berechnung mit NULL ergibt NULL. NULL bedeutet 'unbekannt' — und 5 + unbekannt = unbekannt. Deshalb ist `COALESCE` so wichtig: `COALESCE(spalte, 0)` ersetzt NULL durch 0 vor der Berechnung."))
+        _result = mo.md("✅ **Richtig!** Jede Berechnung mit NULL ergibt NULL. NULL bedeutet 'unbekannt' — und 5 + unbekannt = unbekannt. Deshalb ist `COALESCE` so wichtig: `COALESCE(spalte, 0)` ersetzt NULL durch 0 vor der Berechnung.")
     elif vorhersage_null.value == "5":
-        mo.output.replace(mo.md("❌ Nicht ganz. SQL ignoriert NULL **nicht** und nimmt auch nicht einfach den bekannten Wert. NULL bedeutet 'unbekannt', und 5 + unbekannt = **unbekannt (NULL)**. Verwenden Sie `COALESCE(spalte, 0)` um NULL vorher durch 0 zu ersetzen."))
+        _result = mo.md("❌ Nicht ganz. SQL ignoriert NULL **nicht** und nimmt auch nicht einfach den bekannten Wert. NULL bedeutet 'unbekannt', und 5 + unbekannt = **unbekannt (NULL)**. Verwenden Sie `COALESCE(spalte, 0)` um NULL vorher durch 0 zu ersetzen.")
     elif vorhersage_null.value == "0":
-        mo.output.replace(mo.md("❌ Nicht ganz. NULL ist **nicht** dasselbe wie 0! NULL bedeutet 'unbekannt'. Da der zweite Operand unbekannt ist, ist auch das Ergebnis **unbekannt (NULL)**. Um NULL als 0 zu behandeln: `COALESCE(spalte, 0)`."))
+        _result = mo.md("❌ Nicht ganz. NULL ist **nicht** dasselbe wie 0! NULL bedeutet 'unbekannt'. Da der zweite Operand unbekannt ist, ist auch das Ergebnis **unbekannt (NULL)**. Um NULL als 0 zu behandeln: `COALESCE(spalte, 0)`.")
     elif vorhersage_null.value == "fehler":
-        mo.output.replace(mo.md("❌ Kein Fehler — SQL führt die Berechnung aus, gibt aber **NULL** zurück. NULL bedeutet 'unbekannt', und jede Berechnung mit einem unbekannten Wert ergibt NULL."))
+        _result = mo.md("❌ Kein Fehler — SQL führt die Berechnung aus, gibt aber **NULL** zurück. NULL bedeutet 'unbekannt', und jede Berechnung mit einem unbekannten Wert ergibt NULL.")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([vorhersage_null, _result])
     return
 
 
@@ -499,55 +489,55 @@ def _(mo):
 def _(mo):
     quiz_null = mo.ui.radio(
         options={
-            "null": "NULL (unbekannt)",
-            "true": "TRUE",
-            "false": "FALSE",
-            "error": "Ein Fehler tritt auf"
+            "NULL (unbekannt)": "null",
+            "TRUE": "true",
+            "FALSE": "false",
+            "Ein Fehler tritt auf": "error"
         },
         label="**Quiz:** Was ergibt der Vergleich `NULL = NULL` in SQL?"
     )
-    quiz_null
     return (quiz_null,)
 
 
 @app.cell(hide_code=True)
-def _(quiz_null, mo):
+def _(mo, quiz_null):
     if quiz_null.value == "null":
-        mo.output.replace(mo.md("✅ **Richtig!** `NULL = NULL` ergibt NULL (nicht TRUE!), weil NULL 'unbekannt' bedeutet. Zwei unbekannte Werte sind nicht zwingend gleich — deshalb brauchen wir `IS NULL` statt `= NULL`."))
+        _result = mo.md("✅ **Richtig!** `NULL = NULL` ergibt NULL (nicht TRUE!), weil NULL 'unbekannt' bedeutet. Zwei unbekannte Werte sind nicht zwingend gleich — deshalb brauchen wir `IS NULL` statt `= NULL`.")
     elif quiz_null.value == "true":
-        mo.output.replace(mo.md("❌ Intuitiv denkt man: 'Gleich ist gleich!' Aber NULL bedeutet 'unbekannt'. Zwei **unbekannte** Werte sind nicht automatisch gleich — deshalb ergibt `NULL = NULL` nicht TRUE, sondern **NULL**. Verwenden Sie `IS NULL` statt `= NULL`."))
+        _result = mo.md("❌ Intuitiv denkt man: 'Gleich ist gleich!' Aber NULL bedeutet 'unbekannt'. Zwei **unbekannte** Werte sind nicht automatisch gleich — deshalb ergibt `NULL = NULL` nicht TRUE, sondern **NULL**. Verwenden Sie `IS NULL` statt `= NULL`.")
     elif quiz_null.value == "false":
-        mo.output.replace(mo.md("❌ Nah dran — aber nicht FALSE. `NULL = NULL` ergibt **NULL** (nicht FALSE). In SQL gibt es drei Wahrheitswerte: TRUE, FALSE und NULL. Jeder Vergleich mit NULL ergibt NULL."))
+        _result = mo.md("❌ Nah dran — aber nicht FALSE. `NULL = NULL` ergibt **NULL** (nicht FALSE). In SQL gibt es drei Wahrheitswerte: TRUE, FALSE und NULL. Jeder Vergleich mit NULL ergibt NULL.")
     elif quiz_null.value == "error":
-        mo.output.replace(mo.md("❌ Kein Fehler — SQL führt den Vergleich aus. Aber das Ergebnis ist **NULL** (nicht TRUE oder FALSE). NULL bedeutet 'unbekannt', und ob zwei unbekannte Werte gleich sind, ist ebenfalls unbekannt."))
+        _result = mo.md("❌ Kein Fehler — SQL führt den Vergleich aus. Aber das Ergebnis ist **NULL** (nicht TRUE oder FALSE). NULL bedeutet 'unbekannt', und ob zwei unbekannte Werte gleich sind, ist ebenfalls unbekannt.")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([quiz_null, _result])
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
-        ---
+    mo.md(r"""
+    ---
 
-        **Jetzt zum Übungs-Notebook → Aufgaben 6.x**
+    **Jetzt zum Übungs-Notebook → Aufgaben 6.x**
 
-        ---
+    ---
 
-        ## Phase 7: Visualisierung — Zusammenhänge erkennen
+    ## Phase 7: Visualisierung — Zusammenhänge erkennen
 
-        ### Streudiagramm (Scatter Plot)
+    ### Streudiagramm (Scatter Plot)
 
-        Ein Streudiagramm zeigt den **Zusammenhang** zwischen zwei numerischen Variablen:
-        - x-Achse: eine Variable (z.B. Tore)
-        - y-Achse: andere Variable (z.B. Punkte)
-        - Jeder Punkt = ein Datensatz
+    Ein Streudiagramm zeigt den **Zusammenhang** zwischen zwei numerischen Variablen:
+    - x-Achse: eine Variable (z.B. Tore)
+    - y-Achse: andere Variable (z.B. Punkte)
+    - Jeder Punkt = ein Datensatz
 
-        ```python
-        px.scatter(daten, x="Variable1", y="Variable2",
-                   hover_name="Label", trendline="ols")
-        ```
-        """
-    )
+    ```python
+    px.scatter(daten, x="Variable1", y="Variable2",
+               hover_name="Label", trendline="ols")
+    ```
+    """)
     return
 
 
@@ -629,27 +619,29 @@ def _(mo):
 def _(mo):
     viz_choice_2 = mo.ui.radio(
         options={
-            "bar": "Balkendiagramm",
-            "line": "Liniendiagramm",
-            "scatter": "Streudiagramm",
-            "histogram": "Histogramm",
+            "Balkendiagramm": "bar",
+            "Liniendiagramm": "line",
+            "Streudiagramm": "scatter",
+            "Histogramm": "histogram",
         },
         label="Sie wollen den Zusammenhang zwischen Tore und Punkten zeigen. Welcher Charttyp passt am besten?"
     )
-    viz_choice_2
     return (viz_choice_2,)
 
 
 @app.cell(hide_code=True)
-def _(viz_choice_2, mo):
+def _(mo, viz_choice_2):
     if viz_choice_2.value == "scatter":
-        mo.output.replace(mo.md("✅ **Richtig!** Ein **Streudiagramm** ist ideal, um den **Zusammenhang** zwischen zwei numerischen Variablen zu zeigen. Jedes Team ist ein Punkt, und man sieht sofort, ob ein Muster (Korrelation) existiert."))
+        _result = mo.md("✅ **Richtig!** Ein **Streudiagramm** ist ideal, um den **Zusammenhang** zwischen zwei numerischen Variablen zu zeigen. Jedes Team ist ein Punkt, und man sieht sofort, ob ein Muster (Korrelation) existiert.")
     elif viz_choice_2.value == "bar":
-        mo.output.replace(mo.md("❌ Nicht ganz. Ein Balkendiagramm eignet sich zum **Vergleichen** von Kategorien (z.B. Punkte pro Team). Für den **Zusammenhang** zwischen zwei numerischen Variablen ist ein **Streudiagramm** besser."))
+        _result = mo.md("❌ Nicht ganz. Ein Balkendiagramm eignet sich zum **Vergleichen** von Kategorien (z.B. Punkte pro Team). Für den **Zusammenhang** zwischen zwei numerischen Variablen ist ein **Streudiagramm** besser.")
     elif viz_choice_2.value == "line":
-        mo.output.replace(mo.md("❌ Nicht ganz. Ein Liniendiagramm zeigt **Entwicklungen über die Zeit**. Für den **Zusammenhang** zwischen zwei numerischen Variablen (ohne Zeitbezug) ist ein **Streudiagramm** besser."))
+        _result = mo.md("❌ Nicht ganz. Ein Liniendiagramm zeigt **Entwicklungen über die Zeit**. Für den **Zusammenhang** zwischen zwei numerischen Variablen (ohne Zeitbezug) ist ein **Streudiagramm** besser.")
     elif viz_choice_2.value == "histogram":
-        mo.output.replace(mo.md("❌ Nicht ganz. Ein Histogramm zeigt die **Verteilung** einer einzelnen Variable. Für den **Zusammenhang** zwischen zwei Variablen ist ein **Streudiagramm** besser."))
+        _result = mo.md("❌ Nicht ganz. Ein Histogramm zeigt die **Verteilung** einer einzelnen Variable. Für den **Zusammenhang** zwischen zwei Variablen ist ein **Streudiagramm** besser.")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([viz_choice_2, _result])
     return
 
 
@@ -667,69 +659,69 @@ def _(mo):
 def _(mo):
     selbsttest_2 = mo.ui.radio(
         options={
-            "where_null": "WHERE Verein = NULL",
-            "is_null": "WHERE Verein IS NULL",
-            "coalesce": "WHERE COALESCE(Verein) = NULL",
+            "WHERE Verein = NULL": "where_null",
+            "WHERE Verein IS NULL": "is_null",
+            "WHERE COALESCE(Verein) = NULL": "coalesce",
         },
         label="Welche Abfrage findet Spieler ohne Verein korrekt?"
     )
-    selbsttest_2
     return (selbsttest_2,)
 
 
 @app.cell(hide_code=True)
-def _(selbsttest_2, mo):
+def _(mo, selbsttest_2):
     if selbsttest_2.value == "is_null":
-        mo.output.replace(mo.md("✅ **Richtig!** `IS NULL` ist der einzig korrekte Weg, auf NULL zu prüfen. `= NULL` ergibt immer NULL (nie TRUE), daher findet es keine Zeilen."))
+        _result = mo.md("✅ **Richtig!** `IS NULL` ist der einzig korrekte Weg, auf NULL zu prüfen. `= NULL` ergibt immer NULL (nie TRUE), daher findet es keine Zeilen.")
     elif selbsttest_2.value == "where_null":
-        mo.output.replace(mo.md("❌ `= NULL` funktioniert nicht! Der Vergleich ergibt immer NULL (nie TRUE). Verwenden Sie stattdessen `IS NULL`."))
+        _result = mo.md("❌ `= NULL` funktioniert nicht! Der Vergleich ergibt immer NULL (nie TRUE). Verwenden Sie stattdessen `IS NULL`.")
     elif selbsttest_2.value == "coalesce":
-        mo.output.replace(mo.md("❌ `COALESCE` ersetzt NULL durch einen Standardwert — es prüft nicht auf NULL. Und `COALESCE(Verein)` ohne Ersatzwert ist sinnlos. Verwenden Sie `IS NULL` zum Prüfen."))
+        _result = mo.md("❌ `COALESCE` ersetzt NULL durch einen Standardwert — es prüft nicht auf NULL. Und `COALESCE(Verein)` ohne Ersatzwert ist sinnlos. Verwenden Sie `IS NULL` zum Prüfen.")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([selbsttest_2, _result])
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
-        ---
+    mo.md(r"""
+    ---
 
-        ## Zusammenfassung
+    ## Zusammenfassung
 
-        ### SQL-Konzepte
+    ### SQL-Konzepte
 
-        | Konzept | Syntax | Beispiel |
-        |---------|--------|----------|
-        | Aufsteigend sortieren | `ORDER BY spalte ASC` | `ORDER BY Punkte ASC` |
-        | Absteigend sortieren | `ORDER BY spalte DESC` | `ORDER BY Punkte DESC` |
-        | Begrenzen | `LIMIT n` | `LIMIT 5` |
-        | Überspringen | `LIMIT n OFFSET m` | `LIMIT 5 OFFSET 5` |
-        | Eindeutige Werte | `SELECT DISTINCT` | `SELECT DISTINCT Position` |
-        | Muster (beginnt mit) | `LIKE 'X%'` | `WHERE Name LIKE 'M%'` |
-        | Muster (enthält) | `LIKE '%X%'` | `WHERE Name LIKE '%er%'` |
-        | NULL prüfen | `IS NULL` / `IS NOT NULL` | `WHERE Tore IS NULL` |
-        | NULL ersetzen | `COALESCE(wert, ersatz)` | `COALESCE(Tore, 0)` |
+    | Konzept | Syntax | Beispiel |
+    |---------|--------|----------|
+    | Aufsteigend sortieren | `ORDER BY spalte ASC` | `ORDER BY Punkte ASC` |
+    | Absteigend sortieren | `ORDER BY spalte DESC` | `ORDER BY Punkte DESC` |
+    | Begrenzen | `LIMIT n` | `LIMIT 5` |
+    | Überspringen | `LIMIT n OFFSET m` | `LIMIT 5 OFFSET 5` |
+    | Eindeutige Werte | `SELECT DISTINCT` | `SELECT DISTINCT Position` |
+    | Muster (beginnt mit) | `LIKE 'X%'` | `WHERE Name LIKE 'M%'` |
+    | Muster (enthält) | `LIKE '%X%'` | `WHERE Name LIKE '%er%'` |
+    | NULL prüfen | `IS NULL` / `IS NOT NULL` | `WHERE Tore IS NULL` |
+    | NULL ersetzen | `COALESCE(wert, ersatz)` | `COALESCE(Tore, 0)` |
 
-        ### Visualisierung mit Plotly
+    ### Visualisierung mit Plotly
 
-        | Chart-Typ | Funktion | Verwendung |
-        |-----------|----------|------------|
-        | Balkendiagramm | `px.bar()` | Kategorien vergleichen |
-        | Streudiagramm | `px.scatter()` | Zusammenhänge zeigen |
-        | Farbe als Dimension | `color=` | Dritte Variable kodieren |
+    | Chart-Typ | Funktion | Verwendung |
+    |-----------|----------|------------|
+    | Balkendiagramm | `px.bar()` | Kategorien vergleichen |
+    | Streudiagramm | `px.scatter()` | Zusammenhänge zeigen |
+    | Farbe als Dimension | `color=` | Dritte Variable kodieren |
 
-        ### Häufige Fehler vermeiden
+    ### Häufige Fehler vermeiden
 
-        - `IS NULL` statt `= NULL`
-        - Reihenfolge: SELECT → FROM → WHERE → ORDER BY → LIMIT
-        - Bei Berechnungen: COALESCE verwenden, um NULL zu ersetzen
-        - ASC ist Standard, DESC muss explizit angegeben werden
+    - `IS NULL` statt `= NULL`
+    - Reihenfolge: SELECT → FROM → WHERE → ORDER BY → LIMIT
+    - Bei Berechnungen: COALESCE verwenden, um NULL zu ersetzen
+    - ASC ist Standard, DESC muss explizit angegeben werden
 
-        ### Ausblick Session 3
+    ### Ausblick Session 3
 
-        Nächste Woche: Aggregation & Gruppierung — COUNT, SUM, AVG, GROUP BY, HAVING
-        """
-    )
+    Nächste Woche: Aggregation & Gruppierung — COUNT, SUM, AVG, GROUP BY, HAVING
+    """)
     return
 
 

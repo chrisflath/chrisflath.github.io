@@ -186,23 +186,25 @@ def _(mo):
 def _(mo):
     pred_trans = mo.ui.radio(
         options={
-            "mat_email": "Matrikelnr → Email",
-            "email_mat": "Email → Matrikelnr",
-            "email_student": "Email → Student",
-            "nichts": "Keine neue FD ableitbar",
+            "Matrikelnr → Email": "mat_email",
+            "Email → Matrikelnr": "email_mat",
+            "Email → Student": "email_student",
+            "Keine neue FD ableitbar": "nichts",
         },
         label="**Vorhersage:** Gegeben: Matrikelnr → Student, Student → Email. Was ergibt Transitivität?"
     )
-    pred_trans
     return (pred_trans,)
 
 
 @app.cell(hide_code=True)
-def _(pred_trans, mo):
+def _(mo, pred_trans):
     if pred_trans.value == "mat_email":
-        mo.output.replace(mo.md("✅ **Richtig!** Transitivität: Wenn A → B und B → C, dann A → C. Hier: Matrikelnr → Student und Student → Email ergibt **Matrikelnr → Email**."))
+        _result = mo.md("✅ **Richtig!** Transitivität: Wenn A → B und B → C, dann A → C. Hier: Matrikelnr → Student und Student → Email ergibt **Matrikelnr → Email**.")
     elif pred_trans.value:
-        mo.output.replace(mo.md("❌ Nicht ganz. Bei der Transitivität gilt: Wenn A → B und B → C, dann A → C. Hier: Matrikelnr → Student → Email, also ergibt sich **Matrikelnr → Email**."))
+        _result = mo.md("❌ Nicht ganz. Bei der Transitivität gilt: Wenn A → B und B → C, dann A → C. Hier: Matrikelnr → Student → Email, also ergibt sich **Matrikelnr → Email**.")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([pred_trans, _result])
     return
 
 
@@ -335,23 +337,25 @@ def _(mo):
 def _(mo):
     pred_2nf = mo.ui.radio(
         options={
-            "1nf": "1NF (nicht atomare Werte)",
-            "2nf": "2NF (partielle Abhängigkeit)",
-            "3nf": "3NF (transitive Abhängigkeit)",
-            "keine": "Keine Normalform verletzt",
+            "1NF (nicht atomare Werte)": "1nf",
+            "2NF (partielle Abhängigkeit)": "2nf",
+            "3NF (transitive Abhängigkeit)": "3nf",
+            "Keine Normalform verletzt": "keine",
         },
         label="**Vorhersage:** Schlüssel ist (Best_Nr, Produkt). Kunde hängt nur von Best_Nr ab. Welche NF ist verletzt?"
     )
-    pred_2nf
     return (pred_2nf,)
 
 
 @app.cell(hide_code=True)
-def _(pred_2nf, mo):
+def _(mo, pred_2nf):
     if pred_2nf.value == "2nf":
-        mo.output.replace(mo.md("✅ **Richtig!** Kunde hängt nur von einem Teil des zusammengesetzten Schlüssels ab (Best_Nr, nicht vom gesamten Schlüssel Best_Nr + Produkt). Das ist eine **partielle Abhängigkeit** und verletzt die **2NF**."))
+        _result = mo.md("✅ **Richtig!** Kunde hängt nur von einem Teil des zusammengesetzten Schlüssels ab (Best_Nr, nicht vom gesamten Schlüssel Best_Nr + Produkt). Das ist eine **partielle Abhängigkeit** und verletzt die **2NF**.")
     elif pred_2nf.value:
-        mo.output.replace(mo.md("❌ Nicht ganz. Wenn ein Attribut nur von einem *Teil* des zusammengesetzten Schlüssels abhängt, ist das eine **partielle Abhängigkeit** — ein Verstoß gegen die **2NF**."))
+        _result = mo.md("❌ Nicht ganz. Wenn ein Attribut nur von einem *Teil* des zusammengesetzten Schlüssels abhängt, ist das eine **partielle Abhängigkeit** — ein Verstoß gegen die **2NF**.")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([pred_2nf, _result])
     return
 
 
@@ -547,23 +551,25 @@ def _(mo):
 def _(mo):
     pred_3nf = mo.ui.radio(
         options={
-            "transitiv": "Transitive Abhängigkeit (3NF verletzt)",
-            "partiell": "Partielle Abhängigkeit (2NF verletzt)",
-            "atomar": "Nicht atomare Werte (1NF verletzt)",
-            "kein": "Kein Problem",
+            "Transitive Abhängigkeit (3NF verletzt)": "transitiv",
+            "Partielle Abhängigkeit (2NF verletzt)": "partiell",
+            "Nicht atomare Werte (1NF verletzt)": "atomar",
+            "Kein Problem": "kein",
         },
         label="**Vorhersage:** Best_Nr → Kunde, Kunde → K_Stadt. Was ist das Problem?"
     )
-    pred_3nf
     return (pred_3nf,)
 
 
 @app.cell(hide_code=True)
-def _(pred_3nf, mo):
+def _(mo, pred_3nf):
     if pred_3nf.value == "transitiv":
-        mo.output.replace(mo.md("✅ **Richtig!** Best_Nr → Kunde → K_Stadt ist eine **transitive Abhängigkeit**. K_Stadt hängt nicht direkt vom Schlüssel ab, sondern über den Umweg Kunde. Das verletzt die **3NF**."))
+        _result = mo.md("✅ **Richtig!** Best_Nr → Kunde → K_Stadt ist eine **transitive Abhängigkeit**. K_Stadt hängt nicht direkt vom Schlüssel ab, sondern über den Umweg Kunde. Das verletzt die **3NF**.")
     elif pred_3nf.value:
-        mo.output.replace(mo.md("❌ Nicht ganz. Schauen Sie auf die Kette: Best_Nr → Kunde → K_Stadt. K_Stadt hängt über Kunde *transitiv* vom Schlüssel ab — das ist eine **transitive Abhängigkeit** und verletzt die **3NF**."))
+        _result = mo.md("❌ Nicht ganz. Schauen Sie auf die Kette: Best_Nr → Kunde → K_Stadt. K_Stadt hängt über Kunde *transitiv* vom Schlüssel ab — das ist eine **transitive Abhängigkeit** und verletzt die **3NF**.")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([pred_3nf, _result])
     return
 
 
@@ -631,23 +637,25 @@ def _(mo):
 def _(mo):
     armstrong_quiz = mo.ui.radio(
         options={
-            "a_stadt": "Matrikelnr → Stadt",
-            "stadt_name": "Stadt → Name",
-            "name_matrikel": "Name → Matrikelnr",
-            "stadt_matrikel": "Stadt → Matrikelnr"
+            "Matrikelnr → Stadt": "a_stadt",
+            "Stadt → Name": "stadt_name",
+            "Name → Matrikelnr": "name_matrikel",
+            "Stadt → Matrikelnr": "stadt_matrikel"
         },
         label="**Quiz:** Gegeben: Matrikelnr → Student, Student → Stadt. Welche FD lässt sich per **Transitivität** ableiten?"
     )
-    armstrong_quiz
     return (armstrong_quiz,)
 
 
 @app.cell(hide_code=True)
-def _(armstrong_quiz, mo):
+def _(mo, armstrong_quiz):
     if armstrong_quiz.value == "a_stadt":
-        mo.output.replace(mo.md("✅ **Richtig!** Transitivität: Matrikelnr → Student und Student → Stadt ergibt Matrikelnr → Stadt."))
+        _result = mo.md("✅ **Richtig!** Transitivität: Matrikelnr → Student und Student → Stadt ergibt Matrikelnr → Stadt.")
     elif armstrong_quiz.value:
-        mo.output.replace(mo.md("❌ Nicht ganz. Bei der Transitivität gilt: Wenn A → B und B → C, dann A → C. Hier: Matrikelnr → Student → Stadt, also Matrikelnr → Stadt."))
+        _result = mo.md("❌ Nicht ganz. Bei der Transitivität gilt: Wenn A → B und B → C, dann A → C. Hier: Matrikelnr → Student → Stadt, also Matrikelnr → Stadt.")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([armstrong_quiz, _result])
     return
 
 
@@ -655,23 +663,25 @@ def _(armstrong_quiz, mo):
 def _(mo):
     aug_quiz = mo.ui.radio(
         options={
-            "correct": "ISBN, Verlag → Titel, Verlag",
-            "wrong1": "Verlag → Titel",
-            "wrong2": "Titel → ISBN, Verlag",
-            "wrong3": "ISBN, Titel → Verlag"
+            "ISBN, Verlag → Titel, Verlag": "correct",
+            "Verlag → Titel": "wrong1",
+            "Titel → ISBN, Verlag": "wrong2",
+            "ISBN, Titel → Verlag": "wrong3"
         },
         label="**Quiz:** Gegeben: ISBN → Titel. Welche FD folgt per **Verstärkung** (Augmentation) mit Verlag?"
     )
-    aug_quiz
     return (aug_quiz,)
 
 
 @app.cell(hide_code=True)
-def _(aug_quiz, mo):
+def _(mo, aug_quiz):
     if aug_quiz.value == "correct":
-        mo.output.replace(mo.md("✅ **Richtig!** Verstärkung: Wenn A → B, dann A,C → B,C. Also ISBN,Verlag → Titel,Verlag."))
+        _result = mo.md("✅ **Richtig!** Verstärkung: Wenn A → B, dann A,C → B,C. Also ISBN,Verlag → Titel,Verlag.")
     elif aug_quiz.value:
-        mo.output.replace(mo.md("❌ Nicht ganz. Verstärkung fügt auf **beiden Seiten** das gleiche Attribut hinzu: ISBN → Titel wird zu ISBN,Verlag → Titel,Verlag."))
+        _result = mo.md("❌ Nicht ganz. Verstärkung fügt auf **beiden Seiten** das gleiche Attribut hinzu: ISBN → Titel wird zu ISBN,Verlag → Titel,Verlag.")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([aug_quiz, _result])
     return
 
 
@@ -693,23 +703,25 @@ def _(mo):
 def _(mo):
     quiz1 = mo.ui.radio(
         options={
-            "1nf": "Verletzt 1NF (nicht atomare Werte)",
-            "2nf": "Verletzt 2NF (partielle Abhängigkeit)",
-            "3nf": "Verletzt 3NF (transitive Abhängigkeit)",
-            "ok": "Ist in 3NF (keine Verletzung)"
+            "Verletzt 1NF (nicht atomare Werte)": "1nf",
+            "Verletzt 2NF (partielle Abhängigkeit)": "2nf",
+            "Verletzt 3NF (transitive Abhängigkeit)": "3nf",
+            "Ist in 3NF (keine Verletzung)": "ok"
         },
         label="**Frage 1:** Mitarbeiter(\\underline{MitID}, Name, AbtID, AbtName) — was ist das Problem?"
     )
-    quiz1
     return (quiz1,)
 
 
 @app.cell(hide_code=True)
 def _(mo, quiz1):
     if quiz1.value == "3nf":
-        mo.output.replace(mo.md("✅ **Richtig!** MitID → AbtID → AbtName ist eine transitive Abhängigkeit."))
+        _result = mo.md("✅ **Richtig!** MitID → AbtID → AbtName ist eine transitive Abhängigkeit.")
     elif quiz1.value:
-        mo.output.replace(mo.md("❌ Nicht ganz. Denken Sie an die Kette: MitID → AbtID → AbtName"))
+        _result = mo.md("❌ Nicht ganz. Denken Sie an die Kette: MitID → AbtID → AbtName")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([quiz1, _result])
     return
 
 
@@ -717,23 +729,25 @@ def _(mo, quiz1):
 def _(mo):
     quiz2 = mo.ui.radio(
         options={
-            "1nf": "Verletzt 1NF (nicht atomare Werte)",
-            "2nf": "Verletzt 2NF (partielle Abhängigkeit)",
-            "3nf": "Verletzt 3NF (transitive Abhängigkeit)",
-            "ok": "Ist in 3NF (keine Verletzung)"
+            "Verletzt 1NF (nicht atomare Werte)": "1nf",
+            "Verletzt 2NF (partielle Abhängigkeit)": "2nf",
+            "Verletzt 3NF (transitive Abhängigkeit)": "3nf",
+            "Ist in 3NF (keine Verletzung)": "ok"
         },
         label="**Frage 2:** Buch(\\underline{ISBN, AutorID}, Titel, AutorName) — was ist das Problem?"
     )
-    quiz2
     return (quiz2,)
 
 
 @app.cell(hide_code=True)
 def _(mo, quiz2):
     if quiz2.value == "2nf":
-        mo.output.replace(mo.md("✅ **Richtig!** Titel hängt nur von ISBN ab (partiell), AutorName nur von AutorID (partiell)."))
+        _result = mo.md("✅ **Richtig!** Titel hängt nur von ISBN ab (partiell), AutorName nur von AutorID (partiell).")
     elif quiz2.value:
-        mo.output.replace(mo.md("❌ Nicht ganz. Bei zusammengesetztem Schlüssel: Hängen alle Attribute vom *gesamten* Schlüssel ab?"))
+        _result = mo.md("❌ Nicht ganz. Bei zusammengesetztem Schlüssel: Hängen alle Attribute vom *gesamten* Schlüssel ab?")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([quiz2, _result])
     return
 
 
@@ -741,23 +755,25 @@ def _(mo, quiz2):
 def _(mo):
     quiz3 = mo.ui.radio(
         options={
-            "1nf": "Verletzt 1NF (nicht atomare Werte)",
-            "2nf": "Verletzt 2NF (partielle Abhängigkeit)",
-            "3nf": "Verletzt 3NF (transitive Abhängigkeit)",
-            "ok": "Ist in 3NF (keine Verletzung)"
+            "Verletzt 1NF (nicht atomare Werte)": "1nf",
+            "Verletzt 2NF (partielle Abhängigkeit)": "2nf",
+            "Verletzt 3NF (transitive Abhängigkeit)": "3nf",
+            "Ist in 3NF (keine Verletzung)": "ok"
         },
         label="**Frage 3:** Kurs(KursNr, Titel, DozentName, DozentBüro) mit KursNr → Titel, KursNr → DozentName, DozentName → DozentBüro"
     )
-    quiz3
     return (quiz3,)
 
 
 @app.cell(hide_code=True)
 def _(mo, quiz3):
     if quiz3.value == "3nf":
-        mo.output.replace(mo.md("✅ **Richtig!** KursNr → DozentName → DozentBüro ist eine transitive Abhängigkeit. DozentBüro hängt über DozentName indirekt vom Schlüssel ab. Lösung: Dozent in eigene Tabelle auslagern."))
+        _result = mo.md("✅ **Richtig!** KursNr → DozentName → DozentBüro ist eine transitive Abhängigkeit. DozentBüro hängt über DozentName indirekt vom Schlüssel ab. Lösung: Dozent in eigene Tabelle auslagern.")
     elif quiz3.value:
-        mo.output.replace(mo.md("❌ Nicht ganz. Schauen Sie auf die Kette: KursNr → DozentName → DozentBüro. Das DozentBüro hängt nicht direkt vom Schlüssel ab."))
+        _result = mo.md("❌ Nicht ganz. Schauen Sie auf die Kette: KursNr → DozentName → DozentBüro. Das DozentBüro hängt nicht direkt vom Schlüssel ab.")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([quiz3, _result])
     return
 
 
@@ -877,27 +893,29 @@ def _(mo):
 def _(mo):
     viz_choice_7 = mo.ui.radio(
         options={
-            "grouped_bar": "Gruppiertes Balkendiagramm",
-            "scatter": "Streudiagramm",
-            "line_dual": "Liniendiagramm mit Doppelachse",
-            "stacked": "Gestapeltes Balkendiagramm",
+            "Gruppiertes Balkendiagramm": "grouped_bar",
+            "Streudiagramm": "scatter",
+            "Liniendiagramm mit Doppelachse": "line_dual",
+            "Gestapeltes Balkendiagramm": "stacked",
         },
         label="Trade-off zwischen Tabellenanzahl und Redundanz über NF-Schritte zeigen?"
     )
-    viz_choice_7
     return (viz_choice_7,)
 
 
 @app.cell(hide_code=True)
-def _(viz_choice_7, mo):
+def _(mo, viz_choice_7):
     if viz_choice_7.value == "grouped_bar":
-        mo.output.replace(mo.md("✅ **Richtig!** Ein **gruppiertes Balkendiagramm** eignet sich hervorragend, um zwei Metriken (Tabellen und Redundanz) pro Kategorie (Normalform-Schritt) nebeneinander zu vergleichen. So sieht man sofort den gegenläufigen Trend."))
+        _result = mo.md("✅ **Richtig!** Ein **gruppiertes Balkendiagramm** eignet sich hervorragend, um zwei Metriken (Tabellen und Redundanz) pro Kategorie (Normalform-Schritt) nebeneinander zu vergleichen. So sieht man sofort den gegenläufigen Trend.")
     elif viz_choice_7.value == "scatter":
-        mo.output.replace(mo.md("❌ Nicht ganz. Ein Streudiagramm zeigt den Zusammenhang zwischen zwei numerischen Variablen, aber hier haben wir Kategorien (Normalform-Schritte) mit je zwei Metriken. Ein **gruppiertes Balkendiagramm** stellt das klarer dar."))
+        _result = mo.md("❌ Nicht ganz. Ein Streudiagramm zeigt den Zusammenhang zwischen zwei numerischen Variablen, aber hier haben wir Kategorien (Normalform-Schritte) mit je zwei Metriken. Ein **gruppiertes Balkendiagramm** stellt das klarer dar.")
     elif viz_choice_7.value == "line_dual":
-        mo.output.replace(mo.md("❌ Nicht ganz. Ein Liniendiagramm suggeriert eine kontinuierliche Entwicklung, aber Normalform-Schritte sind diskrete Kategorien. Ein **gruppiertes Balkendiagramm** passt hier besser."))
+        _result = mo.md("❌ Nicht ganz. Ein Liniendiagramm suggeriert eine kontinuierliche Entwicklung, aber Normalform-Schritte sind diskrete Kategorien. Ein **gruppiertes Balkendiagramm** passt hier besser.")
     elif viz_choice_7.value == "stacked":
-        mo.output.replace(mo.md("❌ Nicht ganz. Ein gestapeltes Balkendiagramm zeigt Teile eines Ganzen — aber Tabellen und Redundanz sind keine Teile einer Summe. Ein **gruppiertes Balkendiagramm** zeigt die zwei Metriken besser nebeneinander."))
+        _result = mo.md("❌ Nicht ganz. Ein gestapeltes Balkendiagramm zeigt Teile eines Ganzen — aber Tabellen und Redundanz sind keine Teile einer Summe. Ein **gruppiertes Balkendiagramm** zeigt die zwei Metriken besser nebeneinander.")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([viz_choice_7, _result])
     return
 
 
@@ -915,24 +933,26 @@ def _(mo):
 def _(mo):
     selbsttest_7 = mo.ui.radio(
         options={
-            "nichts_anderem": "...von nichts anderem als dem Schlüssel",
-            "allen": "...von allen Attributen",
-            "mindestens": "...von mindestens einem Schlüssel",
+            "...von nichts anderem als dem Schlüssel": "nichts_anderem",
+            "...von allen Attributen": "allen",
+            "...von mindestens einem Schlüssel": "mindestens",
         },
         label="Merksatz 3NF: 'Jedes Attribut hängt vom Schlüssel ab, vom ganzen Schlüssel, und...?'"
     )
-    selbsttest_7
     return (selbsttest_7,)
 
 
 @app.cell(hide_code=True)
-def _(selbsttest_7, mo):
+def _(mo, selbsttest_7):
     if selbsttest_7.value == "nichts_anderem":
-        mo.output.replace(mo.md("✅ **Richtig!** Der vollständige Merksatz lautet: *\"Jedes Attribut hängt vom Schlüssel ab, vom ganzen Schlüssel, und von nichts anderem als dem Schlüssel.\"* — Das fasst 1NF (Schlüssel existiert), 2NF (ganzer Schlüssel) und 3NF (nichts anderes) zusammen."))
+        _result = mo.md("✅ **Richtig!** Der vollständige Merksatz lautet: *\"Jedes Attribut hängt vom Schlüssel ab, vom ganzen Schlüssel, und von nichts anderem als dem Schlüssel.\"* — Das fasst 1NF (Schlüssel existiert), 2NF (ganzer Schlüssel) und 3NF (nichts anderes) zusammen.")
     elif selbsttest_7.value == "allen":
-        mo.output.replace(mo.md("❌ Nicht ganz. Der Merksatz betont die *Exklusivität*: Attribute dürfen **nur** vom Schlüssel abhängen, nicht von anderen Nicht-Schlüsselattributen. Die korrekte Vervollständigung ist: *\"...von nichts anderem als dem Schlüssel.\"*"))
+        _result = mo.md("❌ Nicht ganz. Der Merksatz betont die *Exklusivität*: Attribute dürfen **nur** vom Schlüssel abhängen, nicht von anderen Nicht-Schlüsselattributen. Die korrekte Vervollständigung ist: *\"...von nichts anderem als dem Schlüssel.\"*")
     elif selbsttest_7.value == "mindestens":
-        mo.output.replace(mo.md("❌ Nicht ganz. Der dritte Teil des Merksatzes adressiert die 3NF und betont, dass es keine transitiven Abhängigkeiten geben darf. Die korrekte Vervollständigung ist: *\"...von nichts anderem als dem Schlüssel.\"*"))
+        _result = mo.md("❌ Nicht ganz. Der dritte Teil des Merksatzes adressiert die 3NF und betont, dass es keine transitiven Abhängigkeiten geben darf. Die korrekte Vervollständigung ist: *\"...von nichts anderem als dem Schlüssel.\"*")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([selbsttest_7, _result])
     return
 
 

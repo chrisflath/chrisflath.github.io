@@ -36,6 +36,8 @@ def _(mo):
         - 🔴 **Debugging**: Fehler finden und beheben
         - ⭐ **Exploration**: Offene Herausforderungen
 
+        > **Hinweis:** 🟡-Aufgaben enthalten `???` als Platzhalter. Die Zelle zeigt einen SQL-Fehler, bis Sie die `???` durch die richtige Lösung ersetzen — das ist Absicht!
+
         ---
         """
     )
@@ -498,22 +500,24 @@ def _(mo):
 def _(mo):
     quiz1 = mo.ui.radio(
         options={
-            "1:1": "1:1 (Eins zu Eins)",
-            "1:N": "1:N (Eins zu Viele)",
-            "M:N": "M:N (Viele zu Viele)"
+            "1:1 (Eins zu Eins)": "1:1",
+            "1:N (Eins zu Viele)": "1:N",
+            "M:N (Viele zu Viele)": "M:N"
         },
         label="**Frage 1:** Verein <-> Spieler (ein Spieler spielt für einen Verein)"
     )
-    quiz1
     return (quiz1,)
 
 
 @app.cell(hide_code=True)
 def _(mo, quiz1):
     if quiz1.value == "1:N":
-        mo.output.replace(mo.md("Richtig! Ein Verein hat viele Spieler, aber jeder Spieler gehört zu einem Verein."))
+        _result = mo.md("Richtig! Ein Verein hat viele Spieler, aber jeder Spieler gehört zu einem Verein.")
     elif quiz1.value:
-        mo.output.replace(mo.md("Nicht ganz. Denken Sie daran: Ein Verein kann *viele* Spieler haben."))
+        _result = mo.md("Nicht ganz. Denken Sie daran: Ein Verein kann *viele* Spieler haben.")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([quiz1, _result])
     return
 
 
@@ -521,22 +525,24 @@ def _(mo, quiz1):
 def _(mo):
     quiz2 = mo.ui.radio(
         options={
-            "1:1": "1:1 (Eins zu Eins)",
-            "1:N": "1:N (Eins zu Viele)",
-            "M:N": "M:N (Viele zu Viele)"
+            "1:1 (Eins zu Eins)": "1:1",
+            "1:N (Eins zu Viele)": "1:N",
+            "M:N (Viele zu Viele)": "M:N"
         },
         label="**Frage 2:** Student <-> Kurs (Studierende können mehrere Kurse besuchen, Kurse haben mehrere Studierende)"
     )
-    quiz2
     return (quiz2,)
 
 
 @app.cell(hide_code=True)
 def _(mo, quiz2):
     if quiz2.value == "M:N":
-        mo.output.replace(mo.md("Richtig! Beide Seiten können mit vielen auf der anderen verbunden sein."))
+        _result = mo.md("Richtig! Beide Seiten können mit vielen auf der anderen verbunden sein.")
     elif quiz2.value:
-        mo.output.replace(mo.md("Nicht ganz. Auf *beiden* Seiten sind mehrere möglich."))
+        _result = mo.md("Nicht ganz. Auf *beiden* Seiten sind mehrere möglich.")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([quiz2, _result])
     return
 
 
@@ -544,22 +550,24 @@ def _(mo, quiz2):
 def _(mo):
     quiz3 = mo.ui.radio(
         options={
-            "1:1": "1:1 (Eins zu Eins)",
-            "1:N": "1:N (Eins zu Viele)",
-            "M:N": "M:N (Viele zu Viele)"
+            "1:1 (Eins zu Eins)": "1:1",
+            "1:N (Eins zu Viele)": "1:N",
+            "M:N (Viele zu Viele)": "M:N"
         },
         label="**Frage 3:** Person <-> Personalausweis (jede Person hat genau einen Ausweis)"
     )
-    quiz3
     return (quiz3,)
 
 
 @app.cell(hide_code=True)
 def _(mo, quiz3):
     if quiz3.value == "1:1":
-        mo.output.replace(mo.md("Richtig! Jede Person hat genau einen Ausweis, und jeder Ausweis gehört zu genau einer Person."))
+        _result = mo.md("Richtig! Jede Person hat genau einen Ausweis, und jeder Ausweis gehört zu genau einer Person.")
     elif quiz3.value:
-        mo.output.replace(mo.md("Nicht ganz. Eine Person hat *genau einen* Ausweis (nicht mehrere)."))
+        _result = mo.md("Nicht ganz. Eine Person hat *genau einen* Ausweis (nicht mehrere).")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([quiz3, _result])
     return
 
 
@@ -567,22 +575,24 @@ def _(mo, quiz3):
 def _(mo):
     quiz4 = mo.ui.radio(
         options={
-            "1:1": "1:1 (Eins zu Eins)",
-            "1:N": "1:N (Eins zu Viele)",
-            "M:N": "M:N (Viele zu Viele)"
+            "1:1 (Eins zu Eins)": "1:1",
+            "1:N (Eins zu Viele)": "1:N",
+            "M:N (Viele zu Viele)": "M:N"
         },
         label="**Frage 4:** Autor <-> Buch (ein Buch kann mehrere Autoren haben, Autoren schreiben mehrere Bücher)"
     )
-    quiz4
     return (quiz4,)
 
 
 @app.cell(hide_code=True)
 def _(mo, quiz4):
     if quiz4.value == "M:N":
-        mo.output.replace(mo.md("Richtig! Co-Autoren und Vielschreiber — M:N!"))
+        _result = mo.md("Richtig! Co-Autoren und Vielschreiber — M:N!")
     elif quiz4.value:
-        mo.output.replace(mo.md("Nicht ganz. Denken Sie an Co-Autoren: Ein Buch kann *mehrere* Autoren haben."))
+        _result = mo.md("Nicht ganz. Denken Sie an Co-Autoren: Ein Buch kann *mehrere* Autoren haben.")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([quiz4, _result])
     return
 
 
@@ -590,22 +600,24 @@ def _(mo, quiz4):
 def _(mo):
     quiz5 = mo.ui.radio(
         options={
-            "1:1": "1:1 (Eins zu Eins)",
-            "1:N": "1:N (Eins zu Viele)",
-            "M:N": "M:N (Viele zu Viele)"
+            "1:1 (Eins zu Eins)": "1:1",
+            "1:N (Eins zu Viele)": "1:N",
+            "M:N (Viele zu Viele)": "M:N"
         },
         label="**Frage 5:** Abteilung <-> Mitarbeiter (jeder Mitarbeiter gehört zu einer Abteilung)"
     )
-    quiz5
     return (quiz5,)
 
 
 @app.cell(hide_code=True)
 def _(mo, quiz5):
     if quiz5.value == "1:N":
-        mo.output.replace(mo.md("Richtig! Eine Abteilung hat viele Mitarbeiter, aber jeder Mitarbeiter ist in einer Abteilung."))
+        _result = mo.md("Richtig! Eine Abteilung hat viele Mitarbeiter, aber jeder Mitarbeiter ist in einer Abteilung.")
     elif quiz5.value:
-        mo.output.replace(mo.md("Nicht ganz. Eine Abteilung hat *viele* Mitarbeiter."))
+        _result = mo.md("Nicht ganz. Eine Abteilung hat *viele* Mitarbeiter.")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([quiz5, _result])
     return
 
 
@@ -838,6 +850,8 @@ def _(mo):
         ---
 
         ## Freie Exploration — Herausforderungen
+
+        **Tipp:** Vergleichen Sie Ihre Lösungen mit Ihrem Nachbarn — bei ER-Diagrammen gibt es oft mehrere sinnvolle Lösungen!
         """
     )
     return
@@ -1012,6 +1026,100 @@ def _(mo):
 - Kurs (5,300): Mindestteilnehmerzahl 5, Hörsaalkapazität 300
 - Kurs (1,1): Jeder Kurs braucht genau einen Raum
 - Raum (0,N): Räume können ungenutzt sein oder mehrfach belegt werden
+""")})
+    return
+
+
+# ============================================================
+# Übungsklausur: ER-Modellierung
+# ============================================================
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+        ---
+
+        ## 🎓 Übungsklausur: ER-Modellierung
+
+        Hier ist eine typische Aufgabe aus der Klausur.
+
+        **Szenario: Online-Lieferdienst "FastFood"**
+
+        Entwerfen Sie ein ER-Modell für einen Lieferdienst basierend auf folgenden Anforderungen:
+
+        1.  **Kunden**: Haben eine eindeutige `KundenNr`, `Name`, `Adresse` und eine `Telefonnummer`.
+        2.  **Restaurants**: Haben eine eindeutige `RestID`, `Name`, `Kategorie` (z.B. Pizza, Sushi) und eine `Adresse`.
+        3.  **Bestellungen**:
+            - Ein Kunde gibt **Bestellungen** auf.
+            - Eine Bestellung hat eine eindeutige `BestellNr` und ein `Datum`.
+            - Ein Kunde kann beliebig viele Bestellungen aufgeben, aber jede Bestellung gehört zu genau einem Kunden.
+        4.  **Enthalten**:
+            - Eine Bestellung enthält **Gerichte**.
+            - Ein Gericht hat eine `GerichtID`, `Name` und `Preis`.
+            - Eine Bestellung kann mehrere Gerichte enthalten, und ein Gericht kann in vielen Bestellungen vorkommen.
+            - Für jedes Gericht in einer Bestellung wird die `Anzahl` festgehalten (Attribut der Beziehung!).
+        5.  **Zubereitung**:
+            - Jedes Gericht wird von genau einem Restaurant zubereitet.
+            - Ein Restaurant bietet viele Gerichte an.
+        6.  **Fahrer**:
+            - Fahrer haben `FahrerID` und `Name`.
+            - Jede Bestellung wird von genau einem Fahrer ausgeliefert.
+            - Ein Fahrer kann (über die Zeit) viele Bestellungen ausliefern.
+
+        **Aufgabe:**
+        Modellieren Sie Entitäten, Attribute (unterstreichen Sie Primärschlüssel), Beziehungen und Kardinalitäten (in (min,max)-Notation).
+        """
+    )
+    return
+
+
+@app.cell
+def _(mo):
+    # Tragen Sie Ihren Entwurf hier ein
+    mo.md(
+        """
+        **Ihre Lösung:**
+
+        **Entitäten:**
+        - ...
+
+        **Beziehungen:**
+        - ...
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Lösung": mo.md("""
+**Entitäten:**
+- **Kunde** (<u>KundenNr</u>, Name, Adresse, Telefon)
+- **Restaurant** (<u>RestID</u>, Name, Kategorie, Adresse)
+- **Bestellung** (<u>BestellNr</u>, Datum)
+- **Gericht** (<u>GerichtID</u>, Name, Preis)
+- **Fahrer** (<u>FahrerID</u>, Name)
+
+**Beziehungen & Kardinalitäten (min,max):**
+
+1.  **gibt auf** (Kunde ↔ Bestellung)
+    -   Kunde: (0,N) — Ein neuer Kunde hat noch nichts bestellt.
+    -   Bestellung: (1,1) — Jede Bestellung gehört genau einem Kunden.
+
+2.  **liefert** (Fahrer ↔ Bestellung)
+    -   Fahrer: (0,N) — Ein neuer Fahrer hat noch nichts geliefert.
+    -   Bestellung: (1,1) — Jede Bestellung wird von einem Fahrer geliefert.
+
+3.  **bietet an** (Restaurant ↔ Gericht)
+    -   Restaurant: (1,N) — Ein Restaurant muss mindestens ein Gericht haben.
+    -   Gericht: (1,1) — Jedes Gericht gehört fest zum Menü eines Restaurants (Annahme: "Pizza Salami" bei Italiener A ist ein anderes Objekt als bei Italiener B).
+
+4.  **enthält** (Bestellung ↔ Gericht)
+    -   Bestellung: (1,N) — Keine leeren Bestellungen.
+    -   Gericht: (0,N) — Ein Gericht wurde evtl. noch nie bestellt.
+    -   **Attribut an Beziehung:** `Anzahl` (Wie oft wurde das Gericht in dieser Bestellung bestellt?)
 """)})
     return
 

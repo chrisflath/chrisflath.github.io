@@ -154,31 +154,33 @@ def _(mo):
 def _(mo):
     armstrong_quiz = mo.ui.radio(
         options={
-            "a_stadt": "Matrikelnr → Stadt",
-            "stadt_name": "Stadt → Name",
-            "name_matrikel": "Name → Matrikelnr",
-            "stadt_matrikel": "Stadt → Matrikelnr",
+            "Matrikelnr → Stadt": "a_stadt",
+            "Stadt → Name": "stadt_name",
+            "Name → Matrikelnr": "name_matrikel",
+            "Stadt → Matrikelnr": "stadt_matrikel",
         },
         label="**Quiz — Transitivität:** Gegeben: Matrikelnr → Student, Student → Stadt. Welche FD lässt sich per Transitivität ableiten?",
     )
-    armstrong_quiz
     return (armstrong_quiz,)
 
 
 @app.cell(hide_code=True)
-def _(armstrong_quiz, mo):
+def _(mo, armstrong_quiz):
     if armstrong_quiz.value == "a_stadt":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "✅ **Richtig!** Transitivität: Matrikelnr → Student und Student → Stadt ergibt **Matrikelnr → Stadt**."
             )
         )
     elif armstrong_quiz.value:
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Nicht ganz. Bei der Transitivität gilt: Wenn A → B und B → C, dann A → C. Hier: Matrikelnr → Student → Stadt, also Matrikelnr → Stadt."
             )
         )
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([armstrong_quiz, _result])
     return
 
 
@@ -186,31 +188,33 @@ def _(armstrong_quiz, mo):
 def _(mo):
     aug_quiz = mo.ui.radio(
         options={
-            "correct": "ISBN, Verlag → Titel, Verlag",
-            "wrong1": "Verlag → Titel",
-            "wrong2": "Titel → ISBN, Verlag",
-            "wrong3": "ISBN, Titel → Verlag",
+            "ISBN, Verlag → Titel, Verlag": "correct",
+            "Verlag → Titel": "wrong1",
+            "Titel → ISBN, Verlag": "wrong2",
+            "ISBN, Titel → Verlag": "wrong3",
         },
         label="**Quiz — Verstärkung:** Gegeben: ISBN → Titel. Welche FD folgt per Verstärkung (Augmentation) mit Verlag?",
     )
-    aug_quiz
     return (aug_quiz,)
 
 
 @app.cell(hide_code=True)
-def _(aug_quiz, mo):
+def _(mo, aug_quiz):
     if aug_quiz.value == "correct":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "✅ **Richtig!** Verstärkung: Wenn A → B, dann A,C → B,C. Also ISBN,Verlag → Titel,Verlag."
             )
         )
     elif aug_quiz.value:
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Nicht ganz. Verstärkung fügt auf **beiden Seiten** das gleiche Attribut hinzu: ISBN → Titel wird zu ISBN,Verlag → Titel,Verlag."
             )
         )
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([aug_quiz, _result])
     return
 
 
@@ -698,31 +702,33 @@ def _(mo):
 def _(mo):
     quiz1 = mo.ui.radio(
         options={
-            "1nf": "Verletzt 1NF (nicht atomare Werte)",
-            "2nf": "Verletzt 2NF (partielle Abhängigkeit)",
-            "3nf": "Verletzt 3NF (transitive Abhängigkeit)",
-            "ok": "Ist in 3NF (keine Verletzung)",
+            "Verletzt 1NF (nicht atomare Werte)": "1nf",
+            "Verletzt 2NF (partielle Abhängigkeit)": "2nf",
+            "Verletzt 3NF (transitive Abhängigkeit)": "3nf",
+            "Ist in 3NF (keine Verletzung)": "ok",
         },
         label="**Frage 1:** Mitarbeiter(MitID, Name, AbtID, AbtName) — was ist das Problem?",
     )
-    quiz1
     return (quiz1,)
 
 
 @app.cell(hide_code=True)
 def _(mo, quiz1):
     if quiz1.value == "3nf":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "✅ **Richtig!** MitID → AbtID → AbtName ist eine transitive Abhängigkeit."
             )
         )
     elif quiz1.value:
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Nicht ganz. Denken Sie an die Kette: MitID → AbtID → AbtName"
             )
         )
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([quiz1, _result])
     return
 
 
@@ -730,31 +736,33 @@ def _(mo, quiz1):
 def _(mo):
     quiz2 = mo.ui.radio(
         options={
-            "1nf": "Verletzt 1NF (nicht atomare Werte)",
-            "2nf": "Verletzt 2NF (partielle Abhängigkeit)",
-            "3nf": "Verletzt 3NF (transitive Abhängigkeit)",
-            "ok": "Ist in 3NF (keine Verletzung)",
+            "Verletzt 1NF (nicht atomare Werte)": "1nf",
+            "Verletzt 2NF (partielle Abhängigkeit)": "2nf",
+            "Verletzt 3NF (transitive Abhängigkeit)": "3nf",
+            "Ist in 3NF (keine Verletzung)": "ok",
         },
         label="**Frage 2:** Buch(ISBN, AutorID, Titel, AutorName) mit PK = (ISBN, AutorID) — was ist das Problem?",
     )
-    quiz2
     return (quiz2,)
 
 
 @app.cell(hide_code=True)
 def _(mo, quiz2):
     if quiz2.value == "2nf":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "✅ **Richtig!** Titel hängt nur von ISBN ab (partiell), AutorName nur von AutorID (partiell)."
             )
         )
     elif quiz2.value:
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Nicht ganz. Bei zusammengesetztem Schlüssel: Hängen alle Attribute vom *gesamten* Schlüssel ab?"
             )
         )
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([quiz2, _result])
     return
 
 
@@ -762,31 +770,33 @@ def _(mo, quiz2):
 def _(mo):
     quiz3 = mo.ui.radio(
         options={
-            "1nf": "Verletzt 1NF (nicht atomare Werte)",
-            "2nf": "Verletzt 2NF (partielle Abhängigkeit)",
-            "3nf": "Verletzt 3NF (transitive Abhängigkeit)",
-            "ok": "Ist in 3NF (keine Verletzung)",
+            "Verletzt 1NF (nicht atomare Werte)": "1nf",
+            "Verletzt 2NF (partielle Abhängigkeit)": "2nf",
+            "Verletzt 3NF (transitive Abhängigkeit)": "3nf",
+            "Ist in 3NF (keine Verletzung)": "ok",
         },
         label="**Frage 3:** Kurs(KursNr, Titel, DozentName, DozentBüro) mit KursNr → Titel, KursNr → DozentName, DozentName → DozentBüro",
     )
-    quiz3
     return (quiz3,)
 
 
 @app.cell(hide_code=True)
 def _(mo, quiz3):
     if quiz3.value == "3nf":
-        mo.output.replace(
+        _result = (
             mo.md(
                 "✅ **Richtig!** KursNr → DozentName → DozentBüro ist eine transitive Abhängigkeit. DozentBüro hängt über DozentName indirekt vom Schlüssel ab."
             )
         )
     elif quiz3.value:
-        mo.output.replace(
+        _result = (
             mo.md(
                 "❌ Nicht ganz. Schauen Sie auf die Kette: KursNr → DozentName → DozentBüro. Das DozentBüro hängt nicht direkt vom Schlüssel ab."
             )
         )
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([quiz3, _result])
     return
 
 
@@ -999,6 +1009,8 @@ def _(mo):
         ## Exploration
 
         Offene Herausforderungen für Fortgeschrittene.
+
+        **Tipp:** Diskutieren Sie mit Ihrem Nachbarn — besonders bei Normalisierungsentscheidungen gibt es Abwägungen, die vom Kontext abhängen!
         """
     )
     return
@@ -1158,44 +1170,77 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.accordion(
-        {
-            "🔑 Musterlösung": mo.md(
-                """
-```sql
--- Denormalisierter View
-CREATE OR REPLACE VIEW bestellung_komplett AS
-SELECT
-    b.Best_Nr, k.Kunde, k.K_Stadt,
-    bp.Produkt, p.P_Preis, bp.Menge,
-    bp.Menge * p.P_Preis AS Positionswert
-FROM Bestellung_3NF b
-JOIN Kunde_3NF k ON b.Kunde = k.Kunde
-JOIN Best_Position_2NF bp ON b.Best_Nr = bp.Best_Nr
-JOIN Produkt_2NF p ON bp.Produkt = p.Produkt;
+    mo.md(
+        r"""
+        ---
 
--- Einfache Abfrage auf den View
-SELECT * FROM bestellung_komplett ORDER BY Best_Nr, Produkt;
+        ## 🎓 Übungsklausur: Relationales Modell & Normalisierung
 
--- Vergleich: Umsatz pro Stadt
-SELECT K_Stadt, SUM(Positionswert) AS Umsatz
-FROM bestellung_komplett
-GROUP BY K_Stadt
-ORDER BY Umsatz DESC;
-```
+        Hier ist eine typische Aufgabe aus der Klausur.
 
-**Wann Denormalisierung?**
-- **Leseleistung** kritisch (Data Warehouse, Reporting)
-- **Komplexe JOINs** verlangsamen häufige Abfragen
-- **Datenänderungen** selten (Read-heavy Workload)
+        Gegeben sei folgende Tabelle zur Projektverwaltung:
 
-**Aber:** Denormalisierung bringt Redundanz zurück! Deshalb:
-- Normalisiert **speichern** (OLTP)
-- Denormalisiert **abfragen** (Views, Materialized Views, OLAP)
-"""
-            )
-        }
+        | ProjektID | Projektname | Projektleiter | EntwicklerID | Entwickler | Aufgabe |
+        |---|---|---|---|---|---|
+        | 101 | Projekt A | Dr. Schmidt | 001 | Max Müller | Frontend |
+        | 101 | Projekt A | Dr. Schmidt | 002 | Julia Fischer | KI |
+        | 102 | Projekt B | Dr. Meier | 003 | Anna Schmidt | Datenbank |
+        | 102 | Projekt B | Dr. Meier | 001 | Max Müller | Datenbank |
+        | 102 | Projekt B | Dr. Meier | 002 | Julia Fischer | KI |
+
+        **Aufgabe:**
+        1. Identifizieren Sie **Redundanzen** in der Tabelle.
+        2. Zerlegen Sie die Tabelle in die **3. Normalform**. Geben Sie die Schemata der resultierenden Tabellen an (unterstrichene Primärschlüssel).
+        """
     )
+    return
+
+
+@app.cell
+def _(mo):
+    # Tragen Sie Ihre Analyse hier ein
+    mo.md(
+        """
+        **Ihre Antwort:**
+
+        1. Redundanzen:
+           - ...
+
+        2. Zerlegung in 3NF:
+           - Tabelle 1: ...
+           - Tabelle 2: ...
+           - ...
+        """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.accordion({"🔑 Lösung": mo.md("""
+**1. Redundanzen:**
+- **Projekt-Daten:** `Projektname` ("Projekt A") und `Projektleiter` ("Dr. Schmidt") werden für jeden Entwickler im Projekt wiederholt.
+- **Entwickler-Daten:** `Entwickler` (Name "Max Müller") wird wiederholt, wenn er in mehreren Projekten arbeitet.
+
+**2. Zerlegung in 3NF:**
+
+Wir trennen die funktionalen Abhängigkeiten:
+- ProjektID → Projektname, Projektleiter
+- EntwicklerID → Entwickler
+- (ProjektID, EntwicklerID) → Aufgabe
+
+**Tabelle: Projekte**
+- Schema: <u>ProjektID</u>, Projektname, Projektleiter
+
+**Tabelle: Entwickler**
+- Schema: <u>EntwicklerID</u>, Name
+
+**Tabelle: Projekt_Zuweisung**
+- Schema: <u>ProjektID, EntwicklerID</u>, Aufgabe
+- Fremdschlüssel: ProjektID referenziert Projekte, EntwicklerID referenziert Entwickler
+
+Damit sind alle Attribute voll funktional vom jeweiligen Primärschlüssel abhängig und transitive Abhängigkeiten sind eliminiert.
+""")})
     return
 
 

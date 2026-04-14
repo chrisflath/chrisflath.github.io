@@ -400,6 +400,11 @@ def _(mo):
         },
         label="Wie viele Zeilen liefert `SELECT Mannschaft, Tordifferenz FROM bundesliga` (ohne WHERE)?"
     )
+    return (vorhersage_select,)
+
+
+@app.cell(hide_code=True)
+def _(mo, vorhersage_select):
     if vorhersage_select.value == "alle":
         _result = mo.md("✅ **Richtig!** Ohne `WHERE`-Filter werden **alle Zeilen** der Tabelle zurückgegeben. `SELECT` wählt nur die **Spalten** aus, nicht die Zeilen.")
     elif vorhersage_select.value == "1":
@@ -508,6 +513,11 @@ def _(mo):
         },
         label="Welcher Operator liefert in der Regel mehr Ergebnisse: AND oder OR?"
     )
+    return (vorhersage_and_or,)
+
+
+@app.cell(hide_code=True)
+def _(mo, vorhersage_and_or):
     if vorhersage_and_or.value == "or":
         _result = mo.md("✅ **Richtig!** `OR` liefert mehr Ergebnisse, weil nur **eine** der Bedingungen erfüllt sein muss. `AND` ist restriktiver — **beide** Bedingungen müssen gelten.")
     elif vorhersage_and_or.value == "and":
@@ -539,6 +549,11 @@ def _(mo):
         },
         label="**Quiz:** Welche Aussage zu AND und OR in SQL ist korrekt?"
     )
+    return (quiz_operator,)
+
+
+@app.cell(hide_code=True)
+def _(mo, quiz_operator):
     if quiz_operator.value == "and_or":
         _result = mo.md("✅ **Richtig!** AND bindet stärker als OR, genau wie `*` vor `+` in der Mathematik. Deshalb sind Klammern bei OR wichtig: `WHERE (A OR B) AND C` ist etwas anderes als `WHERE A OR B AND C`.")
     elif quiz_operator.value == "or_and":
@@ -688,6 +703,11 @@ def _(mo):
         },
         label="Sie wollen zeigen, wie sich Bayerns Punkte über die Saison entwickeln. Welcher Diagrammtyp passt am besten?"
     )
+    return (viz_choice,)
+
+
+@app.cell(hide_code=True)
+def _(mo, viz_choice):
     if viz_choice.value == "line":
         _result = mo.md("✅ **Richtig!** Ein **Liniendiagramm** ist ideal für **Zeitreihen** — es zeigt die Entwicklung eines Werts über die Zeit. Die x-Achse ist der Spieltag, die y-Achse die kumulierten Punkte.")
     elif viz_choice.value == "bar":
@@ -722,6 +742,11 @@ def _(mo):
         },
         label="Wie begrenzen Sie in SQL die **Zeilen** einer Abfrage?"
     )
+    return (selbsttest,)
+
+
+@app.cell(hide_code=True)
+def _(mo, selbsttest):
     if selbsttest.value == "where":
         _result = mo.md("✅ **Richtig!** `WHERE` filtert Zeilen nach einer Bedingung. `SELECT` wählt hingegen nur die **Spalten** aus.")
     elif selbsttest.value == "select":

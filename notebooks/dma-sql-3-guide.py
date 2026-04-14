@@ -340,27 +340,29 @@ def _(mo):
 def _(mo):
     quiz_where_having = mo.ui.radio(
         options={
-            "correct": "WHERE filtert Zeilen vor GROUP BY, HAVING filtert Gruppen danach",
-            "reversed": "HAVING filtert Zeilen vor GROUP BY, WHERE filtert Gruppen danach",
-            "same": "WHERE und HAVING sind austauschbar — beide filtern Gruppen",
-            "dtype": "WHERE ist für Zahlen, HAVING ist für Text",
+            "WHERE filtert Zeilen vor GROUP BY, HAVING filtert Gruppen danach": "correct",
+            "HAVING filtert Zeilen vor GROUP BY, WHERE filtert Gruppen danach": "reversed",
+            "WHERE und HAVING sind austauschbar — beide filtern Gruppen": "same",
+            "WHERE ist für Zahlen, HAVING ist für Text": "dtype",
         },
         label="**Quiz:** Was ist der Unterschied zwischen WHERE und HAVING?"
     )
-    quiz_where_having
     return (quiz_where_having,)
 
 
 @app.cell(hide_code=True)
-def _(quiz_where_having, mo):
+def _(mo, quiz_where_having):
     if quiz_where_having.value == "correct":
-        mo.output.replace(mo.md("✅ **Richtig!** WHERE filtert *einzelne Zeilen* bevor sie gruppiert werden. HAVING filtert *ganze Gruppen* nach der Aggregation. Deshalb kann HAVING Aggregatfunktionen wie COUNT(*) oder AVG() verwenden — WHERE nicht."))
+        _result = mo.md("✅ **Richtig!** WHERE filtert *einzelne Zeilen* bevor sie gruppiert werden. HAVING filtert *ganze Gruppen* nach der Aggregation. Deshalb kann HAVING Aggregatfunktionen wie COUNT(*) oder AVG() verwenden — WHERE nicht.")
     elif quiz_where_having.value == "reversed":
-        mo.output.replace(mo.md("❌ Genau umgekehrt! **WHERE** filtert Zeilen *vor* GROUP BY, **HAVING** filtert Gruppen *danach*. Eselsbrücke: WHERE → WHERE are the rows (Zeilen), HAVING → HAVING grouped (Gruppen)."))
+        _result = mo.md("❌ Genau umgekehrt! **WHERE** filtert Zeilen *vor* GROUP BY, **HAVING** filtert Gruppen *danach*. Eselsbrücke: WHERE → WHERE are the rows (Zeilen), HAVING → HAVING grouped (Gruppen).")
     elif quiz_where_having.value == "same":
-        mo.output.replace(mo.md("❌ WHERE und HAVING sind **nicht** austauschbar. WHERE filtert *einzelne Zeilen* vor der Gruppierung und kann keine Aggregatfunktionen verwenden. HAVING filtert *Gruppen* nach der Aggregation und kann z.B. `COUNT(*) > 5` prüfen."))
+        _result = mo.md("❌ WHERE und HAVING sind **nicht** austauschbar. WHERE filtert *einzelne Zeilen* vor der Gruppierung und kann keine Aggregatfunktionen verwenden. HAVING filtert *Gruppen* nach der Aggregation und kann z.B. `COUNT(*) > 5` prüfen.")
     elif quiz_where_having.value == "dtype":
-        mo.output.replace(mo.md("❌ Der Unterschied hat nichts mit Datentypen zu tun. WHERE filtert *einzelne Zeilen* vor GROUP BY (z.B. `WHERE Alter < 30`), HAVING filtert *ganze Gruppen* nach der Aggregation (z.B. `HAVING COUNT(*) > 3`)."))
+        _result = mo.md("❌ Der Unterschied hat nichts mit Datentypen zu tun. WHERE filtert *einzelne Zeilen* vor GROUP BY (z.B. `WHERE Alter < 30`), HAVING filtert *ganze Gruppen* nach der Aggregation (z.B. `HAVING COUNT(*) > 3`).")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([quiz_where_having, _result])
     return
 
 
@@ -376,24 +378,26 @@ def _(mo):
 def _(mo):
     vorhersage_groupby = mo.ui.radio(
         options={
-            "fehler": "Fehler — Position ohne GROUP BY ist nicht erlaubt",
-            "alle_mit_avg": "Alle Positionen, jede mit dem gleichen AVG-Wert",
-            "eine_zeile": "Nur eine Zeile mit einer zufälligen Position",
+            "Fehler — Position ohne GROUP BY ist nicht erlaubt": "fehler",
+            "Alle Positionen, jede mit dem gleichen AVG-Wert": "alle_mit_avg",
+            "Nur eine Zeile mit einer zufälligen Position": "eine_zeile",
         },
         label="Was passiert bei `SELECT Position, AVG(Alter) FROM spieler` ohne GROUP BY?"
     )
-    vorhersage_groupby
     return (vorhersage_groupby,)
 
 
 @app.cell(hide_code=True)
-def _(vorhersage_groupby, mo):
+def _(mo, vorhersage_groupby):
     if vorhersage_groupby.value == "fehler":
-        mo.output.replace(mo.md("✅ **Richtig!** Ohne `GROUP BY Position` kann SQL nicht wissen, welche Position zur aggregierten Durchschnittszeile gehört. Die *Goldene Regel*: Im SELECT nur GROUP BY-Spalten oder Aggregatfunktionen! (Manche Datenbanken wie MySQL erlauben dies trotzdem, liefern aber undefinierte Ergebnisse.)"))
+        _result = mo.md("✅ **Richtig!** Ohne `GROUP BY Position` kann SQL nicht wissen, welche Position zur aggregierten Durchschnittszeile gehört. Die *Goldene Regel*: Im SELECT nur GROUP BY-Spalten oder Aggregatfunktionen! (Manche Datenbanken wie MySQL erlauben dies trotzdem, liefern aber undefinierte Ergebnisse.)")
     elif vorhersage_groupby.value == "alle_mit_avg":
-        mo.output.replace(mo.md("❌ Nicht ganz. Ohne GROUP BY wird nur **eine** Zeile berechnet (der Durchschnitt aller Spieler). Aber `Position` hat mehrere verschiedene Werte — SQL weiß nicht, welchen es in diese eine Zeile schreiben soll → **Fehler**."))
+        _result = mo.md("❌ Nicht ganz. Ohne GROUP BY wird nur **eine** Zeile berechnet (der Durchschnitt aller Spieler). Aber `Position` hat mehrere verschiedene Werte — SQL weiß nicht, welchen es in diese eine Zeile schreiben soll → **Fehler**.")
     elif vorhersage_groupby.value == "eine_zeile":
-        mo.output.replace(mo.md("❌ Nah dran — es würde tatsächlich eine Zeile werden (AVG über alle). Aber SQL kann nicht 'zufällig' eine Position wählen. `Position` ist nicht aggregiert und nicht in GROUP BY → die meisten Datenbanken geben einen **Fehler** aus."))
+        _result = mo.md("❌ Nah dran — es würde tatsächlich eine Zeile werden (AVG über alle). Aber SQL kann nicht 'zufällig' eine Position wählen. `Position` ist nicht aggregiert und nicht in GROUP BY → die meisten Datenbanken geben einen **Fehler** aus.")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([vorhersage_groupby, _result])
     return
 
 
@@ -464,27 +468,29 @@ def _(mo):
 def _(mo):
     viz_choice_3 = mo.ui.radio(
         options={
-            "bar": "Balkendiagramm",
-            "line": "Liniendiagramm",
-            "scatter": "Streudiagramm",
-            "histogram": "Histogramm",
+            "Balkendiagramm": "bar",
+            "Liniendiagramm": "line",
+            "Streudiagramm": "scatter",
+            "Histogramm": "histogram",
         },
         label="Sie wollen das durchschnittliche Alter pro Position zeigen. Welcher Charttyp passt am besten?"
     )
-    viz_choice_3
     return (viz_choice_3,)
 
 
 @app.cell(hide_code=True)
-def _(viz_choice_3, mo):
+def _(mo, viz_choice_3):
     if viz_choice_3.value == "bar":
-        mo.output.replace(mo.md("✅ **Richtig!** Ein **Balkendiagramm** ist ideal zum **Vergleichen von Kategorien**. Die Positionen (Sturm, Mittelfeld, etc.) sind Kategorien, und der Durchschnittswert wird als Balkenhöhe dargestellt. Das macht Unterschiede sofort sichtbar."))
+        _result = mo.md("✅ **Richtig!** Ein **Balkendiagramm** ist ideal zum **Vergleichen von Kategorien**. Die Positionen (Sturm, Mittelfeld, etc.) sind Kategorien, und der Durchschnittswert wird als Balkenhöhe dargestellt. Das macht Unterschiede sofort sichtbar.")
     elif viz_choice_3.value == "line":
-        mo.output.replace(mo.md("❌ Nicht ganz. Ein Liniendiagramm zeigt **Entwicklungen über die Zeit**. Positionen haben keine natürliche Reihenfolge — ein **Balkendiagramm** eignet sich besser zum Vergleichen von Kategorien."))
+        _result = mo.md("❌ Nicht ganz. Ein Liniendiagramm zeigt **Entwicklungen über die Zeit**. Positionen haben keine natürliche Reihenfolge — ein **Balkendiagramm** eignet sich besser zum Vergleichen von Kategorien.")
     elif viz_choice_3.value == "scatter":
-        mo.output.replace(mo.md("❌ Nicht ganz. Ein Streudiagramm zeigt den **Zusammenhang zwischen zwei numerischen Variablen**. Hier haben wir Kategorien (Positionen) und einen Wert (Ø Alter) — ein **Balkendiagramm** passt besser."))
+        _result = mo.md("❌ Nicht ganz. Ein Streudiagramm zeigt den **Zusammenhang zwischen zwei numerischen Variablen**. Hier haben wir Kategorien (Positionen) und einen Wert (Ø Alter) — ein **Balkendiagramm** passt besser.")
     elif viz_choice_3.value == "histogram":
-        mo.output.replace(mo.md("❌ Nicht ganz. Ein Histogramm zeigt die **Verteilung** einer Variable (z.B. wie viele Spieler sind 20-25 Jahre alt). Für den **Vergleich** von Kategorien (Positionen) eignet sich ein **Balkendiagramm** besser."))
+        _result = mo.md("❌ Nicht ganz. Ein Histogramm zeigt die **Verteilung** einer Variable (z.B. wie viele Spieler sind 20-25 Jahre alt). Für den **Vergleich** von Kategorien (Positionen) eignet sich ein **Balkendiagramm** besser.")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([viz_choice_3, _result])
     return
 
 
@@ -502,24 +508,26 @@ def _(mo):
 def _(mo):
     selbsttest_3 = mo.ui.radio(
         options={
-            "where": "In die WHERE-Klausel",
-            "having": "In die HAVING-Klausel",
-            "select": "In die SELECT-Klausel",
+            "In die WHERE-Klausel": "where",
+            "In die HAVING-Klausel": "having",
+            "In die SELECT-Klausel": "select",
         },
         label="Sie wollen nur Positionen mit mehr als 3 Spielern anzeigen. Wohin gehört `COUNT(*) > 3`?"
     )
-    selbsttest_3
     return (selbsttest_3,)
 
 
 @app.cell(hide_code=True)
-def _(selbsttest_3, mo):
+def _(mo, selbsttest_3):
     if selbsttest_3.value == "having":
-        mo.output.replace(mo.md("✅ **Richtig!** `HAVING` filtert **Gruppen** nach der Aggregation. `WHERE` kann keine Aggregatfunktionen verwenden, weil es **vor** GROUP BY ausgeführt wird."))
+        _result = mo.md("✅ **Richtig!** `HAVING` filtert **Gruppen** nach der Aggregation. `WHERE` kann keine Aggregatfunktionen verwenden, weil es **vor** GROUP BY ausgeführt wird.")
     elif selbsttest_3.value == "where":
-        mo.output.replace(mo.md("❌ `WHERE` wird **vor** GROUP BY ausgeführt und kann daher keine Aggregatfunktionen wie `COUNT(*)` verwenden. Für Bedingungen auf Gruppen brauchen Sie `HAVING`."))
+        _result = mo.md("❌ `WHERE` wird **vor** GROUP BY ausgeführt und kann daher keine Aggregatfunktionen wie `COUNT(*)` verwenden. Für Bedingungen auf Gruppen brauchen Sie `HAVING`.")
     elif selbsttest_3.value == "select":
-        mo.output.replace(mo.md("❌ `SELECT` wählt Spalten aus, filtert aber nicht. Um Gruppen zu filtern, verwenden Sie `HAVING` — es wird nach GROUP BY ausgeführt und kann Aggregatfunktionen prüfen."))
+        _result = mo.md("❌ `SELECT` wählt Spalten aus, filtert aber nicht. Um Gruppen zu filtern, verwenden Sie `HAVING` — es wird nach GROUP BY ausgeführt und kann Aggregatfunktionen prüfen.")
+    else:
+        _result = mo.callout(mo.md("Bitte wählen."), kind="info")
+    mo.vstack([selbsttest_3, _result])
     return
 
 
